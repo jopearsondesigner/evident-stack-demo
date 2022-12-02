@@ -67,26 +67,26 @@ data class Command(
     override val id: CommandId,
     override val name: Name,
     override val description: Description? = null,
-    private val schemaAssignments: Map<CommandSchemaRole, SchemaId> = mapOf(),
+    private val configAssignments: Map<CommandConfigRole, ConfigId> = mapOf(),
 ) : DescribedEntity,
-    HasSchemasAssignedByRole<CommandSchemaRole, Command> {
-    override fun withSchemaByRole(
-        role: CommandSchemaRole,
-        schemaId: SchemaId
+    HasConfigsAssignedByRole<CommandConfigRole, Command> {
+    override fun withConfigByRole(
+        role: CommandConfigRole,
+        configId: ConfigId
     ): Command {
-        val newSchemaAssignments = schemaAssignments.toMutableMap()
-        newSchemaAssignments[role] = schemaId
-        return copy(schemaAssignments = newSchemaAssignments.toMap())
+        val newConfigAssignments = configAssignments.toMutableMap()
+        newConfigAssignments[role] = configId
+        return copy(configAssignments = newConfigAssignments.toMap())
     }
 
-    override fun withoutSchemaRole(role: CommandSchemaRole): Command {
-        val newSchemaAssignments = schemaAssignments.toMutableMap()
-        newSchemaAssignments.remove(role)
-        return copy(schemaAssignments = newSchemaAssignments.toMap())
+    override fun withoutConfigRole(role: CommandConfigRole): Command {
+        val newConfigAssignments = configAssignments.toMutableMap()
+        newConfigAssignments.remove(role)
+        return copy(configAssignments = newConfigAssignments.toMap())
     }
 
-    override fun getSchemaByRole(model: EventModel, role: CommandSchemaRole) =
-        schemaAssignments[role]?.let { model.schemas[it] }
+    override fun getConfigByRole(model: EventModel, role: CommandConfigRole) =
+        configAssignments[role]?.let { model.configs[it] }
 }
 
 // Events
@@ -98,25 +98,25 @@ data class Event(
     override val id: EventId,
     override val name: Name,
     override val description: Description? = null,
-    private val schemaAssignments: Map<SchemaRole, SchemaId> = mapOf(),
-) : DescribedEntity, HasSchemasAssignedByRole<EventSchemaRole, Event> {
-    override fun withSchemaByRole(
-        role: EventSchemaRole,
-        schemaId: SchemaId
+    private val configAssignments: Map<ConfigRole, ConfigId> = mapOf(),
+) : DescribedEntity, HasConfigsAssignedByRole<EventConfigRole, Event> {
+    override fun withConfigByRole(
+        role: EventConfigRole,
+        configId: ConfigId
     ): Event {
-        val newSchemaAssignments = schemaAssignments.toMutableMap()
-        newSchemaAssignments[role] = schemaId
-        return copy(schemaAssignments = newSchemaAssignments.toMap())
+        val newConfigAssignments = configAssignments.toMutableMap()
+        newConfigAssignments[role] = configId
+        return copy(configAssignments = newConfigAssignments.toMap())
     }
 
-    override fun withoutSchemaRole(role: EventSchemaRole): Event {
-        val newSchemaAssignments = schemaAssignments.toMutableMap()
-        newSchemaAssignments.remove(role)
-        return copy(schemaAssignments = newSchemaAssignments.toMap())
+    override fun withoutConfigRole(role: EventConfigRole): Event {
+        val newConfigAssignments = configAssignments.toMutableMap()
+        newConfigAssignments.remove(role)
+        return copy(configAssignments = newConfigAssignments.toMap())
     }
 
-    override fun getSchemaByRole(model: EventModel, role: EventSchemaRole) =
-        schemaAssignments[role]?.let { model.schemas[it] }
+    override fun getConfigByRole(model: EventModel, role: EventConfigRole) =
+        configAssignments[role]?.let { model.configs[it] }
 }
 
 // Read Models
@@ -128,64 +128,53 @@ data class ReadModel(
     override val id: ReadModelId,
     override val name: Name,
     override val description: Description? = null,
-    private val schemaAssignments: Map<SchemaRole, SchemaId> = mapOf(),
-) : DescribedEntity, HasSchemasAssignedByRole<ReadModelSchemaRole, ReadModel> {
-    override fun withSchemaByRole(
-        role: ReadModelSchemaRole,
-        schemaId: SchemaId
+    private val configAssignments: Map<ConfigRole, ConfigId> = mapOf(),
+) : DescribedEntity, HasConfigsAssignedByRole<ReadModelConfigRole, ReadModel> {
+    override fun withConfigByRole(
+        role: ReadModelConfigRole,
+        configId: ConfigId
     ): ReadModel {
-        val newSchemaAssignments = schemaAssignments.toMutableMap()
-        newSchemaAssignments[role] = schemaId
-        return copy(schemaAssignments = newSchemaAssignments.toMap())
+        val newConfigAssignments = configAssignments.toMutableMap()
+        newConfigAssignments[role] = configId
+        return copy(configAssignments = newConfigAssignments.toMap())
     }
 
-    override fun withoutSchemaRole(role: ReadModelSchemaRole): ReadModel {
-        val newSchemaAssignments = schemaAssignments.toMutableMap()
-        newSchemaAssignments.remove(role)
-        return copy(schemaAssignments = newSchemaAssignments.toMap())
+    override fun withoutConfigRole(role: ReadModelConfigRole): ReadModel {
+        val newConfigAssignments = configAssignments.toMutableMap()
+        newConfigAssignments.remove(role)
+        return copy(configAssignments = newConfigAssignments.toMap())
     }
 
-    override fun getSchemaByRole(model: EventModel, role: ReadModelSchemaRole) =
-        schemaAssignments[role]?.let { model.schemas[it] }
+    override fun getConfigByRole(model: EventModel, role: ReadModelConfigRole) =
+        configAssignments[role]?.let { model.configs[it] }
 }
 
-// Schemas
+// Configs
 
-typealias SchemaId = EntityId
+typealias Config = String
 
-@Serializable
-data class Schema(
-    override val id: SchemaId,
-    override val name: Name,
-    override val description: Description?,
-    // TODO: Schema data
-) : DescribedEntity
+sealed interface CommandConfigRole : ConfigRole
+sealed interface EventConfigRole : ConfigRole
+sealed interface ReadModelConfigRole : ConfigRole
 
-sealed interface CommandSchemaRole : SchemaRole
-sealed interface EventSchemaRole : SchemaRole
-sealed interface ReadModelSchemaRole : SchemaRole
+sealed interface ConfigRole {
+    object CommandSchema : CommandConfigRole
+    object ResultSchema : CommandConfigRole
 
-sealed interface SchemaRole {
-    object Command : CommandSchemaRole
-    object Result : CommandSchemaRole
+    object EventBodySchema : EventConfigRole
 
-    object Event : EventSchemaRole
+    object QuerySchema : ReadModelConfigRole
+    object ReadModelSchema : ReadModelConfigRole
 
-    object Query : ReadModelSchemaRole
-    object ReadModel : ReadModelSchemaRole
-
-    object Error : CommandSchemaRole, ReadModelSchemaRole
+    object ErrorSchema : CommandConfigRole, ReadModelConfigRole
 }
 
-sealed interface HasSchemasAssignedByRole<
-        in S : SchemaRole,
-        T : HasSchemasAssignedByRole<S, T>> {
-    fun withSchemaByRole(role: S, schema: Schema): T =
-        withSchemaByRole(role, schema.id)
-
-    fun withSchemaByRole(role: S, schemaId: SchemaId): T
-    fun withoutSchemaRole(role: S): T
-    fun getSchemaByRole(model: EventModel, role: S): Schema?
+sealed interface HasConfigsAssignedByRole<
+        in S : ConfigRole,
+        out T : HasConfigsAssignedByRole<S, T>> {
+    fun withConfigByRole(role: S, config: Config): T
+    fun withoutConfigRole(role: S): T
+    fun getConfigByRole(role: S): Config?
 }
 
 // Lanes
@@ -409,7 +398,7 @@ interface EventModel : DescribedEntity, EventModelLifecycle {
     val streams: List<Stream>
     val placements: Map<PlacementId, Placement>
     val flows: Map<FlowId, FlowArrow>
-    val schemas: Map<SchemaId, Schema>
+    val configs: Map<ConfigId, Config>
 
     fun builder(): EventModelBuilder<EventModel>
 
@@ -601,7 +590,7 @@ interface EventModel : DescribedEntity, EventModelLifecycle {
                 eventModel.streams.isEmpty() &&
                 eventModel.placements.isEmpty() &&
                 eventModel.flows.isEmpty() &&
-                eventModel.schemas.isEmpty()
+                eventModel.configs.isEmpty()
     }
 }
 
@@ -638,8 +627,8 @@ interface EventModelBuilder<out T : EventModel> {
 
     fun minusFlow(flowId: FlowId): EventModelBuilder<T>
 
-    fun plusSchema(schema: Schema): EventModelBuilder<T>
-    fun minusSchema(schemaId: SchemaId): EventModelBuilder<T>
+    fun plusConfig(config: Config): EventModelBuilder<T>
+    fun minusConfig(configId: ConfigId): EventModelBuilder<T>
 
     fun build(): T
 }
@@ -657,7 +646,7 @@ data class ImmutableEventModel internal constructor(
     override val streams: List<Stream> = listOf(),
     override val placements: Map<PlacementId, Placement> = mapOf(),
     override val flows: Map<FlowId, FlowArrow> = mapOf(),
-    override val schemas: Map<SchemaId, Schema> = mapOf(),
+    override val configs: Map<ConfigId, Config> = mapOf(),
 ) : EventModel {
     override fun builder() = builder(this)
 
@@ -681,7 +670,7 @@ data class ImmutableEventModel internal constructor(
         private var streams = eventModel.streams
         private var placements = eventModel.placements
         private var flows = eventModel.flows
-        private var schemas = eventModel.schemas
+        private var configs = eventModel.configs
 
         override fun name(name: Name): EventModelBuilder<ImmutableEventModel> =
             apply { this.name = name }
@@ -753,18 +742,18 @@ data class ImmutableEventModel internal constructor(
         override fun minusFlow(flowId: FlowId): EventModelBuilder<ImmutableEventModel> =
             apply { this.flows = flows - flowId }
 
-        override fun plusSchema(schema: Schema): EventModelBuilder<ImmutableEventModel> =
-            apply { this.schemas = schemas + Pair(schema.id, schema) }
+        override fun plusConfig(config: Config): EventModelBuilder<ImmutableEventModel> =
+            apply { this.configs = configs + Pair(config.id, config) }
 
-        override fun minusSchema(schemaId: SchemaId): EventModelBuilder<ImmutableEventModel> =
-            apply { this.schemas = schemas - schemaId }
+        override fun minusConfig(configId: ConfigId): EventModelBuilder<ImmutableEventModel> =
+            apply { this.configs = configs - configId }
 
         override fun build(): ImmutableEventModel =
             ImmutableEventModel(
                 eventModel.id, name, description,
                 interfaces, commands, events, readModels,
                 audiences, streams,
-                placements, flows, schemas
+                placements, flows, configs
             )
     }
 }

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform")
+    id("evident.platform.kotlin-multiplatform-library")
 }
 
 group = "evident.platform.domain"

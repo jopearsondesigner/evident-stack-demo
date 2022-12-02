@@ -1,6 +1,15 @@
+// == Define locations for build logic ==
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
+// == Define locations for components ==
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 includeBuild("../platforms")

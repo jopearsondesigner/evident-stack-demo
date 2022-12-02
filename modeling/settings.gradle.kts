@@ -1,12 +1,3 @@
-// TODO: Replace this version catalog with platform constrained versions?
-dependencyResolutionManagement {
-    versionCatalogs {
-        create("libs") {
-            from(files("../gradle/libs.versions.toml"))
-        }
-    }
-}
-
 // == Define locations for build logic ==
 pluginManagement {
     repositories {

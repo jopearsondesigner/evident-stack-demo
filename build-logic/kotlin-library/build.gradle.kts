@@ -3,8 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(platform("com.example.platform:plugins-platform"))
+    implementation(platform("evident.platform:plugins-platform"))
 
-    implementation(project(":commons"))
     implementation("org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin")
 }

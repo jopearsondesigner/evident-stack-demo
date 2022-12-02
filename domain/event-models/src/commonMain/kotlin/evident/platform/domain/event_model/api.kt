@@ -2,7 +2,7 @@ package evident.platform.domain.event_model
 
 import arrow.core.Either
 import arrow.core.right
-import com.twolambdas.domain.SimpleDecider
+import evident.platform.domain.state.SimpleDecider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 

@@ -1,5 +1,5 @@
 plugins {
-    id("evident.platform.kotlin-js-lib")
+    id("evident.platform.kotlin-js-library")
 }
 
 group = "$group.modeling"
@@ -8,8 +8,7 @@ version = "0.1.0-SNAPSHOT"
 dependencies {
     //platform()
     implementation("evident.platform.domain:event-models")
-    implementation(libs.kotlinx.coroutines)
-    testImplementation(kotlin("test"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 }
 
 kotlin {

@@ -2,8 +2,6 @@ plugins {
     id("java")
 }
 
-group = "evident.platform"
-
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -19,4 +17,3 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
-

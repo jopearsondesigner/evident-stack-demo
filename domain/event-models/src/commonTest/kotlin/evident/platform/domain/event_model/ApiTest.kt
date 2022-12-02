@@ -1,7 +1,7 @@
 package evident.platform.domain.event_model
 
 import arrow.core.Either
-import com.twolambdas.domain.ISimpleDecider
+import evident.platform.domain.state.ISimpleDecider
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="event-models-jvm-0.1.0-SNAPSHOT">
+    <output-path>$PROJECT_DIR$/domain/event-models/build/libs</output-path>
+    <root id="archive" name="event-models-jvm-0.1.0-SNAPSHOT.jar">
+      <element id="module-output" name="domain.event-models.jvmMain" />
+    </root>
+  </artifact>
+</component>

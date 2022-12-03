@@ -38,6 +38,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 // Language & Platform
+                implementation(libs.kotlinx.collections.immutable)
                 implementation(libs.kotlinx.coroutines)
                 implementation(libs.kotlinx.uuid.core)
                 implementation(libs.kotlinx.serialization.json)

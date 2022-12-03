@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="converge-jvm-0.1.0-SNAPSHOT">
+    <output-path>$PROJECT_DIR$/domain/converge/build/libs</output-path>
+    <root id="archive" name="converge-jvm-0.1.0-SNAPSHOT.jar">
+      <element id="module-output" name="domain.converge.jvmMain" />
+    </root>
+  </artifact>
+</component>

@@ -25,3 +25,6 @@ $(CUE_C_OUTPUT): $(CUE_C_INPUT)
 	go build -buildmode=c-archive -o $(CUE_C_OUTPUT) $(CUE_C_INPUT)
 
 build: $(CUE_WASM_OUTPUT) $(CUE_C_OUTPUT)
+
+clean:
+	-rm -rf $(CUE_WASM_OUTPUT) $(CUE_C_OUTPUT)

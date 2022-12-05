@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.filterMap
 import arrow.core.left
 import arrow.core.right
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.serialization.Serializable
 import kotlinx.uuid.UUID
 import kotlinx.uuid.generateUUID
@@ -67,28 +68,25 @@ data class Command(
     override val id: CommandId,
     override val name: Name,
     override val description: Description? = null,
-    private val configAssignments: Map<CommandConfigRole, ConfigId> = mapOf(),
+    private val configAssignments: Map<CommandConfigRole, Config> = persistentMapOf()
 ) : DescribedEntity,
     HasConfigsAssignedByRole<CommandConfigRole, Command> {
     override fun withConfigByRole(
         role: CommandConfigRole,
-        configId: ConfigId
+        config: Config
     ): Command {
-        val newConfigAssignments = configAssignments.toMutableMap()
-        newConfigAssignments[role] = configId
-        return copy(configAssignments = newConfigAssignments.toMap())
+        val newConfigAssignments = configAssignments + (role to config)
+        return copy(configAssignments = newConfigAssignments)
     }
 
     override fun withoutConfigRole(role: CommandConfigRole): Command {
-        val newConfigAssignments = configAssignments.toMutableMap()
-        newConfigAssignments.remove(role)
-        return copy(configAssignments = newConfigAssignments.toMap())
+        val newConfigAssignments = configAssignments - role
+        return copy(configAssignments = newConfigAssignments)
     }
 
-    override fun getConfigByRole(model: EventModel, role: CommandConfigRole) =
-        configAssignments[role]?.let { model.configs[it] }
+    override fun getConfigByRole(role: CommandConfigRole) =
+        configAssignments[role]
 }
-
 // Events
 
 typealias EventId = EntityId
@@ -98,25 +96,23 @@ data class Event(
     override val id: EventId,
     override val name: Name,
     override val description: Description? = null,
-    private val configAssignments: Map<ConfigRole, ConfigId> = mapOf(),
+    private val configAssignments: Map<ConfigRole, Config> = persistentMapOf(),
 ) : DescribedEntity, HasConfigsAssignedByRole<EventConfigRole, Event> {
     override fun withConfigByRole(
         role: EventConfigRole,
-        configId: ConfigId
+        config: Config
     ): Event {
-        val newConfigAssignments = configAssignments.toMutableMap()
-        newConfigAssignments[role] = configId
-        return copy(configAssignments = newConfigAssignments.toMap())
+        val newConfigAssignments = configAssignments + (role to config)
+        return copy(configAssignments = newConfigAssignments)
     }
 
     override fun withoutConfigRole(role: EventConfigRole): Event {
-        val newConfigAssignments = configAssignments.toMutableMap()
-        newConfigAssignments.remove(role)
-        return copy(configAssignments = newConfigAssignments.toMap())
+        val newConfigAssignments = configAssignments - role
+        return copy(configAssignments = newConfigAssignments)
     }
 
-    override fun getConfigByRole(model: EventModel, role: EventConfigRole) =
-        configAssignments[role]?.let { model.configs[it] }
+    override fun getConfigByRole(role: EventConfigRole) =
+        configAssignments[role]
 }
 
 // Read Models
@@ -128,25 +124,23 @@ data class ReadModel(
     override val id: ReadModelId,
     override val name: Name,
     override val description: Description? = null,
-    private val configAssignments: Map<ConfigRole, ConfigId> = mapOf(),
+    private val configAssignments: Map<ConfigRole, Config> = persistentMapOf(),
 ) : DescribedEntity, HasConfigsAssignedByRole<ReadModelConfigRole, ReadModel> {
     override fun withConfigByRole(
         role: ReadModelConfigRole,
-        configId: ConfigId
+        config: Config
     ): ReadModel {
-        val newConfigAssignments = configAssignments.toMutableMap()
-        newConfigAssignments[role] = configId
-        return copy(configAssignments = newConfigAssignments.toMap())
+        val newConfigAssignments = configAssignments + (role to config)
+        return copy(configAssignments = newConfigAssignments)
     }
 
     override fun withoutConfigRole(role: ReadModelConfigRole): ReadModel {
-        val newConfigAssignments = configAssignments.toMutableMap()
-        newConfigAssignments.remove(role)
-        return copy(configAssignments = newConfigAssignments.toMap())
+        val newConfigAssignments = configAssignments - role
+        return copy(configAssignments = newConfigAssignments)
     }
 
-    override fun getConfigByRole(model: EventModel, role: ReadModelConfigRole) =
-        configAssignments[role]?.let { model.configs[it] }
+    override fun getConfigByRole(role: ReadModelConfigRole) =
+        configAssignments[role]
 }
 
 // Configs
@@ -398,7 +392,7 @@ interface EventModel : DescribedEntity, EventModelLifecycle {
     val streams: List<Stream>
     val placements: Map<PlacementId, Placement>
     val flows: Map<FlowId, FlowArrow>
-    val configs: Map<ConfigId, Config>
+    val definitions: Config?
 
     fun builder(): EventModelBuilder<EventModel>
 
@@ -582,15 +576,17 @@ interface EventModel : DescribedEntity, EventModelLifecycle {
     }
 
     companion object {
-        fun isEmpty(eventModel: EventModel) = eventModel.interfaces.isEmpty() &&
-                eventModel.commands.isEmpty() &&
-                eventModel.events.isEmpty() &&
-                eventModel.readModels.isEmpty() &&
-                eventModel.audiences.isEmpty() &&
-                eventModel.streams.isEmpty() &&
-                eventModel.placements.isEmpty() &&
-                eventModel.flows.isEmpty() &&
-                eventModel.configs.isEmpty()
+        fun isEmpty(eventModel: EventModel) =
+            eventModel.description.isNullOrEmpty() &&
+                    eventModel.interfaces.isEmpty() &&
+                    eventModel.commands.isEmpty() &&
+                    eventModel.events.isEmpty() &&
+                    eventModel.readModels.isEmpty() &&
+                    eventModel.audiences.isEmpty() &&
+                    eventModel.streams.isEmpty() &&
+                    eventModel.placements.isEmpty() &&
+                    eventModel.flows.isEmpty() &&
+                    eventModel.definitions.isNullOrEmpty()
     }
 }
 
@@ -627,9 +623,6 @@ interface EventModelBuilder<out T : EventModel> {
 
     fun minusFlow(flowId: FlowId): EventModelBuilder<T>
 
-    fun plusConfig(config: Config): EventModelBuilder<T>
-    fun minusConfig(configId: ConfigId): EventModelBuilder<T>
-
     fun build(): T
 }
 
@@ -646,7 +639,7 @@ data class ImmutableEventModel internal constructor(
     override val streams: List<Stream> = listOf(),
     override val placements: Map<PlacementId, Placement> = mapOf(),
     override val flows: Map<FlowId, FlowArrow> = mapOf(),
-    override val configs: Map<ConfigId, Config> = mapOf(),
+    override val definitions: Config? = null,
 ) : EventModel {
     override fun builder() = builder(this)
 
@@ -670,7 +663,7 @@ data class ImmutableEventModel internal constructor(
         private var streams = eventModel.streams
         private var placements = eventModel.placements
         private var flows = eventModel.flows
-        private var configs = eventModel.configs
+        private var definitions = eventModel.definitions
 
         override fun name(name: Name): EventModelBuilder<ImmutableEventModel> =
             apply { this.name = name }
@@ -742,18 +735,12 @@ data class ImmutableEventModel internal constructor(
         override fun minusFlow(flowId: FlowId): EventModelBuilder<ImmutableEventModel> =
             apply { this.flows = flows - flowId }
 
-        override fun plusConfig(config: Config): EventModelBuilder<ImmutableEventModel> =
-            apply { this.configs = configs + Pair(config.id, config) }
-
-        override fun minusConfig(configId: ConfigId): EventModelBuilder<ImmutableEventModel> =
-            apply { this.configs = configs - configId }
-
         override fun build(): ImmutableEventModel =
             ImmutableEventModel(
                 eventModel.id, name, description,
                 interfaces, commands, events, readModels,
                 audiences, streams,
-                placements, flows, configs
+                placements, flows, definitions
             )
     }
 }

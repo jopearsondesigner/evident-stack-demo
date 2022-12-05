@@ -16,7 +16,7 @@ includeBuild("../platforms")
 
 rootProject.name = "build-logic"
 include("commons")
-include("kotlin-library")
-include("kotlin-multiplatform-library")
+include("kotlin-jvm-library")
 include("kotlin-js-library")
-include("micronaut-application")
+include("kotlin-multiplatform-library")
+//include("micronaut-grpc-application")

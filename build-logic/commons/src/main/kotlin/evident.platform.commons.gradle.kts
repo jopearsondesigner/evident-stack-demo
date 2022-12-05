@@ -1,19 +1,13 @@
-plugins {
-    id("java")
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        languageVersion = "1.7"
+        apiVersion = "1.7"
+    }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-dependencies {
-    implementation(platform("evident.platform:product-platform"))
-
-    testImplementation(platform("evident.platform:test-platform"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-}
-
-tasks.test {
+tasks.withType<KotlinJvmTest>().configureEach {
     useJUnitPlatform()
 }

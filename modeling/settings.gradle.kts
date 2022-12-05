@@ -12,7 +12,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-includeBuild("../platforms")
+includeBuild("../domain")
 
 // == Define the inner structure of this component ==
 rootProject.name = "modeling" // the component name

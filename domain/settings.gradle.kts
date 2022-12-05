@@ -25,4 +25,4 @@ includeBuild("../platforms")
 
 // == Define the inner structure of this component ==
 rootProject.name = "domain" // the component name
-include("event-models", "schemas", "state")
+include("converge", "event-models", "schemas", "state")

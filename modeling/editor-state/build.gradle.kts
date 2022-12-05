@@ -2,7 +2,7 @@ plugins {
     id("evident.platform.kotlin-js-library")
 }
 
-group = "$group.modeling"
+group = "evident.platform.modeling"
 version = "0.1.0-SNAPSHOT"
 
 dependencies {

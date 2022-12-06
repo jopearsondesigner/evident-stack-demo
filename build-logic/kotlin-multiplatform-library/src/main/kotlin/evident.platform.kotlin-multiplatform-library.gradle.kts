@@ -5,9 +5,14 @@ plugins {
     id("io.kotest.multiplatform")
 }
 
- dependencies {
+dependencies {
     commonMainImplementation(platform("evident.platform:product-platform"))
     commonTestImplementation(platform("evident.platform:test-platform"))
+    commonTestImplementation("io.kotest:kotest-assertions-core")
+    commonTestImplementation("io.kotest:kotest-framework-engine")
+    commonTestImplementation("io.kotest:kotest-framework-datatest")
+    commonTestImplementation(kotlin("test-common"))
+    commonTestImplementation(kotlin("test-annotations-common"))
 }
 
 kotlin {
@@ -36,28 +41,12 @@ kotlin {
         isMingwX64 -> mingwX64("native")
         else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
     }
-
     sourceSets {
-        val commonMain by getting
-        val commonTest by getting {
-            dependencies {
-                implementation("io.kotest:kotest-assertions-core")
-                implementation("io.kotest:kotest-framework-engine")
-                implementation("io.kotest:kotest-framework-datatest")
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-            }
-        }
-        val jvmMain by getting
         val jvmTest by getting {
             dependencies {
                 implementation("io.kotest:kotest-runner-junit5")
             }
         }
-        val jsMain by getting
-        val jsTest by getting
-        val nativeMain by getting
-        val nativeTest by getting
     }
 }
 

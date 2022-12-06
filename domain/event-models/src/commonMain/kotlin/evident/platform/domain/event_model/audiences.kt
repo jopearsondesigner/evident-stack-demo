@@ -41,6 +41,7 @@ data class RemoveAudience(
 
 sealed interface AudienceEvent: EventModelEvent
 
+// TODO: change `index` here to `after` w/ Op Id
 @Serializable
 data class AudienceAdded(
     val id: AudienceId,
@@ -48,6 +49,7 @@ data class AudienceAdded(
     val index: Int,
 ): AudienceEvent
 
+// TODO: is this an Assign Op?
 @Serializable
 data class AudienceReordered(
     val audienceId: AudienceId,

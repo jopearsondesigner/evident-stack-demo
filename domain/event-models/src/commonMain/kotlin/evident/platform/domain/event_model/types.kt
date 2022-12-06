@@ -145,6 +145,8 @@ data class ReadModel(
 
 // Configs
 
+// TODO: Make Config an instance of a sealed interface, so as to support multiple types
+
 typealias Config = String
 
 sealed interface CommandConfigRole : ConfigRole

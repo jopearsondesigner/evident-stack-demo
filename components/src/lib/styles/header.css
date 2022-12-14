@@ -1,0 +1,9 @@
+/* @tailwind base; */
+/* @tailwind components; */
+/* @tailwind utilities; */
+
+/* @layer components { */
+/* 	.navbar { */
+/* 		@apply shadow-header bg-white w-full max-h-10 max-h-12 min-h-[48px] px-3 py-0 text-body; */
+/* 	} */
+/* } */

@@ -3,12 +3,15 @@ module.exports = {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
 		fontFamily: {
-			primary: 'lato, san-serif'
+			primary: 'lato, san-serif',
+			Header: 'niveau-grotesk, sans-serif'
 		},
 		extend: {
 			colors: {
-				primary: '##1E6AFF',
+				active: '#1E6AFF',
 				body: '#333333',
+				red: '#ff0000',
+				green: '#00ff00',
 				'body-light': '#586E75',
 				'gray-primary': '#CCCCCC',
 				'gray-secondary': '#E6E6E6',
@@ -17,7 +20,8 @@ module.exports = {
 				'gray-brand-3': '#839496',
 				'gray-brand-4': '#93A1A1',
 				'gray-bg': '#EEEEEE',
-				'onote-brand': '#2FB6E1'
+				'brand-primary': '#2FB6E1',
+				'brand-secondary': '#FB8C3A'
 			},
 			fontSize: {
 				xs: '0.75rem',

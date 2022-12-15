@@ -1,5 +1,4 @@
 <script>
-	import './drawer/drawer.css';
 	import Drawer from './Drawer.svelte';
 	import Sidebar from './Sidebar.svelte';
 	import SidebarInner from './SidebarInner.svelte';
@@ -26,8 +25,7 @@
 </script>
 
 <div class="text-center">
-	<Button primary size="small" on:click={() => (hidden = false)} class="">Show Sidebar</Button><br
-	/>
+	<Button gradient color=primary size="sm" on:click={() => (hidden = false)} class="">Show Sidebar</Button><br/>
 	<button on:click={() => (hidden = true)} class="mt-4">Close</button>
 </div>
 

@@ -1,5 +1,5 @@
 <script>
-	import Header from './Header.svelte';
+	import NavbarExample from './navbar/NavbarExample.svelte';
 </script>
 
 <article>

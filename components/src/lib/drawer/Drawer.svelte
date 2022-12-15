@@ -11,7 +11,7 @@
 </script>
 
 {#if !hidden}
-	<div transition:fly={transitionParams}>
+	<div transition:fly={transitionParams} class="absolute">
 		<slot />
 	</div>
 {/if}

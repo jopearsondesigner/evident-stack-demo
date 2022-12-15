@@ -9,23 +9,20 @@
 	import OpenDown from '../icons/OpenDown.svelte';
 	import CloseLeft from '../icons/CloseLeft.svelte';
 	import CloseUp from '../icons/CloseUp.svelte';
-	export let verticalLiCLass = 'w-full relative inline-flex';
-	export let verticalULClass =
-		'sidebarDropdownItem w-60 border-t border-r border-b border-gray-primary';
-	export let verticalWrapperClass = 'left-full top-0 bottom-auto absolute';
-	export let headerTextClass = 'font-extrabold text-default text-body';
-	export let sidebarItemClass = 'flex items-center pl-4 pr-1 transition duration-200 ease-in';
-	export let sidebarBtnClass =
-		'bg-white hover:bg-primary/[.20] focus:text-white focus:bg-primary/[100] transition duration-200 ease-in w-full space-x-3 h-8 pointer-default';
+	export let verticalLiCLass='w-full relative inline-flex';
+	export let verticalULClass='sidebarDropdownItem w-60 border-t border-r border-b border-gray-primary';
+	export let verticalWrapperClass='left-full top-0 bottom-auto absolute';
+	export let headerTextClass='font-extrabold text-default text-body';
+	export let sidebarItemClass='flex items-center pl-4 pr-1 transition duration-200 ease-in';
+	export let sidebarBtnClass='bg-white hover:bg-active/[.20] focus:text-white focus:bg-active/[100] transition duration-200 ease-in w-full space-x-3 h-8 pointer-default';
 	export let sidebarSpanClass = 'flex-1 ml-3 text-left whitespace-nowrap';
 	export let label = '';
-	export let horizontal = false;
-	export let isHorizontalOpen = false;
+	export let horizontal=false;
+	export let isHorizontalOpen=false;
 	/**
 	 * @type {{ contains: (arg0: any) => boolean; }}
 	 */
 	let container;
-
 	/**
 	 * @param {{ target: any; }} e
 	 */

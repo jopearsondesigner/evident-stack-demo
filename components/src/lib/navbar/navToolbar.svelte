@@ -5,5 +5,5 @@
 </script>
 
 <div class={classNames(toolbarClass)}>
-	<slot name="icon" />
+	<slot/>
 </div>

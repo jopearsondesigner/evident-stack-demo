@@ -3,9 +3,9 @@
 	export let size = 20;
 	export let name = '';
 	export let iconColor = 'fill-current text-body-light';
-	export let className = 'transition duration-200 ease-in';
-	export { className as class };
-	$: classes = classNames(iconColor, className);
+	export let iconClass = 'transition duration-200 ease-in cursor-default';
+	export { iconClass as class };
+	$: classes = classNames(iconColor, iconClass);
 	/**
 	 * @type {any}
 	 */

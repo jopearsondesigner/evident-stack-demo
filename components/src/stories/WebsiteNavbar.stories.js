@@ -1,13 +1,13 @@
-import Dropdown from '../lib/dropdown/DropdownMenu.svelte';
+import WebsiteNavbar from '../lib/websitenavbar/NavbarExample.svelte';
 
 export default {
-	title: 'Global/Dropdown',
-	component: Dropdown,
+	title: 'Website/Navbar',
+	component: WebsiteNavbar,
 	argTypes: {}
 };
 
 const Template = (/** @type {any} */ args) => ({
-	Component: Dropdown,
+	Component: WebsiteNavbar,
 	props: args
 });
 

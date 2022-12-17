@@ -19,24 +19,24 @@
 		| 'brandSecondary';
 
 	const colorClasses = {
-		default: 'text-white bg-active hover:bg-[#054FDE] ring-active',
+		default: 'text-white bg-focus hover:bg-[#054FDE] ring-focus',
 		secondary:
-			'text-active bg-active/0 hover:bg-active/100 hover:text-white ring-active',
+			'text-focus bg-focus/0 hover:bg-focus/100 hover:text-white ring-focus',
 		warning:
-		'text-white bg-active/0 hover:bg-active/20 ring-red',
+		'text-white bg-focus/0 hover:bg-focus/20 ring-red',
 		success:
-		'text-white bg-active/0 hover:bg-active/20 ring-green',
+		'text-white bg-focus/0 hover:bg-focus/20 ring-green',
 	};
 	const gradientClasses = {
-		primary: 'text-white bg-gradient-to-b from-active to-brand-primary hover:from-active hover:to-active ring-active',
+		primary: 'text-white bg-gradient-to-b from-focus to-brand-primary hover:from-focus hover:to-focus ring-focus',
 		brandPrimary:
 			'text-white bg-gradient-to-b from-brand-primary to-[#248CAD] hover:from-[#248CAD] hover:to-[#248CAD] ring-brand-primary',
 		brandSecondary:
-			'text-white bg-gradient-to-b from-brand-secondary to-[#E15B2F] hover:to-[#E15B2F] hover:from-[#E15B2F] ring-brand-secondary',
+			'text-white bg-gradient-to-t from-brand-secondary to-secondary-red hover:to-secondary-red hover:from-secondary-red ring-brand-secondary',
 	};
 	const sizeClasses = {
-		xs: 'px-3 py-2 text-xs',
-		sm: 'px-4 py-2 text-xs',
+		xs: 'px-3 py-1 text-xs',
+		sm: 'px-4 py-1.5 text-xs',
 		md: 'px-4 py-2.5 text-sm',
 		lg: 'px-4 py-2 text-base',
 		xl: 'px-5 py-3 text-base'

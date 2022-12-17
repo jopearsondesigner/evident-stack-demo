@@ -1,5 +1,4 @@
 <script lang='ts'>
-	import classNames from 'classnames';
 	import {createEventDispatcher} from 'svelte';
 	import Icon from "../Icon.svelte";
 	import CloseSidebar from "../icons/CloseSidebar.svelte";
@@ -15,7 +14,7 @@
 	};
 </script>
 
-<button class={classNames(navHamburgerClass)} on:click={() => toggle()} on:click={handleClick}>
+<button class={navHamburgerClass} on:click={() => toggle()} on:click={handleClick}>
 	{#if !hidden}
 	<Icon
 	  name="open-sidebar"

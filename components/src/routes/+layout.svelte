@@ -15,7 +15,7 @@
 	import Support from '$lib/icons/Support.svelte';
 	import AdminPortal from '$lib/icons/AdminPortal.svelte';
 	import Home from '$lib/icons/Home.svelte';
-	import Logo from '$lib/assets/images/onoteLogo.svg';
+	import Logo from '$lib/assets/images/global/onoteLogo.svg';
 	import Drawer from '$lib/drawer/Drawer.svelte';
 	import Sidebar from '$lib/drawer/Sidebar.svelte';
 	import SidebarInner from '$lib/drawer/SidebarInner.svelte';

@@ -1,7 +1,7 @@
 <script lang='ts'>
     import classNames from 'classnames';
 	import Logo from '../assets/images/global/onoteLogo.svg';
-    import Dropdown from '../dropdown/DropdownMenu.svelte';
+    import Dropdown from '../dropdown/Dropdown.svelte';
     import Button from '../Button.svelte';
     import Icon from '../Icon.svelte';
     import ArrowRight from '../icons/ArrowRight.svelte';

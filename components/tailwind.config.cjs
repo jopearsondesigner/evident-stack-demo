@@ -1,13 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
-	darkMode: 'class',
+	// darkMode: 'class',
 	theme: {
 		fontFamily: {
 			primary: 'lato, san-serif',
 			copy: 'lato, san-serif',
 			sans: 'lato, san-serif',
-			Hero: 'niveau-grotesk, sans-serif'
+			hero: 'niveau-grotesk, sans-serif'
 		},
 		extend: {
 			colors: {
@@ -30,7 +30,8 @@ module.exports = {
 				'dark-2': '#073642',
 				'secondary-red': '#E15B2F',
 				'border-light': '#E6E6E6',
-				'border-dark': '#586E75'
+				'border-dark': '#586E75',
+				gradient: '#93A1A1'
 			},
 			fontSize: {
 				xs: '0.75rem',

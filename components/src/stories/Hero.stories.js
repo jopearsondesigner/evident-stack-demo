@@ -1,4 +1,4 @@
-import Hero from '../lib/hero/Hero.svelte';
+import Hero from '../lib/hero/HeroExample.svelte';
 
 export default {
 	title: 'website/Hero',

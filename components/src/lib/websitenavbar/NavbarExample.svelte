@@ -5,7 +5,7 @@
     import NabBrand from './NavBrand.svelte';
     import NavHamburger from './NavHamburger.svelte';
     import CloseButton from '../utils/CloseButton.svelte';
-    import ModeSwitch from '../utils/ModeSwitch.svelte';
+    import ThemeSwitch from '../utils/ThemeSwitch.svelte';
     import Nav from './Nav.svelte';
     import MobileNav from './MobileNav.svelte';
     import DropdownMenu from '../dropdown/DropdownMenu.svelte';
@@ -85,7 +85,7 @@
         <MobileNav>
             <NavUl hidden>
                 <NavLi hidden>
-                    <ModeSwitch bind:checked={acceptTerms}/>
+                    <ThemeSwitch bind:checked={acceptTerms}/>
                     <CloseButton on:click={() => handleMenu()}/>
                 </NavLi>
                 <DropdownMenuMobile name='Why oNote?'>

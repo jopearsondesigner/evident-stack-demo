@@ -8,14 +8,12 @@
     import FooterCopyright from './FooterCopyright.svelte';
     import Container from '../Container.svelte';
 	let containerClass: string | undefined='container';
-    import A from '../typography/A.svelte';
     import Row from '../Row.svelte';
 	let gridClass: string='grid lg:grid-cols-2 grid-col-1';
     import Column from '../Column.svelte';
-	let flexClass: string='flex justify-center items-center px-4';
 	import Logo from '../assets/images/global/onoteLogo.svg';
 	export let alt="Brand Logo";
-    export let href: string;
+    export let href:string = '';
     export let navBrandClass='flex min-w-[103.26px] no-underline';
     export { navBrandClass as class };
     export let product='oNote';

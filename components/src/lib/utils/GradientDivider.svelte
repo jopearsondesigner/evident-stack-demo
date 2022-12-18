@@ -1,5 +1,6 @@
 <script lang='ts'>
-    export let gradientDividerClass='xl:mt-[-224px] lg:mt-[-150px] sm:mt-[-60px] mt-[-70px] h-[64px] bg-gradient-to-t from-gradient to-transparency opacity-20';
+    export let gradientDividerClass='bg-gradient-to-t from-gradient to-transparency opacity-20 h-[64px]';
+    export {gradientDividerClass as class};
 </script>
 
 <div class={gradientDividerClass}>

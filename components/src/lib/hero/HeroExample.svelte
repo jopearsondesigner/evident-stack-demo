@@ -54,5 +54,5 @@
             </HeroFlexbox>
         </HeroGrid>
     </HeroContainer>
-    <GradientDivider/>
+    <GradientDivider class={classNames('xl:mt-[-224px] lg:mt-[-150px] sm:mt-[-60px] mt-[-70px]',gradientDividerClass)}/>
 </Hero>

@@ -7,7 +7,7 @@ module.exports = {
 			primary: 'lato, san-serif',
 			copy: 'lato, san-serif',
 			sans: 'lato, san-serif',
-			hero: 'niveau-grotesk, sans-serif'
+			header: 'niveau-grotesk, sans-serif'
 		},
 		extend: {
 			colors: {
@@ -16,7 +16,7 @@ module.exports = {
 				red: '#ff0000',
 				green: '#00ff00',
 				'body-light': '#586E75',
-				'body-dark': '#93A1A1',
+				'body-dark': '#CCCCCC',
 				'gray-primary': '#CCCCCC',
 				'gray-secondary': '#E6E6E6',
 				'gray-brand-1': '#586E75',

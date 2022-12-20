@@ -6,7 +6,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
@@ -14,6 +14,7 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         languageVersion = "1.7"
         apiVersion = "1.7"
+        jvmTarget = "17"
     }
 }
 

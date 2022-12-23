@@ -1,0 +1,23 @@
+/* @tailwind base; */
+/* @tailwind components; */
+/* @tailwind utilities; */
+
+/* @layer components { */
+/* } */
+
+/* button.sidebarItem:focus span, */
+/* button.sidebarDropdownWrapper:focus span { */
+/* 	color: white !important; */
+/* 	transition: all 200ms ease-in !important; */
+/* } */
+
+/* .sidebarMenu button { */
+/* 	color: rgba(51, 51, 51, 0.41); */
+/* 	transition: all 200ms ease-in !important; */
+/* } */
+/* .sidebarMenu button:hover { */
+/* 	color: rgba(51, 51, 51, 100); */
+/* } */
+/* .sidebarMenu button.menuActive { */
+/* 	color: rgba(51, 51, 51, 100); */
+/* } */

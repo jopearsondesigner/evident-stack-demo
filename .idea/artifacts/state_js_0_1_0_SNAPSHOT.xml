@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="state-js-0.1.0-SNAPSHOT">
-    <output-path>$PROJECT_DIR$/domain/state/build/libs</output-path>
-    <root id="archive" name="state-js-0.1.0-SNAPSHOT.jar">
-      <element id="module-output" name="domain.state.jsMain" />
-    </root>
-  </artifact>
-</component>

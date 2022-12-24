@@ -3,7 +3,7 @@ extern crate uuid;
 extern crate serde_cbor;
 
 mod types;
-mod convergent;
+mod api;
 mod default;
 
 #[cfg(test)]

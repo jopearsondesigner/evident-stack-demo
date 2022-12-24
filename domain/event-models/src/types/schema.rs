@@ -1,12 +1,14 @@
+use serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
-use crate::types::text::Text;
 
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Schema {
-    CUE(Box<dyn Text>),
-    CDDL(Box<dyn Text>),
-    Malli(Box<dyn Text>)
+    CUE(String),
+    CDDL(String),
+    Malli(String)
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub enum SchemaRole {
     CommandSchema,
     ResultSchema,

@@ -1,3 +1,4 @@
+use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 use crate::types::common::Entity;
 use crate::types::command::CommandId;
@@ -10,6 +11,7 @@ use crate::types::stream::StreamId;
 type PlacementIndex = u32;
 pub type PlacementId = Uuid;
 
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Placement {
     Interface(InterfacePlacement),
     Command(CommandPlacement),
@@ -30,6 +32,7 @@ impl Entity for Placement {
 
 // TODO: when serializing, replace references with entity IDs
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct InterfacePlacement {
     id: PlacementId,
     index: PlacementIndex,
@@ -37,12 +40,14 @@ pub struct InterfacePlacement {
     audience: Option<AudienceId>
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct CommandPlacement {
     id: PlacementId,
     index: PlacementIndex,
     command: CommandId
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct EventPlacement {
     id: PlacementId,
     index: PlacementIndex,
@@ -50,6 +55,7 @@ pub struct EventPlacement {
     stream: Option<StreamId>
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ReadModelPlacement {
     id: PlacementId,
     index: PlacementIndex,

@@ -1,14 +1,14 @@
-use std::ops::Deref;
+use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 use crate::types::common::{Described, Entity, Named};
-use crate::types::text::Text;
 
 pub type EventId = Uuid;
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Event {
     id: EventId,
     name: String,
-    description: Box<dyn Text>
+    description: String
 }
 
 impl Entity for Event {
@@ -21,7 +21,6 @@ impl Named for Event {
 
 impl Described for Event {
     fn description(&self) -> &str {
-        let desc = &self.description;
-        desc.deref().into()
+        &self.description
     }
 }

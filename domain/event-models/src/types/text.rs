@@ -10,3 +10,9 @@ impl From<&dyn Text> for &str {
         todo!()
     }
 }
+
+impl From<&dyn Text> for String {
+    fn from(_: &dyn Text) -> Self {
+        todo!()
+    }
+}

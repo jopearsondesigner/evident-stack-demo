@@ -1,14 +1,14 @@
-use std::ops::Deref;
+use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 use crate::types::common::{Described, Entity, Named};
-use crate::types::text::Text;
 
 pub type ReadModelId = Uuid;
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ReadModel {
     id: ReadModelId,
     name: String,
-    description: Box<dyn Text>
+    description: String
 }
 
 impl Entity for ReadModel {
@@ -21,7 +21,6 @@ impl Named for ReadModel {
 
 impl Described for ReadModel {
     fn description(&self) -> &str {
-        let desc = &self.description;
-        desc.deref().into()
+        &self.description
     }
 }

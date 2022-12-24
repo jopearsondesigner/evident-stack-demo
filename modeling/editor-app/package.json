@@ -47,6 +47,6 @@
     "vite": "^3.1.0"
   },
   "dependencies": {
-    "editor-state": "../editor-state/build/productionLibrary"
+    "editor-state": "../editor-state/pkg"
   }
 }

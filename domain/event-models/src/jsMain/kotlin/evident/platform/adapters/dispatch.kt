@@ -1,2 +1,0 @@
-package evident.platform.adapters
-

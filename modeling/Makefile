@@ -5,13 +5,13 @@ SHELL := bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-GRADLE ?= ../gradlew
+CARGO ?= cargo
 
 default: build
 
 # Deps
 
-editor-app/yarn.lock: editor-app/package.json editor-state/build/productionLibrary/package.json
+editor-app/yarn.lock: editor-app/package.json editor-state/pkg/package.json
 	cd editor-app && yarn
 
 # Dev
@@ -28,7 +28,7 @@ dev: editor-app/yarn.lock
 
 .PHONY: check
 check: editor-app/yarn.lock
-	$(GRADLE) :editor-state:check
+	$(CARGO) :editor-state:check
 	cd editor-app && yarn run check && yarn run lint && yarn run test
 
 # Build

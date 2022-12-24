@@ -1,5 +1,12 @@
 use std::collections::HashMap;
 
+// TODO: Snapshot event prunes any component definitions not present in placements
+//  In a api context, we can't know when deleting a placement whether it's
+//  the last placement for a given component definition in order to delete that
+//  definition.  So we should leave the definitions in place until a snapshot,
+//  then prune. Subsequent additions of placements against that definition
+//  should then fail
+
 type Node = u64;
 type Counter = u64;
 

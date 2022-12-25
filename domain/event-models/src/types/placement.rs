@@ -8,7 +8,7 @@ use crate::types::read_model::ReadModelId;
 use crate::types::audience::AudienceId;
 use crate::types::stream::StreamId;
 
-type PlacementIndex = u32;
+pub type PlacementIndex = u32;
 pub type PlacementId = Uuid;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -16,6 +16,12 @@ pub enum Placement {
     Interface(InterfacePlacement),
     Command(CommandPlacement),
     Event(EventPlacement),
+    ReadModel(ReadModelPlacement)
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum TimelinePlacement {
+    Command(CommandPlacement),
     ReadModel(ReadModelPlacement)
 }
 
@@ -29,8 +35,6 @@ impl Entity for Placement {
         }
     }
 }
-
-// TODO: when serializing, replace references with entity IDs
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct InterfacePlacement {

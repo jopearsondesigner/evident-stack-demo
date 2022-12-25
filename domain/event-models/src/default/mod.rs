@@ -1,1 +1,1 @@
-mod text;
+mod provider;

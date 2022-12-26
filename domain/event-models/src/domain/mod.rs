@@ -10,3 +10,14 @@ pub(crate) mod placement;
 pub(crate) mod flow;
 pub(crate) mod schema;
 pub(crate) mod event_model;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let result = 4;
+        assert_eq!(result, 4);
+    }
+}

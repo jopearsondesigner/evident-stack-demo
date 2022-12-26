@@ -1,10 +1,9 @@
-use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::types::common::{Described, Entity, Named};
+use crate::domain::common::{Described, Entity, Named};
 
 pub type CommandId = Uuid;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct Command {
     id: CommandId,
     name: String,

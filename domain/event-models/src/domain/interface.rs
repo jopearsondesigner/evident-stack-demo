@@ -1,18 +1,17 @@
-use serde_derive::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
-use crate::types::common::{Described, Entity, Named};
+use crate::domain::common::{Described, Entity, Named};
 
 pub type InterfaceId = Uuid;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub enum InterfaceConfig {
     Figma(Url),
     Image(Url),
     Job
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct Interface {
     id: InterfaceId,
     config: InterfaceConfig,

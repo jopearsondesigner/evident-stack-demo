@@ -1,8 +1,10 @@
 use std::collections::HashMap;
-use crate::types::audience::Audience;
-use crate::types::event_model::EventModel;
-use crate::types::placement::{EventPlacement, InterfacePlacement, PlacementIndex, TimelinePlacement};
-use crate::types::stream::Stream;
+
+// TODO: use DTOs instead of domain types
+use crate::domain::audience::Audience;
+use crate::domain::event_model::EventModel;
+use crate::domain::placement::{EventPlacement, InterfacePlacement, PlacementIndex, TimelinePlacement};
+use crate::domain::stream::Stream;
 
 impl EventModel {
     fn grid(&self) -> Vec<GridLane> {
@@ -17,6 +19,8 @@ impl EventModel {
     }
 }
 
+// TODO: implement in terms of owned DTO versions of these types,
+//  rather than references to domain types
 pub enum GridLane<'a> {
     DefaultAudience(HashMap<PlacementIndex, &'a InterfacePlacement>),
     Audience(&'a Audience, HashMap<PlacementIndex, &'a InterfacePlacement>),

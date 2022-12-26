@@ -1,33 +1,32 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter};
-use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::types::common::Entity;
-use crate::types::event_model::EventModel;
-use crate::types::placement::{Placement, PlacementId};
+use crate::domain::common::Entity;
+use crate::domain::event_model::EventModel;
+use crate::domain::placement::{Placement, PlacementId};
 
 pub type FlowId = Uuid;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 enum Anchor {
     None, Top, Left, Bottom, Right
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 struct Port {
     placement: PlacementId,
     anchor: Anchor
     // TODO: InterfaceElement?
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct FlowArrow {
     id: FlowId,
     from: Port,
     to: Port
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct IllegalFlowArrow(String);
 
 impl Display for IllegalFlowArrow {

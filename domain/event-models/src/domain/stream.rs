@@ -1,10 +1,9 @@
-use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::types::common::{Entity, Named};
+use crate::domain::common::{Entity, Named};
 
 pub type StreamId = Uuid;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug)]
 pub struct Stream {
     id: StreamId,
     name: String

@@ -1,19 +1,30 @@
 mod grid;
+mod decider;
 
-use crate::types::event_model::{EventModel, EventModelId};
+use std::collections::HashSet;
+use crate::domain::event_model::{EventModel, EventModelId};
 
-trait EventModelCreationContext {
+pub trait EventModelRepository {
+    type Error;
+
+    fn all_ids(&self) -> HashSet<EventModelId>;
+    fn by_id(&self, id: &EventModelId) -> Option<EventModel>;
+
+    fn put_by_id(
+        &self,
+        id: &EventModelId,
+        event_model: &EventModel
+    ) -> Result<(), Self::Error>;
+}
+
+pub trait EventModelCreator {
     type Error;
 
     fn name_exists(name: &str) -> bool;
     fn create(name: &str) -> Result<EventModel, Self::Error>;
 }
 
-trait EventModelProvider {
-    fn by_id(&self, id: &EventModelId) -> Option<EventModel>;
-}
-
-trait EventModelModifier: EventModelProvider {
+pub trait EventModelModifier {
     //     fun name(name: Name): EventModelBuilder<T>
     //     fun description(description: Description): EventModelBuilder<T>
     //
@@ -43,4 +54,16 @@ trait EventModelModifier: EventModelProvider {
     //         minusFlow(FlowArrow.flowId(from, to))
     //
     //     fun minusFlow(flowId: FlowId): EventModelBuilder<T>
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let result = 4;
+        assert_eq!(result, 4);
+    }
 }

@@ -27,12 +27,12 @@
 			<NavBrand src={Logo} {alt}/>
 			<NavToolbar>
 				<IconButton iconBtnClass="hover:bg-gray-brand-1/0">
-				<Icon
-				name="home"
-				iconColor="text-gray-brand-1 hover:text-brand-primary transition duration-200 ease-in">
-					<Home />
-				</Icon>
-			</IconButton>
+					<Icon
+					name="home"
+					iconColor="text-gray-brand-1 hover:text-brand-primary transition duration-200 ease-in">
+						<Home />
+					</Icon>
+				</IconButton>
 			</NavToolbar>
 		</NavLeft>
 		<NavRight>

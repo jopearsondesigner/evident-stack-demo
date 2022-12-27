@@ -1,131 +1,55 @@
 <script lang='ts'>
     import classNames from 'classnames';
     import Navbar from './Navbar.svelte';
-    import NavWrapper from './NavWrapper.svelte';
-    import NabBrand from './NavBrand.svelte';
     import NavHamburger from './NavHamburger.svelte';
-    import CloseButton from '../utils/CloseButton.svelte';
-    import ThemeSwitch from '../utils/ThemeSwitch.svelte';
+    import NavBrand from './NavBrand.svelte';
     import Nav from './Nav.svelte';
-    import MobileNav from './MobileNav.svelte';
-    import DropdownMenu from '../dropdown/DropdownMenu.svelte';
-    import DropdownMenuMobile from '../dropdown/DropdownMenuMobile.svelte';
-    import NavUl from './NavUl.svelte';
-    import NavLi from './NavLi.svelte';
-    import Button from '../Button.svelte';
+    import NavToolbar from './NavToolbar.svelte';
     import Icon from '../Icon.svelte';
-    import ArrowRight from '../icons/ArrowRight.svelte';
-    export let href:string = '';
-    let navUlClass:string = 'flex space-x-8 items-center';
-    let website = false;
-    let acceptTerms = false;
-    export let hidden:boolean = false;
-    let handleMenu = () => {
-		hidden = !hidden;
-	};
+    import Button from '../Button.svelte';
+    import IconButton from '../IconButton.svelte';
+    import Avatar from '../Avatar.svelte';
+    import Home from '../icons/Home.svelte';
+    import Docs from '../icons/Docs.svelte';
+    import Support from '../icons/Support.svelte';
+    import AdminPortal from '../icons/AdminPortal.svelte';
+    let brandClass='flex no-underline mx-3';
+    let website:boolean = false;
+    export let user:boolean = true;
 </script>
 
-<Navbar>
-    {#if !hidden}
-    <NavWrapper {hidden}>
-        <NabBrand {href}/>
-        <NavHamburger on:click={() => handleMenu()}/>
-        <Nav>
-            <NavUl>
-                <DropdownMenu name='Why oNote?' {website}>
-                    <NavUl>
-                        <NavLi>Features</NavLi>
-                    </NavUl>
-                </DropdownMenu>
-                <NavLi href="#">Docs</NavLi>
-                <DropdownMenu name='Learn' {website}>
-                    <NavUl>
-                        <NavLi href="#">Blog</NavLi>
-                        <NavLi href="#">Webinars</NavLi>
-                        <NavLi href="#">Conferences</NavLi>
-                    </NavUl>
-                </DropdownMenu>
-                <DropdownMenu name='Service & Support' {website}>
-                    <NavUl>
-                        <NavLi href="#">Support</NavLi>
-                    </NavUl>
-                </DropdownMenu>
-                <DropdownMenu name='Company' {website}>
-                    <NavUl>
-                        <NavLi href="#">Team</NavLi>
-                        <NavLi href="#">Contact</NavLi>
-                    </NavUl>
-                </DropdownMenu>
-            </NavUl>
-            <NavUl class={classNames('lg:mr-12',navUlClass)}>
-                <NavLi href="#">Log In</NavLi>
-                <NavLi>
-                    <Button href='https://app.onote.com/sign-up' gradient color='brandSecondary' class='flex items-center' size='sm' label='Sign In'>
-                        <Icon name='arrow-right' slot=icon class='stroke-2 ml-1' iconColor='fill-current' size={12}><ArrowRight/></Icon>
-                    </Button>
-                </NavLi>
-            </NavUl>
-        </Nav>
-    </NavWrapper>
-    {:else}
-    <NavWrapper hidden>
-        <MobileNav>
-            <NavUl hidden>
-                <NavLi hidden>
-                    <ThemeSwitch bind:checked={acceptTerms}/>
-                    <CloseButton on:click={() => handleMenu()}/>
-                </NavLi>
-                <DropdownMenuMobile name='Why oNote?'>
-                    <NavUl hidden>
-                        <NavLi hidden>
-                            Features
-                        </NavLi>
-                    </NavUl>
-                </DropdownMenuMobile>
-                <NavLi hidden href="#">
-                    Docs
-                </NavLi>
-                <DropdownMenuMobile name='Learn'>
-                    <NavUl hidden>
-                        <NavLi hidden>
-                            Blog
-                        </NavLi>
-                        <NavLi hidden>
-                            Webinars
-                        </NavLi>
-                        <NavLi hidden>
-                            Conferences
-                        </NavLi>
-                    </NavUl>
-                </DropdownMenuMobile>
-                <DropdownMenuMobile name='Service & Support'>
-                    <NavUl hidden>
-                        <NavLi hidden>
-                            Support
-                        </NavLi>
-                    </NavUl>
-                </DropdownMenuMobile>
-                <DropdownMenuMobile name='Company'>
-                    <NavUl hidden>
-                        <NavLi hidden>
-                            Team
-                        </NavLi>
-                        <NavLi hidden>
-                            Contact
-                        </NavLi>
-                    </NavUl>
-                </DropdownMenuMobile>
-            </NavUl>
-            <NavUl mobileNavUl='p-3 border-t border-border-light dark:border-border-dark' hidden>
-                <NavLi href="#" class="p-0" hidden footer>Log In</NavLi>
-                <NavLi hidden footer>
-                    <Button href='https://app.onote.com/sign-up' gradient color='brandSecondary' class='flex items-center' size='sm' label='Sign In'>
-                        <Icon name='arrow-right' slot=icon class='stroke-2 ml-1' iconColor='fill-current' size={12}><ArrowRight/></Icon>
-                    </Button>
-                </NavLi>
-            </NavUl>
-        </MobileNav>
-    </NavWrapper>
-    {/if}
+<Navbar website>
+    <Nav {website}>
+        <div class="inline-flex space-x-3 mx-3 items-center">
+            <NavHamburger {website}/>
+            <NavBrand height={24} class={classNames('mx-3',brandClass)}/>
+            <NavToolbar>
+                <IconButton iconBtnClass="hover:bg-gray-brand-1/0">
+                    <Icon
+                    name="home"
+                    iconColor="text-body-light hover:text-brand-primary transition duration-200 ease-in">
+                        <Home />
+                    </Icon>
+                </IconButton>
+            </NavToolbar>
+            {#if user}
+            <div class="tooltip tooltip-bottom" data-tip="Docs">
+                <IconButton><Icon name="docs"><Docs/></Icon></IconButton>
+            </div>
+            <div class="tooltip tooltip-bottom" data-tip="Support">
+                <IconButton><Icon name="support"><Support/></Icon></IconButton>
+            </div>
+            <div class="tooltip tooltip-bottom" data-tip="Admin Portal">
+                <IconButton><Icon name="admin-portal"><AdminPortal/></Icon></IconButton>
+            </div>
+            <span class="flex justify-center px-2">
+                <Avatar/>
+            </span>
+            {:else}
+            <Button color="secondary" size="sm" on:click label="Log in" />
+            <Button gradient color="primary" size="sm" on:click label="Sign up" />
+            {/if}
+        </div>
+    </Nav>
 </Navbar>
 

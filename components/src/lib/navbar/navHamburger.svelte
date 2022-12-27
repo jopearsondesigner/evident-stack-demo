@@ -8,10 +8,10 @@
 	function handleClick(event: any) {
 		dispatch('click', event);
 	}
-	let hidden = true;
-	let toggle = () => {
-		hidden = !hidden;
-	};
+		let hidden = true;
+		let toggle = () => {
+			hidden = !hidden;
+		};
 </script>
 
 <button class={navHamburgerClass} on:click={() => toggle()} on:click={handleClick}>

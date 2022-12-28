@@ -1,9 +1,9 @@
 use uuid::Uuid;
-use crate::domain::common::{Entity, Named};
+use crate::domain::types::{Entity, Named};
 
 pub type AudienceId = Uuid;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Audience {
     id: AudienceId,
     name: String
@@ -18,5 +18,9 @@ impl Entity for Audience {
 impl Named for Audience {
     fn name(&self) -> &str {
         &self.name
+    }
+
+    fn rename(&mut self, name: &str) {
+        self.name = name.to_string();
     }
 }

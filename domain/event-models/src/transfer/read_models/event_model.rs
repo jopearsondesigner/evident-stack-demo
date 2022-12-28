@@ -1,5 +1,4 @@
 use serde_derive::{Deserialize, Serialize};
-use std::collections::HashMap;
 use uuid::Uuid;
 
 pub type EventModelId = Uuid;
@@ -7,7 +6,7 @@ pub type EventModelId = Uuid;
 // TODO: CBOR-ish DTO types for all subcomponents w/ serialization functions
 // TODO: From<EventModel> trait implementation (both directions)
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct EventModel {
     // pub id: EventModelId,
     // pub name: String,

@@ -1,32 +1,34 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 use uuid::Uuid;
-use crate::domain::common::Entity;
-use crate::domain::event_model::EventModel;
-use crate::domain::placement::{Placement, PlacementId};
+use crate::domain::types::Entity;
+use crate::domain::types::event_model::EventModel;
+use crate::domain::types::placement::PlacementId;
 
 pub type FlowId = Uuid;
 
-#[derive(Debug)]
+#[derive(Debug, Default, Clone, PartialEq)]
 enum Anchor {
-    None, Top, Left, Bottom, Right
+    #[default]
+    None,
+    Top, Left, Bottom, Right
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 struct Port {
     placement: PlacementId,
     anchor: Anchor
     // TODO: InterfaceElement?
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct FlowArrow {
     id: FlowId,
     from: Port,
     to: Port
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct IllegalFlowArrow(String);
 
 impl Display for IllegalFlowArrow {
@@ -39,9 +41,9 @@ impl Error for IllegalFlowArrow {}
 
 // TODO: enforce business rules!
 impl FlowArrow {
-    fn new(model: &EventModel, from: Port, to: Port) -> Result<FlowArrow, Box<dyn Error>> {
-        let from_placement: &Placement = &model.placements[&from.placement];
-        let to_placement: &Placement = &model.placements[&to.placement];
+    fn new(model: &dyn EventModel, from: Port, to: Port) -> Result<FlowArrow, Box<dyn Error>> {
+        let from_placement = model.placements().get(&from.placement);
+        let to_placement = model.placements().get(&to.placement);
         todo!();
         Ok(FlowArrow {
             id: Uuid::new_v5(

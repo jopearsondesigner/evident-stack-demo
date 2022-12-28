@@ -1,16 +1,16 @@
 use uuid::Uuid;
-use crate::domain::common::Entity;
-use crate::domain::command::CommandId;
-use crate::domain::event::EventId;
-use crate::domain::interface::InterfaceId;
-use crate::domain::read_model::ReadModelId;
-use crate::domain::audience::AudienceId;
-use crate::domain::stream::StreamId;
+use crate::domain::types::Entity;
+use crate::domain::types::command::CommandId;
+use crate::domain::types::event::EventId;
+use crate::domain::types::interface::InterfaceId;
+use crate::domain::types::read_model::ReadModelId;
+use crate::domain::types::audience::AudienceId;
+use crate::domain::types::stream::StreamId;
 
 pub type PlacementIndex = u32;
 pub type PlacementId = Uuid;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Placement {
     Interface(InterfacePlacement),
     Command(CommandPlacement),
@@ -18,7 +18,7 @@ pub enum Placement {
     ReadModel(ReadModelPlacement)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TimelinePlacement {
     Command(CommandPlacement),
     ReadModel(ReadModelPlacement)
@@ -35,7 +35,7 @@ impl Entity for Placement {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct InterfacePlacement {
     id: PlacementId,
     index: PlacementIndex,
@@ -43,14 +43,14 @@ pub struct InterfacePlacement {
     audience: Option<AudienceId>
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct CommandPlacement {
     id: PlacementId,
     index: PlacementIndex,
     command: CommandId
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct EventPlacement {
     id: PlacementId,
     index: PlacementIndex,
@@ -58,7 +58,7 @@ pub struct EventPlacement {
     stream: Option<StreamId>
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ReadModelPlacement {
     id: PlacementId,
     index: PlacementIndex,

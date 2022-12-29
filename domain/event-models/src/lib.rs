@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use crate::types::{Component, ComponentId, ComponentMut, Described, Lane, LaneId, LaneIndex, PlacementPosition};
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
-use crate::types::errors::EventModelCreationError;
+use crate::types::errors::EventModelError;
 use crate::types::event::{Event, EventId};
 use crate::types::flow::{FlowArrow, FlowId};
 use crate::types::interface::{Interface, InterfaceId};
@@ -25,11 +25,11 @@ pub mod default;
 
 pub type EventModelId = Uuid;
 
-pub fn validate_name(name: &str) -> Result<String, EventModelCreationError> {
+pub fn validate_name(name: &str) -> Result<String, EventModelError> {
     if !name.is_empty() {
         Ok(name.to_string())
     } else {
-        Err(EventModelCreationError("Name cannot be empty".to_string()))
+        Err(EventModelError::CreationError("Name cannot be empty".to_string()))
     }
 }
 
@@ -47,14 +47,14 @@ pub trait EventModel: Described {
     fn schemas(&self) -> &HashMap<SchemaId, Schema>;
 }
 
-pub trait EventModelBuilder: EventModel {
+pub trait EventModelModifier: EventModel {
     // Name validation must be performed by `decide` prior to this step
     fn renamed(self, name: &str) -> Self;
     fn added_to_description(self, index: u32, addition: &str) -> Self;
     fn deleted_from_description(self, index: u32) -> Self;
 }
 
-pub trait EventModelComponentBuilder: EventModelBuilder {
+pub trait EventModelComponentModifier: EventModelModifier {
     fn component_defined(self, component: Component) -> Self;
 
     // Validation of presence of component_id must be performed
@@ -77,7 +77,7 @@ pub trait EventModelComponentBuilder: EventModelBuilder {
     ) -> Self;
 }
 
-pub trait EventModelPlacementBuilder: EventModelBuilder {
+pub trait EventModelPlacementModifier: EventModelModifier {
     fn component_placed(self, placement: &Placement) -> Self;
     fn placement_moved(
         self,
@@ -88,21 +88,21 @@ pub trait EventModelPlacementBuilder: EventModelBuilder {
     fn placement_removed(self, placement_id: &PlacementId) -> Self;
 }
 
-pub trait EventModelLaneBuilder: EventModelBuilder {
+pub trait EventModelLaneModifier: EventModelModifier {
     fn lane_added(self, lane: Lane, index: LaneIndex) -> Self;
     fn lane_renamed(self, lane_id: LaneId, name: &str) -> Self;
     fn lane_reordered(self, lane_id: LaneId, index: LaneIndex) -> Self;
     fn lane_removed(self, lane_id: LaneId) -> Self;
 }
 
-pub trait EventModelFlowBuilder: EventModelBuilder {
+pub trait EventModelFlowModifier: EventModelModifier {
     fn plus_flow(self, flow_arrow: &FlowArrow) -> Self;
     fn minus_flow_by_placement_ids(self, from: &PlacementId, to: &PlacementId) -> Self;
 
     fn minus_flow(self, flow_id: &FlowId) -> Self;
 }
 
-pub trait EventModelSchemaBuilder: EventModelComponentBuilder {
+pub trait EventModelSchemaModifier: EventModelComponentModifier {
     fn schema_defined(self, schema: &Schema) -> Self;
 
     fn added_to_schema_definition(self, schema_id: &SchemaId, index: u32, addition: &str) -> Self;

@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use uuid::Uuid;
 
-use crate::{EventModel, EventModelId, EventModelBuilder, EventModelComponentBuilder,
-            EventModelFlowBuilder, EventModelLaneBuilder, EventModelPlacementBuilder,
-            EventModelSchemaBuilder,
+use crate::{EventModel, EventModelId, EventModelModifier, EventModelComponentModifier,
+            EventModelFlowModifier, EventModelLaneModifier, EventModelPlacementModifier,
+            EventModelSchemaModifier,
             validate_name};
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
@@ -12,7 +12,7 @@ use crate::types::flow::{FlowArrow, FlowId};
 use crate::types::interface::{Interface, InterfaceId};
 use crate::types::{Component, ComponentId, ComponentMut, Described, Entity,
                    Lane, LaneId, LaneIndex, Named, PlacementPosition};
-use crate::types::errors::EventModelCreationError;
+use crate::types::errors::EventModelError;
 use crate::types::placement::{Placement, PlacementId};
 use crate::types::read_model::{ReadModel, ReadModelId};
 use crate::types::schema::{Schema, SchemaId};
@@ -37,7 +37,7 @@ pub struct DefaultEventModel {
 #[cfg(test)]
 mod tests {
     use uuid::Uuid;
-    use crate::{EventModel, EventModelBuilder, EventModelComponentBuilder, EventModelSchemaBuilder};
+    use crate::{EventModel, EventModelModifier, EventModelComponentModifier, EventModelSchemaModifier};
     use crate::default::DefaultEventModel;
 
     use crate::types::{Component, Described, Entity, Named};
@@ -313,7 +313,7 @@ mod tests {
 }
 
 impl DefaultEventModel {
-    pub fn new(id: &Uuid, name: &str) -> Result<DefaultEventModel, EventModelCreationError> {
+    pub fn new(id: &Uuid, name: &str) -> Result<DefaultEventModel, EventModelError> {
         let name = validate_name(name)?;
         Ok(DefaultEventModel {
             id: id.to_owned(),
@@ -441,7 +441,7 @@ fn delete_from_description(described: &mut dyn Described, index: u32) {
     }
 }
 
-impl EventModelBuilder for DefaultEventModel {
+impl EventModelModifier for DefaultEventModel {
     fn renamed(mut self, name: &str) -> Self {
         self.rename(name);
         self
@@ -466,7 +466,7 @@ impl EventModelBuilder for DefaultEventModel {
     }
 }
 
-impl EventModelComponentBuilder for DefaultEventModel {
+impl EventModelComponentModifier for DefaultEventModel {
     fn component_defined(mut self, component: Component) -> Self {
         match component {
             Component::InterfaceComponent(i) => { self.interfaces.insert(*i.id(), i.to_owned()); }
@@ -559,7 +559,7 @@ impl EventModelComponentBuilder for DefaultEventModel {
     }
 }
 
-impl EventModelPlacementBuilder for DefaultEventModel {
+impl EventModelPlacementModifier for DefaultEventModel {
     fn component_placed(self, placement: &Placement) -> Self {
         todo!()
     }
@@ -573,7 +573,7 @@ impl EventModelPlacementBuilder for DefaultEventModel {
     }
 }
 
-impl EventModelLaneBuilder for DefaultEventModel {
+impl EventModelLaneModifier for DefaultEventModel {
     fn lane_added(self, lane: Lane, index: LaneIndex) -> Self {
         todo!()
     }
@@ -591,7 +591,7 @@ impl EventModelLaneBuilder for DefaultEventModel {
     }
 }
 
-impl EventModelFlowBuilder for DefaultEventModel {
+impl EventModelFlowModifier for DefaultEventModel {
     fn plus_flow(self, flow_arrow: &FlowArrow) -> Self {
         todo!()
     }
@@ -605,7 +605,7 @@ impl EventModelFlowBuilder for DefaultEventModel {
     }
 }
 
-impl EventModelSchemaBuilder for DefaultEventModel {
+impl EventModelSchemaModifier for DefaultEventModel {
     fn schema_defined(self, schema: &Schema) -> Self {
         todo!()
     }

@@ -1,7 +1,7 @@
 use url::Url;
 use uuid::Uuid;
-use crate::domain::types::{Described, Entity, Named};
-use crate::domain::types::errors::EventModelModificationError;
+use crate::types::{Described, Entity, Named};
+use crate::types::errors::EventModelModificationError;
 
 pub type InterfaceId = Uuid;
 
@@ -55,11 +55,11 @@ impl Described for Interface {
         self.description.as_deref()
     }
 
-    fn add_to_description(&mut self, index: u32, addition: &str) {
-        todo!()
-    }
-
-    fn remove_from_description(&mut self, index: u32) {
-        todo!()
+    fn set_description(&mut self, description: &str) {
+        if description.is_empty() {
+            self.description = None
+        } else {
+            self.description = Some(description.to_string());
+        }
     }
 }

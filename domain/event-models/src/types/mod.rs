@@ -1,16 +1,15 @@
 use uuid::Uuid;
-use crate::domain::types::audience::{Audience, AudienceId};
-use crate::domain::types::command::{Command, CommandId};
-use crate::domain::types::event::{Event, EventId};
-use crate::domain::types::interface::{Interface, InterfaceId};
-use crate::domain::types::placement::PlacementIndex;
-use crate::domain::types::read_model::{ReadModel, ReadModelId};
-use crate::domain::types::stream::{Stream, StreamId};
+use crate::types::audience::{Audience, AudienceId};
+use crate::types::command::{Command, CommandId};
+use crate::types::event::{Event, EventId};
+use crate::types::interface::{Interface, InterfaceId};
+use crate::types::placement::PlacementIndex;
+use crate::types::read_model::{ReadModel, ReadModelId};
+use crate::types::stream::{Stream, StreamId};
 
 pub(crate) mod audience;
 pub(crate) mod command;
 pub(crate) mod event;
-pub(crate) mod event_model;
 pub(crate) mod flow;
 pub(crate) mod interface;
 pub(crate) mod placement;
@@ -31,22 +30,24 @@ pub trait Named: Entity {
 // TODO: ensure non-blank strings
 pub trait Described: Named {
     fn description(&self) -> Option<&str>;
-    fn add_to_description(&mut self, index: u32, addition: &str);
-    fn remove_from_description(&mut self, index: u32);
+    fn set_description(&mut self, description: &str);
 }
 
 pub type LaneIndex = u32;
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum LaneId<'a> {
     AudienceLaneId(&'a AudienceId),
     StreamLaneId(&'a StreamId)
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum Lane<'a> {
     AudienceLane(&'a Audience),
     StreamLane(&'a Stream)
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum ComponentId<'a> {
     InterfaceComponentId(&'a InterfaceId),
     CommandComponentId(&'a CommandId),
@@ -54,6 +55,7 @@ pub enum ComponentId<'a> {
     ReadModelComponentId(&'a ReadModelId),
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum Component<'a> {
     InterfaceComponent(&'a Interface),
     CommandComponent(&'a Command),
@@ -61,6 +63,15 @@ pub enum Component<'a> {
     ReadModelComponent(&'a ReadModel),
 }
 
+#[derive(Debug)]
+pub enum ComponentMut<'a> {
+    InterfaceComponentMut(&'a mut Interface),
+    CommandComponentMut(&'a mut Command),
+    EventComponentMut(&'a mut Event),
+    ReadModelComponentMut(&'a mut ReadModel),
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum PlacementPosition<'a> {
     InterfacePosition(&'a PlacementIndex, Option<&'a AudienceId>),
     CommandPosition(&'a PlacementIndex),

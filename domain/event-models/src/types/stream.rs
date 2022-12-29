@@ -1,21 +1,21 @@
 use uuid::Uuid;
-use crate::domain::types::{Entity, Named};
+use crate::types::{Entity, Named};
 
-pub type AudienceId = Uuid;
+pub type StreamId = Uuid;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Audience {
-    id: AudienceId,
+pub struct Stream {
+    id: StreamId,
     name: String
 }
 
-impl Entity for Audience {
+impl Entity for Stream {
     fn id(&self) -> &Uuid {
         &self.id
     }
 }
 
-impl Named for Audience {
+impl Named for Stream {
     fn name(&self) -> &str {
         &self.name
     }

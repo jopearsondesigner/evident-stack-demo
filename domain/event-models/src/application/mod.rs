@@ -1,8 +1,5 @@
-mod grid;
-
 use std::collections::HashSet;
-use crate::domain::types::event_model::{EventModel, EventModelId};
-
+use crate::{EventModel, EventModelId};
 // TODO: implement in terms of DTOs, as appropriate
 
 pub trait EventModelRepository {

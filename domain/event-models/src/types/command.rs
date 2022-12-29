@@ -1,6 +1,6 @@
 use uuid::Uuid;
 use crate::types::{Described, Entity, Named};
-use crate::types::errors::EventModelCreationError;
+use crate::types::errors::EventModelError;
 
 pub type CommandId = Uuid;
 
@@ -13,7 +13,7 @@ pub struct Command {
 
 impl Command {
     // TODO:
-    pub fn new(id: Uuid, name: &str) -> Result<Self, EventModelCreationError> {
+    pub fn new(id: Uuid, name: &str) -> Result<Self, EventModelError> {
         Ok(Command {
             id,
             name: name.to_string(),

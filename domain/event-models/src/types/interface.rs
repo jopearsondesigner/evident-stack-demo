@@ -1,7 +1,7 @@
 use url::Url;
 use uuid::Uuid;
 use crate::types::{Described, Entity, Named};
-use crate::types::errors::EventModelModificationError;
+use crate::types::errors::EventModelError;
 
 pub type InterfaceId = Uuid;
 
@@ -23,7 +23,7 @@ pub struct Interface {
 }
 
 impl Interface {
-    pub fn new(id: Uuid, name: &str) -> Result<Self, EventModelModificationError> {
+    pub fn new(id: Uuid, name: &str) -> Result<Self, EventModelError> {
         // TODO: validate name
         Ok(Interface {
             id,

@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
 // TODO: use DTOs instead of domain types
-use crate::domain::types::audience::Audience;
-use crate::domain::types::event_model::EventModel;
-use crate::domain::types::placement::{EventPlacement, InterfacePlacement, PlacementIndex, TimelinePlacement};
-use crate::domain::types::stream::Stream;
+use crate::types::audience::Audience;
+use crate::EventModel;
+use crate::types::placement::{EventPlacement, InterfacePlacement, PlacementIndex, TimelinePlacement};
+use crate::types::stream::Stream;
 
 fn grid(event_model: &dyn EventModel) -> Vec<GridLane> {
     let lane_count = 1 // default audience

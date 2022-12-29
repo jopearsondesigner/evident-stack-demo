@@ -1,11 +1,11 @@
 use uuid::Uuid;
-use crate::domain::types::Entity;
-use crate::domain::types::command::CommandId;
-use crate::domain::types::event::EventId;
-use crate::domain::types::interface::InterfaceId;
-use crate::domain::types::read_model::ReadModelId;
-use crate::domain::types::audience::AudienceId;
-use crate::domain::types::stream::StreamId;
+use crate::types::Entity;
+use crate::types::command::CommandId;
+use crate::types::event::EventId;
+use crate::types::interface::InterfaceId;
+use crate::types::read_model::ReadModelId;
+use crate::types::audience::AudienceId;
+use crate::types::stream::StreamId;
 
 pub type PlacementIndex = u32;
 pub type PlacementId = Uuid;

@@ -1,9 +1,9 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 use uuid::Uuid;
-use crate::domain::types::Entity;
-use crate::domain::types::event_model::EventModel;
-use crate::domain::types::placement::PlacementId;
+use crate::types::Entity;
+use crate::EventModel;
+use crate::types::placement::PlacementId;
 
 pub type FlowId = Uuid;
 

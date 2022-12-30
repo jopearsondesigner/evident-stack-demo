@@ -1,3 +1,4 @@
+use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 use crate::types::audience::{Audience, AudienceId};
 use crate::types::command::{Command, CommandId};
@@ -47,12 +48,12 @@ pub enum Lane<'a> {
     StreamLane(&'a Stream)
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub enum ComponentId<'a> {
-    InterfaceComponentId(&'a InterfaceId),
-    CommandComponentId(&'a CommandId),
-    EventComponentId(&'a EventId),
-    ReadModelComponentId(&'a ReadModelId),
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum ComponentId {
+    InterfaceComponentId(InterfaceId),
+    CommandComponentId(CommandId),
+    EventComponentId(EventId),
+    ReadModelComponentId(ReadModelId),
 }
 
 #[derive(Debug, Clone, PartialEq)]

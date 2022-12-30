@@ -34,8 +34,7 @@ pub fn validate_name(name: &str) -> Result<String, EventModelError> {
 }
 
 pub trait EventModel: Described {
-    fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<ComponentMut>;
-
+    fn new(id: EventModelId, name: String) -> Self;
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface>;
     fn commands(&self) -> &HashMap<CommandId, Command>;
     fn events(&self) -> &HashMap<EventId, Event>;
@@ -55,25 +54,27 @@ pub trait EventModelModifier: EventModel {
 }
 
 pub trait EventModelComponentModifier: EventModelModifier {
+    fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<ComponentMut>;
+
     fn component_defined(self, component: Component) -> Self;
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn component_renamed(self, component_id: ComponentId, name: &str) -> Self;
+    fn component_renamed(self, component_id: &ComponentId, name: &str) -> Self;
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn component_removed(self, component_id: ComponentId) -> Self;
+    fn component_removed(self, component_id: &ComponentId) -> Self;
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
     fn added_to_component_description(
-        self, component_id: ComponentId, index: u32, addition: &str
+        self, component_id: &ComponentId, index: u32, addition: &str
     ) -> Self;
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
     fn deleted_from_component_description(
-        self, component_id: ComponentId, index: u32
+        self, component_id: &ComponentId, index: u32
     ) -> Self;
 }
 

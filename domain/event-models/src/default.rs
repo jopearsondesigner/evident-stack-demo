@@ -419,7 +419,7 @@ impl EventModel for DefaultEventModel {
     }
 }
 
-fn add_to_description(described: &mut dyn Described, index: u32, addition: &str) {
+fn add_to_description(described: &mut impl Described, index: u32, addition: &str) {
     match described.description() {
         None => { described.set_description(addition); }
         Some(desc) => {
@@ -430,7 +430,7 @@ fn add_to_description(described: &mut dyn Described, index: u32, addition: &str)
     }
 }
 
-fn delete_from_description(described: &mut dyn Described, index: u32) {
+fn delete_from_description(described: &mut impl Described, index: u32) {
     match described.description() {
         None => { described.set_description(""); }
         Some(desc) => {

@@ -6,7 +6,7 @@ use crate::EventModel;
 use crate::types::placement::{EventPlacement, InterfacePlacement, PlacementIndex, TimelinePlacement};
 use crate::types::stream::Stream;
 
-fn grid(event_model: &dyn EventModel) -> Vec<GridLane> {
+fn grid(event_model: &impl EventModel) -> Vec<GridLane> {
     let lane_count = 1 // default audience
         + event_model.audiences().len() // audiences
         + 1 // timeline

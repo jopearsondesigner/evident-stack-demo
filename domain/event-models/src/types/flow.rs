@@ -1,4 +1,3 @@
-use std::fmt::{Display, Formatter};
 use uuid::Uuid;
 use crate::types::Entity;
 use crate::EventModel;

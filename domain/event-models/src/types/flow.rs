@@ -1,8 +1,8 @@
-use std::error::Error;
 use std::fmt::{Display, Formatter};
 use uuid::Uuid;
 use crate::types::Entity;
 use crate::EventModel;
+use crate::types::errors::EventModelError;
 use crate::types::placement::PlacementId;
 
 pub type FlowId = Uuid;
@@ -28,20 +28,9 @@ pub struct FlowArrow {
     to: Port
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct IllegalFlowArrow(String);
-
-impl Display for IllegalFlowArrow {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        todo!()
-    }
-}
-
-impl Error for IllegalFlowArrow {}
-
 // TODO: enforce business rules!
 impl FlowArrow {
-    fn new(model: &dyn EventModel, from: Port, to: Port) -> Result<FlowArrow, Box<dyn Error>> {
+    fn new(model: &impl EventModel, from: Port, to: Port) -> Result<FlowArrow, EventModelError> {
         let from_placement = model.placements().get(&from.placement);
         let to_placement = model.placements().get(&to.placement);
         todo!();

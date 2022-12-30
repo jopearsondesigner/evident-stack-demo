@@ -6,42 +6,42 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
 CARGO ?= cargo
+WASM_PACK ?= wasm-pack
+YARN ?= yarn
 
 default: build
 
 # Deps
 
 editor-app/yarn.lock: editor-app/package.json editor-state/pkg/package.json
-	cd editor-app && yarn
+	cd editor-app && $(YARN)
+
+editor-app/node_modules/.yarn-integrity: editor-app/yarn.lock
+	cd editor-app && $(YARN) && $(YARN) upgrade components
 
 # Dev
 
-.PHONY: storybook
-storybook: editor-app/yarn.lock
-	cd editor-app && yarn storybook
-
 .PHONY: dev
-dev: editor-app/yarn.lock
-	cd editor-app && yarn dev
+dev: editor-app/node_modules/.yarn-integrity
+	cd editor-app && $(YARN) dev
 
 # Verification
 
 .PHONY: check
-check: editor-app/yarn.lock
-	$(CARGO) :editor-state:check
-	cd editor-app && yarn run check && yarn run lint && yarn run test
+check: editor-app/node_modules/.yarn-integrity
+	cd editor-state && $(WASM_PACK) test --headless --firefox
+	cd editor-app && $(YARN) run check && $(YARN) run lint && $(YARN) run test
 
 # Build
 
-editor-state/build/productionLibrary/package.json: editor-state/build.gradle.kts editor-state/gradle.properties $(wildcard editor-state/src/**/*)
-	$(GRADLE) :editor-state:build
-	cd editor-app && yarn upgrade editor-state
+editor-state/pkg/package.json: editor-state/Cargo.lock $(wildcard editor-state/src/**/*)
+	cd editor-state && $(WASM_PACK) build
 
-editor-app/.svelte-kit/cloudflare/vite-manifest.json: editor-app/yarn.lock editor-state/build/productionLibrary/package.json $(wildcard editor-app/src/**/*)
-	cd editor-app && yarn run build
+editor-app/.svelte-kit/cloudflare/vite-manifest.json: editor-app/node_modules/.yarn-integrity $(wildcard editor-app/src/**/*)
+	cd editor-app && $(YARN) run build
 
 build: check editor-app/.svelte-kit/cloudflare/vite-manifest.json
 
 clean:
 	rm -rf editor-app/.svelte-kit
-	$(GRADLE) :editor-state:clean
+	cd editor-state && $(CARGO) clean

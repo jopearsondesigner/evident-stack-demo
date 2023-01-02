@@ -1,3 +1,4 @@
+use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 use crate::types::Entity;
 use crate::types::command::CommandId;
@@ -10,7 +11,7 @@ use crate::types::stream::StreamId;
 pub type PlacementIndex = u32;
 pub type PlacementId = Uuid;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Placement {
     Interface(InterfacePlacement),
     Command(CommandPlacement),
@@ -18,10 +19,18 @@ pub enum Placement {
     ReadModel(ReadModelPlacement)
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum TimelinePlacement {
     Command(CommandPlacement),
     ReadModel(ReadModelPlacement)
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum PlacementPosition {
+    InterfacePosition(PlacementId, PlacementIndex, Option<AudienceId>),
+    CommandPosition(PlacementId, PlacementIndex),
+    EventPosition(PlacementId, PlacementIndex, Option<StreamId>),
+    ReadModelPosition(PlacementId, PlacementIndex),
 }
 
 impl Entity for Placement {
@@ -35,7 +44,7 @@ impl Entity for Placement {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct InterfacePlacement {
     id: PlacementId,
     index: PlacementIndex,
@@ -43,14 +52,14 @@ pub struct InterfacePlacement {
     audience: Option<AudienceId>
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CommandPlacement {
     id: PlacementId,
     index: PlacementIndex,
     command: CommandId
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct EventPlacement {
     id: PlacementId,
     index: PlacementIndex,
@@ -58,7 +67,7 @@ pub struct EventPlacement {
     stream: Option<StreamId>
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ReadModelPlacement {
     id: PlacementId,
     index: PlacementIndex,

@@ -59,10 +59,10 @@ fn defining_components() {
     let event = Event::new(Uuid::new_v4(), "an event");
     let read_model = ReadModel::new(Uuid::new_v4(), "a read model");
     let result = initial
-        .component_defined(Component::InterfaceComponent(&interface))
-        .component_defined(Component::CommandComponent(&command))
-        .component_defined(Component::EventComponent(&event))
-        .component_defined(Component::ReadModelComponent(&read_model));
+        .component_defined(Component::InterfaceComponent(interface.to_owned()))
+        .component_defined(Component::CommandComponent(command.to_owned()))
+        .component_defined(Component::EventComponent(event.to_owned()))
+        .component_defined(Component::ReadModelComponent(read_model.to_owned()));
     assert_eq!(result.interfaces().get(&interface.id()), Some(&interface));
     assert_eq!(result.commands().get(&command.id()), Some(&command));
     assert_eq!(result.events().get(&event.id()), Some(&event));
@@ -78,10 +78,10 @@ fn renaming_components() {
     let read_model = ReadModel::new(Uuid::new_v4(), "a read model");
 
     let initial = DefaultEventModel::new(id, "foo".to_string())
-        .component_defined(Component::InterfaceComponent(&interface))
-        .component_defined(Component::CommandComponent(&command))
-        .component_defined(Component::EventComponent(&event))
-        .component_defined(Component::ReadModelComponent(&read_model));
+        .component_defined(Component::InterfaceComponent(interface.to_owned()))
+        .component_defined(Component::CommandComponent(command.to_owned()))
+        .component_defined(Component::EventComponent(event.to_owned()))
+        .component_defined(Component::ReadModelComponent(read_model.to_owned()));
 
     let new_interface_name = "interface foo";
     let new_command_name = "command foo";
@@ -140,10 +140,10 @@ fn adding_to_component_description() {
     let read_model = ReadModel::new(Uuid::new_v4(), "a read model");
 
     let initial = DefaultEventModel::new(id, "foo".to_string())
-        .component_defined(Component::InterfaceComponent(&interface))
-        .component_defined(Component::CommandComponent(&command))
-        .component_defined(Component::EventComponent(&event))
-        .component_defined(Component::ReadModelComponent(&read_model));
+        .component_defined(Component::InterfaceComponent(interface.to_owned()))
+        .component_defined(Component::CommandComponent(command.to_owned()))
+        .component_defined(Component::EventComponent(event.to_owned()))
+        .component_defined(Component::ReadModelComponent(read_model.to_owned()));
 
     let result = initial
         .added_to_component_description(
@@ -197,10 +197,10 @@ fn deleting_from_component_description() {
     let read_model = ReadModel::new(Uuid::new_v4(), "a read model");
 
     let initial = DefaultEventModel::new(id, "foo".to_string())
-        .component_defined(Component::InterfaceComponent(&interface))
-        .component_defined(Component::CommandComponent(&command))
-        .component_defined(Component::EventComponent(&event))
-        .component_defined(Component::ReadModelComponent(&read_model));
+        .component_defined(Component::InterfaceComponent(interface.to_owned()))
+        .component_defined(Component::CommandComponent(command.to_owned()))
+        .component_defined(Component::EventComponent(event.to_owned()))
+        .component_defined(Component::ReadModelComponent(read_model.to_owned()));
 
     let result = initial
         .added_to_component_description(

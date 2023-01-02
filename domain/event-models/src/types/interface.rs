@@ -1,3 +1,4 @@
+use serde_derive::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 use crate::types::{Described, Entity, Named};
@@ -5,16 +6,16 @@ use crate::types::errors::EventModelError;
 
 pub type InterfaceId = Uuid;
 
-#[derive(Debug, Default, Clone, PartialEq)]
+#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
 pub enum InterfaceConfig {
     #[default]
     None,
-    Figma(Url),
-    Image(Url),
+    Figma(Url, Option<u32>, Option<u32>),
+    Image(Url, Option<u32>, Option<u32>),
     Job
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Interface {
     id: InterfaceId,
     name: String,

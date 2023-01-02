@@ -1,6 +1,9 @@
 use serde_derive::{Deserialize, Serialize};
+use crate::EventModelId;
 use crate::types::audience::AudienceId;
 use crate::types::ComponentId;
+use crate::types::flow::{Anchor, FlowId};
+use crate::types::interface::InterfaceConfig;
 use crate::types::placement::PlacementId;
 use crate::types::stream::StreamId;
 
@@ -8,39 +11,44 @@ use crate::types::stream::StreamId;
 pub enum EventModelCommand {
     // Event Model Details
     Create(String),
-    Rename(String),
-    AddToDescription(u32, String),
-    DeleteFromDescription(u32),
+    Rename(EventModelId, String),
+    AddToDescription(EventModelId, u32, String),
+    DeleteFromDescription(EventModelId, u32),
+    Delete(EventModelId),
 
     // Lanes
-    AddAudience(u32, String),
-    RenameAudience(AudienceId, String),
-    ReorderAudience(AudienceId, u32),
-    RemoveAudience(AudienceId),
-    AddStream(u32, String),
-    RenameStream(StreamId, String),
-    ReorderStream(StreamId, u32),
-    RemoveStream(StreamId),
+    AddAudience(EventModelId, u32, String),
+    RenameAudience(EventModelId, AudienceId, String),
+    ReorderAudience(EventModelId, AudienceId, u32),
+    RemoveAudience(EventModelId, AudienceId),
+    AddStream(EventModelId, u32, String),
+    RenameStream(EventModelId, StreamId, String),
+    ReorderStream(EventModelId, StreamId, u32),
+    RemoveStream(EventModelId, StreamId),
 
     // Canvas
-    DefineAndPlaceInterface(String, u32, Option<AudienceId>),
-    DefineAndPlaceCommand(String, u32),
-    DefineAndPlaceEvent(String, u32, Option<StreamId>),
-    DefineAndPlaceReadModel(String, u32),
-    RenamePlacement(PlacementId, String),
-    MoveInterfacePlacement(PlacementId, u32, Option<AudienceId>),
-    MoveTimelinePlacement(PlacementId, u32),
-    MoveEventPlacement(PlacementId, u32, Option<StreamId>),
-    RemovePlacement(PlacementId),
+    DefineAndPlaceInterface(EventModelId, String, u32, Option<AudienceId>),
+    DefineAndPlaceCommand(EventModelId, String, u32),
+    DefineAndPlaceEvent(EventModelId, String, u32, Option<StreamId>),
+    DefineAndPlaceReadModel(EventModelId, String, u32),
+    RenamePlacement(EventModelId, PlacementId, String),
+    MoveInterfacePlacement(EventModelId, PlacementId, u32, Option<AudienceId>),
+    MoveTimelinePlacement(EventModelId, PlacementId, u32),
+    MoveEventPlacement(EventModelId, PlacementId, u32, Option<StreamId>),
+    RemovePlacement(EventModelId, PlacementId),
 
     // Clipboard
-    DuplicateInterfacePlacement(PlacementId, u32, Option<AudienceId>),
-    DuplicateTimelinePlacement(PlacementId, u32),
-    DuplicateEventPlacement(PlacementId, u32, Option<StreamId>),
+    DuplicateInterfacePlacement(EventModelId, PlacementId, u32, Option<AudienceId>),
+    DuplicateTimelinePlacement(EventModelId, PlacementId, u32),
+    DuplicateEventPlacement(EventModelId, PlacementId, u32, Option<StreamId>),
 
     // Component Details
-    RenameComponent(ComponentId, String),
-    AddToComponentDescription(),
-    DeleteFromComponentDescription(),
+    RenameComponent(EventModelId, ComponentId, String),
+    AddToComponentDescription(EventModelId, ComponentId, u32, String),
+    DeleteFromComponentDescription(EventModelId, ComponentId, u32),
+    ConfigureInterface(EventModelId, InterfaceConfig),
 
+    // Flows
+    ConnectFlow(EventModelId, PlacementId, Anchor, PlacementId, Anchor),
+    DisconnectFlow(EventModelId, FlowId)
 }

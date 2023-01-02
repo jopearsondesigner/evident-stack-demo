@@ -1,19 +1,18 @@
 use std::collections::HashMap;
 use uuid::Uuid;
 
-use crate::{EventModel, EventModelId, EventModelModifier, EventModelComponentModifier,
-            EventModelFlowModifier, EventModelLaneModifier, EventModelPlacementModifier,
-            EventModelSchemaModifier,
-            validate_name};
+use crate::{EventModel, EventModelComponentModifier, EventModelFlowModifier, EventModelId,
+            EventModelLaneModifier, EventModelModifier, EventModelPlacementModifier,
+            EventModelSchemaModifier
+};
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
 use crate::types::event::{Event, EventId};
 use crate::types::flow::{FlowArrow, FlowId};
 use crate::types::interface::{Interface, InterfaceId};
-use crate::types::{Component, ComponentId, ComponentMut, Described, Entity,
-                   Lane, LaneId, LaneIndex, Named, PlacementPosition};
+use crate::types::{Component, ComponentId, ComponentMut, Described, Entity, Lane, LaneId, LaneIndex, Named, validate_name};
 use crate::types::errors::EventModelError;
-use crate::types::placement::{Placement, PlacementId};
+use crate::types::placement::{Placement, PlacementId, PlacementPosition};
 use crate::types::read_model::{ReadModel, ReadModelId};
 use crate::types::schema::{Schema, SchemaId};
 use crate::types::stream::Stream;
@@ -286,7 +285,7 @@ impl EventModelPlacementModifier for DefaultEventModel {
         todo!()
     }
 
-    fn placement_moved(self, placement_id: &PlacementId, position: &PlacementPosition) -> Self {
+    fn placement_moved(self, position: &PlacementPosition) -> Self {
         todo!()
     }
 

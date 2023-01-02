@@ -1,3 +1,4 @@
+use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 use crate::types::Entity;
 use crate::EventModel;
@@ -6,21 +7,21 @@ use crate::types::placement::PlacementId;
 
 pub type FlowId = Uuid;
 
-#[derive(Debug, Default, Clone, PartialEq)]
-enum Anchor {
+#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
+pub enum Anchor {
     #[default]
     None,
     Top, Left, Bottom, Right
 }
 
-#[derive(Debug, Clone, PartialEq)]
-struct Port {
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Port {
     placement: PlacementId,
     anchor: Anchor
     // TODO: InterfaceElement?
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FlowArrow {
     id: FlowId,
     from: Port,

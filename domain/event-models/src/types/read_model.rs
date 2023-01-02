@@ -1,9 +1,10 @@
+use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 use crate::types::{Described, Entity, Named};
 
 pub type ReadModelId = Uuid;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ReadModel {
     id: ReadModelId,
     name: String,

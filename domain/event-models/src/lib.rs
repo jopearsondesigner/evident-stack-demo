@@ -5,10 +5,10 @@ extern crate core;
 
 use uuid::Uuid;
 use std::collections::HashMap;
-use crate::types::{Component, ComponentId, ComponentMut, Described, Lane, LaneId, LaneIndex, PlacementPosition};
+use types::placement::PlacementPosition;
+use crate::types::{Component, ComponentId, ComponentMut, Described, Lane, LaneId, LaneIndex};
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
-use crate::types::errors::EventModelError;
 use crate::types::event::{Event, EventId};
 use crate::types::flow::{FlowArrow, FlowId};
 use crate::types::interface::{Interface, InterfaceId};
@@ -24,14 +24,6 @@ pub mod grid;
 pub mod default;
 
 pub type EventModelId = Uuid;
-
-pub fn validate_name(name: &str) -> Result<String, EventModelError> {
-    if !name.is_empty() {
-        Ok(name.to_string())
-    } else {
-        Err(EventModelError::CreationError("Name cannot be empty".to_string()))
-    }
-}
 
 pub trait EventModel: Described {
     fn new(id: EventModelId, name: String) -> Self;
@@ -82,7 +74,6 @@ pub trait EventModelPlacementModifier: EventModelModifier {
     fn component_placed(self, placement: &Placement) -> Self;
     fn placement_moved(
         self,
-        placement_id: &PlacementId,
         position: &PlacementPosition
     ) -> Self;
 

@@ -3,7 +3,7 @@
 
     export let href: string = '#';
     export let color: string = 'text-focus hover:text-[#054FDE]';
-    export let aClass: string = 'inline-flex items-center transition duration-300 ease-in';
+    export let aClass: string = 'flex items-center transition duration-300 ease-in';
     export {aClass as class};
   </script>
 

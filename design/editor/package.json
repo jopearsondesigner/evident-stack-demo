@@ -1,0 +1,24 @@
+{
+  "name": "evident-design-editor",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "../../components/package",
+    "state/pkg",
+    "app"
+  ],
+  "scripts": {
+    "app:dev": "yarn workspace editor-app dev",
+    "app:build": "yarn workspace editor-app build",
+    "components:dev": "cd ../../components && yarn build-watch",
+    "components:build": "cd ../../components && yarn build",
+    "state:dev": "cd state && cargo watch -i .gitignore -i \"pkg/*\" -s \"wasm-pack build --target web\"",
+    "state:build": "cd state && wasm-pack build --target web",
+    "dev": "concurrently --kill-others-on-fail \"yarn components:dev\" \"yarn state:dev\" \"yarn app:dev\"",
+    "build": "yarn components:build && yarn state:build && yarn app:build",
+    "ci:build": "yarn components:build && yarn state:build && yarn && yarn app:build"
+  },
+  "devDependencies": {
+    "concurrently": "^6.3.0"
+  }
+}

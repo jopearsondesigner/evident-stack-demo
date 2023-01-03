@@ -1,1 +1,0 @@
-../../components/postcss.config.cjs

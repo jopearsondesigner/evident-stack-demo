@@ -1,1 +1,0 @@
-../../components/tailwind.config.cjs

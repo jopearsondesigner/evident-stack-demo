@@ -35,6 +35,7 @@
     "vitest": "^0.25.3"
   },
   "dependencies": {
-    "editor-state": "../editor-state/pkg"
+    "components": "0.1.0",
+    "editor-state": "0.1.0"
   }
 }

@@ -10,8 +10,8 @@ use crate::types::command::{Command, CommandId};
 use crate::types::event::{Event, EventId};
 use crate::types::flow::{FlowArrow, FlowId};
 use crate::types::interface::{Interface, InterfaceId};
-use crate::types::{Component, ComponentId, ComponentMut, Described, Entity, Lane, LaneId, LaneIndex, Named, validate_name};
-use crate::types::errors::EventModelError;
+use crate::types::{Component, ComponentId, ComponentMut,
+                   Described, Entity, Lane, LaneId, LaneIndex, Named};
 use crate::types::placement::{Placement, PlacementId, PlacementPosition};
 use crate::types::read_model::{ReadModel, ReadModelId};
 use crate::types::schema::{Schema, SchemaId};

@@ -15,7 +15,7 @@
 	import Support from '../icons/Support.svelte';
 	import AdminPortal from '../icons/AdminPortal.svelte';
 	import Home from '../icons/Home.svelte';
-	import Logo from '../assets/images/global/onoteLogo.svg';
+	import Logo from '../assets/images/global/evidentDesignLogo.svg';
 	export let alt="Brand Logo";
 	export let user=true;
 </script>

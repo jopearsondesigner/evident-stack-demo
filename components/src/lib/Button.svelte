@@ -15,7 +15,7 @@
 		| 'warning'
 		| 'success'
 		| 'disabled'
-		| 'brandPrimary'
+		| 'brandDesignPrimary'
 		| 'brandSecondary';
 
 	const colorClasses = {
@@ -29,10 +29,10 @@
 	};
 	const gradientClasses = {
 		primary: 'text-white bg-gradient-to-b from-focus to-brand-primary hover:from-focus hover:to-focus ring-focus',
-		brandPrimary:
-			'text-white bg-gradient-to-b from-brand-primary to-[#248CAD] hover:from-[#248CAD] hover:to-[#248CAD] ring-brand-primary',
+		brandDesignPrimary:
+			'text-white bg-gradient-to-t from-design-brand-700 via-design-brand-500 to-design-brand-300 hover:to-design-brand-700 hover:via-design-brand-700 hover:from-design-brand-700 ring-design-brand-500',
 		brandSecondary:
-			'text-white bg-gradient-to-t from-brand-secondary to-secondary-red hover:to-secondary-red hover:from-secondary-red ring-brand-secondary',
+			'text-white bg-gradient-to-b from-brand-primary to-[#248CAD] hover:from-[#248CAD] hover:to-[#248CAD] ring-design-brand-500',
 	};
 	const sizeClasses = {
 		xs: 'px-3 py-1 text-xs',

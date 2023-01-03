@@ -5,3 +5,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+	font-family: 'strokeweight160';
+	src: url('strokeweight_160-webfont.woff2') format('woff2'),
+		url('strokeweight_160-webfont.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}

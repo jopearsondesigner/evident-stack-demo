@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 	import '../app.css';
 	import Navbar from '$lib/navbar/Navbar.svelte';
 	import NavInner from '$lib/navbar/NavInner.svelte';
@@ -15,7 +15,7 @@
 	import Support from '$lib/icons/Support.svelte';
 	import AdminPortal from '$lib/icons/AdminPortal.svelte';
 	import Home from '$lib/icons/Home.svelte';
-	import Logo from '$lib/assets/images/global/onoteLogo.svg';
+	import Logo from '$lib/assets/images/global/evidentDesignLogo.svg';
 	import Drawer from '$lib/drawer/Drawer.svelte';
 	import Sidebar from '$lib/drawer/Sidebar.svelte';
 	import SidebarInner from '$lib/drawer/SidebarInner.svelte';
@@ -163,5 +163,5 @@
 		</SidebarInner>
 	</Sidebar>
 </Drawer>
-
+ -->
 <main class="w-full"><slot/></main>

@@ -78,12 +78,12 @@ Success.args = {
 	label: 'Success'
 };
 
-export const BrandPrimary = Template.bind({});
+export const brandDesignPrimary = Template.bind({});
 // @ts-ignore
-BrandPrimary.args = {
+brandDesignPrimary.args = {
 	gradient: true,
 	size: 'md',
-	color: 'brandPrimary',
+	color: 'brandDesignPrimary',
 	label: 'Brand Primary'
 };
 

@@ -27,11 +27,11 @@
 <Hero>
     <HeroContainer>
         <HeroGrid>
-            <HeroFlexbox class={classNames('lg:mt-[99px] relative z-10 lg:px-0 px-4',heroFlexboxClass)}>
+            <HeroFlexbox class={classNames('lg:mt-[56px] relative z-10 lg:px-0 px-4',heroFlexboxClass)}>
                 <HeroCopy>
-                    <span slot=hero-header>Design, implement, and operate event-driven information systems with <TextBrand>oNote</TextBrand></span>
+                    <span slot=hero-header>Design, implement, and operate event-driven information systems with <TextBrand>Evident Design</TextBrand></span>
                     <span slot=hero-copy>Give your customers a better cohesive customer experience. Your technical and non-technical teams can create a shared user journey together.</span>
-                    <Button slot=hero-cta gradient color='brandSecondary' size='sm' label='Sign In' class='flex items-center'>
+                    <Button slot=hero-cta gradient color='brandDesignPrimary' size='sm' label='Sign In' class='flex items-center'>
                         <Icon name="arrow-right" slot=icon class='inline-flex ml-1 stroke-2' iconColor='fill-current text-white' size={12}><ArrowRight/></Icon>
                     </Button>
                 </HeroCopy>

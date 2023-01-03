@@ -31,7 +31,7 @@
 <main class={mainClass}>
     <Container class={classNames('pb-[128px]', containerClass)}>
         <SectionLabel>
-            The value of oNrote
+            The value of Evident Design
         </SectionLabel>
         <Row class={classNames('mt-[44px]',gridClass)}>
             <Column class='flex order-first mx-auto'>
@@ -43,7 +43,7 @@
                         Enable digital transformation
                     </SectionHeader>
                     <SectionCopy class='text-[18px] lg:pl-4 lg:text-left text-center' textSize='text-[1.125rem]'>
-                        oNote promotes collaboration between technical and non-technical teams by creating shared visual models that communicate project requirements and the overall business strategy.
+                        Evident Design promotes collaboration between technical and non-technical teams by creating shared visual models that communicate project requirements and the overall business strategy.
                     </SectionCopy>
                 </Section>
             </Column>
@@ -58,7 +58,7 @@
                         Empower developers
                     </SectionHeader>
                     <SectionCopy class='text-[18px] lg:pl-4 lg:text-left text-center' textSize='text-[1.125rem]'>
-                        oNote empowers developers by providing clear requirements as well as an accurate picture of the business needs, logic, and processes prior to coding.
+                        Evident Design empowers developers by providing clear requirements as well as an accurate picture of the business needs, logic, and processes prior to coding.
                     </SectionCopy>
                 </Section>
             </Column>
@@ -73,7 +73,7 @@
                         Leverage data structure
                     </SectionHeader>
                     <SectionCopy class='text-[18px] lg:pl-4 lg:text-left text-center' textSize='text-[1.125rem]'>
-                        oNote allows teams to leverage data structure to jumpstart other applications and projects you may have.
+                        Evident Design allows teams to leverage data structure to jumpstart other applications and projects you may have.
                     </SectionCopy>
                 </Section>
             </Column>
@@ -166,10 +166,10 @@
                     <img src={Community} class="lg:m-4 mx-auto my-0" width="28" alt="Join the oNote community">
                     <Section name=benefit divClass='flex flex-col'>
                         <SectionHeader tag=h4 classes='min-h-[60px] mb-4 lg:pl-4 lg:text-left text-center' customSize='text-[1.5rem]'>
-                            Join the oNote community
+                            Join the Evident Design community
                         </SectionHeader>
                         <SectionCopy classes='min-h-[112px] flex lg:pl-4 lg:text-left text-center'>
-                            Learn from others on their use cases and where they’ve levaraged oNote.
+                            Learn from others on their use cases and where they’ve levaraged Evident Design.
                         </SectionCopy>
                         <SectionCopy classes='flex lg:text-left text-center pl-4'>
                             <A href='/use-cases'>
@@ -187,7 +187,7 @@
                             Read the docs
                         </SectionHeader>
                         <SectionCopy classes='min-h-[112px] flex lg:pl-4 lg:text-left text-center'>
-                            Get a headstart on how to go in-depth with oNote.
+                            Get a headstart on how to go in-depth with Evident Design.
                         </SectionCopy>
                         <SectionCopy classes='flex lg:text-left text-center pl-4'>
                             <A href='/docs'>

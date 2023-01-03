@@ -22,7 +22,7 @@
     <Nav {website}>
         <div class="inline-flex space-x-3 mx-3 items-center">
             <NavHamburger {website}/>
-            <NavBrand height={24} class={classNames('mx-3',brandClass)}/>
+            <NavBrand height={32} class={classNames('mx-3',brandClass)}/>
             <NavToolbar>
                 <IconButton iconBtnClass="hover:bg-gray-brand-1/0">
                     <Icon

@@ -7,7 +7,7 @@ module.exports = {
 			primary: 'lato, san-serif',
 			copy: 'lato, san-serif',
 			sans: 'lato, san-serif',
-			header: 'niveau-grotesk, sans-serif'
+			header: 'strokeweight160, sans-serif'
 		},
 		extend: {
 			colors: {
@@ -24,6 +24,15 @@ module.exports = {
 				'gray-brand-3': '#839496',
 				'gray-brand-4': '#93A1A1',
 				'gray-bg': '#EEEEEE',
+				'design-brand-100': '#ffeee2',
+				'design-brand-200': '#fedcc3',
+				'design-brand-300': '#fcc8a1',
+				'design-brand-400': '#faac74',
+				'design-brand-500': '#f68c3d',
+				'design-brand-600': '#f37221',
+				'design-brand-700': '#e06226',
+				'design-brand-800': '#b85226',
+				'design-brand-900': '#873d1d',
 				'brand-primary': '#2FB6E1',
 				'brand-secondary': '#FB8C3A',
 				'dark-1': '#002B36',

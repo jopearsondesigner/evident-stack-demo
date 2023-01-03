@@ -11,7 +11,7 @@
     import Row from '../Row.svelte';
 	let gridClass: string='grid lg:grid-cols-2 grid-col-1';
     import Column from '../Column.svelte';
-	import Logo from '../assets/images/global/onoteLogo.svg';
+	import Logo from '../assets/images/global/evidentDesignLogo.svg';
 	export let alt="Brand Logo";
     export let href:string = '';
     export let navBrandClass='flex min-w-[103.26px] no-underline';
@@ -30,7 +30,7 @@
                     <Column class='flex-none col-span-3'>
                         <Row class='grid grid-cols-3 gap-4 py-4'>
                             <Column class='flex'>
-                                <FooterLinkGroup label='Why oNote?'>
+                                <FooterLinkGroup label='Why Design?'>
                                     <FooterLink label='Features'/>
                                 </FooterLinkGroup>
                             </Column>

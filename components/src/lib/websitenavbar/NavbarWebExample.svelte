@@ -28,11 +28,11 @@
 <Navbar>
     {#if !hidden}
     <NavWrapper {hidden}>
-        <NabBrand {href} height={24}/>
+        <NabBrand {href} height={32}/>
         <NavHamburger website on:click={() => handleMenu()}/>
         <Nav>
             <NavUl>
-                <DropdownMenu name='Why oNote?' {website}>
+                <DropdownMenu name='Why Design?' {website}>
                     <NavUl>
                         <NavLi>Features</NavLi>
                     </NavUl>
@@ -60,7 +60,7 @@
             <NavUl class={classNames('lg:mr-12',ulClass)}>
                 <NavLi href="#">Log In</NavLi>
                 <NavLi>
-                    <Button href='https://app.onote.com/sign-up' gradient color='brandSecondary' class='flex items-center' size='sm' label='Sign In'>
+                    <Button href='https://app.onote.com/sign-up' gradient color='brandDesignPrimary' class='flex items-center' size='sm' label='Sign In'>
                         <Icon name='arrow-right' slot=icon class='stroke-2 ml-1' iconColor='fill-current' size={12}><ArrowRight/></Icon>
                     </Button>
                 </NavLi>
@@ -75,7 +75,7 @@
                     <ThemeSwitch bind:checked={acceptTerms}/>
                     <CloseButton on:click={() => handleMenu()}/>
                 </NavLi>
-                <DropdownMenuMobile name='Why oNote?'>
+                <DropdownMenuMobile name='Why Design?'>
                     <NavUl hidden>
                         <NavLi hidden>
                             Features

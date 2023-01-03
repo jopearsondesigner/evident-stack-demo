@@ -122,7 +122,6 @@ mod tests {
     use crate::domain::events::EventModelEvent::*;
     use crate::domain::decide;
     use crate::domain::evolve;
-    use crate::types::errors::EventModelError;
     use crate::types::Named;
 
     #[test]

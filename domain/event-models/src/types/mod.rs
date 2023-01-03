@@ -5,7 +5,6 @@ use crate::types::command::{Command, CommandId};
 use crate::types::errors::EventModelError;
 use crate::types::event::{Event, EventId};
 use crate::types::interface::{Interface, InterfaceId};
-use crate::types::placement::PlacementIndex;
 use crate::types::read_model::{ReadModel, ReadModelId};
 use crate::types::stream::{Stream, StreamId};
 

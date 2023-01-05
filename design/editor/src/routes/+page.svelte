@@ -1,7 +1,7 @@
 <script>
- import state from "$lib/state";
+ import { greet } from "$lib/state";
 
- const handleClick = function(e) { state.greet() };
+ const handleClick = function(e) { greet() };
 </script>
 
 <h1>Welcome</h1>

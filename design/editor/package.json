@@ -1,24 +1,50 @@
 {
-  "name": "evident-design-editor",
+  "name": "editor-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "workspaces": [
-    "../../components/package",
-    "state/pkg",
-    "app"
+    "./state/pkg"
   ],
   "scripts": {
-    "app:dev": "yarn workspace editor-app dev",
-    "app:build": "yarn workspace editor-app build",
-    "components:dev": "cd ../../components && yarn build-watch",
-    "components:build": "cd ../../components && yarn build",
+    "app:dev": "vite dev",
+    "app:build": "vite build",
     "state:dev": "cd state && cargo watch -i .gitignore -i \"pkg/*\" -s \"wasm-pack build --target web\"",
     "state:build": "cd state && wasm-pack build --target web",
-    "dev": "concurrently --kill-others-on-fail \"yarn components:dev\" \"yarn state:dev\" \"yarn app:dev\"",
-    "build": "yarn components:build && yarn state:build && yarn app:build",
-    "ci:build": "yarn components:build && yarn state:build && yarn && yarn app:build"
+    "dev": "concurrently --kill-others-on-fail \"yarn state:dev\" \"yarn app:dev\"",
+    "preview": "yarn state:build && vite preview",
+    "build": "yarn state:build && yarn app:build",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
+    "test": "playwright test",
+    "test:unit": "vitest",
+    "lint": "prettier --plugin-search-dir . --check . && eslint .",
+    "format": "prettier --plugin-search-dir . --write ."
   },
   "devDependencies": {
-    "concurrently": "^6.3.0"
+    "@playwright/test": "^1.28.1",
+    "@sveltejs/adapter-cloudflare": "^1.0.0",
+    "@sveltejs/kit": "^1.0.0",
+    "@tailwindcss/typography": "^0.5.8",
+    "autoprefixer": "^10.4.13",
+    "concurrently": "^6.3.0",
+    "daisyui": "^2.41.0",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-svelte3": "^4.0.0",
+    "postcss": "^8.4.19",
+    "prettier": "^2.8.0",
+    "prettier-plugin-svelte": "^2.8.1",
+    "svelte": "^3.54.0",
+    "svelte-check": "^2.9.2",
+    "tailwindcss": "^3.2.4",
+    "typescript": "^4.9.3",
+    "vite": "^4.0.0",
+    "vite-plugin-top-level-await": "^1.2.2",
+    "vite-plugin-wasm-esm": "^1.0.0",
+    "vitest": "^0.25.3"
+  },
+  "dependencies": {
+    "editor-state": "0.1.0"
   }
 }

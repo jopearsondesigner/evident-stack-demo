@@ -8,7 +8,7 @@
     import SectionCopy from 'components/typography/SectionCopy.svelte';
     import SectionLabel from 'components/typography/SectionLabel.svelte';
     import A from 'components/typography/A.svelte';
-    import Bobby from 'components/assets/images/team/bobby.png';
+    import Bobby from 'components/assets/images/team/bobby-2.png';
     import Ryan from 'components/assets/images/team/ryan.png';
     import Mike from 'components/assets/images/team/mike.png';
     import Jo from 'components/assets/images/team/jo.png';
@@ -60,7 +60,7 @@
                             Ryan Murry
                         </SectionHeader>
                         <SectionCopy pClass='uppercase text-gray-primary dark:text-gray-brand-4 leading-[1.27] font-bold font-header mb-2 text-center' textSize='text-xs'>
-                            GET TITLE OF ROLE
+                            (GET TITLE OF ROLE)
                         </SectionCopy>
                     </Section>
                 </Card>
@@ -177,7 +177,7 @@
                 <SectionHeader tag='h2' hClass='leading-[1.27] font-bold font-header mb-4 text-center' customSize='lg:text-[30px] text-[24px]' color='text-gray-brand-2 dark:text-gray-brand-4'>
                     Evident Stack is a product of Evident Systems LLC.
                 </SectionHeader>
-                <SectionCopy class='my-4'>
+                <SectionCopy class='my-4 text-center'>
                     <A class='transition duration-300 ease-in' href='https://www.linkedin.com/in/bobbycalderwood/'>Bobby Calderwood</A> founded Evident Systems LLC in 2018 to help companies build event-based information systems. He has <A class='transition duration-300 ease-in' href='https://www.youtube.com/watch?v=B1-gS0oEtYc'>spoken at conferences</A> and <A class='transition duration-300 ease-in' href='https://www.confluent.io/blog/toward-functional-programming-analogy-microservices/'>written about</A> achieving better software architecture by focusing on business events.
                 </SectionCopy>
             </Section>

@@ -6,7 +6,7 @@
     import Column from 'components/Row.svelte';
     import Section from 'components/Section.svelte';
     import SectionHeader from 'components/typography/SectionHeader.svelte';
-    import SectionCopy from 'components/typography/sectionCopy.svelte';
+    import SectionCopy from 'components/typography/SectionCopy.svelte';
     import YouTube from 'components/utils/YouTube.svelte';
     let WebinarVideo = 'https://www.youtube.com/embed/i_uPgCD9co8?feature=oembed';
 </script>

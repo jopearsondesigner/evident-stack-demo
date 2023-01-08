@@ -6,11 +6,11 @@
 
 <!--MUST KEEP THESE LINKS UPDATED ALWAYS-->
 <div class="text-center my-4">
-    <a {href} class={aClass}>
+    <a href='/privacy-policy' class={aClass}>
         Privacy
     </a>
     <span class={spanClass}>|</span>
-    <a {href} class={aClass}>
+    <a href='/terms-and-conditions' class={aClass}>
         Terms of Service
     </a>
 </div>

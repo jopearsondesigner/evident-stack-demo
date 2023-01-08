@@ -13,7 +13,7 @@
 <li class={liClass} role="presentation">
     <button
         on:click
-        class={classNames(activeTabValue === id ? activeClass : inactiveClass, buttonClass)}
+        class={classNames(activeTabValue === id ? activeClass : inactiveClass, buttonClass, 'lg:mr-2.5')}
         id="{id}-tabhead"
         type="button"
         role="tab">

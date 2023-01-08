@@ -9,7 +9,8 @@
         | 'blog'
         | 'info'
         | 'resource'
-        | 'feature';
+        | 'feature'
+        | 'terms';
     const sectionClasses = {
         benefit: {
             div: ''
@@ -26,6 +27,10 @@
         feature: {
             div: ''
         },
+        terms: {
+            div: ''
+        }
+
     }
 </script>
 

@@ -1,5 +1,5 @@
 <script lang='ts'>
-    export let containerClass: string = 'relative w-100% h-0 pb-[56.25%]';
+    export let containerClass: string = 'relative w-100% h-0 pb-[56.25%] my-8';
     export let videoClass: string = 'absolute t-0 l-0 w-full h-full';
     export let src: string;
 </script>

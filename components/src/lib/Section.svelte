@@ -8,7 +8,8 @@
         | 'benefit'
         | 'blog'
         | 'info'
-        | 'resource';
+        | 'resource'
+        | 'feature';
     const sectionClasses = {
         benefit: {
             div: ''
@@ -22,10 +23,13 @@
         resource: {
             div: ''
         },
+        feature: {
+            div: ''
+        },
     }
 </script>
 
-<section class={classNames(sectionClass, $$props.classSection)}>
+<section class={classNames(sectionClass, $$props.sectionClass)}>
     <div class={classNames(sectionClasses[name]['div'], $$props.divClass)}>
         <slot/>
     </div>

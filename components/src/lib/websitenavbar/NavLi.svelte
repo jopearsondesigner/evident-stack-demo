@@ -2,8 +2,9 @@
   import classNames from 'classnames';
   export let href: string = '';
   export let active: boolean = false;
-  export let activeClass: string='';
-  export let nonActiveClass: string ='';
+  export let activeClass: string= '';
+  export let nonActiveClass: string = '';
+  export let customColor: string = '';
   export {liClass as class}
   let liClass:string;
   $: liClass = classNames(
@@ -21,6 +22,7 @@
 <li class={liClass}>
   <svelte:element
     this={href ? 'a' : 'div'}
+    class= {customColor}
     {href}
     {...$$restProps}
     on:blur

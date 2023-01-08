@@ -1,4 +1,4 @@
-<!-- <script>
+<script>
 	import '../app.css';
 	import Navbar from '$lib/navbar/Navbar.svelte';
 	import NavInner from '$lib/navbar/NavInner.svelte';
@@ -32,6 +32,7 @@
 	import GenerateAvro from '$lib/icons/GenerateAvro.svelte';
 	import Powerup from '$lib/icons/Powerup.svelte';
 	import AddIcon from '$lib/icons/AddIcon.svelte';
+	// import ThemeSwitch from '$lib/utils/ThemeSwitch.svelte';
 	let aLink = true;
 	let headerText = true;
 	let featureData = true;
@@ -42,6 +43,7 @@
 	let handleDrawer = () => {
 		hidden = !hidden;
 	};
+	// let checked = false;
 </script>
 
 <Navbar>
@@ -82,6 +84,7 @@
 	</NavInner>
 </Navbar>
 
+<!-- <ThemeSwitch {checked}/> -->
 <Drawer {hidden}>
 	<Sidebar>
 		<SidebarInner slot="eventModel">
@@ -163,5 +166,4 @@
 		</SidebarInner>
 	</Sidebar>
 </Drawer>
- -->
 <main class="w-full"><slot/></main>

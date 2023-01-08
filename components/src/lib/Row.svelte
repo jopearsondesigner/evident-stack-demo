@@ -6,6 +6,6 @@
     export let style: string = '';
 </script>
 
-<div class={classNames(gridClass, customCols)} {style}>
+<div class={classNames(gridClass, customCols, $$props.class)} {style}>
     <slot/>
 </div>

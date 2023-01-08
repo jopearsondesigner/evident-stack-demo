@@ -14,32 +14,32 @@
     // }
 
       // USE THIS ONE
-    // import { browser } from '../../../node_modules/@sveltejs/kit/src/runtime/app/environment.js';
+    import { browser } from '../../../node_modules/@sveltejs/kit/src/runtime/app/environment.js';
 
-    // let darkMode = true;
+    let darkMode = true;
 
-    // function handleSwitchDarkMode() {
-    //     darkMode = !darkMode;
+    function handleSwitchDarkMode() {
+        darkMode = !darkMode;
 
-    //     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+        localStorage.setItem('theme', darkMode ? 'dark' : 'light');
 
-    //     darkMode
-    //         ? document.documentElement.classList.add('dark')
-    //         : document.documentElement.classList.remove('dark');
-    // }
+        darkMode
+            ? document.documentElement.classList.add('dark')
+            : document.documentElement.classList.remove('dark');
+    }
 
-    // if (browser) {
-    //     if (
-    //         localStorage.theme === 'dark' ||
-    //         (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    //     ) {
-    //         document.documentElement.classList.add('dark');
-    //         darkMode = true;
-    //     } else {
-    //         document.documentElement.classList.remove('dark');
-    //         darkMode = false;
-    //     }
-    // }
+    if (browser) {
+        if (
+            localStorage.theme === 'dark' ||
+            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+            document.documentElement.classList.add('dark');
+            darkMode = true;
+        } else {
+            document.documentElement.classList.remove('dark');
+            darkMode = false;
+        }
+    }
   </script>
 
   <style>
@@ -106,7 +106,7 @@
   </label> -->
 
   <label class="switch" for="theme-toggle">
-    <input type="checkbox" id="theme-toggle" />
+    <input type="checkbox" id="theme-toggle" {checked}/>
     <span class="slider">
         <Icon name='theme-switch-icon' size={37} iconColor='fill-current' viewBox='0 0 60 60' class='-mt-[9px]'><ThemeSwitchIcon/></Icon>
     </span>

@@ -5,7 +5,7 @@
   import NavArrowDark from '../icons/NavArrowDark.svelte';
   import NavArrowLight from '../icons/NavArrowLight.svelte';
   import ArrowDown from '../icons/ArrowDown.svelte';
-  export let liButtonClass:string='whitespace-nowrap inline-flex justify-center items-center py-4 text-sm hover:text-body-dark dark:hover:text-body-light focus:text-body-dark focus:hover:text-body-light focus:outline-none transition duration-300 ease-in-out text-body-light dark:text-body-dark';
+  export let liButtonClass:string='whitespace-nowrap inline-flex justify-center items-center py-4 text-sm text-body-light dark:text-body-dark hover:text-body-dark dark:hover:text-body-light focus:text-body-dark focus:hover:text-body-light focus:outline-none transition duration-300 ease-in-out';
   export let name: string;
   export let child: NavbarType[] = [];
   export let dropdownDiv:string='absolute whitespace-nowrap z-40 -ml-4 -mt-1 transform w-auto rounded-lg shadow-xl border border-light dark:border-border-dark overflow-hidden bg-white dark:bg-dark-2 px-4 py-4 sm:gap-8 sm:p-8';

@@ -19,6 +19,7 @@
 		"@sveltejs/adapter-auto": "^1.0.0",
 		"@sveltejs/adapter-cloudflare": "^1.0.0",
 		"@sveltejs/kit": "^1.0.0",
+		"@tailwindcss/line-clamp": "^0.4.2",
 		"@tailwindcss/typography": "^0.5.8",
 		"autoprefixer": "^10.4.13",
 		"daisyui": "^2.41.0",
@@ -36,6 +37,8 @@
 		"vitest": "^0.25.3"
 	},
 	"dependencies": {
-		"components": "link:../components/package"
+		"components": "workspace:../components/src/lib",
+		"classnames": "^2.3.2",
+		"svelte-layout-aware-transitions": "^0.0.5"
 	}
 }

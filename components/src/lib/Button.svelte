@@ -31,8 +31,8 @@
 		primary: 'text-white bg-gradient-to-b from-focus to-brand-primary hover:from-focus hover:to-focus ring-focus',
 		brandDesignPrimary:
 			'text-white bg-gradient-to-t from-design-brand-700 via-design-brand-500 to-design-brand-300 hover:to-design-brand-700 hover:via-design-brand-700 hover:from-design-brand-700 ring-design-brand-500',
-		brandSecondary:
-			'text-white bg-gradient-to-b from-brand-primary to-[#248CAD] hover:from-[#248CAD] hover:to-[#248CAD] ring-design-brand-500',
+		brandStackPrimary:
+			'text-white bg-gradient-to-t from-stack-brand-700 via-stack-brand-500 to-stack-brand-300 hover:to-stack-brand-700 hover:via-stack-brand-700 hover:from-stack-brand-700 ring-stack-brand-500',
 	};
 	const sizeClasses = {
 		xs: 'px-3 py-1 text-xs',

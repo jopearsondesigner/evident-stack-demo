@@ -1,6 +1,6 @@
 <script lang='ts'>
     export let href:string = '/';
-    export let aClass:string = 'text-sm text-brand-gray-1 hover:text-gray-brand-4 dark:text-gray-brand-4 dark:hover:text-gray-brand-1 transition duration-200 ease-in';
+    export let aClass:string = 'text-sm text-body-light hover:text-body-dark dark:text-body-light dark:hover:text-body-dark transition duration-200 ease-in';
     export let spanClass:string = 'py-4 text-sm text-body-light dark:text-body-dark';
 </script>
 

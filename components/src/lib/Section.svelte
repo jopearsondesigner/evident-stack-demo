@@ -5,6 +5,7 @@
     let classes: string = '';
     export {classes as class};
     export let name:
+        | 'general'
         | 'benefit'
         | 'blog'
         | 'info'
@@ -12,6 +13,9 @@
         | 'feature'
         | 'terms';
     const sectionClasses = {
+        general: {
+            div: ''
+        },
         benefit: {
             div: ''
         },

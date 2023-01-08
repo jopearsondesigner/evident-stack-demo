@@ -5,6 +5,7 @@
     export let cardClass:string = '';
     export let href: string | undefined = undefined;
     export let img: string | undefined = undefined;
+    export let width: number;
     // export const size: SizeType = 'sm';
 
     const sizes = {
@@ -18,12 +19,11 @@
 
 <svelte:element this={href ? 'a' : 'div'}
     {href}
+    class={classNames(cardClass, $$props.class)}
     {...$$restProps}>
     {#if img}
-      <img class={imgClass} src={img} alt="" />
-      <div class={cardClass}>
+      <img class={imgClass} src={img} alt="" width={width}/>
         <slot />
-      </div>
     {:else}
       <slot />
     {/if}

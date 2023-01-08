@@ -69,7 +69,7 @@
                 </DropdownMenu>
                 <DropdownMenu name='Company' {website}>
                     <NavUl>
-                        <NavLi href="#">Team</NavLi>
+                        <NavLi href='/team'>Team</NavLi>
                         <NavLi href="#">Contact</NavLi>
                     </NavUl>
                 </DropdownMenu>

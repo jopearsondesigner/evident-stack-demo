@@ -1,7 +1,5 @@
 /* Lato */
 @import url('https://use.typekit.net/dcj2uau.css');
-/* Niveau Grotesk */
-@import url('https://use.typekit.net/xfq7yqi.css');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

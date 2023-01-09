@@ -129,7 +129,7 @@
                             John Kealey
                         </SectionHeader>
                         <SectionCopy pClass='uppercase text-gray-primary dark:text-gray-brand-4 leading-[1.27] font-bold font-header mb-2 text-center' textSize='text-xs'>
-                            Advidor
+                            Advisor
                         </SectionCopy>
                         <SectionCopy pClass='leading-normal text-center px-4 mb-10 text-body-light dark:text-body-dark' textSize='text-medium'>
                             When John isn’t advising, he’s out boating around on the lake with his wife.

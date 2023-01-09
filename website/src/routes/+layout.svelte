@@ -54,7 +54,7 @@
                         <NavLi href='/features'>Features</NavLi>
                     </NavUl>
                 </DropdownMenu>
-                <NavLi href="#">Docs</NavLi>
+                <NavLi href='http://docs.onote.com/'>Docs</NavLi>
                 <DropdownMenu name='Learn' {website}>
                     <NavUl>
                         <NavLi href='/blog'>Blog</NavLi>
@@ -64,7 +64,7 @@
                 </DropdownMenu>
                 <DropdownMenu name='Service & Support' {website}>
                     <NavUl>
-                        <NavLi href="#">Support</NavLi>
+                        <NavLi href='https://support.onote.com/'>Support</NavLi>
                     </NavUl>
                 </DropdownMenu>
                 <DropdownMenu name='Company' {website}>
@@ -75,7 +75,7 @@
                 </DropdownMenu>
             </NavUl>
             <NavUl class={classNames('lg:mr-12',ulClass)}>
-                <NavLi href="#">Log In</NavLi>
+                <NavLi href='https://app.onote.com/'>Log In</NavLi>
                 <NavLi>
                     <Button href='https://app.onote.com/sign-up' gradient color='brandStackPrimary' class='flex items-center' size='sm' label='Sign In'>
                         <Icon name='arrow-right' slot=icon class='stroke-2 ml-1' iconColor='fill-current' size={12}><ArrowRight/></Icon>
@@ -94,47 +94,47 @@
                 </NavLi>
                 <DropdownMenuMobile name='Why Design?'>
                     <NavUl hidden>
-                        <NavLi hidden>
+                        <NavLi hidden href='/features'>
                             Features
                         </NavLi>
                     </NavUl>
                 </DropdownMenuMobile>
-                <NavLi hidden href="#">
+                <NavLi hidden href='http://docs.onote.com/'>
                     Docs
                 </NavLi>
                 <DropdownMenuMobile name='Learn'>
                     <NavUl hidden>
-                        <NavLi hidden>
+                        <NavLi hidden href='/blog'>
                             Blog
                         </NavLi>
-                        <NavLi hidden>
+                        <NavLi hidden href='/webinars'>
                             Webinars
                         </NavLi>
-                        <NavLi hidden>
+                        <NavLi hidden href='/conferences'>
                             Conferences
                         </NavLi>
                     </NavUl>
                 </DropdownMenuMobile>
                 <DropdownMenuMobile name='Service & Support'>
                     <NavUl hidden>
-                        <NavLi hidden>
+                        <NavLi hidden href='https://support.onote.com/'>
                             Support
                         </NavLi>
                     </NavUl>
                 </DropdownMenuMobile>
                 <DropdownMenuMobile name='Company'>
                     <NavUl hidden>
-                        <NavLi hidden>
+                        <NavLi hidden href='/team'>
                             Team
                         </NavLi>
-                        <NavLi hidden>
+                        <NavLi hidden href='/contact'>
                             Contact
                         </NavLi>
                     </NavUl>
                 </DropdownMenuMobile>
             </NavUl>
             <NavUl mobileNavUl='p-3 border-t border-border-light dark:border-border-dark' hidden>
-                <NavLi href="#" class="p-0" hidden footer>Log In</NavLi>
+                <NavLi href='https://app.onote.com/' class="p-0" hidden footer>Log In</NavLi>
                 <NavLi hidden footer>
                     <Button href='https://app.onote.com/sign-up' gradient color='brandStackPrimary' class='flex items-center' size='sm' label='Sign In'>
                         <Icon name='arrow-right' slot=icon class='stroke-2 ml-1' iconColor='fill-current' size={12}><ArrowRight/></Icon>
@@ -159,32 +159,32 @@
                     <Row class='grid grid-cols-3 gap-4 py-4'>
                         <Column class='flex'>
                             <FooterLinkGroup label='Why Design?'>
-                                <FooterLink label='Features'/>
+                                <FooterLink label='Features' href='/features'/>
                             </FooterLinkGroup>
                         </Column>
                         <Column class='flex'>
                             <FooterLinkGroup label='Learn'>
-                                <FooterLink label='Blog'/>
-                                <FooterLink label='Webinars'/>
-                                <FooterLink label='Conferences'/>
+                                <FooterLink label='Blog' href='/blog'/>
+                                <FooterLink label='Webinars' href='/webinars'/>
+                                <FooterLink label='Conferences' href='/conferences'/>
                             </FooterLinkGroup>
                         </Column>
                         <Column class='flex'>
                             <FooterLinkGroup liClass='pb-2 w-full text-sm font-bold text-body-light dark:text-body-dark'>
-                                <FooterLink label='Docs'/>
+                                <FooterLink label='Docs' href='http://docs.onote.com/'/>
                             </FooterLinkGroup>
                         </Column>
                     </Row>
                     <Row class='grid grid-cols-3 gap-4 py-4'>
                         <Column class='flex'>
                             <FooterLinkGroup label='Service & Support'>
-                                <FooterLink label='Support'/>
+                                <FooterLink label='Support' href='https://support.onote.com/'/>
                             </FooterLinkGroup>
                         </Column>
                         <Column class='flex'>
                             <FooterLinkGroup label='Company'>
-                                <FooterLink label='Team'/>
-                                <FooterLink label='Contact'/>
+                                <FooterLink label='Team' href='/team'/>
+                                <FooterLink label='Contact' href='/contact'/>
                             </FooterLinkGroup>
                         </Column>
                     </Row>

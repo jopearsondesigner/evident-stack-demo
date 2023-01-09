@@ -119,7 +119,7 @@
             <NavUl mobileNavUl='p-3 border-t border-border-light dark:border-border-dark' hidden>
                 <NavLi href="#" class="p-0" hidden footer>Log In</NavLi>
                 <NavLi hidden footer>
-                    <Button href='https://app.onote.com/sign-up' gradient color='brandSecondary' class='flex items-center' size='sm' label='Sign In'>
+                    <Button href='https://app.onote.com/sign-up' gradient color='brandStackPrimary' class='flex items-center' size='sm' label='Sign In'>
                         <Icon name='arrow-right' slot=icon class='stroke-2 ml-1' iconColor='fill-current' size={12}><ArrowRight/></Icon>
                     </Button>
                 </NavLi>

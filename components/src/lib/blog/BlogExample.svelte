@@ -68,7 +68,7 @@
                             2021-10-14
                         </div>
                         <BlogCta label='Join the community.'>
-                            <Button gradient color='brandSecondary' size='sm' label='Get Started' class='flex items-center' href='#'>
+                            <Button gradient color='brandStackPrimary' size='sm' label='Get Started' class='flex items-center' href='#'>
                                 <Icon name="arrow-right" slot=icon class='inline-flex ml-1 stroke-2' iconColor='fill-current text-white' size={12}><ArrowRight/></Icon>
                             </Button>
                         </BlogCta>

@@ -92,7 +92,7 @@ export const BrandSecondary = Template.bind({});
 BrandSecondary.args = {
 	gradient: true,
 	size: 'md',
-	color: 'brandSecondary',
+	color: 'brandStackPrimary',
 	label: 'Brand Secondary'
 };
 
@@ -101,6 +101,6 @@ export const BrandSecondarySmall = Template.bind({});
 BrandSecondarySmall.args = {
 	gradient: true,
 	size: 'sm',
-	color: 'brandSecondary',
+	color: 'brandStackPrimary',
 	label: 'Sign Up'
 };

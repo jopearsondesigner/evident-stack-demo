@@ -154,7 +154,7 @@
                         If you haven’t already, <A class='transition duration-300 ease-in' href='https://app.onote.com/sign-up'>sign up</A> for oNote and <A class='transition duration-300 ease-in' href='https://app.onote.com/profile/billing/subscription?add=price_1JZrzbDAZ6jOceePJ3svOFp3'>upgrade to the Essential plan</A> to try out all the new features and gain access to our PowerUps. Of course, our free tier oNote Starter is available for you to try out our basic event modeling features.
                     </SectionCopy>
                     <Column>
-                        <Button gradient color='brandSecondary' size='sm' label='Start Using Schemas!' class='mt-8 block m-auto' href='https://app.onote.com/'/>
+                        <Button gradient color='brandStackPrimary' size='sm' label='Start Using Schemas!' class='mt-8 block m-auto' href='https://app.onote.com/'/>
                     </Column>
                 </Section>
             </Column>

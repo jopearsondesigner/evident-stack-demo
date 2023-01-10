@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+	darkMode: 'class',
 	content: ['./src/**/*.{html,js,svelte,ts}', '../components/src/lib/**/*.svelte'],
-	// darkMode: 'class',
 	theme: {
 		fontFamily: {
 			primary: 'lato, san-serif',

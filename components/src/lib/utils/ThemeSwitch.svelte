@@ -1,20 +1,10 @@
 <script lang='ts'>
-	import { useState } from 'react';
     export let checked = false;
     import Icon from '../Icon.svelte';
     import ThemeSwitchIcon from '../icons/ThemeSwitchIcon.svelte';
     export const themeSwitchClass:string='';
 
-    // Don't use this one
-    // const [darkMode,setDarkMode] = useState(false);
-    // const toggleTheme = ()=>{
-    //     setDarkMode(!darkMode);
-    //     const root = window.document.documentElement; //add 'dark class to html root element'
-    //     root.classList.toggle('dark');
-    // }
-
-      // USE THIS ONE
-    import { browser } from '../../../node_modules/@sveltejs/kit/src/runtime/app/environment.js';
+    import { browser } from '$app/environment';
 
     let darkMode = true;
 
@@ -40,7 +30,7 @@
             darkMode = false;
         }
     }
-  </script>
+</script>
 
   <style>
     .switch {
@@ -98,19 +88,14 @@
     }
   </style>
 
-  <!-- <label class="switch" for="theme-toggle">
+  <label class="switch" for="theme-toggle">
     <input checked={darkMode} on:click={handleSwitchDarkMode} type="checkbox" id="theme-toggle" />
     <span class="slider">
         <Icon name='mode-switch-icon' size={37} iconColor='fill-current' viewBox='0 0 60 60' class='-mt-[9px]'><ThemeSwitchIcon/></Icon>
     </span>
-  </label> -->
-
-  <label class="switch" for="theme-toggle">
-    <input type="checkbox" id="theme-toggle" {checked}/>
-    <span class="slider">
-        <Icon name='theme-switch-icon' size={37} iconColor='fill-current' viewBox='0 0 60 60' class='-mt-[9px]'><ThemeSwitchIcon/></Icon>
-    </span>
   </label>
+
+
 
 
 

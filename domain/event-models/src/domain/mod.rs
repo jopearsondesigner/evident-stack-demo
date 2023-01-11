@@ -9,11 +9,11 @@ use crate::types::errors::EventModelError;
 use crate::types::errors::EventModelError::IllegalState;
 use crate::types::validate_name;
 
-mod read_models;
-mod events;
-mod commands;
+pub mod read_models;
+pub mod events;
+pub mod commands;
 
-fn decide<T>(
+pub fn decide<T>(
     command: &EventModelCommand,
     state: &Option<T>
 ) -> Result<Vec<EventModelEvent>, EventModelError>
@@ -72,7 +72,7 @@ fn decide<T>(
 }
 
 // TODO: could split input state type from output state type
-fn evolve<T>(
+pub fn evolve<T>(
     state: Option<T>,
     event: &EventModelEvent
 ) -> Option<T>

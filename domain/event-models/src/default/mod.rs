@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::{EventModel, EventModelComponentModifier, EventModelFlowModifier, EventModelId,
@@ -20,7 +21,7 @@ use crate::types::stream::Stream;
 #[cfg(test)]
 mod tests;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DefaultEventModel {
     id: EventModelId,
     name: String,

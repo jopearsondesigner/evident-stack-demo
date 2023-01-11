@@ -1,7 +1,8 @@
 extern crate url;
 extern crate uuid;
-extern crate serde_cbor;
 extern crate core;
+#[cfg(feature = "cbor")]
+extern crate serde_cbor;
 
 use uuid::Uuid;
 use std::collections::HashMap;

@@ -1,1 +1,1 @@
-../../components/tailwind.config.cjs
+../components/tailwind.config.cjs

@@ -16,13 +16,13 @@
             Privacy Policy
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            Protecting your private information is our priority. This Statement of Privacy applies to oNote.com and Evident Systems LLC and governs data collection and usage. For the purposes of this Privacy Policy, unless otherwise noted, all references to Evident Systems LLC include oNote.com and oNote. The oNote website is a Software as a Service (SaaS) site. By using the oNote website, you consent to the data practices described in this statement.
+            Protecting your private information is our priority. This Statement of Privacy applies to evidentstack.com and Evident Systems LLC and governs data collection and usage. For the purposes of this Privacy Policy, unless otherwise noted, all references to Evident Systems LLC include evidentstack.com and Evident Stack. The Evident Stack website is a Software as a Service (SaaS) site. By using the Evident Stack website, you consent to the data practices described in this statement.
         </SectionCopy>
         <SectionHeader tag='h3' class='mb-4' customSize='text-[24px]'>
             Collection of your Personal Information
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            In order to better provide you with products and services offered on our Site, oNote may collect personally identifiable information, such as your:
+            In order to better provide you with products and services offered on our Site, Evident Stack may collect personally identifiable information, such as your:
             <ul class='my-4 list-disc'>
                 <li>First and Last Name</li>
                 <li>Mailing Address</li>
@@ -33,10 +33,10 @@
             </ul>
         </SectionCopy>
         <SectionCopy class='mb-4'>
-            If you purchase oNote’s products and services, we collect billing and credit card information. This information is used to complete the purchase transaction.
+            If you purchase Evident Stack’s products and services, we collect billing and credit card information. This information is used to complete the purchase transaction.
         </SectionCopy>
         <SectionCopy class='mb-4'>
-            Please keep in mind that if you directly disclose personally identifiable information or personally sensitive data through oNote’s public message boards, this information may be collected and used by others.
+            Please keep in mind that if you directly disclose personally identifiable information or personally sensitive data through Evident Stack’s public message boards, this information may be collected and used by others.
         </SectionCopy>
         <SectionCopy class='mb-4'>
             We do not collect any personal information about you unless you voluntarily provide it to us. However, you may be required to provide certain personal information to us when you elect to use certain products or services available on the Site. These may include: (a) registering for an account on our Site; (b) entering a sweepstakes or contest sponsored by us or one of our partners; (c) signing up for special offers from selected third parties; (d) sending us an email message; (e) submitting your credit card or other payment information when ordering and purchasing products and services on our Site. To wit, we will use your information for, but not limited to, communicating with you in relation to services and/or products you have requested from us. We also may gather additional personal or non-personal information in the future.
@@ -45,46 +45,46 @@
             Use of your Personal Information
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            oNote collects and uses your personal information to operate its website(s) and deliver the services you have requested.
+            Evident Stack collects and uses your personal information to operate its website(s) and deliver the services you have requested.
         </SectionCopy>
         <SectionCopy class='mb-4'>
-            oNote may also use your personally identifiable information to inform you of other products or services available from oNote and its affiliates.
+            Evident Stack may also use your personally identifiable information to inform you of other products or services available from Evident Stack and its affiliates.
         </SectionCopy>
         <SectionHeader tag='h3' class='mb-4' customSize='text-[24px]'>
             Sharing Information with Third Parties
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            oNote does not sell, rent or lease its customer lists to third parties.
+            Evident Stack does not sell, rent or lease its customer lists to third parties.
         </SectionCopy>
         <SectionCopy class='mb-4'>
-            oNote may share data with trusted partners to help perform statistical analysis, send you email or postal mail, provide customer support, or arrange for deliveries. All such third parties are prohibited from using your personal information except to provide these services to oNote, and they are required to maintain the confidentiality of your information.
+            Evident Stack may share data with trusted partners to help perform statistical analysis, send you email or postal mail, provide customer support, or arrange for deliveries. All such third parties are prohibited from using your personal information except to provide these services to Evident Stack, and they are required to maintain the confidentiality of your information.
         </SectionCopy>
         <SectionCopy class='mb-4'>
-            oNote may disclose your personal information, without notice, if required to do so by law or in the good faith belief that such action is necessary to: (a) conform to the edicts of the law or comply with legal process served on oNote or the site; (b) protect and defend the rights or property of oNote; and/or (c) act under exigent circumstances to protect the personal safety of users of oNote, or the public.
+            Evident Stack may disclose your personal information, without notice, if required to do so by law or in the good faith belief that such action is necessary to: (a) conform to the edicts of the law or comply with legal process served on Evident Stack or the site; (b) protect and defend the rights or property of Evident Stack; and/or (c) act under exigent circumstances to protect the personal safety of users of Evident Stack, or the public.
         </SectionCopy>
         <SectionHeader tag='h3' class='mb-4' customSize='text-[24px]'>
             Tracking User Behavior
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            oNote may keep track of the websites and pages our users visit within oNote, in order to determine what oNote services are the most popular. This data is used to deliver customized content and advertising within oNote to customers whose behavior indicates that they are interested in a particular subject area.
+            Evident Stack may keep track of the websites and pages our users visit within Evident Stack, in order to determine what Evident Stack services are the most popular. This data is used to deliver customized content and advertising within Evident Stack to customers whose behavior indicates that they are interested in a particular subject area.
         </SectionCopy>
         <SectionHeader tag='h3' class='mb-4' customSize='text-[24px]'>
             Automatically Collected Information
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            Information about your computer hardware and software may be automatically collected by oNote. This information can include: your IP address, browser type, domain names, access times and referring website addresses. This information is used for the operation of the service, to maintain quality of the service, and to provide general statistics regarding use of the oNote website.
+            Information about your computer hardware and software may be automatically collected by Evident Stack. This information can include: your IP address, browser type, domain names, access times and referring website addresses. This information is used for the operation of the service, to maintain quality of the service, and to provide general statistics regarding use of the Evident Stack website.
         </SectionCopy>
         <SectionHeader tag='h3' class='mb-4' customSize='text-[24px]'>
             Use of Cookies
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            The oNote website may use “cookies” to help you personalize your online experience. A cookie is a text file that is placed on your hard disk by a web page server. Cookies cannot be used to run programs or deliver viruses to your computer. Cookies are uniquely assigned to you, and can only be read by a web server in the domain that issued the cookie to you.
+            The Evident Stack website may use “cookies” to help you personalize your online experience. A cookie is a text file that is placed on your hard disk by a web page server. Cookies cannot be used to run programs or deliver viruses to your computer. Cookies are uniquely assigned to you, and can only be read by a web server in the domain that issued the cookie to you.
         </SectionCopy>
         <SectionCopy class='mb-4'>
-            One of the primary purposes of cookies is to provide a convenience feature to save you time. The purpose of a cookie is to tell the Web server that you have returned to a specific page. For example, if you personalize oNote pages, or register with oNote site or services, a cookie helps oNote to recall your specific information on subsequent visits. This simplifies the process of recording your personal information, such as billing addresses, shipping addresses, and so on. When you return to the same oNote website, the information you previously provided can be retrieved, so you can easily use the oNote features that you customized.
+            One of the primary purposes of cookies is to provide a convenience feature to save you time. The purpose of a cookie is to tell the Web server that you have returned to a specific page. For example, if you personalize Evident Stack pages, or register with Evident Stack site or services, a cookie helps Evident Stack to recall your specific information on subsequent visits. This simplifies the process of recording your personal information, such as billing addresses, shipping addresses, and so on. When you return to the same Evident Stack website, the information you previously provided can be retrieved, so you can easily use the Evident Stack features that you customized.
         </SectionCopy>
         <SectionCopy class='mb-4'>
-            You have the ability to accept or decline cookies. Most Web browsers automatically accept cookies, but you can usually modify your browser setting to decline cookies if you prefer. If you choose to decline cookies, you may not be able to fully experience the interactive features of the oNote services or websites you visit.
+            You have the ability to accept or decline cookies. Most Web browsers automatically accept cookies, but you can usually modify your browser setting to decline cookies if you prefer. If you choose to decline cookies, you may not be able to fully experience the interactive features of the Evident Stack services or websites you visit.
         </SectionCopy>
         <SectionHeader tag='h3' class='mb-4' customSize='text-[24px]'>
             Links
@@ -96,7 +96,7 @@
             Security of your Personal Information
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            oNote secures your personal information from unauthorized access, use, or disclosure. oNote uses the following methods for this purpose:
+            Evident Stack secures your personal information from unauthorized access, use, or disclosure. Evident Stack uses the following methods for this purpose:
             <ul class='my-4 list-disc'>
                 <li>SSL Protocol</li>
                 <li> High-strength Encryption of data at rest</li>
@@ -137,16 +137,16 @@
             Children Under Thirteen
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            oNote does not knowingly collect personally identifiable information from children under the age of thirteen. If you are under the age of thirteen, you must ask your parent or guardian for permission to use this website.
+            Evident Stack does not knowingly collect personally identifiable information from children under the age of thirteen. If you are under the age of thirteen, you must ask your parent or guardian for permission to use this website.
         </SectionCopy>
         <SectionHeader tag='h3' class='mb-4' customSize='text-[24px]'>
             E-mail Communications
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            From time to time, oNote may contact you via email for the purpose of providing announcements, promotional offers, alerts, confirmations, surveys, and/or other general communication. In order to improve our Services, we may receive a notification when you open an email from oNote or click on a link therein.
+            From time to time, Evident Stack may contact you via email for the purpose of providing announcements, promotional offers, alerts, confirmations, surveys, and/or other general communication. In order to improve our Services, we may receive a notification when you open an email from Evident Stack or click on a link therein.
         </SectionCopy>
         <SectionCopy class='mb-4'>
-            If you would like to stop receiving marketing or promotional communications via email from oNote, you may opt out of such communications by UNSUBSCRIBE in our preferences or UNSUBSCRIBE via a link or button or UNSUBSCRIBE by replying STOP.
+            If you would like to stop receiving marketing or promotional communications via email from Evident Stack, you may opt out of such communications by UNSUBSCRIBE in our preferences or UNSUBSCRIBE via a link or button or UNSUBSCRIBE by replying STOP.
         </SectionCopy>
         <SectionHeader tag='h3' class='mb-4' customSize='text-[24px]'>
             External Data Storage Sites
@@ -158,13 +158,13 @@
             Changes to this Statement
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            oNote reserves the right to change this Privacy Policy from time to time. We will notify you about significant changes in the way we treat personal information by sending a notice to the primary email address specified in your account, by placing a prominent notice on our site, and/or by updating any privacy information on this page. Your continued use of the Site and/or Services available through this Site after such modifications will constitute your: (a) acknowledgment of the modified Privacy Policy; and (b) agreement to abide and be bound by that Policy.
+            Evident Stack reserves the right to change this Privacy Policy from time to time. We will notify you about significant changes in the way we treat personal information by sending a notice to the primary email address specified in your account, by placing a prominent notice on our site, and/or by updating any privacy information on this page. Your continued use of the Site and/or Services available through this Site after such modifications will constitute your: (a) acknowledgment of the modified Privacy Policy; and (b) agreement to abide and be bound by that Policy.
         </SectionCopy>
         <SectionHeader tag='h3' class='mb-4' customSize='text-[24px]'>
             Contact Information
         </SectionHeader>
         <SectionCopy class='mb-4'>
-            oNote welcomes your questions or comments regarding this Statement of Privacy. If you believe that oNote has not adhered to this Statement, please contact oNote at:
+            Evident Stack welcomes your questions or comments regarding this Statement of Privacy. If you believe that Evident Stack has not adhered to this Statement, please contact Evident Stack at:
         </SectionCopy>
         <SectionCopy class='mb-4'>
             Evident Systems LLC 12110 Sunset Hills Rd Reston, Virginia 20190

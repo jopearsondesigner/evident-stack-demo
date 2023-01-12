@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="schemas-jvm-0.1.0-SNAPSHOT">
-    <output-path>$PROJECT_DIR$/domain/schemas/build/libs</output-path>
-    <root id="archive" name="schemas-jvm-0.1.0-SNAPSHOT.jar">
-      <element id="module-output" name="domain.schemas.jvmMain" />
-    </root>
-  </artifact>
-</component>

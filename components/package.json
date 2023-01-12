@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "svelte-kit sync && svelte-package",
+    "build-watch": "svelte-kit sync && svelte-package --watch",
     "prepublishOnly": "echo 'Did you mean to publish `./package/`, instead of `./`?' && exit 1",
     "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
@@ -20,17 +21,17 @@
   "devDependencies": {
     "@babel/core": "^7.20.5",
     "@playwright/test": "^1.28.1",
-    "@storybook/addon-essentials": "^7.0.0-beta.6",
-    "@storybook/addon-interactions": "^7.0.0-beta.6",
-    "@storybook/addon-links": "^7.0.0-beta.6",
-    "@storybook/blocks": "^7.0.0-beta.6",
-    "@storybook/svelte": "^7.0.0-beta.6",
-    "@storybook/sveltekit": "^7.0.0-beta.6",
-    "@storybook/testing-library": "^0.0.13",
-    "@storybook/theming": ">=6.4.20",
-    "@sveltejs/adapter-auto": "next",
-    "@sveltejs/kit": "next",
-    "@sveltejs/package": "next",
+    "@storybook/addon-essentials": "next",
+    "@storybook/addon-interactions": "next",
+    "@storybook/addon-links": "next",
+    "@storybook/blocks": "next",
+    "@storybook/svelte": "next",
+    "@storybook/sveltekit": "next",
+    "@storybook/testing-library": "next",
+    "@storybook/theming": "next",
+    "@sveltejs/adapter-auto": "^1.0.0",
+    "@sveltejs/kit": "^1.0.0",
+    "@sveltejs/package": "^1.0.0",
     "@tailwindcss/typography": "^0.5.8",
     "autoprefixer": "^10.4.13",
     "chromatic": "^6.13.1",
@@ -44,7 +45,7 @@
     "prettier-plugin-svelte": "^2.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "storybook": "^7.0.0-beta.6",
+    "storybook": "next",
     "svelte": "^3.54.0",
     "svelte-check": "^2.9.2",
     "tailwindcss": "^3.2.4",
@@ -56,7 +57,5 @@
   "dependencies": {
     "classnames": "^2.3.2",
     "svelte-layout-aware-transitions": "^0.0.5"
-  },
-  "readme": "ERROR: No README data found!",
-  "_id": "components@0.1.0"
+  }
 }

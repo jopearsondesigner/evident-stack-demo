@@ -1,21 +1,21 @@
 <script lang='ts'>
-    import Container from 'components/Container.svelte';
-    import Row from 'components/Row.svelte';
-    import Column from 'components/Column.svelte';
-    import Section from 'components/Column.svelte';
-    import SectionHeader from 'components/typography/SectionHeader.svelte';
-    import SectionCopy from 'components/typography/SectionCopy.svelte';
-    import SectionLabel from 'components/typography/SectionLabel.svelte';
-    import Icon from 'components/Icon.svelte';
-    import Pin from 'components/icons/Pin.svelte';
-    import Phone from 'components/icons/Phone.svelte';
-    import Email from 'components/icons/Email.svelte';
-    import Form from 'components/form/Form.svelte';
-    import Input from 'components/form/Input.svelte';
-    import Textarea from 'components/form/Textarea.svelte';
-    import Label from 'components/form/Label.svelte';
-    import A from 'components/typography/A.svelte';
-    import Submit from 'components/form/Submit.svelte';
+    import Container from '$lib/components/Container.svelte';
+    import Row from '$lib/components/Row.svelte';
+    import Column from '$lib/components/Column.svelte';
+    import Section from '$lib/components/Column.svelte';
+    import SectionHeader from '$lib/components/typography/SectionHeader.svelte';
+    import SectionCopy from '$lib/components/typography/SectionCopy.svelte';
+    import SectionLabel from '$lib/components/typography/SectionLabel.svelte';
+    import Icon from '$lib/components/Icon.svelte';
+    import Pin from '$lib/components/icons/Pin.svelte';
+    import Phone from '$lib/components/icons/Phone.svelte';
+    import Email from '$lib/components/icons/Email.svelte';
+    import Form from '$lib/components/form/Form.svelte';
+    import Input from '$lib/components/form/Input.svelte';
+    import Textarea from '$lib/components/form/Textarea.svelte';
+    import Label from '$lib/components/form/Label.svelte';
+    import A from '$lib/components/typography/A.svelte';
+    import Submit from '$lib/components/form/Submit.svelte';
 </script>
 
 <Container class='sm:container pb-4'>

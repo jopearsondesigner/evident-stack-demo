@@ -1,22 +1,22 @@
 <script lang='ts'>
-    import Card from 'components/card/Card.svelte';
-    import Container from 'components/Container.svelte';
-    import Row from 'components/Row.svelte';
-    import Column from 'components/Column.svelte';
-    import Section from 'components/Section.svelte';
-    import SectionHeader from 'components/typography/SectionHeader.svelte';
-    import SectionCopy from 'components/typography/SectionCopy.svelte';
-    import SectionLabel from 'components/typography/SectionLabel.svelte';
-    import A from 'components/typography/A.svelte';
-    import Bobby from 'components/assets/images/team/bobby-2.png';
-    import Ryan from 'components/assets/images/team/ryan.png';
-    import Mike from 'components/assets/images/team/mike.png';
-    import Jo from 'components/assets/images/team/jo.png';
-    import Kevin from 'components/assets/images/team/kevin.png';
-    import Tracey from 'components/assets/images/team/tracey.png';
-    import John from 'components/assets/images/team/john.png';
-    import Anthony from 'components/assets/images/team/anthony.png';
-    import Adam from 'components/assets/images/team/adam.png';
+    import Card from '$lib/components/card/Card.svelte';
+    import Container from '$lib/components/Container.svelte';
+    import Row from '$lib/components/Row.svelte';
+    import Column from '$lib/components/Column.svelte';
+    import Section from '$lib/components/Section.svelte';
+    import SectionHeader from '$lib/components/typography/SectionHeader.svelte';
+    import SectionCopy from '$lib/components/typography/SectionCopy.svelte';
+    import SectionLabel from '$lib/components/typography/SectionLabel.svelte';
+    import A from '$lib/components/typography/A.svelte';
+    import Bobby from '$lib/components/assets/images/team/bobby-2.png';
+    import Ryan from '$lib/components/assets/images/team/ryan.png';
+    import Mike from '$lib/components/assets/images/team/mike.png';
+    import Jo from '$lib/components/assets/images/team/jo.png';
+    import Kevin from '$lib/components/assets/images/team/kevin.png';
+    import Tracey from '$lib/components/assets/images/team/tracey.png';
+    import John from '$lib/components/assets/images/team/john.png';
+    import Anthony from '$lib/components/assets/images/team/anthony.png';
+    import Adam from '$lib/components/assets/images/team/adam.png';
 </script>
 
 <div class="bg-black dark:bg-white bg-opacity-[4%] dark:bg-opacity-[4%] pb-24">

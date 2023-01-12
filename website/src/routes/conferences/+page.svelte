@@ -1,25 +1,25 @@
 <script lang='ts'>
-    import  Navbar from 'components/websitenavbar/Navbar.svelte';
-    import  NavWrapper from 'components/websitenavbar/NavWrapper.svelte';
-    import  Nav from 'components/websitenavbar/Nav.svelte';
-    import  NavUl from 'components/websitenavbar/NavUl.svelte';
-    import  NavLi from 'components/websitenavbar/NavLi.svelte';
-    import Container from 'components/Container.svelte';
-    import Section from 'components/Section.svelte';
-    import SectionHeader from 'components/typography/SectionHeader.svelte';
-    import SectionCopy from 'components/typography/SectionCopy.svelte';
-    import SectionLabel from 'components/typography/SectionLabel.svelte'
-    import Row from 'components/Row.svelte';
-    import A from 'components/typography/A.svelte';
-    import Column from 'components/Column.svelte';
-    import Button from 'components/Button.svelte';
-    import Icon from 'components/Icon.svelte';
-    import ArrowRight from 'components/icons/ArrowRight.svelte';
-    import Article from 'components/blog/Article.svelte';
-    import FeaturedBadge from 'components/blog/FeaturedBadge.svelte';
-    import BlogCta from 'components/blog/BlogCta.svelte';
-    import FeaturedBlogImage from 'components/assets/images/blog/conference-photo-2021.png';
-    import BlogImage1 from 'components/assets/images/blog/conference-photo-1.png';
+    import  Navbar from '$lib/components/websitenavbar/Navbar.svelte';
+    import  NavWrapper from '$lib/components/websitenavbar/NavWrapper.svelte';
+    import  Nav from '$lib/components/websitenavbar/Nav.svelte';
+    import  NavUl from '$lib/components/websitenavbar/NavUl.svelte';
+    import  NavLi from '$lib/components/websitenavbar/NavLi.svelte';
+    import Container from '$lib/components/Container.svelte';
+    import Section from '$lib/components/Section.svelte';
+    import SectionHeader from '$lib/components/typography/SectionHeader.svelte';
+    import SectionCopy from '$lib/components/typography/SectionCopy.svelte';
+    import SectionLabel from '$lib/components/typography/SectionLabel.svelte'
+    import Row from '$lib/components/Row.svelte';
+    import A from '$lib/components/typography/A.svelte';
+    import Column from '$lib/components/Column.svelte';
+    import Button from '$lib/components/Button.svelte';
+    import Icon from '$lib/components/Icon.svelte';
+    import ArrowRight from '$lib/components/icons/ArrowRight.svelte';
+    import Article from '$lib/components/blog/Article.svelte';
+    import FeaturedBadge from '$lib/components/blog/FeaturedBadge.svelte';
+    import BlogCta from '$lib/components/blog/BlogCta.svelte';
+    import FeaturedBlogImage from '$lib/components/assets/images/blog/conference-photo-2021.png';
+    import BlogImage1 from '$lib/components/assets/images/blog/conference-photo-1.png';
 </script>
 
 <Navbar navbarClass='w-full bg-black bg-opacity-90 px-4 py-3 sticky top-0 z-10 shadow-md'>

@@ -1,19 +1,19 @@
 <script lang='ts'>
     import classNames from 'classnames';
-    import Article from 'components/blog/Article.svelte';
-    import ArticleHead from 'components/blog/ArticleHead.svelte';
-    import ArticleBody from 'components/blog/ArticleBody.svelte';
-    import Row from 'components/Row.svelte';
-    import Column from 'components/Row.svelte';
-    import Section from 'components/Section.svelte';
-    import SectionHeader from 'components/typography/SectionHeader.svelte';
-    import SectionCopy from 'components/typography/sectionCopy.svelte';
-    import FeaturedBlogImage from 'components/assets/images/blog/blog-photo-1.png';
-    import Container from 'components/Container.svelte';
-    import A from 'components/typography/A.svelte';
-    import BlogImg1 from 'components/assets/images/blog/ss-navigation.png';
-    import BlogImg2 from 'components/assets/images/blog/ss-schemas.png';
-    import Button from 'components/Button.svelte';
+    import Article from '$lib/components/blog/Article.svelte';
+    import ArticleHead from '$lib/components/blog/ArticleHead.svelte';
+    import ArticleBody from '$lib/components/blog/ArticleBody.svelte';
+    import Row from '$lib/components/Row.svelte';
+    import Column from '$lib/components/Row.svelte';
+    import Section from '$lib/components/Section.svelte';
+    import SectionHeader from '$lib/components/typography/SectionHeader.svelte';
+    import SectionCopy from '$lib/components/typography/sectionCopy.svelte';
+    import FeaturedBlogImage from '$lib/components/assets/images/blog/blog-photo-1.png';
+    import Container from '$lib/components/Container.svelte';
+    import A from '$lib/components/typography/A.svelte';
+    import BlogImg1 from '$lib/components/assets/images/blog/ss-navigation.png';
+    import BlogImg2 from '$lib/components/assets/images/blog/ss-schemas.png';
+    import Button from '$lib/components/Button.svelte';
     let customSpan: string = 'lg:col-span-3';
 </script>
 

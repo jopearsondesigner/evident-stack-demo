@@ -1,22 +1,22 @@
 <script lang='ts'>
     import classNames from 'classnames';
-    import Container from 'components/Container.svelte';
-    import SectionLabel from 'components/typography/SectionLabel.svelte';
-    import Row from 'components/Row.svelte';
-    import Column from 'components/Column.svelte';
-    import Section from 'components/Section.svelte';
-    import SectionHeader from 'components/typography/SectionHeader.svelte';
-    import SectionCopy from 'components/typography/SectionCopy.svelte';
-    import TabWrapper from 'components/tabs/TabWrapper.svelte';
-    import TabHead from 'components/tabs/TabHead.svelte';
-    import TabHeadItem from 'components/tabs/TabHeadItem.svelte';
-    import TabContentItem from 'components/tabs/TabContentItem.svelte';
+    import Container from '$lib/components/Container.svelte';
+    import SectionLabel from '$lib/components/typography/SectionLabel.svelte';
+    import Row from '$lib/components/Row.svelte';
+    import Column from '$lib/components/Column.svelte';
+    import Section from '$lib/components/Section.svelte';
+    import SectionHeader from '$lib/components/typography/SectionHeader.svelte';
+    import SectionCopy from '$lib/components/typography/SectionCopy.svelte';
+    import TabWrapper from '$lib/components/tabs/TabWrapper.svelte';
+    import TabHead from '$lib/components/tabs/TabHead.svelte';
+    import TabHeadItem from '$lib/components/tabs/TabHeadItem.svelte';
+    import TabContentItem from '$lib/components/tabs/TabContentItem.svelte';
     let mainClass:string = 'w-full h-auto z-10 relative';
     let containerClass = 'sm:container mx-auto lg:py-16 py-4';
-    import FeaturesDesign from 'components/assets/images/features/featuresDesign.svg';
-    import FeaturesImplement from 'components/assets/images/features/featuresImplement.svg';
-    import FeaturesOperate from 'components/assets/images/features/featuresOperate.svg';
-    import FeaturesLogo from 'components/assets/images/features/featureslogo.svg';
+    import FeaturesDesign from '$lib/components/assets/images/features/featuresDesign.svg';
+    import FeaturesImplement from '$lib/components/assets/images/features/featuresImplement.svg';
+    import FeaturesOperate from '$lib/components/assets/images/features/featuresOperate.svg';
+    import FeaturesLogo from '$lib/components/assets/images/features/featureslogo.svg';
     let activeTabValue = 1;
     const handleClick = (tabValue:number) => () => {
         activeTabValue = tabValue;

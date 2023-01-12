@@ -1,15 +1,15 @@
 <script lang='ts'>
     import classNames from 'classnames';
-    import Hero from 'components/hero/Hero.svelte';
-    import HeroContainer from 'components/hero/HeroContainer.svelte';
-    import HeroCopy from 'components/hero/HeroCopy.svelte';
-    import HeroFlexbox from 'components/hero/HeroFlexbox.svelte';
-    import HeroGrid from 'components/hero/HeroGrid.svelte';
-    import HeroImage from 'components/hero/HeroImage.svelte';
-    import TextBrand from 'components/utils/TextBrand.svelte';
-    import Button from 'components/Button.svelte';
-    import BackgroundImage from 'components/assets/images/homepage/hero/heroBgO.svg'
-    import ForegroundImage from 'components/assets/images/homepage/hero/heroLaptop.svg'
+    import Hero from '$lib/components/hero/Hero.svelte';
+    import HeroContainer from '$lib/components/hero/HeroContainer.svelte';
+    import HeroCopy from '$lib/components/hero/HeroCopy.svelte';
+    import HeroFlexbox from '$lib/components/hero/HeroFlexbox.svelte';
+    import HeroGrid from '$lib/components/hero/HeroGrid.svelte';
+    import HeroImage from '$lib/components/hero/HeroImage.svelte';
+    import TextBrand from '$lib/components/utils/TextBrand.svelte';
+    import Button from '$lib/components/Button.svelte';
+    import BackgroundImage from '$lib/components/assets/images/homepage/hero/heroBgO.svg'
+    import ForegroundImage from '$lib/components/assets/images/homepage/hero/heroLaptop.svg'
     export let heroClass='h-auto bg-white dark:bg-dark-1 text-body-light dark:text-body-dark';
     export let heroContainerClass='container h-full';
     export let heroGridClass='grid lg:grid-cols-2 grid-col-1';
@@ -17,36 +17,36 @@
     export let heroCopyClass='lg:mt-0 mt-8 sm:mt-[-130px] mt-[-103px] mb-16 lg:ml-16';
     export let heroImage='h-full relative w-auto overflow-hidden';
     export let gradientDividerClass='xl:mt-[-224px] lg:mt-[-150px] sm:mt-[-60px] mt-[-70px] h-[64px] bg-gradient-to-t from-gradient to-transparency opacity-20';
-    import Container from 'components/Container.svelte';
-    import SectionLabel from 'components/typography/SectionLabel.svelte';
-    import Section from 'components/Section.svelte';
-    import SectionHeader from 'components/typography/SectionHeader.svelte';
-    import SectionCopy from 'components/typography/SectionCopy.svelte';
-    import A from 'components/typography/A.svelte';
-    import Row from 'components/Row.svelte';
-    import Column from 'components/Column.svelte';
-    import EnablesDigitalTransformation from 'components/assets/images/homepage/crossFunctionalGraphic.svg';
-    import EmpowerDevelopers from 'components/assets/images/homepage/empowerDev.svg';
-    import LeverageDataStructure from 'components/assets/images/homepage/leverageDataStructure.svg';
-    import PoorSoftwareQuality from 'components/assets/images/homepage/poorSoftwareQuality.svg';
+    import Container from '$lib/components/Container.svelte';
+    import SectionLabel from '$lib/components/typography/SectionLabel.svelte';
+    import Section from '$lib/components/Section.svelte';
+    import SectionHeader from '$lib/components/typography/SectionHeader.svelte';
+    import SectionCopy from '$lib/components/typography/SectionCopy.svelte';
+    import A from '$lib/components/typography/A.svelte';
+    import Row from '$lib/components/Row.svelte';
+    import Column from '$lib/components/Column.svelte';
+    import EnablesDigitalTransformation from '$lib/components/assets/images/homepage/crossFunctionalGraphic.svg';
+    import EmpowerDevelopers from '$lib/components/assets/images/homepage/empowerDev.svg';
+    import LeverageDataStructure from '$lib/components/assets/images/homepage/leverageDataStructure.svg';
+    import PoorSoftwareQuality from '$lib/components/assets/images/homepage/poorSoftwareQuality.svg';
     let mainClass='bg-white dark:bg-dark-1 w-full h-auto z-10 relative pb-[128px]';
     export let gridClass:string='grid lg:grid-cols-2 grid-col-1 mt-[44px]';
     export let flexClass:string='flex justify-center items-center px-4';
     export let containerClass: string | undefined='container pb-[128px]';
-    import SeventyFive from 'components/assets/images/homepage/infoSeventyFive.svg';
-    import SeventyEight from 'components/assets/images/homepage/infoSeventyEight.svg';
-    import Eighty from 'components/assets/images/homepage/infoEighty.svg';
-    import FifyFive from 'components/assets/images/homepage/infoFiftyFive.svg';
-    import GradientDivider from 'components/utils/GradientDivider.svelte';
-    import FifteenOBg from 'components/assets/images/homepage/fifteen-o-bg.svg';
-    import Community from 'components/assets/images/homepage/ico-community.svg';
-    import SearchDocs from 'components/assets/images/homepage/ico-search-docs.svg';
-    import Icon from 'components/Icon.svelte';
-    import ArrowRight from 'components/icons/ArrowRight.svelte';
-    import Logo from 'components/assets/images/global/evidentDesignLogo.svg';
-    import Navbar from 'components/websitenavbar/Navbar.svelte';
-    import NavWrapper from 'components/websitenavbar/NavWrapper.svelte';
-    import NabBrand from 'components/websitenavbar/NavBrand.svelte';
+    import SeventyFive from '$lib/components/assets/images/homepage/infoSeventyFive.svg';
+    import SeventyEight from '$lib/components/assets/images/homepage/infoSeventyEight.svg';
+    import Eighty from '$lib/components/assets/images/homepage/infoEighty.svg';
+    import FifyFive from '$lib/components/assets/images/homepage/infoFiftyFive.svg';
+    import GradientDivider from '$lib/components/utils/GradientDivider.svelte';
+    import FifteenOBg from '$lib/components/assets/images/homepage/fifteen-o-bg.svg';
+    import Community from '$lib/components/assets/images/homepage/ico-community.svg';
+    import SearchDocs from '$lib/components/assets/images/homepage/ico-search-docs.svg';
+    import Icon from '$lib/components/Icon.svelte';
+    import ArrowRight from '$lib/components/icons/ArrowRight.svelte';
+    import Logo from '$lib/components/assets/images/global/evidentDesignLogo.svg';
+    import Navbar from '$lib/components/websitenavbar/Navbar.svelte';
+    import NavWrapper from '$lib/components/websitenavbar/NavWrapper.svelte';
+    import NabBrand from '$lib/components/websitenavbar/NavBrand.svelte';
     let website:boolean = true;
 </script>
 

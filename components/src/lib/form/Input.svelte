@@ -6,7 +6,7 @@
   </script>
 
   <script lang="ts">
-    import Wrapper from '$lib/utils/Wrapper.svelte';
+    import Wrapper from '../utils/Wrapper.svelte';
     import classNames from 'classnames';
     import { getContext } from 'svelte';
     import type { InputType } from '../types';
@@ -18,22 +18,22 @@
     export let color: 'base' | 'green' | 'red' = 'base';
 
     const borderClasses = {
-      base: 'border-gray-300 dark:border-gray-600',
+      base: 'border-border-light dark:border-border-dark',
       tinted: 'border-gray-300 dark:border-gray-500',
-      green: 'border-green-500 dark:border-green-400',
-      red: 'border-red-500 dark:border-red-400'
+      green: 'border-green dark:border-green',
+      red: 'border-red dark:border-red'
     };
 
     const ringClasses = {
-      base: 'focus:border-blue-500 focus:ring-blue-500 dark:focus:border-blue-500 dark:focus:ring-blue-500',
+      base: 'focus:border-focus focus:ring-focus dark:focus:border-focus dark:focus:ring-focus',
       green:
         'focus:ring-green-500 focus:border-green-500 dark:focus:border-green-500 dark:focus:ring-green-500',
-      red: 'focus:ring-red-500 focus:border-red-500 dark:focus:ring-red-500 dark:focus:border-red-500'
+      red: 'focus:ring-red focus:border-red dark:focus:ring-red dark:focus:border-red'
     };
 
     const colorClasses = {
-      base: 'bg-gray-50 text-gray-900 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400',
-      tinted: 'bg-gray-50 text-gray-900 dark:bg-gray-600 dark:text-white dark:placeholder-gray-400',
+      base: 'bg-black bg-opacity-[4%] dark:bg-opacity-[4%] text-body-light dark:text-body-dark dark:placeholder-gray-400',
+      tinted: 'bg-gray-50 text-body-light dark:text-body-dark dark:bg-gray-600 dark: dark:placeholder-gray-400',
       green: 'bg-green-50 text-green-900 placeholder-green-700 dark:bg-gray-700',
       red: 'bg-red-50 text-red-900 placeholder-red-700 dark:bg-gray-700'
     };

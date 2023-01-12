@@ -8,7 +8,7 @@
   export {liClass as class}
   let liClass:string;
   $: liClass = classNames(
-    'text-sm text-body-light hover:text-body-dark dark:text-body-dark dark:hover:text-body-light whitespace-nowrap transition duration-200 ease-in-out inline-flex no-underline',
+    'text-sm text-body-light hover:text-body-dark dark:text-body-dark dark:hover:text-body-light whitespace-nowrap transition duration-200 ease-in-out no-underline',
     active ? activeClass : nonActiveClass,
     $$props.class
   );

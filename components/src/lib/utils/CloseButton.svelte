@@ -12,5 +12,5 @@
 type="button"
 on:click={handleClick}>
     <span class="sr-only">Close</span>
-    <Icon name='close' size={16} viewBox='0 0 20 20' iconColor='dark:text-gray-primary'><Close/></Icon>
+    <Icon name='close' size={16} viewBox='0 0 20 20' class='stroke-2' iconColor='text-body-light dark:text-gray-primary'><Close/></Icon>
 </button>

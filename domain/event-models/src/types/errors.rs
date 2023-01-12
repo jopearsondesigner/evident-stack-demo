@@ -1,4 +1,6 @@
-#[derive(Debug, Clone, PartialEq)]
+use serde_derive::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum EventModelError {
     IllegalState(String),
     InvalidNameError(String),

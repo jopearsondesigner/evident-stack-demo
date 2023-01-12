@@ -17,7 +17,7 @@ pub(crate) mod placement;
 pub(crate) mod read_model;
 pub(crate) mod schema;
 pub(crate) mod stream;
-pub(crate) mod errors;
+pub mod errors;
 
 pub trait Entity {
     fn id(&self) -> &Uuid;

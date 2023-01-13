@@ -1,7 +1,7 @@
 <script lang="ts">
-    export let mainClass: string = '';
+	export let mainClass: string = '';
 </script>
 
 <main>
-    <slot/>
+	<slot />
 </main>

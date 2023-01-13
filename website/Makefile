@@ -10,13 +10,10 @@ default: release
 
 # Dependencies
 
-../components/package/package.json:
-	cd ../components && $(MAKE) build
-
-yarn.lock:
+yarn.lock: package.json
 	$(YARN)
 
-node_modules/.yarn-integrity: package.json yarn.lock ../components/package/package.json
+node_modules/.yarn-integrity: yarn.lock
 	$(YARN) && $(YARN) upgrade components
 
 # Development Workflow
@@ -49,6 +46,10 @@ release: check build
 
 preview: release
 	$(YARN) preview
+
+.PHONY: pretty
+pretty:
+	$(YARN) format
 
 .PHONY: clean
 clean:

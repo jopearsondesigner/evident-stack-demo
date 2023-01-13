@@ -37,7 +37,6 @@
 		"vitest": "^0.25.3"
 	},
 	"dependencies": {
-		"components": "workspace:../components/src/lib",
 		"classnames": "^2.3.2",
 		"svelte-layout-aware-transitions": "^0.0.5"
 	}

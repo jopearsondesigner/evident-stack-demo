@@ -4,5 +4,5 @@
 </script>
 
 <div class={navDivCLass}>
-	<slot/>
+	<slot />
 </div>

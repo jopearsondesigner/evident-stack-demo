@@ -22,8 +22,16 @@ jobs:
         with:
           node-version: 16
 
+      - name: Install dependencies
+        run: yarn
+        working-directory: website
+
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
+        working-directory: website
+
       - name: Build
-        run: make clean release
+        run: make release
         working-directory: website
 
       - name: Publish to Cloudflare Pages

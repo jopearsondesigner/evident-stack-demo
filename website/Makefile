@@ -47,6 +47,10 @@ release: check build
 preview: release
 	$(YARN) preview
 
+.PHONY: pretty
+pretty:
+	$(YARN) format
+
 .PHONY: clean
 clean:
 	rm -rf .svelte-kit/

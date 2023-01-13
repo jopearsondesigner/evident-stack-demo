@@ -3,5 +3,5 @@
 </script>
 
 <div class={toolbarClass}>
-	<slot/>
+	<slot />
 </div>

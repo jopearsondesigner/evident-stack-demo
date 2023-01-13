@@ -1,8 +1,7 @@
-<script lang='ts'>
-    export let heroContainerClass='container h-full';
+<script lang="ts">
+	export let heroContainerClass = 'container h-full';
 </script>
 
 <div class={heroContainerClass}>
-    <slot/>
+	<slot />
 </div>
-

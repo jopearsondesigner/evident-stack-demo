@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
 	export let href = '/';
 	export let alt: string;
 	export let src: string;

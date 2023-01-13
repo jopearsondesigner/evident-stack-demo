@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
 	import classNames from 'classnames';
 	import Icon from './Icon.svelte';
 	export let name = '';

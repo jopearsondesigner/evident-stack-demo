@@ -16,7 +16,7 @@
 	import FeaturesDesign from '$lib/components/assets/images/features/featuresDesign.svg';
 	import FeaturesImplement from '$lib/components/assets/images/features/featuresImplement.svg';
 	import FeaturesOperate from '$lib/components/assets/images/features/featuresOperate.svg';
-	import FeaturesLogo from '$lib/components/assets/images/features/featureslogo.svg';
+	import FeaturesLogo from '$lib/components/assets/images/features/featuresLogo.svg';
 	let activeTabValue = 1;
 	const handleClick = (tabValue: number) => () => {
 		activeTabValue = tabValue;

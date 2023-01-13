@@ -1,4 +1,4 @@
-import { EventModelStateManager, EventModelCreationContext } from "editor-state";
+import { default as init, EventModelStateManager, EventModelCreationContext } from "editor-state";
 import { readable, derived } from 'svelte/store';
 
 const initializeEventModelCreationContext = function() {
@@ -22,4 +22,8 @@ const initializeEventModelStore = function(id) {
   };
 }
 
-export { initializeEventModelStore, initializeEventModelCreationContext };
+const initWasm = async function() {
+    await init();
+}
+
+export { initWasm, initializeEventModelStore, initializeEventModelCreationContext };

@@ -1,0 +1,36 @@
+---
+name: Stage App on Pull Request
+run-name: Pull Request Staged by ${{ github.actor }}
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "app/**"
+jobs:
+  Publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    name: Publish to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Build
+        run: make release
+        working-directory: app
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_PAGES_API_KEY }}
+          accountId: 24a2b0f48cf4f2d0cd375521394e63bd
+          projectName: evidentstack-app
+          directory: app/.svelte-kit/cloudflare
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

@@ -1,11 +1,11 @@
-use serde_derive::{Deserialize, Serialize};
-use crate::EventModelId;
 use crate::types::audience::AudienceId;
-use crate::types::ComponentId;
 use crate::types::flow::{Anchor, FlowId};
 use crate::types::interface::InterfaceConfig;
 use crate::types::placement::PlacementId;
 use crate::types::stream::StreamId;
+use crate::types::ComponentId;
+use crate::EventModelId;
+use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum EventModelCommand {
@@ -50,5 +50,5 @@ pub enum EventModelCommand {
 
     // Flows
     ConnectFlow(EventModelId, PlacementId, Anchor, PlacementId, Anchor),
-    DisconnectFlow(EventModelId, FlowId)
+    DisconnectFlow(EventModelId, FlowId),
 }

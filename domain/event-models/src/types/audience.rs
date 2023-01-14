@@ -1,13 +1,13 @@
+use crate::types::{Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::types::{Entity, Named};
 
 pub type AudienceId = Uuid;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Audience {
     id: AudienceId,
-    name: String
+    name: String,
 }
 
 impl Entity for Audience {

@@ -20,7 +20,7 @@ pub struct MalliSchema {
     id: SchemaId,
     name: String,
     definition: String,
-    description: Option<String>
+    description: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

@@ -1,6 +1,6 @@
+use crate::types::{Described, Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::types::{Described, Entity, Named};
 
 pub type ReadModelId = Uuid;
 
@@ -8,7 +8,7 @@ pub type ReadModelId = Uuid;
 pub struct ReadModel {
     id: ReadModelId,
     name: String,
-    description: Option<String>
+    description: Option<String>,
 }
 
 impl ReadModel {
@@ -22,11 +22,15 @@ impl ReadModel {
 }
 
 impl Entity for ReadModel {
-    fn id(&self) -> &Uuid { &self.id }
+    fn id(&self) -> &Uuid {
+        &self.id
+    }
 }
 
 impl Named for ReadModel {
-    fn name(&self) -> &str { &self.name }
+    fn name(&self) -> &str {
+        &self.name
+    }
 
     fn rename(&mut self, name: &str) {
         self.name = name.to_string();

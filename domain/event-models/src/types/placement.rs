@@ -1,12 +1,12 @@
-use serde_derive::{Deserialize, Serialize};
-use uuid::Uuid;
-use crate::types::Entity;
+use crate::types::audience::AudienceId;
 use crate::types::command::CommandId;
 use crate::types::event::EventId;
 use crate::types::interface::InterfaceId;
 use crate::types::read_model::ReadModelId;
-use crate::types::audience::AudienceId;
 use crate::types::stream::StreamId;
+use crate::types::Entity;
+use serde_derive::{Deserialize, Serialize};
+use uuid::Uuid;
 
 pub type PlacementIndex = u32;
 pub type PlacementId = Uuid;
@@ -16,13 +16,13 @@ pub enum Placement {
     Interface(InterfacePlacement),
     Command(CommandPlacement),
     Event(EventPlacement),
-    ReadModel(ReadModelPlacement)
+    ReadModel(ReadModelPlacement),
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum TimelinePlacement {
     Command(CommandPlacement),
-    ReadModel(ReadModelPlacement)
+    ReadModel(ReadModelPlacement),
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -39,7 +39,7 @@ impl Entity for Placement {
             Placement::Interface(i) => &i.id,
             Placement::Command(c) => &c.id,
             Placement::Event(e) => &e.id,
-            Placement::ReadModel(r) => &r.id
+            Placement::ReadModel(r) => &r.id,
         }
     }
 }
@@ -49,14 +49,14 @@ pub struct InterfacePlacement {
     id: PlacementId,
     index: PlacementIndex,
     interface: InterfaceId,
-    audience: Option<AudienceId>
+    audience: Option<AudienceId>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CommandPlacement {
     id: PlacementId,
     index: PlacementIndex,
-    command: CommandId
+    command: CommandId,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -64,7 +64,7 @@ pub struct EventPlacement {
     id: PlacementId,
     index: PlacementIndex,
     event: EventId,
-    stream: Option<StreamId>
+    stream: Option<StreamId>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

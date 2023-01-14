@@ -1,13 +1,13 @@
+use crate::types::{Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::types::{Entity, Named};
 
 pub type StreamId = Uuid;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Stream {
     id: StreamId,
-    name: String
+    name: String,
 }
 
 impl Entity for Stream {

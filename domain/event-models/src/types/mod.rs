@@ -1,5 +1,3 @@
-use serde_derive::{Deserialize, Serialize};
-use uuid::Uuid;
 use crate::types::audience::{Audience, AudienceId};
 use crate::types::command::{Command, CommandId};
 use crate::types::errors::EventModelError;
@@ -7,9 +5,12 @@ use crate::types::event::{Event, EventId};
 use crate::types::interface::{Interface, InterfaceId};
 use crate::types::read_model::{ReadModel, ReadModelId};
 use crate::types::stream::{Stream, StreamId};
+use serde_derive::{Deserialize, Serialize};
+use uuid::Uuid;
 
 pub(crate) mod audience;
 pub(crate) mod command;
+pub mod errors;
 pub(crate) mod event;
 pub(crate) mod flow;
 pub(crate) mod interface;
@@ -17,18 +18,18 @@ pub(crate) mod placement;
 pub(crate) mod read_model;
 pub(crate) mod schema;
 pub(crate) mod stream;
-pub mod errors;
 
 pub trait Entity {
     fn id(&self) -> &Uuid;
 }
 
-
 pub fn validate_name(name: &str) -> Result<String, EventModelError> {
     if !name.is_empty() {
         Ok(name.to_string())
     } else {
-        Err(EventModelError::InvalidNameError("Name cannot be empty".to_string()))
+        Err(EventModelError::InvalidNameError(
+            "Name cannot be empty".to_string(),
+        ))
     }
 }
 
@@ -48,13 +49,13 @@ pub type LaneIndex = u32;
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum LaneId {
     AudienceLaneId(AudienceId),
-    StreamLaneId(StreamId)
+    StreamLaneId(StreamId),
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Lane {
     AudienceLane(Audience),
-    StreamLane(Stream)
+    StreamLane(Stream),
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

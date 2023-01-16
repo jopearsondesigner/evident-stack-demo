@@ -18,7 +18,6 @@
 	export let href: string = '';
 	let ulClass: string = 'flex space-x-8 items-center';
 	let website: boolean = false;
-	let acceptTerms = false;
 	export let hidden: boolean = false;
 	let handleMenu = () => {
 		hidden = !hidden;
@@ -85,7 +84,7 @@
 			<MobileNav>
 				<NavUl hidden>
 					<NavLi hidden>
-						<ThemeSwitch bind:checked={acceptTerms} />
+						<ThemeSwitch/>
 						<CloseButton on:click={() => handleMenu()} />
 					</NavLi>
 					<DropdownMenuMobile name="Why Design?">

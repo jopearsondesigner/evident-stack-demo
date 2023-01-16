@@ -1,5 +1,4 @@
 <script lang="ts">
-	import classNames from 'classnames';
 	import Container from '$lib/components/Container.svelte';
 	import SectionLabel from '$lib/components/typography/SectionLabel.svelte';
 	import Row from '$lib/components/Row.svelte';

@@ -28,20 +28,14 @@
 	let gridClass: string = 'grid lg:grid-cols-2 grid-col-1';
 	import Column from '$lib/components/Column.svelte';
 	import Logo from '$lib/components/assets/images/global/evidentStackLogo.svg';
-	export let alt = 'Brand Logo';
-	export let navBrandClass = 'flex min-w-[103.26px] no-underline';
-	export { navBrandClass as class };
-	export let product = 'oNote';
-	export let href: string = '';
+	export const alt = 'Brand Logo';
 	let ulClass: string = 'flex space-x-8 items-center';
 	let website: boolean = false;
-	let checked = false;
 	export let hidden: boolean = false;
-	// let backdrop: boolean = false;
 	let handleMenu = () => {
 		hidden = !hidden;
 	};
-	import { clickOutside } from '$lib/components/utils/clickOutside.js';
+	import { clickOutside } from 'svelte-use-click-outside';
 	export let bgColor: string = 'bg-gray-900';
 	export let bgOpacity: string = 'bg-opacity-75';
 	let backdropDivClass = classNames(
@@ -55,7 +49,7 @@
 	{#if !hidden}
 		<NavWrapper {hidden}>
 			<NabBrand href="/" src={Logo} height={32} class="flex my-4" />
-			<NavHamburger website on:click={() => handleMenu()} />
+			<NavHamburger website on:click={() => handleMenu()}/>
 			<Nav>
 				<NavUl>
 					<DropdownMenu name="Why Evident Stack?" {website}>
@@ -108,12 +102,12 @@
 		</NavWrapper>
 	{:else}
 		<NavWrapper hidden>
-			<div use:clickOutside on:click_outside={handleMenu}>
+			<div use:clickOutside={handleMenu}>
 				<MobileNav>
 					<NavUl hidden>
 						<NavLi hidden>
-							<ThemeSwitch {checked} />
-							<CloseButton on:click={() => handleMenu()} />
+							<ThemeSwitch/>
+							<CloseButton on:click={() => handleMenu()}/>
 						</NavLi>
 						<DropdownMenuMobile name="Why Design?">
 							<NavUl hidden>

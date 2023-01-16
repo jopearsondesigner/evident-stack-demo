@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { NavbarType } from '../types';
-	import { clickOutside } from '../utils/clickOutside';
 	import Icon from '../Icon.svelte';
 	import NavArrowDark from '../icons/NavArrowDark.svelte';
 	import NavArrowLight from '../icons/NavArrowLight.svelte';
@@ -8,11 +7,11 @@
 	export let liButtonClass: string =
 		'whitespace-nowrap inline-flex justify-center items-center py-4 text-sm text-body-light dark:text-body-dark hover:text-body-dark dark:hover:text-body-light focus:text-body-dark focus:hover:text-body-light focus:outline-none transition duration-300 ease-in-out';
 	export let name: string;
-	export let child: NavbarType[] = [];
+	export const child: NavbarType[] = [];
 	export let dropdownDiv: string =
 		'absolute whitespace-nowrap z-40 -ml-4 -mt-1 transform w-auto rounded-lg shadow-xl border border-light dark:border-border-dark overflow-hidden bg-white dark:bg-dark-2 px-4 py-4 sm:gap-8 sm:p-8';
-	export let dropdownLinkClassWithChild: string | undefined = undefined;
-	export let rel: string | undefined = undefined;
+	export const dropdownLinkClassWithChild: string | undefined = undefined;
+	export const rel: string | undefined = undefined;
 
 	let hidden = true;
 	let block = false;
@@ -27,7 +26,7 @@
 	let liClass = '';
 </script>
 
-<li use:clickOutside={() => !hidden && handleDropdown()} class={liClass}>
+<li class={liClass}>
 	<button on:click={() => handleDropdown()} class={liButtonClass}
 		>{name}
 		<Icon name="arrow-down" class="ml-1 stroke-2" iconColor="fill-current" size={12}

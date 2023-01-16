@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let checked = false;
+	export const checked = false;
 	import Icon from '../Icon.svelte';
 	import ThemeSwitchIcon from '../icons/ThemeSwitchIcon.svelte';
 	export const themeSwitchClass: string = '';

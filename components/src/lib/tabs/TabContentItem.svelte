@@ -3,7 +3,7 @@
 	export let activeTabValue: number;
 	export let id: number;
 	export let contentDivClass = 'p-4 min-h-sreen h-full';
-	import { fly, fade } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 	import { sineIn } from 'svelte/easing';
 	let transitionParams = {
 		x: 32,

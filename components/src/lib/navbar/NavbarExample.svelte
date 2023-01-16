@@ -1,5 +1,4 @@
 <script lang="ts">
-	import classNames from 'classnames';
 	import Navbar from './Navbar.svelte';
 	import NavInner from './NavInner.svelte';
 	import NavLeft from './NavLeft.svelte';

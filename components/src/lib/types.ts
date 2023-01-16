@@ -1,4 +1,4 @@
-export type ButtonType = ('button'|'submit');
+export type ButtonType = 'button' | 'submit';
 
 export interface NavbarType {
 	name: string;

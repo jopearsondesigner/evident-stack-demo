@@ -1,5 +1,4 @@
 <script lang="ts">
-	import classNames from 'classnames';
 	import Article from './Article.svelte';
 	import ArticleHead from './ArticleHead.svelte';
 	import ArticleBody from './ArticleBody.svelte';
@@ -9,7 +8,6 @@
 	import SectionHeader from '../typography/SectionHeader.svelte';
 	import SectionCopy from '../typography/SectionCopy.svelte';
 	import FeaturedBlogImage from '../assets/images/blog/blog-photo-4.png';
-	import Container from '../Container.svelte';
 	import A from '../typography/A.svelte';
 	import BlogImg1 from '../assets/images/blog/ss-navigation.png';
 	import BlogImg2 from '../assets/images/blog/ss-schemas.png';

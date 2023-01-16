@@ -2,6 +2,6 @@
 	export let mainClass: string = '';
 </script>
 
-<main>
+<main class={mainClass}>
 	<slot />
 </main>

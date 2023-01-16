@@ -4,7 +4,6 @@
 	import Column from '$lib/components/Column.svelte';
 	import Section from '$lib/components/Column.svelte';
 	import SectionHeader from '$lib/components/typography/SectionHeader.svelte';
-	import SectionCopy from '$lib/components/typography/SectionCopy.svelte';
 	import SectionLabel from '$lib/components/typography/SectionLabel.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import Pin from '$lib/components/icons/Pin.svelte';
@@ -13,7 +12,6 @@
 	import Form from '$lib/components/form/Form.svelte';
 	import Input from '$lib/components/form/Input.svelte';
 	import Textarea from '$lib/components/form/Textarea.svelte';
-	import Label from '$lib/components/form/Label.svelte';
 	import A from '$lib/components/typography/A.svelte';
 	import Submit from '$lib/components/form/Submit.svelte';
 </script>

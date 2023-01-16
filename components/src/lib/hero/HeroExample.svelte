@@ -14,12 +14,7 @@
 	import BackgroundImage from '../assets/images/homepage/hero/heroBgO.svg';
 	import ForegroundImage from '../assets/images/homepage/hero/heroLaptop.svg';
 	import ThemeSwitch from '../utils/ThemeSwitch.svelte';
-	export let heroClass = 'h-auto bg-white dark:bg-dark-1 text-body-light dark:text-body-dark';
-	export let heroContainerClass = 'container h-full';
-	export let heroGridClass = 'grid lg:grid-cols-2 grid-col-1';
-	export let heroFlexboxClass = 'flex justify-center';
-	export let heroCopyClass = 'lg:mt-0 mt-8 sm:mt-[-130px] mt-[-103px] mb-16 lg:ml-16';
-	export let heroImage = 'h-full relative w-auto overflow-hidden';
+	let heroFlexboxClass = 'flex justify-center';
 	export let gradientDividerClass =
 		'xl:mt-[-224px] lg:mt-[-150px] sm:mt-[-60px] mt-[-70px] h-[64px] bg-gradient-to-t from-gradient to-transparency opacity-20';
 </script>

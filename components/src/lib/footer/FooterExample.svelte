@@ -12,11 +12,9 @@
 	let gridClass: string = 'grid lg:grid-cols-2 grid-col-1';
 	import Column from '../Column.svelte';
 	import Logo from '../assets/images/global/evidentDesignLogo.svg';
-	export let alt = 'Brand Logo';
-	export let href: string = '';
-	export let navBrandClass = 'flex min-w-[103.26px] no-underline';
-	export { navBrandClass as class };
-	export let product = 'oNote';
+	export const alt = 'Brand Logo';
+	export const href: string = '';
+	export const product:string = '';
 </script>
 
 <div class="bg-white dark:bg-dark-1">

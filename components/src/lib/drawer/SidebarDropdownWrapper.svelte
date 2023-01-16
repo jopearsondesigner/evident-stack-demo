@@ -1,4 +1,4 @@
-<script>
+<script type="ts">
 	import classNames from 'classnames';
 	import './drawer.css';
 	import { slide } from 'svelte/transition';
@@ -21,14 +21,9 @@
 	export let label = '';
 	export let horizontal = false;
 	export let isHorizontalOpen = false;
-	/**
-	 * @type {{ contains: (arg0: any) => boolean; }}
-	 */
-	let container;
-	/**
-	 * @param {{ target: any; }} e
-	 */
-	function onWindowClick(e) {
+
+	let container: HTMLButtonElement;
+	function onWindowClick(e: { target: any; }) {
 		if (container.contains(e.target) == false) isHorizontalOpen = false;
 	}
 	export let isVerticalOpen = false;

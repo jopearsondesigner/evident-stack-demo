@@ -1,7 +1,7 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	export let sectionClass: string = 'lg:mt-0 mt-8';
-	export let divClass: string = '';
+	export const divClass: string = '';
 	let classes: string = '';
 	export { classes as class };
 	export let name: 'general' | 'benefit' | 'blog' | 'info' | 'resource' | 'feature' | 'terms';
@@ -30,7 +30,7 @@
 	};
 </script>
 
-<section class={classNames(sectionClass, $$props.sectionClass)}>
+<section class={classNames(sectionClass, classes, $$props.sectionClass)}>
 	<div class={classNames(sectionClasses[name]['div'], $$props.divClass)}>
 		<slot />
 	</div>

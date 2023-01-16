@@ -9,7 +9,6 @@
 	import SectionHeader from '$lib/components/typography/SectionHeader.svelte';
 	import SectionCopy from '$lib/components/typography/SectionCopy.svelte';
 	import FeaturedBlogImage from '$lib/components/assets/images/blog/blog-photo-4.png';
-	import Container from '$lib/components/Container.svelte';
 	import A from '$lib/components/typography/A.svelte';
 	import BlogImg1 from '$lib/components/assets/images/blog/ss-navigation.png';
 	import BlogImg2 from '$lib/components/assets/images/blog/ss-schemas.png';

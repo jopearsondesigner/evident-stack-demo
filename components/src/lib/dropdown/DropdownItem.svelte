@@ -7,11 +7,6 @@
 
 	let liClass: string;
 	$: liClass = classNames(defaultClass, href ? 'block' : 'w-full text-left', $$props.class);
-
-	let wrap: boolean = true;
-	function init(node: HTMLElement) {
-		wrap = node.parentElement?.tagName === 'UL';
-	}
 </script>
 
 <svelte:element

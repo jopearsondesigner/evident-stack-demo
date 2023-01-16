@@ -52,11 +52,7 @@
 			<NavHamburger website on:click={() => handleMenu()} />
 			<Nav>
 				<NavUl>
-					<DropdownMenu name="Why Evident Stack?" {website}>
-						<NavUl>
-							<NavLi href="/features">Features</NavLi>
-						</NavUl>
-					</DropdownMenu>
+					<NavLi href="/features">Features</NavLi>
 					<NavLi href="http://docs.onote.com/">Docs</NavLi>
 					<DropdownMenu name="Learn" {website}>
 						<NavUl>
@@ -109,11 +105,7 @@
 							<ThemeSwitch />
 							<CloseButton on:click={() => handleMenu()} />
 						</NavLi>
-						<DropdownMenuMobile name="Why Design?">
-							<NavUl hidden>
-								<NavLi hidden href="/features">Features</NavLi>
-							</NavUl>
-						</DropdownMenuMobile>
+						<NavLi hidden href="/features">Features</NavLi>
 						<NavLi hidden href="http://docs.onote.com/">Docs</NavLi>
 						<DropdownMenuMobile name="Learn">
 							<NavUl hidden>
@@ -179,7 +171,9 @@
 				<Column class="flex-none col-span-3">
 					<Row class="grid grid-cols-3 gap-4 py-4">
 						<Column class="flex">
-							<FooterLinkGroup label="Why Design?">
+							<FooterLinkGroup
+								liClass="pb-2 w-full text-sm font-bold text-body-light dark:text-body-dark"
+							>
 								<FooterLink label="Features" href="/features" />
 							</FooterLinkGroup>
 						</Column>

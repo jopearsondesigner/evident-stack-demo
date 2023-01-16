@@ -23,7 +23,7 @@
 	export let isHorizontalOpen = false;
 
 	let container: HTMLButtonElement;
-	function onWindowClick(e: { target: any; }) {
+	function onWindowClick(e: { target: any }) {
 		if (container.contains(e.target) == false) isHorizontalOpen = false;
 	}
 	export let isVerticalOpen = false;

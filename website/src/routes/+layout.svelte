@@ -49,7 +49,7 @@
 	{#if !hidden}
 		<NavWrapper {hidden}>
 			<NabBrand href="/" src={Logo} height={32} class="flex my-4" />
-			<NavHamburger website on:click={() => handleMenu()}/>
+			<NavHamburger website on:click={() => handleMenu()} />
 			<Nav>
 				<NavUl>
 					<DropdownMenu name="Why Evident Stack?" {website}>
@@ -106,8 +106,8 @@
 				<MobileNav>
 					<NavUl hidden>
 						<NavLi hidden>
-							<ThemeSwitch/>
-							<CloseButton on:click={() => handleMenu()}/>
+							<ThemeSwitch />
+							<CloseButton on:click={() => handleMenu()} />
 						</NavLi>
 						<DropdownMenuMobile name="Why Design?">
 							<NavUl hidden>

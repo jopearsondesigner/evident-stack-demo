@@ -84,7 +84,7 @@
 			<MobileNav>
 				<NavUl hidden>
 					<NavLi hidden>
-						<ThemeSwitch/>
+						<ThemeSwitch />
 						<CloseButton on:click={() => handleMenu()} />
 					</NavLi>
 					<DropdownMenuMobile name="Why Design?">

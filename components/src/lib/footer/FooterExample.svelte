@@ -14,7 +14,7 @@
 	import Logo from '../assets/images/global/evidentDesignLogo.svg';
 	export const alt = 'Brand Logo';
 	export const href: string = '';
-	export const product:string = '';
+	export const product: string = '';
 </script>
 
 <div class="bg-white dark:bg-dark-1">

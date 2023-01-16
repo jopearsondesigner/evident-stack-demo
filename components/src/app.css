@@ -5,11 +5,9 @@
 @tailwind utilities;
 
 @font-face {
-	font-family: 'strokeweight160';
-	src: url('strokeweight_160-webfont.woff2') format('woff2'),
-		url('strokeweight_160-webfont.woff') format('woff');
-	font-weight: normal;
-	font-style: normal;
+	font-family: 'strokeWeight';
+	src: url('/fonts/font.woff2') format('woff2-variations');
+	src: url('/fonts/font.woff') format('woff-variations');
 }
 
 body {

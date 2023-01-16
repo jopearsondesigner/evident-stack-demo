@@ -7,7 +7,7 @@ module.exports = {
 			primary: 'lato, san-serif',
 			copy: 'lato, san-serif',
 			sans: 'lato, san-serif',
-			header: 'strokeweight160, sans-serif'
+			header: 'strokeWeight, sans-serif'
 		},
 		extend: {
 			colors: {

@@ -104,7 +104,7 @@
 								</SectionCopy>
 								<SectionHeader
 									tag="h2"
-									hClass="leading-[1.27] font-copy font-bold mb-4 text-left"
+									hClass="leading-[1.27] font-header font-bold mb-4 text-left"
 									color="text-gray-brand-2 dark:text-gray-brand-4"
 									customSize="lg:text-[30px] text-[24px]"
 								>
@@ -137,7 +137,7 @@
 								</SectionCopy>
 								<SectionHeader
 									tag="h2"
-									hClass="leading-[1.27] font-copy font-bold mb-4 text-left"
+									hClass="leading-[1.27] font-header font-bold mb-4 text-left"
 									color="text-gray-brand-2 dark:text-gray-brand-4"
 									customSize="lg:text-[30px] text-[24px]"
 								>
@@ -166,7 +166,7 @@
 								</SectionCopy>
 								<SectionHeader
 									tag="h2"
-									hClass="leading-[1.27] font-copy font-bold mb-4 text-left"
+									hClass="leading-[1.27] font-header font-bold mb-4 text-left"
 									color="text-gray-brand-2 dark:text-gray-brand-4"
 									customSize="lg:text-[30px] text-[24px]"
 								>

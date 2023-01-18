@@ -241,7 +241,13 @@ impl Evolver for EventModelDecider {
 }
 
 impl Event for EventModelEvent {
+    type EntityId = String;
+
     fn event_type(&self) -> String {
+        todo!()
+    }
+
+    fn get_id(&self) -> Self::EntityId {
         todo!()
     }
 }

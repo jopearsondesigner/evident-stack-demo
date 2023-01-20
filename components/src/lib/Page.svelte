@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Navbar from './websitenavbar/NavbarWebExample.svelte';
+	import Navbar from './navbar/NavbarWebExample.svelte';
 	import Hero from './hero/HeroExample.svelte';
 	import Main from './MainExample.svelte';
 	import Footer from './footer/FooterExample.svelte';

@@ -1,8 +1,7 @@
 <script>
-	import './navbar.css';
-	export let toolbarClass = 'px-3 h-9 border-x border-gray-secondary flex items-center';
+	export let navClass = 'px-3 h-9 flex items-center';
 </script>
 
-<div class={toolbarClass}>
+<nav class={navClass}>
 	<slot />
-</div>
+</nav>

@@ -4,7 +4,7 @@
 	import ThemeSwitchIcon from '../icons/ThemeSwitchIcon.svelte';
 	export const themeSwitchClass: string = '';
 
-	import { browser } from '$app/environment';
+	// import { browser } from '$app/environment';
 
 	let darkMode = true;
 
@@ -18,18 +18,18 @@
 			: document.documentElement.classList.remove('dark');
 	}
 
-	if (browser) {
-		if (
-			localStorage.theme === 'dark' ||
-			(!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-		) {
-			document.documentElement.classList.add('dark');
-			darkMode = true;
-		} else {
-			document.documentElement.classList.remove('dark');
-			darkMode = false;
-		}
-	}
+	// if (browser) {
+	// 	if (
+	// 		localStorage.theme === 'dark' ||
+	// 		(!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+	// 	) {
+	// 		document.documentElement.classList.add('dark');
+	// 		darkMode = true;
+	// 	} else {
+	// 		document.documentElement.classList.remove('dark');
+	// 		darkMode = false;
+	// 	}
+	// }
 </script>
 
 <label class="switch" for="theme-toggle">

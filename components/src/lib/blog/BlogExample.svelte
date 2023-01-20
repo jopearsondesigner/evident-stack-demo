@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Navbar from '../websitenavbar/Navbar.svelte';
-	import NavWrapper from '../websitenavbar/NavWrapper.svelte';
-	import Nav from '../websitenavbar/Nav.svelte';
-	import NavUl from '../websitenavbar/NavUl.svelte';
-	import NavLi from '../websitenavbar/NavLi.svelte';
+	import Navbar from '../navbar/Navbar.svelte';
+	import NavWrapper from '../navbar/NavWrapper.svelte';
+	import Nav from '../navbar/Nav.svelte';
+	import NavUl from '../navbar/NavUl.svelte';
+	import NavLi from '../navbar/NavLi.svelte';
 	import Container from '../Container.svelte';
 	import Section from '../Section.svelte';
 	import SectionHeader from '../typography/SectionHeader.svelte';

@@ -1,4 +1,4 @@
-import WebsiteNavbar from '../lib/websitenavbar/NavbarWebExample.svelte';
+import WebsiteNavbar from '../lib/navbar/NavbarWebExample.svelte';
 
 export default {
 	title: 'Website/Navbar',

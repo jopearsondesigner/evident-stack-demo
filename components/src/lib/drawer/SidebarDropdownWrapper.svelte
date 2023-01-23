@@ -1,6 +1,5 @@
 <script type="ts">
 	import classNames from 'classnames';
-	import './drawer.css';
 	import { slide } from 'svelte/transition';
 	import { sineIn } from 'svelte/easing';
 	import { slideRight } from 'svelte-layout-aware-transitions';
@@ -47,9 +46,9 @@
 			<slot name="icon" />
 			<span class={classNames(headerTextClass, sidebarSpanClass)}>{label}</span>
 			{#if isHorizontalOpen}
-				<Icon name="open-right" size={20} iconColor="text-brand-4"><OpenRight /></Icon>
+				<Icon name="open-right" size={16} iconColor="text-brand-4"><OpenRight /></Icon>
 			{:else}
-				<Icon name="close-left" size={20} iconColor="text-brand-4"><CloseLeft /></Icon>
+				<Icon name="close-left" size={16} iconColor="text-brand-4"><CloseLeft /></Icon>
 			{/if}
 		</button>
 		<div class={classNames(verticalWrapperClass)}>
@@ -71,9 +70,9 @@
 		>
 			<span class={classNames(headerTextClass, sidebarSpanClass)}>{label}</span>
 			{#if isVerticalOpen}
-				<Icon name="close-down" size={20} iconColor="text-brand-4"><CloseUp /></Icon>
+				<Icon name="close-down" size={16} iconColor="text-brand-4"><CloseUp /></Icon>
 			{:else}
-				<Icon name="open-down" size={20} iconColor="text-brand-4"><OpenDown /></Icon>
+				<Icon name="open-down" size={16} iconColor="text-brand-4"><OpenDown /></Icon>
 			{/if}
 		</button>
 		{#if isVerticalOpen}

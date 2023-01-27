@@ -8,26 +8,31 @@ use crate::types::placement::{
 use crate::types::stream::Stream;
 use crate::EventModel;
 
-fn grid(event_model: &impl EventModel) -> Vec<GridLane> {
-    let lane_count = 1 // default audience
-        + event_model.audiences().len() // audiences
-        + 1 // timeline
-        + event_model.streams().len() // streams
-        + 1; // default stream
-    let mut lanes: Vec<GridLane> = Vec::with_capacity(lane_count);
-    todo!();
-    lanes
+fn grid(event_model: &impl EventModel) -> Grid {
+    todo!()
 }
 
-// TODO: implement in terms of owned DTO versions of these types,
-//  rather than references to domain types
-pub enum GridLane<'a> {
-    DefaultAudience(HashMap<PlacementIndex, &'a InterfacePlacement>),
-    Audience(
-        &'a Audience,
-        HashMap<PlacementIndex, &'a InterfacePlacement>,
-    ),
-    Timeline(HashMap<PlacementIndex, &'a TimelinePlacement>),
-    Stream(&'a Stream, HashMap<PlacementIndex, &'a EventPlacement>),
-    Default(&'a HashMap<PlacementIndex, &'a EventPlacement>),
+pub struct DefaultAudienceLane(HashMap<PlacementIndex, InterfacePlacement>);
+pub struct AudienceLane(Audience, HashMap<PlacementIndex, InterfacePlacement>);
+pub struct TimelineLane(HashMap<PlacementIndex, TimelinePlacement>);
+pub struct StreamLane(Stream, HashMap<PlacementIndex, EventPlacement>);
+pub struct DefaultStreamLane(HashMap<PlacementIndex, EventPlacement>);
+
+pub struct Grid {
+    default_audience: DefaultAudienceLane,
+    audiences: Vec<AudienceLane>,
+    timeline: TimelineLane,
+    streams: Vec<StreamLane>,
+    default_stream: DefaultStreamLane,
+}
+
+impl Grid {
+    fn lane_count(&self) -> usize {
+        1 + self.audiences.len() + 1 + self.streams.len() + 1
+    }
+
+    fn column_count(&self) -> usize {
+        // find max placement index from all lanes
+        todo!()
+    }
 }

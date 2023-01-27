@@ -40,9 +40,9 @@
 	import Icon from '$lib/components/Icon.svelte';
 	import ArrowRight from '$lib/components/icons/ArrowRight.svelte';
 	import Logo from '$lib/components/assets/images/global/evidentDesignLogo.svg';
-	import Navbar from '$lib/components/websitenavbar/Navbar.svelte';
-	import NavWrapper from '$lib/components/websitenavbar/NavWrapper.svelte';
-	import NabBrand from '$lib/components/websitenavbar/NavBrand.svelte';
+	import Navbar from '$lib/components/navbar/Navbar.svelte';
+	import NavWrapper from '$lib/components/navbar/NavWrapper.svelte';
+	import NabBrand from '$lib/components/navbar/NavBrand.svelte';
 	let website: boolean = true;
 </script>
 

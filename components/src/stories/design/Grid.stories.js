@@ -1,11 +1,8 @@
-import Main from '../../lib/MainExample.svelte';
+import Grid from '../../lib/design/Grid.svelte';
 
 export default {
 	title: 'Evident Design/Grid',
-	component: Main,
-	parameters: {
-		layout: 'fullscreen'
-	},
+	component: Grid,
 	argTypes: {}
 };
 

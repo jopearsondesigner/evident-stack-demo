@@ -1,22 +1,22 @@
 <script>
-  import MaybeTooltip from '../../../utils/MaybeTooltip.svelte';
-  import markdown from '../../../utils/markdown.js';
+  import MaybeTooltip from '../../utils/MaybeTooltip.svelte';
+  import markdown from '../../utils/markdown.js';
 
   /* TODO: UUID */
   /* @type {string} */
-  export let id;
+  export let id = "";
 
   /* @type {string} */
-  export let title;
+  export let title = "";
 
   /* @type {string | null} */
-  export let description;
+  export let description = "";
 
   /* @type {number} */
-  export let row;
+  export let row = 0;
 
   /* @type {number} */
-  export let column;
+  export let column = 0;
 
   /* @type {boolean} */
   export let cursor = false;
@@ -25,7 +25,7 @@
 </script>
 
 <div
-  id={id}
+  id="{id}"
   class="placement z-30 flex place-self-center align-items-center p-3"
   class:cursor
   style="grid-row: {row} / {row}; grid-column: {column} / {column};">

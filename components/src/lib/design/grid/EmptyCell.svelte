@@ -1,9 +1,9 @@
 <script>
   /* @type {number} */
-  export let row;
+  export let row = 0;
 
   /* @type {number} */
-  export let column;
+  export let column = 0;
 
   /* @type {boolean} */
   export let cursor = false;

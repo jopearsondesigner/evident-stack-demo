@@ -2,10 +2,10 @@
   import Interface from './Interface.svelte';
 
   /* @type {number} */
-  export let row;
+  export let row = 0;
 
-  /* @type {string | undefined} */
-  export let title;
+  /* @type {string} */
+  export let title = "";
 
   /* @type {Object.<number,
              {id:   string,
@@ -14,7 +14,7 @@
              description?: string,
              index: number
              }>} */
-  export let placements;
+  export let placements = {};
 </script>
 
 {#if title}
@@ -23,6 +23,6 @@
 
 <div class="audience" style="grid-row: {row} / {row};" />
 
-{#each placements.values() as {id, title, description, index} (id) }
+{#each Object.values(placements) as {id, title, description, index} (id) }
   <Interface id={id} title={title} description={description} row={row} column={index + 1} />
 {/each}

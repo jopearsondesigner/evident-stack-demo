@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
   import Audience from './grid/Audience.svelte';
   import Timeline from './grid/Timeline.svelte';
   import Stream   from './grid/Stream.svelte';
@@ -10,7 +12,7 @@
              title: string,
              description?: string,
              }>} */
-  export let default_audience;
+  export let default_audience = {};
 
   /* @type {Array.<{title: string,
              placements: {Object.<number,
@@ -19,7 +21,7 @@
              title: string,
              description?: string,
              }>}}>} */
-  export let audiences;
+  export let audiences = [];
 
   // TODO: use Rust-generated types
   /* @type {Object.<number,
@@ -28,7 +30,7 @@
              title: string,
              description?: string,
              }>} */
-  export let timeline;
+  export let timeline = {};
 
   /* @type {Array.<{title: string,
              placements: {Object.<number,
@@ -37,7 +39,7 @@
              title: string,
              description?: string,
              }>}}>} */
-  export let streams;
+  export let streams = [];
 
   // TODO: use Rust-generated types
   /* @type {Object.<number,
@@ -46,11 +48,11 @@
              title: string,
              description?: string,
              }>} */
-  export let default_stream;
+  export let default_stream = {};
 
   $: timelineRow = 1 + audiences.length + 1
 
-  $: defaultStreamRow = timelineOffset + streams.length + 1
+  $: defaultStreamRow = timelineRow + streams.length + 1
 </script>
 
 <Audience row=1 placements={default_audience} />

@@ -1,0 +1,44 @@
+---
+name: Publish Website to Production
+run-name: Production publish by ${{ github.actor }}
+on:
+  release:
+    types:
+      - published
+    paths:
+      - "website/**"
+jobs:
+  Publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    name: Publish to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: yarn
+        working-directory: website
+
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
+        working-directory: website
+
+      - name: Build
+        run: make release
+        working-directory: website
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_PAGES_API_KEY }}
+          accountId: 24a2b0f48cf4f2d0cd375521394e63bd
+          projectName: evidentstack-website
+          directory: website/.svelte-kit/cloudflare
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

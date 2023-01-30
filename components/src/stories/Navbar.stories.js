@@ -1,8 +1,8 @@
-import NavbarExample from '../lib/navbar/NavbarExample.svelte';
+import Navbar from '../lib/navbar/NavbarExample.svelte';
 
 export default {
-	title: 'global/NavbarExample',
-	component: NavbarExample,
+	title: 'global/Navbar',
+	component: Navbar,
 	parameters: {
 		// More on Story layout: https://storybook.js.org/docs/svelte/configure/story-layout
 		layout: 'fullscreen'
@@ -15,7 +15,7 @@ export default {
 };
 
 const Template = (/** @type {{ onLogin: any; onLogout: any; onCreateAccount: any; }} */ args) => ({
-	Component: NavbarExample,
+	Component: Navbar,
 	props: args,
 	on: {
 		login: args.onLogin,
@@ -27,13 +27,3 @@ const Template = (/** @type {{ onLogin: any; onLogout: any; onCreateAccount: any
 export const Default = Template.bind({});
 // @ts-ignore
 Default.args = {};
-
-// export const LoggedIn = Template.bind({});
-// LoggedIn.args = {
-// 	user: {
-// 		name: 'Jane Doe'
-// 	}
-// };
-
-// export const LoggedOut = Template.bind({});
-// LoggedOut.args = {};

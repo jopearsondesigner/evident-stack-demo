@@ -1,13 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-	content: ['./src/**/*.{html,js,svelte,ts}'],
-	// darkMode: 'class',
+	darkMode: 'class',
+	content: ['./src/**/*.{html,js,svelte,ts}', '../components/src/lib/**/*.svelte'],
 	theme: {
 		fontFamily: {
 			primary: 'lato, san-serif',
 			copy: 'lato, san-serif',
 			sans: 'lato, san-serif',
-			header: 'niveau-grotesk, sans-serif'
+			header: 'strokeWeight, sans-serif'
 		},
 		extend: {
 			colors: {
@@ -24,6 +24,24 @@ module.exports = {
 				'gray-brand-3': '#839496',
 				'gray-brand-4': '#93A1A1',
 				'gray-bg': '#EEEEEE',
+				'design-brand-100': '#FEEDE1',
+				'design-brand-200': '#FEDCC3',
+				'design-brand-300': '#FDC7A0',
+				'design-brand-400': '#FCAC73',
+				'design-brand-500': '#FB8C3A',
+				'design-brand-600': '#FA710F',
+				'design-brand-700': '#E16005',
+				'design-brand-800': '#B94F04',
+				'design-brand-900': '#873A03',
+				'stack-brand-100': '#E0F4FB',
+				'stack-brand-200': '#C1EAF6',
+				'stack-brand-300': '#98DCF0',
+				'stack-brand-400': '#6CCCEA',
+				'stack-brand-500': '#2FB6E1',
+				'stack-brand-600': '#1EA4CD',
+				'stack-brand-700': '#1A92B7',
+				'stack-brand-800': '#167998',
+				'stack-brand-900': '#0F566B',
 				'brand-primary': '#2FB6E1',
 				'brand-secondary': '#FB8C3A',
 				'dark-1': '#002B36',
@@ -77,6 +95,7 @@ module.exports = {
 	plugins: [
 		require('@tailwindcss/typography'),
 		require('daisyui'),
+		require('@tailwindcss/line-clamp'),
 		function ({ addComponents }) {
 			addComponents({
 				'.container': {

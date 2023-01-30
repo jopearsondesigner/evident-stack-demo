@@ -1,14 +1,15 @@
-<script lang='ts'>
-    export let src = '';
-	export let alt:string = "Brand Logo";
-    export let href:string = '/';
-    export let height:number = 24;
-    export let logoClass='lg:h-[24px] h-[25px] ml-4';
-    export let product:string = '';
+<script lang="ts">
+	import classNames from 'classnames';
+	export let src = '';
+	export let alt: string = 'Brand Logo';
+	export let href: string = '/';
+	export let height: number = 32;
+	export let logoClass = 'ml-4';
+	export let product: string = '';
 </script>
 
 <!-- FooterBrand -->
 <a {href}>
-    <span class="sr-only">{product}</span>
-    <img class={logoClass} {src} {alt} {height}>
+	<span class="sr-only">{product}</span>
+	<img {src} {alt} {height} class={classNames(logoClass)} style="height:{height}px" />
 </a>

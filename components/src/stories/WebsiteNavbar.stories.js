@@ -1,13 +1,13 @@
-import WebsiteNavbar from '../lib/websitenavbar/NavbarExample.svelte';
+import Navbar from '../lib/navbar/NavbarWebExample.svelte';
 
 export default {
 	title: 'Website/Navbar',
-	component: WebsiteNavbar,
+	component: Navbar,
 	argTypes: {}
 };
 
 const Template = (/** @type {any} */ args) => ({
-	Component: WebsiteNavbar,
+	Component: Navbar,
 	props: args
 });
 

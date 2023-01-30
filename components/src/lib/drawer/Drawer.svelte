@@ -1,5 +1,4 @@
 <script>
-	import './drawer.css';
 	import { fly } from 'svelte/transition';
 	import { sineIn } from 'svelte/easing';
 	export let hidden = true;

@@ -21,6 +21,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.5",
     "@playwright/test": "^1.28.1",
+    "@tailwindcss/line-clamp": "^0.4.2",
     "@storybook/addon-essentials": "next",
     "@storybook/addon-interactions": "next",
     "@storybook/addon-links": "next",

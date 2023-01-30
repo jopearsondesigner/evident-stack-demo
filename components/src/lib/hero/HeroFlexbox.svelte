@@ -1,9 +1,8 @@
-<script lang='ts'>
-    import classNames from 'classnames';
-    export let heroFlexboxClass='flex justify-center';
-    export {heroFlexboxClass as class};
+<script lang="ts">
+	export let heroFlexboxClass = 'flex justify-center';
+	export { heroFlexboxClass as class };
 </script>
 
 <div class={heroFlexboxClass}>
-    <slot/>
+	<slot />
 </div>

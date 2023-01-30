@@ -78,12 +78,12 @@ Success.args = {
 	label: 'Success'
 };
 
-export const BrandPrimary = Template.bind({});
+export const brandDesignPrimary = Template.bind({});
 // @ts-ignore
-BrandPrimary.args = {
+brandDesignPrimary.args = {
 	gradient: true,
 	size: 'md',
-	color: 'brandPrimary',
+	color: 'brandDesignPrimary',
 	label: 'Brand Primary'
 };
 
@@ -92,7 +92,7 @@ export const BrandSecondary = Template.bind({});
 BrandSecondary.args = {
 	gradient: true,
 	size: 'md',
-	color: 'brandSecondary',
+	color: 'brandStackPrimary',
 	label: 'Brand Secondary'
 };
 
@@ -101,6 +101,6 @@ export const BrandSecondarySmall = Template.bind({});
 BrandSecondarySmall.args = {
 	gradient: true,
 	size: 'sm',
-	color: 'brandSecondary',
+	color: 'brandStackPrimary',
 	label: 'Sign Up'
 };

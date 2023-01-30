@@ -75,7 +75,6 @@ pub trait EventModelComponentModifier: EventModelModifier {
 pub trait EventModelPlacementModifier: EventModelModifier {
     fn component_placed(self, placement: &Placement) -> Self;
     fn placement_moved(self, position: &PlacementPosition) -> Self;
-
     fn placement_removed(self, placement_id: &PlacementId) -> Self;
 }
 

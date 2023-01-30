@@ -1,18 +1,18 @@
 <script lang="ts">
 	import '../app.css';
 	import classNames from 'classnames';
-	import Navbar from '$lib/components/websitenavbar/Navbar.svelte';
-	import NavWrapper from '$lib/components/websitenavbar/NavWrapper.svelte';
-	import NabBrand from '$lib/components/websitenavbar/NavBrand.svelte';
-	import NavHamburger from '$lib/components/websitenavbar/NavHamburger.svelte';
+	import Navbar from '$lib/components/navbar/Navbar.svelte';
+	import NavWrapper from '$lib/components/navbar/NavWrapper.svelte';
+	import NabBrand from '$lib/components/navbar/NavBrand.svelte';
+	import NavHamburger from '$lib/components/navbar/NavHamburger.svelte';
 	import CloseButton from '$lib/components/utils/CloseButton.svelte';
 	import ThemeSwitch from '$lib/components/utils/ThemeSwitch.svelte';
-	import Nav from '$lib/components/websitenavbar/Nav.svelte';
-	import MobileNav from '$lib/components/websitenavbar/MobileNav.svelte';
+	import Nav from '$lib/components/navbar/Nav.svelte';
+	import MobileNav from '$lib/components/navbar/MobileNav.svelte';
 	import DropdownMenu from '$lib/components/dropdown/DropdownMenu.svelte';
 	import DropdownMenuMobile from '$lib/components/dropdown/DropdownMenuMobile.svelte';
-	import NavUl from '$lib/components/websitenavbar/NavUl.svelte';
-	import NavLi from '$lib/components/websitenavbar/NavLi.svelte';
+	import NavUl from '$lib/components/navbar/NavUl.svelte';
+	import NavLi from '$lib/components/navbar/NavLi.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import ArrowRight from '$lib/components/icons/ArrowRight.svelte';

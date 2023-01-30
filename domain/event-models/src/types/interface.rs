@@ -1,8 +1,8 @@
+use crate::types::errors::EventModelError;
+use crate::types::{Described, Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
-use crate::types::{Described, Entity, Named};
-use crate::types::errors::EventModelError;
 
 pub type InterfaceId = Uuid;
 
@@ -12,7 +12,7 @@ pub enum InterfaceConfig {
     None,
     Figma(Url, Option<u32>, Option<u32>),
     Image(Url, Option<u32>, Option<u32>),
-    Job
+    Job,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

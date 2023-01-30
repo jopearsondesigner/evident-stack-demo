@@ -22,6 +22,12 @@ jobs:
         with:
           node-version: 16
 
+      - uses: jetli/wasm-pack-action@v0.4.0
+
+      - name: Build editor-state
+        run: yarn state:build
+        working-directory: app
+
       - name: Install dependencies
         run: yarn
         working-directory: app

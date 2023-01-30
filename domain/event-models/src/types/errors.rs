@@ -6,5 +6,5 @@ pub enum EventModelError {
     InvalidNameError(String),
     CreationError(String),
     ModificationError(String),
-    IllegalFlowArrow(String)
+    IllegalFlowArrow(String),
 }

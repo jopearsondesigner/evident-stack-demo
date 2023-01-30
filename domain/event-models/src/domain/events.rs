@@ -1,9 +1,9 @@
-use serde_derive::{Deserialize, Serialize};
-use crate::EventModelId;
-use crate::types::{Component, ComponentId, Lane, LaneId};
 use crate::types::flow::{FlowArrow, FlowId};
 use crate::types::interface::InterfaceConfig;
 use crate::types::placement::{Placement, PlacementId, PlacementPosition};
+use crate::types::{Component, ComponentId, Lane, LaneId};
+use crate::EventModelId;
+use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum EventModelEvent {
@@ -35,6 +35,5 @@ pub enum EventModelEvent {
     // Flows
     FlowConnected(EventModelId, FlowArrow),
     FlowDisconnected(EventModelId, FlowId),
-
     // TODO: Schemas
 }

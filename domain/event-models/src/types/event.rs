@@ -1,6 +1,6 @@
+use crate::types::{Described, Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::types::{Described, Entity, Named};
 
 pub type EventId = Uuid;
 
@@ -8,7 +8,7 @@ pub type EventId = Uuid;
 pub struct Event {
     id: EventId,
     name: String,
-    description: Option<String>
+    description: Option<String>,
 }
 
 impl Event {
@@ -22,11 +22,15 @@ impl Event {
 }
 
 impl Entity for Event {
-    fn id(&self) -> &Uuid { &self.id }
+    fn id(&self) -> &Uuid {
+        &self.id
+    }
 }
 
 impl Named for Event {
-    fn name(&self) -> &str { &self.name }
+    fn name(&self) -> &str {
+        &self.name
+    }
 
     fn rename(&mut self, name: &str) {
         self.name = name.to_string();

@@ -1,13 +1,9 @@
-extern crate url;
-extern crate uuid;
 extern crate core;
 #[cfg(feature = "cbor")]
 extern crate serde_cbor;
+extern crate url;
+extern crate uuid;
 
-use uuid::Uuid;
-use std::collections::HashMap;
-use types::placement::PlacementPosition;
-use crate::types::{Component, ComponentId, ComponentMut, Described, Lane, LaneId, LaneIndex};
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
 use crate::types::event::{Event, EventId};
@@ -17,12 +13,16 @@ use crate::types::placement::{Placement, PlacementId};
 use crate::types::read_model::{ReadModel, ReadModelId};
 use crate::types::schema::{Schema, SchemaId};
 use crate::types::stream::Stream;
+use crate::types::{Component, ComponentId, ComponentMut, Described, Lane, LaneId, LaneIndex};
+use std::collections::HashMap;
+use types::placement::PlacementPosition;
+use uuid::Uuid;
 
-pub mod domain;
 pub mod application;
-pub mod types;
-pub mod grid;
 pub mod default;
+pub mod domain;
+pub mod grid;
+pub mod types;
 
 pub type EventModelId = Uuid;
 
@@ -62,22 +62,19 @@ pub trait EventModelComponentModifier: EventModelModifier {
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
     fn added_to_component_description(
-        self, component_id: &ComponentId, index: u32, addition: &str
+        self,
+        component_id: &ComponentId,
+        index: u32,
+        addition: &str,
     ) -> Self;
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn deleted_from_component_description(
-        self, component_id: &ComponentId, index: u32
-    ) -> Self;
+    fn deleted_from_component_description(self, component_id: &ComponentId, index: u32) -> Self;
 }
 
 pub trait EventModelPlacementModifier: EventModelModifier {
     fn component_placed(self, placement: &Placement) -> Self;
-    fn placement_moved(
-        self,
-        position: &PlacementPosition
-    ) -> Self;
-
+    fn placement_moved(self, position: &PlacementPosition) -> Self;
     fn placement_removed(self, placement_id: &PlacementId) -> Self;
 }
 
@@ -101,8 +98,7 @@ pub trait EventModelSchemaModifier: EventModelComponentModifier {
     fn added_to_schema_definition(self, schema_id: &SchemaId, index: u32, addition: &str) -> Self;
     fn deleted_from_schema_definition(self, schema_id: &SchemaId, index: u32) -> Self;
 
-    fn added_to_schema_description(self, schema_id: &SchemaId, index: u32, addition: &str
-    ) -> Self;
+    fn added_to_schema_description(self, schema_id: &SchemaId, index: u32, addition: &str) -> Self;
     fn deleted_from_schema_description(self, schema_id: &SchemaId, index: u32) -> Self;
 
     fn remove_schema(self, schema_id: &SchemaId) -> Self;

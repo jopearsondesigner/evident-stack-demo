@@ -12,6 +12,8 @@ default = ["console_error_panic_hook"]
 
 [dependencies]
 event-models = { path = "../../domain/event-models" }
+# domain_functions = { git = "https://github.com/evidentstack/domain_functions.rs" }
+epoch = { git = "https://github.com/Shearerbeard/Epoch", branch = "decider", default-features = false, features = ["in_memory"] }
 getrandom = { version = "0.2", features = ["js"] }
 wasm-bindgen = "0.2"
 serde-wasm-bindgen = "0.4"

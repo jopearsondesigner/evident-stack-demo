@@ -1,7 +1,7 @@
+use crate::types::errors::EventModelError;
+use crate::types::{Described, Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::types::{Described, Entity, Named};
-use crate::types::errors::EventModelError;
 
 pub type CommandId = Uuid;
 
@@ -9,7 +9,7 @@ pub type CommandId = Uuid;
 pub struct Command {
     id: CommandId,
     name: String,
-    description: Option<String>
+    description: Option<String>,
 }
 
 impl Command {
@@ -24,11 +24,15 @@ impl Command {
 }
 
 impl Entity for Command {
-    fn id(&self) -> &Uuid { &self.id }
+    fn id(&self) -> &Uuid {
+        &self.id
+    }
 }
 
 impl Named for Command {
-    fn name(&self) -> &str { &self.name }
+    fn name(&self) -> &str {
+        &self.name
+    }
 
     fn rename(&mut self, name: &str) {
         self.name = name.to_string();

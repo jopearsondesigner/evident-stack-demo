@@ -1,9 +1,9 @@
-use serde_derive::{Deserialize, Serialize};
-use uuid::Uuid;
-use crate::types::Entity;
-use crate::EventModel;
 use crate::types::errors::EventModelError;
 use crate::types::placement::PlacementId;
+use crate::types::Entity;
+use crate::EventModel;
+use serde_derive::{Deserialize, Serialize};
+use uuid::Uuid;
 
 pub type FlowId = Uuid;
 
@@ -11,21 +11,23 @@ pub type FlowId = Uuid;
 pub enum Anchor {
     #[default]
     None,
-    Top, Left, Bottom, Right
+    Top,
+    Left,
+    Bottom,
+    Right,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Port {
     placement: PlacementId,
-    anchor: Anchor
-    // TODO: InterfaceElement?
+    anchor: Anchor, // TODO: InterfaceElement?
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FlowArrow {
     id: FlowId,
     from: Port,
-    to: Port
+    to: Port,
 }
 
 // TODO: enforce business rules!
@@ -35,12 +37,9 @@ impl FlowArrow {
         let to_placement = model.placements().get(&to.placement);
         todo!();
         Ok(FlowArrow {
-            id: Uuid::new_v5(
-                &from.placement,
-                to.placement.as_bytes()
-            ),
+            id: Uuid::new_v5(&from.placement, to.placement.as_bytes()),
             from,
-            to
+            to,
         })
     }
 

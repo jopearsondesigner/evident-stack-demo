@@ -1,16 +1,19 @@
-use crate::types::audience::{Audience, AudienceId};
-use crate::types::command::{Command, CommandId};
-use crate::types::errors::EventModelError;
-use crate::types::event::{Event, EventId};
-use crate::types::interface::{Interface, InterfaceId};
-use crate::types::read_model::{ReadModel, ReadModelId};
-use crate::types::stream::{Stream, StreamId};
+pub use crate::types::audience::{Audience, AudienceId};
+pub use crate::types::command::{Command, CommandId};
+pub use crate::types::errors::EventModelError;
+pub use crate::types::event::{Event, EventId};
+pub use crate::types::flow::{FlowArrow, FlowId};
+pub use crate::types::interface::{Interface, InterfaceId};
+pub use crate::types::placement::{Placement, PlacementId};
+pub use crate::types::read_model::{ReadModel, ReadModelId};
+pub use crate::types::schema::{Schema, SchemaId, SchemaRole};
+pub use crate::types::stream::{Stream, StreamId};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 
 pub(crate) mod audience;
 pub(crate) mod command;
-pub mod errors;
+pub(crate) mod errors;
 pub(crate) mod event;
 pub(crate) mod flow;
 pub(crate) mod interface;

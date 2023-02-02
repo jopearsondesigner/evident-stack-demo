@@ -9,13 +9,13 @@ use crate::types::command::{Command, CommandId};
 use crate::types::event::{Event, EventId};
 use crate::types::flow::{FlowArrow, FlowId};
 use crate::types::interface::{Interface, InterfaceId};
+use crate::types::placement::PlacementPosition;
 use crate::types::placement::{Placement, PlacementId};
 use crate::types::read_model::{ReadModel, ReadModelId};
 use crate::types::schema::{Schema, SchemaId};
 use crate::types::stream::Stream;
 use crate::types::{Component, ComponentId, ComponentMut, Described, Lane, LaneId, LaneIndex};
 use std::collections::HashMap;
-use types::placement::PlacementPosition;
 use uuid::Uuid;
 
 pub mod application;
@@ -27,7 +27,6 @@ pub mod types;
 pub type EventModelId = Uuid;
 
 pub trait EventModel: Described {
-    fn new(id: EventModelId, name: String) -> Self;
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface>;
     fn commands(&self) -> &HashMap<CommandId, Command>;
     fn events(&self) -> &HashMap<EventId, Event>;

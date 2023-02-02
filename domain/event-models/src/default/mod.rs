@@ -39,6 +39,31 @@ pub struct DefaultEventModel {
     schemas: HashMap<SchemaId, Schema>,
 }
 
+impl DefaultEventModel {
+    pub fn new(id: EventModelId, name: String) -> Self {
+        DefaultEventModel {
+            id,
+            name,
+            description: None,
+            interfaces: Default::default(),
+            commands: Default::default(),
+            events: Default::default(),
+            read_models: Default::default(),
+            audiences: Default::default(),
+            streams: Default::default(),
+            placements: Default::default(),
+            flows: Default::default(),
+            schemas: Default::default(),
+        }
+    }
+}
+
+impl Default for DefaultEventModel {
+    fn default() -> Self {
+        Self::new(Uuid::new_v4(), "Default".to_string())
+    }
+}
+
 impl Entity for DefaultEventModel {
     fn id(&self) -> &Uuid {
         &self.id
@@ -70,23 +95,6 @@ impl Described for DefaultEventModel {
 }
 
 impl EventModel for DefaultEventModel {
-    fn new(id: EventModelId, name: String) -> Self {
-        DefaultEventModel {
-            id: id.to_owned(),
-            name: name.to_owned(),
-            description: None,
-            interfaces: Default::default(),
-            commands: Default::default(),
-            events: Default::default(),
-            read_models: Default::default(),
-            audiences: vec![],
-            streams: vec![],
-            placements: Default::default(),
-            flows: Default::default(),
-            schemas: Default::default(),
-        }
-    }
-
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface> {
         &self.interfaces
     }

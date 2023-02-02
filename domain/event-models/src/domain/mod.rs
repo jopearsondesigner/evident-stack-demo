@@ -18,7 +18,7 @@ pub mod commands;
 pub mod events;
 pub mod read_models;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventModelState<T>
 where
     T: EventModel

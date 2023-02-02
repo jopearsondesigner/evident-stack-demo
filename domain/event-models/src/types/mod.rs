@@ -46,19 +46,19 @@ pub trait Described: Named {
 
 pub type LaneIndex = u32;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LaneId {
     AudienceLaneId(AudienceId),
     StreamLaneId(StreamId),
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Lane {
     AudienceLane(Audience),
     StreamLane(Stream),
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ComponentId {
     InterfaceComponentId(InterfaceId),
     CommandComponentId(CommandId),
@@ -66,7 +66,7 @@ pub enum ComponentId {
     ReadModelComponentId(ReadModelId),
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Component {
     InterfaceComponent(Interface),
     CommandComponent(Command),

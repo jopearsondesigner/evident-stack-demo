@@ -7,7 +7,7 @@ use crate::types::ComponentId;
 use crate::EventModelId;
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventModelCommand {
     // Event Model Details
     Create(String),

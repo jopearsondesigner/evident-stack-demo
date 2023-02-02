@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 pub type ReadModelId = Uuid;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ReadModel {
     id: ReadModelId,
     name: String,

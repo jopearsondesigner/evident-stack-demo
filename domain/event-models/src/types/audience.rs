@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 pub type AudienceId = Uuid;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Audience {
     id: AudienceId,
     name: String,

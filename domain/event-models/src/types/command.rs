@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 pub type CommandId = Uuid;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Command {
     id: CommandId,
     name: String,

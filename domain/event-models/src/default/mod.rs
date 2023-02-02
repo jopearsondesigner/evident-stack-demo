@@ -23,7 +23,7 @@ use crate::{
 #[cfg(test)]
 mod tests;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DefaultEventModel {
     id: EventModelId,
     name: String,

@@ -6,7 +6,7 @@ pub type EventModelId = Uuid;
 // TODO: CBOR-ish DTO types for all subcomponents w/ serialization functions
 // TODO: From<EventModel> trait implementation (both directions)
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct EventModel {
     // pub id: EventModelId,
     // pub name: String,

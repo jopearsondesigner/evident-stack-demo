@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 pub type FlowId = Uuid;
 
-#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Anchor {
     #[default]
     None,
@@ -17,13 +17,13 @@ pub enum Anchor {
     Right,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Port {
     placement: PlacementId,
     anchor: Anchor, // TODO: InterfaceElement?
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FlowArrow {
     id: FlowId,
     from: Port,

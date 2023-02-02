@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 pub type InterfaceId = Uuid;
 
-#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum InterfaceConfig {
     #[default]
     None,
@@ -15,7 +15,7 @@ pub enum InterfaceConfig {
     Job,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Interface {
     id: InterfaceId,
     name: String,

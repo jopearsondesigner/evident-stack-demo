@@ -1,31 +1,13 @@
-use std::collections::HashMap;
+mod converge;
+mod event_models;
 
-// TODO: Snapshot event prunes any component definitions not present in placements
-//  In a api context, we can't know when deleting a placement whether it's
-//  the last placement for a given component definition in order to delete that
-//  definition.  So we should leave the definitions in place until a snapshot,
-//  then prune. Subsequent additions of placements against that definition
-//  should then fail
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
 
-type Node = u64;
-type Counter = u64;
-
-pub trait OpSet {
-    fn max_counter(&self) -> Counter;
-    fn clock(&self) -> Clock {
-        self.sorted_ops()
-    }
-    fn sorted_ops(&self) -> &BoxStream<(Id, Op)>;
-    fn commit_patch(&self, patch: &HashMap<Id, Op>);
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+//     #[test]
+//     fn it_works() {
+//         let result = add(2, 2);
+//         assert_eq!(result, 4);
+//     }
+// }

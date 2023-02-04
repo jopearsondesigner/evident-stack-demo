@@ -140,7 +140,7 @@ fn add_to_description(described: &mut impl Described, index: u32, addition: &str
         Some(desc) => {
             let mut description: String = desc.to_string();
             description.insert_str(index as usize, addition);
-            described.set_description(&*description);
+            described.set_description(&description);
         }
     }
 }

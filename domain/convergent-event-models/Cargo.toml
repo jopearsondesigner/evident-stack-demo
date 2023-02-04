@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 event-models = { path = "../event-models" }
 async-trait = "0.1.53"
+rand = "0.8"
 
 [dependencies.uuid]
 version = "1.2.2"

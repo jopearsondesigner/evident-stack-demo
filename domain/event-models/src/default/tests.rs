@@ -37,7 +37,7 @@ fn renaming() {
 fn adding_to_description() {
     let id = Uuid::new_v4();
     let initial = DefaultEventModel::new(id, "foo".to_string());
-    assert_eq!(initial.description, None);
+    assert_eq!(initial.description(), None);
     let result = initial.added_to_description(0, "foo bar");
     assert_eq!(result.description, Some("foo bar".to_string()));
 }

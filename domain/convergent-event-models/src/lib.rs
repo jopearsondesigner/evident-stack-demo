@@ -1,5 +1,5 @@
 mod converge;
-mod event_models;
+mod event_model;
 
 // #[cfg(test)]
 // mod tests {

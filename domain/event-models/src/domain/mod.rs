@@ -1,9 +1,9 @@
-use crate::default::DefaultEventModel;
+use crate::default::InMemoryEventModel;
 use crate::domain::commands::EventModelCommand;
 use crate::domain::events::EventModelEvent;
 use crate::types::errors::EventModelError;
 use crate::types::errors::EventModelError::IllegalState;
-use crate::types::validate_name;
+use crate::types::{validate_name, Named};
 use crate::{
     EventModel, EventModelComponentModifier, EventModelFlowModifier, EventModelId,
     EventModelLaneModifier, EventModelModifier, EventModelPlacementModifier,
@@ -34,9 +34,9 @@ where
     EventModel(T),
 }
 
-impl EventModelState<DefaultEventModel> {
+impl EventModelState<InMemoryEventModel> {
     pub fn new(id: EventModelId, name: String) -> Self {
-        EventModelState::EventModel(DefaultEventModel::new(id, name))
+        EventModelState::EventModel(InMemoryEventModel::new(id, name))
     }
 }
 
@@ -160,7 +160,7 @@ impl Decider for EventModelDecider {
 
 impl Evolver for EventModelDecider {
     // eagerly awaiting https://github.com/rust-lang/rust/issues/63063
-    type State = EventModelState<DefaultEventModel>;
+    type State = EventModelState<InMemoryEventModel>;
     type Evt = EventModelEvent;
 
     fn evolve(mut state: Self::State, event: &Self::Evt) -> Self::State {
@@ -171,10 +171,11 @@ impl Evolver for EventModelDecider {
                 }
                 _ => EventModelState::BeforeCreation,
             },
-            EventModelState::EventModel(model) => match event {
+            EventModelState::EventModel(mut model) => match event {
                 EventModelEvent::Created(_, _) => EventModelState::EventModel(model),
                 EventModelEvent::Renamed(_, name) => {
-                    EventModelState::EventModel(model.renamed(name))
+                    model.rename(name);
+                    EventModelState::EventModel(model)
                 }
                 EventModelEvent::AddedToDescription(_, _, _) => {
                     todo!()
@@ -257,13 +258,13 @@ mod tests {
     use crate::domain::commands::EventModelCommand::*;
     use crate::domain::events::EventModelEvent::*;
     use crate::domain::{EventModelDecider, EventModelState};
-    use crate::{default::DefaultEventModel, types::Named};
+    use crate::{default::InMemoryEventModel, types::Named};
     use epoch::decider::{Decider, Evolver};
     use uuid::Uuid;
 
     #[test]
     fn creating_event_model() {
-        let mut state: EventModelState<DefaultEventModel> = EventModelState::BeforeCreation;
+        let mut state: EventModelState<InMemoryEventModel> = EventModelState::BeforeCreation;
 
         let command = Create("New Event Model".to_string());
         let events = EventModelDecider::decide(&state, &command).unwrap();
@@ -290,7 +291,7 @@ mod tests {
 
     #[test]
     fn renaming_event_model() {
-        let mut state: EventModelState<DefaultEventModel> = EventModelState::BeforeCreation;
+        let mut state: EventModelState<InMemoryEventModel> = EventModelState::BeforeCreation;
         let id = Uuid::new_v4();
 
         let given_events = vec![Created(id.to_owned(), "Model".to_string())];

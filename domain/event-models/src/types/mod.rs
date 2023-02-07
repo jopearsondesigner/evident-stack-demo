@@ -36,12 +36,13 @@ pub fn validate_name(name: &str) -> Result<String, EventModelError> {
     }
 }
 
+// Name cannot be an empty string
 pub trait Named: Entity {
     fn name(&self) -> &str;
     fn rename(&mut self, name: &str);
 }
 
-// TODO: ensure non-blank strings
+// Description cannot be an empty string
 pub trait Described: Named {
     fn description(&self) -> Option<&str>;
     fn set_description(&mut self, description: &str);
@@ -51,14 +52,17 @@ pub type LaneIndex = u32;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LaneId {
-    AudienceLaneId(AudienceId),
-    StreamLaneId(StreamId),
+    DefaultAudience,
+    Audience(AudienceId),
+    Timeline,
+    Stream(StreamId),
+    DefaultStream,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Lane {
-    AudienceLane(Audience),
-    StreamLane(Stream),
+    Audience(Audience),
+    Stream(Stream),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -78,7 +82,7 @@ pub enum Component {
 }
 
 #[derive(Debug)]
-pub enum ComponentMut<'a> {
+pub(crate) enum ComponentMut<'a> {
     InterfaceComponentMut(&'a mut Interface),
     CommandComponentMut(&'a mut Command),
     EventComponentMut(&'a mut Event),

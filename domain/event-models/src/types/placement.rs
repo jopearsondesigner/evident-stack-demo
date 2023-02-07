@@ -8,8 +8,19 @@ use crate::types::Entity;
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use super::LaneId;
+
 pub type PlacementIndex = u32;
 pub type PlacementId = Uuid;
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PlacementPosition(pub PlacementId, pub PlacementIndex, pub LaneId);
+
+impl Entity for PlacementPosition {
+    fn id(&self) -> &Uuid {
+        &self.0
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Placement {
@@ -19,18 +30,53 @@ pub enum Placement {
     ReadModel(ReadModelPlacement),
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum TimelinePlacement {
-    Command(CommandPlacement),
-    ReadModel(ReadModelPlacement),
-}
+impl Placement {
+    pub fn index(&self) -> &PlacementIndex {
+        match self {
+            Placement::Interface(i) => &i.index,
+            Placement::Command(c) => &c.index,
+            Placement::Event(e) => &e.index,
+            Placement::ReadModel(r) => &r.index,
+        }
+    }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum PlacementPosition {
-    InterfacePosition(PlacementId, PlacementIndex, Option<AudienceId>),
-    CommandPosition(PlacementId, PlacementIndex),
-    EventPosition(PlacementId, PlacementIndex, Option<StreamId>),
-    ReadModelPosition(PlacementId, PlacementIndex),
+    pub fn lane(&self) -> LaneId {
+        match self {
+            Placement::Interface(i) => match i.audience {
+                Some(id) => LaneId::Audience(id),
+                None => LaneId::DefaultAudience,
+            },
+            Placement::Command(_) => LaneId::Timeline,
+            Placement::Event(e) => match e.stream {
+                Some(id) => LaneId::Stream(id),
+                None => LaneId::DefaultStream,
+            },
+            Placement::ReadModel(_) => LaneId::Timeline,
+        }
+    }
+
+    pub fn relocate(&mut self, index: PlacementIndex, lane: LaneId) {
+        match self {
+            Placement::Interface(i) => {
+                i.index = index;
+                match lane {
+                    LaneId::DefaultAudience => i.audience = None,
+                    LaneId::Audience(id) => i.audience = Some(id),
+                    _ => (),
+                };
+            }
+            Placement::Command(c) => c.index = index,
+            Placement::Event(e) => {
+                e.index = index;
+                match lane {
+                    LaneId::Stream(id) => e.stream = Some(id),
+                    LaneId::DefaultStream => e.stream = None,
+                    _ => (),
+                }
+            }
+            Placement::ReadModel(r) => r.index = index,
+        }
+    }
 }
 
 impl Entity for Placement {
@@ -72,4 +118,10 @@ pub struct ReadModelPlacement {
     id: PlacementId,
     index: PlacementIndex,
     read_model: ReadModelId,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TimelinePlacement {
+    Command(CommandPlacement),
+    ReadModel(ReadModelPlacement),
 }

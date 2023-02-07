@@ -40,65 +40,63 @@ pub trait EventModel: Described {
 
 pub trait EventModelModifier: EventModel {
     // Name validation must be performed by `decide` prior to this step
-    fn renamed(self, name: &str) -> Self;
-    fn added_to_description(self, index: u32, addition: &str) -> Self;
-    fn deleted_from_description(self, index: u32) -> Self;
+    fn added_to_description(&mut self, index: u32, addition: &str);
+    fn deleted_from_description(&mut self, index: u32);
 }
 
 pub trait EventModelComponentModifier: EventModelModifier {
-    fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<ComponentMut>;
-
-    fn component_defined(self, component: Component) -> Self;
+    fn component_defined(&mut self, component: Component);
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn component_renamed(self, component_id: &ComponentId, name: &str) -> Self;
+    fn component_renamed(&mut self, component_id: &ComponentId, name: &str);
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn component_removed(self, component_id: &ComponentId) -> Self;
+    fn component_removed(&mut self, component_id: &ComponentId);
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
     fn added_to_component_description(
-        self,
+        &mut self,
         component_id: &ComponentId,
         index: u32,
         addition: &str,
-    ) -> Self;
+    );
+
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn deleted_from_component_description(self, component_id: &ComponentId, index: u32) -> Self;
+    fn deleted_from_component_description(&mut self, component_id: &ComponentId, index: u32);
 }
 
 pub trait EventModelPlacementModifier: EventModelModifier {
-    fn component_placed(self, placement: &Placement) -> Self;
-    fn placement_moved(self, position: &PlacementPosition) -> Self;
-    fn placement_removed(self, placement_id: &PlacementId) -> Self;
+    fn component_placed(&mut self, placement: &Placement);
+    fn placement_moved(&mut self, position: &PlacementPosition);
+    fn placement_removed(&mut self, placement_id: &PlacementId);
 }
 
 pub trait EventModelLaneModifier: EventModelModifier {
-    fn lane_added(self, lane: Lane, index: LaneIndex) -> Self;
-    fn lane_renamed(self, lane_id: LaneId, name: &str) -> Self;
-    fn lane_reordered(self, lane_id: LaneId, index: LaneIndex) -> Self;
-    fn lane_removed(self, lane_id: LaneId) -> Self;
+    fn lane_added(&mut self, lane: Lane, index: LaneIndex);
+    fn lane_renamed(&mut self, lane_id: LaneId, name: &str);
+    fn lane_reordered(&mut self, lane_id: LaneId, index: LaneIndex);
+    fn lane_removed(&mut self, lane_id: LaneId);
 }
 
 pub trait EventModelFlowModifier: EventModelModifier {
-    fn plus_flow(self, flow_arrow: &FlowArrow) -> Self;
-    fn minus_flow_by_placement_ids(self, from: &PlacementId, to: &PlacementId) -> Self;
+    fn plus_flow(&mut self, flow_arrow: &FlowArrow);
+    fn minus_flow_by_placement_ids(&mut self, from: &PlacementId, to: &PlacementId);
 
-    fn minus_flow(self, flow_id: &FlowId) -> Self;
+    fn minus_flow(&mut self, flow_id: &FlowId);
 }
 
 pub trait EventModelSchemaModifier: EventModelComponentModifier {
-    fn schema_defined(self, schema: &Schema) -> Self;
+    fn schema_defined(&mut self, schema: &Schema);
 
-    fn added_to_schema_definition(self, schema_id: &SchemaId, index: u32, addition: &str) -> Self;
-    fn deleted_from_schema_definition(self, schema_id: &SchemaId, index: u32) -> Self;
+    fn added_to_schema_definition(&mut self, schema_id: &SchemaId, index: u32, addition: &str);
+    fn deleted_from_schema_definition(&mut self, schema_id: &SchemaId, index: u32);
 
-    fn added_to_schema_description(self, schema_id: &SchemaId, index: u32, addition: &str) -> Self;
-    fn deleted_from_schema_description(self, schema_id: &SchemaId, index: u32) -> Self;
+    fn added_to_schema_description(&mut self, schema_id: &SchemaId, index: u32, addition: &str);
+    fn deleted_from_schema_description(&mut self, schema_id: &SchemaId, index: u32);
 
-    fn remove_schema(self, schema_id: &SchemaId) -> Self;
+    fn remove_schema(&mut self, schema_id: &SchemaId);
 }

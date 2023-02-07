@@ -24,7 +24,7 @@ use crate::{
 mod tests;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DefaultEventModel {
+pub struct InMemoryEventModel {
     id: EventModelId,
     name: String,
     description: Option<String>,
@@ -39,9 +39,9 @@ pub struct DefaultEventModel {
     schemas: HashMap<SchemaId, Schema>,
 }
 
-impl DefaultEventModel {
+impl InMemoryEventModel {
     pub fn new(id: EventModelId, name: String) -> Self {
-        DefaultEventModel {
+        InMemoryEventModel {
             id,
             name,
             description: None,
@@ -56,21 +56,42 @@ impl DefaultEventModel {
             schemas: Default::default(),
         }
     }
+
+    fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<ComponentMut> {
+        match id {
+            ComponentId::InterfaceComponentId(id) => self
+                .interfaces
+                .get_mut(id)
+                .map(|i| ComponentMut::InterfaceComponentMut(i)),
+            ComponentId::CommandComponentId(id) => self
+                .commands
+                .get_mut(id)
+                .map(|i| ComponentMut::CommandComponentMut(i)),
+            ComponentId::EventComponentId(id) => self
+                .events
+                .get_mut(id)
+                .map(|i| ComponentMut::EventComponentMut(i)),
+            ComponentId::ReadModelComponentId(id) => self
+                .read_models
+                .get_mut(id)
+                .map(|i| ComponentMut::ReadModelComponentMut(i)),
+        }
+    }
 }
 
-impl Default for DefaultEventModel {
+impl Default for InMemoryEventModel {
     fn default() -> Self {
         Self::new(Uuid::new_v4(), "Default".to_string())
     }
 }
 
-impl Entity for DefaultEventModel {
+impl Entity for InMemoryEventModel {
     fn id(&self) -> &Uuid {
         &self.id
     }
 }
 
-impl Named for DefaultEventModel {
+impl Named for InMemoryEventModel {
     fn name(&self) -> &str {
         &self.name
     }
@@ -80,7 +101,7 @@ impl Named for DefaultEventModel {
     }
 }
 
-impl Described for DefaultEventModel {
+impl Described for InMemoryEventModel {
     fn description(&self) -> Option<&str> {
         self.description.as_deref()
     }
@@ -94,7 +115,7 @@ impl Described for DefaultEventModel {
     }
 }
 
-impl EventModel for DefaultEventModel {
+impl EventModel for InMemoryEventModel {
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface> {
         &self.interfaces
     }
@@ -158,56 +179,28 @@ fn delete_from_description(described: &mut impl Described, index: u32) {
     }
 }
 
-impl EventModelModifier for DefaultEventModel {
-    fn renamed(mut self, name: &str) -> Self {
-        self.rename(name);
-        self
-    }
-
-    fn added_to_description(mut self, index: u32, addition: &str) -> Self {
+impl EventModelModifier for InMemoryEventModel {
+    fn added_to_description(&mut self, index: u32, addition: &str) {
         match &mut self.description {
             None => self.set_description(addition), // Ignore index?
             Some(desc) => {
                 desc.insert_str(index as usize, addition);
             }
         };
-        self
     }
 
-    fn deleted_from_description(mut self, index: u32) -> Self {
+    fn deleted_from_description(&mut self, index: u32) {
         match &mut self.description {
             None => (),
             Some(desc) => {
                 desc.remove(index as usize);
             }
         };
-        self
     }
 }
 
-impl EventModelComponentModifier for DefaultEventModel {
-    fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<ComponentMut> {
-        match id {
-            ComponentId::InterfaceComponentId(id) => self
-                .interfaces
-                .get_mut(id)
-                .map(|i| ComponentMut::InterfaceComponentMut(i)),
-            ComponentId::CommandComponentId(id) => self
-                .commands
-                .get_mut(id)
-                .map(|i| ComponentMut::CommandComponentMut(i)),
-            ComponentId::EventComponentId(id) => self
-                .events
-                .get_mut(id)
-                .map(|i| ComponentMut::EventComponentMut(i)),
-            ComponentId::ReadModelComponentId(id) => self
-                .read_models
-                .get_mut(id)
-                .map(|i| ComponentMut::ReadModelComponentMut(i)),
-        }
-    }
-
-    fn component_defined(mut self, component: Component) -> Self {
+impl EventModelComponentModifier for InMemoryEventModel {
+    fn component_defined(&mut self, component: Component) {
         match component {
             Component::InterfaceComponent(i) => {
                 self.interfaces.insert(*i.id(), i.to_owned());
@@ -222,10 +215,9 @@ impl EventModelComponentModifier for DefaultEventModel {
                 self.read_models.insert(*r.id(), r.to_owned());
             }
         }
-        self
     }
 
-    fn component_renamed(mut self, component_id: &ComponentId, name: &str) -> Self {
+    fn component_renamed(&mut self, component_id: &ComponentId, name: &str) {
         match self.component_mut_by_id(&component_id) {
             None => {
                 panic!("Component with id {:?} not found", component_id)
@@ -243,10 +235,9 @@ impl EventModelComponentModifier for DefaultEventModel {
                 ComponentMut::ReadModelComponentMut(r) => r.rename(name),
             },
         }
-        self
     }
 
-    fn component_removed(mut self, component_id: &ComponentId) -> Self {
+    fn component_removed(&mut self, component_id: &ComponentId) {
         match component_id {
             ComponentId::InterfaceComponentId(id) => {
                 self.interfaces.remove(id);
@@ -261,15 +252,14 @@ impl EventModelComponentModifier for DefaultEventModel {
                 self.read_models.remove(id);
             }
         }
-        self
     }
 
     fn added_to_component_description(
-        mut self,
+        &mut self,
         component_id: &ComponentId,
         index: u32,
         addition: &str,
-    ) -> Self {
+    ) {
         match self.component_mut_by_id(&component_id) {
             None => {
                 panic!("Component with id {:?} not found", component_id)
@@ -289,14 +279,9 @@ impl EventModelComponentModifier for DefaultEventModel {
                 }
             },
         }
-        self
     }
 
-    fn deleted_from_component_description(
-        mut self,
-        component_id: &ComponentId,
-        index: u32,
-    ) -> Self {
+    fn deleted_from_component_description(&mut self, component_id: &ComponentId, index: u32) {
         match self.component_mut_by_id(&component_id) {
             None => {
                 panic!("Component with id {:?} not found", component_id)
@@ -316,78 +301,142 @@ impl EventModelComponentModifier for DefaultEventModel {
                 }
             },
         }
-        self
     }
 }
 
-impl EventModelPlacementModifier for DefaultEventModel {
-    fn component_placed(self, placement: &Placement) -> Self {
+impl EventModelPlacementModifier for InMemoryEventModel {
+    fn component_placed(&mut self, placement: &Placement) {
+        self.placements
+            .insert(placement.id().to_owned(), placement.to_owned());
+    }
+
+    fn placement_moved(&mut self, position: &PlacementPosition) {
+        if let Some(ref mut placement) = self.placements.get_mut(position.id()) {
+            let PlacementPosition(_, index, lane) = position;
+            placement.relocate(index.to_owned(), lane.to_owned());
+        };
+    }
+
+    fn placement_removed(&mut self, placement_id: &PlacementId) {
+        self.placements.remove(placement_id);
+    }
+}
+
+impl EventModelLaneModifier for InMemoryEventModel {
+    fn lane_added(&mut self, lane: Lane, index: LaneIndex) {
+        match lane {
+            Lane::Audience(audience) => self.audiences.insert(index as usize, audience),
+            Lane::Stream(stream) => self.streams.insert(index as usize, stream),
+        }
+    }
+
+    fn lane_renamed(&mut self, lane_id: LaneId, name: &str) {
+        match lane_id {
+            LaneId::Audience(id) => {
+                if let Some(a) = self
+                    .audiences
+                    .iter_mut()
+                    .find(|audience| id == *audience.id())
+                {
+                    a.rename(name);
+                }
+            }
+            LaneId::Stream(id) => {
+                if let Some(s) = self.streams.iter_mut().find(|stream| id == *stream.id()) {
+                    s.rename(name);
+                }
+            }
+            _ => (),
+        }
+    }
+
+    fn lane_reordered(&mut self, lane_id: LaneId, index: LaneIndex) {
+        match lane_id {
+            LaneId::Audience(id) => {
+                if let Some(idx) = self
+                    .audiences
+                    .iter_mut()
+                    .position(|audience| id == *audience.id())
+                {
+                    let audience = self.audiences.remove(idx);
+                    self.audiences.insert(index as usize, audience);
+                }
+            }
+            LaneId::Stream(id) => {
+                if let Some(idx) = self
+                    .streams
+                    .iter_mut()
+                    .position(|stream| id == *stream.id())
+                {
+                    let stream = self.streams.remove(idx);
+                    self.streams.insert(index as usize, stream);
+                }
+            }
+            _ => (),
+        }
+    }
+
+    fn lane_removed(&mut self, lane_id: LaneId) {
+        match lane_id {
+            LaneId::Audience(id) => {
+                if let Some(idx) = self
+                    .audiences
+                    .iter_mut()
+                    .position(|audience| id == *audience.id())
+                {
+                    self.audiences.remove(idx);
+                }
+            }
+            LaneId::Stream(id) => {
+                if let Some(idx) = self
+                    .streams
+                    .iter_mut()
+                    .position(|stream| id == *stream.id())
+                {
+                    self.streams.remove(idx);
+                }
+            }
+            _ => (),
+        }
+    }
+}
+
+impl EventModelFlowModifier for InMemoryEventModel {
+    fn plus_flow(&mut self, flow_arrow: &FlowArrow) {
         todo!()
     }
 
-    fn placement_moved(self, position: &PlacementPosition) -> Self {
+    fn minus_flow_by_placement_ids(&mut self, from: &PlacementId, to: &PlacementId) {
         todo!()
     }
 
-    fn placement_removed(self, placement_id: &PlacementId) -> Self {
+    fn minus_flow(&mut self, flow_id: &FlowId) {
         todo!()
     }
 }
 
-impl EventModelLaneModifier for DefaultEventModel {
-    fn lane_added(self, lane: Lane, index: LaneIndex) -> Self {
+impl EventModelSchemaModifier for InMemoryEventModel {
+    fn schema_defined(&mut self, schema: &Schema) {
         todo!()
     }
 
-    fn lane_renamed(self, lane_id: LaneId, name: &str) -> Self {
+    fn added_to_schema_definition(&mut self, schema_id: &SchemaId, index: u32, addition: &str) {
         todo!()
     }
 
-    fn lane_reordered(self, lane_id: LaneId, index: LaneIndex) -> Self {
+    fn deleted_from_schema_definition(&mut self, schema_id: &SchemaId, index: u32) {
         todo!()
     }
 
-    fn lane_removed(self, lane_id: LaneId) -> Self {
-        todo!()
-    }
-}
-
-impl EventModelFlowModifier for DefaultEventModel {
-    fn plus_flow(self, flow_arrow: &FlowArrow) -> Self {
+    fn added_to_schema_description(&mut self, schema_id: &SchemaId, index: u32, addition: &str) {
         todo!()
     }
 
-    fn minus_flow_by_placement_ids(self, from: &PlacementId, to: &PlacementId) -> Self {
+    fn deleted_from_schema_description(&mut self, schema_id: &SchemaId, index: u32) {
         todo!()
     }
 
-    fn minus_flow(self, flow_id: &FlowId) -> Self {
-        todo!()
-    }
-}
-
-impl EventModelSchemaModifier for DefaultEventModel {
-    fn schema_defined(self, schema: &Schema) -> Self {
-        todo!()
-    }
-
-    fn added_to_schema_definition(self, schema_id: &SchemaId, index: u32, addition: &str) -> Self {
-        todo!()
-    }
-
-    fn deleted_from_schema_definition(self, schema_id: &SchemaId, index: u32) -> Self {
-        todo!()
-    }
-
-    fn added_to_schema_description(self, schema_id: &SchemaId, index: u32, addition: &str) -> Self {
-        todo!()
-    }
-
-    fn deleted_from_schema_description(self, schema_id: &SchemaId, index: u32) -> Self {
-        todo!()
-    }
-
-    fn remove_schema(self, schema_id: &SchemaId) -> Self {
+    fn remove_schema(&mut self, schema_id: &SchemaId) {
         todo!()
     }
 }

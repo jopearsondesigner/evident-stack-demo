@@ -1,4 +1,4 @@
-use crate::default::DefaultEventModel;
+use crate::default::InMemoryEventModel;
 use crate::{
     EventModel, EventModelComponentModifier, EventModelModifier, EventModelSchemaModifier,
 };
@@ -17,7 +17,7 @@ use crate::types::{Component, Described, Entity, Named};
 fn successful_creation() {
     let id = Uuid::new_v4();
     let name = "foo".to_string();
-    let result = DefaultEventModel::new(id, name);
+    let result = InMemoryEventModel::new(id, name);
 
     let event_model = result;
     assert_eq!(event_model.id(), &id);
@@ -28,7 +28,7 @@ fn successful_creation() {
 #[test]
 fn renaming() {
     let id = Uuid::new_v4();
-    let initial = DefaultEventModel::new(id, "foo".to_string());
+    let initial = InMemoryEventModel::new(id, "foo".to_string());
     let result = initial.renamed("bar");
     assert_eq!(result.name, "bar");
 }
@@ -36,7 +36,7 @@ fn renaming() {
 #[test]
 fn adding_to_description() {
     let id = Uuid::new_v4();
-    let initial = DefaultEventModel::new(id, "foo".to_string());
+    let initial = InMemoryEventModel::new(id, "foo".to_string());
     assert_eq!(initial.description(), None);
     let result = initial.added_to_description(0, "foo bar");
     assert_eq!(result.description, Some("foo bar".to_string()));
@@ -45,7 +45,7 @@ fn adding_to_description() {
 #[test]
 fn deleting_from_description() {
     let id = Uuid::new_v4();
-    let initial = DefaultEventModel::new(id, "foo".to_string());
+    let initial = InMemoryEventModel::new(id, "foo".to_string());
     let result = initial
         .added_to_description(0, "foo bar")
         .deleted_from_description(2);
@@ -55,7 +55,7 @@ fn deleting_from_description() {
 #[test]
 fn defining_components() {
     let id = Uuid::new_v4();
-    let initial = DefaultEventModel::new(id, "foo".to_string());
+    let initial = InMemoryEventModel::new(id, "foo".to_string());
 
     let interface = Interface::new(Uuid::new_v4(), "an interface").unwrap();
     let command = Command::new(Uuid::new_v4(), "a command").unwrap();
@@ -83,7 +83,7 @@ fn renaming_components() {
     let event = Event::new(Uuid::new_v4(), "an event");
     let read_model = ReadModel::new(Uuid::new_v4(), "a read model");
 
-    let initial = DefaultEventModel::new(id, "foo".to_string())
+    let initial = InMemoryEventModel::new(id, "foo".to_string())
         .component_defined(Component::InterfaceComponent(interface.to_owned()))
         .component_defined(Component::CommandComponent(command.to_owned()))
         .component_defined(Component::EventComponent(event.to_owned()))
@@ -134,7 +134,7 @@ fn adding_to_component_description() {
     let event = Event::new(Uuid::new_v4(), "an event");
     let read_model = ReadModel::new(Uuid::new_v4(), "a read model");
 
-    let initial = DefaultEventModel::new(id, "foo".to_string())
+    let initial = InMemoryEventModel::new(id, "foo".to_string())
         .component_defined(Component::InterfaceComponent(interface.to_owned()))
         .component_defined(Component::CommandComponent(command.to_owned()))
         .component_defined(Component::EventComponent(event.to_owned()))
@@ -187,7 +187,7 @@ fn deleting_from_component_description() {
     let event = Event::new(Uuid::new_v4(), "an event");
     let read_model = ReadModel::new(Uuid::new_v4(), "a read model");
 
-    let initial = DefaultEventModel::new(id, "foo".to_string())
+    let initial = InMemoryEventModel::new(id, "foo".to_string())
         .component_defined(Component::InterfaceComponent(interface.to_owned()))
         .component_defined(Component::CommandComponent(command.to_owned()))
         .component_defined(Component::EventComponent(event.to_owned()))

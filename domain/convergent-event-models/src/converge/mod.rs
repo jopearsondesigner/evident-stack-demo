@@ -10,8 +10,8 @@ pub(crate) mod opset;
 //  then prune. Subsequent additions of placements against that definition
 //  should then fail
 
-pub type Node = u64;
-pub type Counter = u64;
+pub type Node = u32;
+pub type Counter = u32;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
 pub struct Id(pub Counter, pub Node);
@@ -78,7 +78,7 @@ pub trait OpSetStorage<Op: Clone>: OpSet<Op> {
     type Err;
 
     // On success, result conveys the number of ops loaded
-    async fn load_ops(&self) -> Result<usize, Self::Err>;
+    async fn load_ops(&self) -> Result<u32, Self::Err>;
     async fn commit_patch(&self, patch: &Patch<Op>) -> Result<(), Self::Err>;
 }
 

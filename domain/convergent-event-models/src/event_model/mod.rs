@@ -1,4 +1,4 @@
-use event_models::default::DefaultEventModel;
+use event_models::default::InMemoryEventModel;
 use event_models::types::{
     Audience, Command, CommandId, Described, Entity, Event, EventId, FlowArrow, FlowId, Interface,
     InterfaceId, Named, Placement, PlacementId, PlacementPosition, ReadModel, ReadModelId, Schema,
@@ -27,7 +27,7 @@ enum Op {
 struct ConvergentEventModel<S: OpSet<Op>> {
     node: Node,
     opset: S,
-    value: DefaultEventModel,
+    value: InMemoryEventModel,
 }
 
 impl<S: OpSet<Op>> ConvergentEventModel<S> {
@@ -36,7 +36,7 @@ impl<S: OpSet<Op>> ConvergentEventModel<S> {
         patch.insert(opset.next_id(&node), Op::Named(name.to_string()));
         opset.apply_patch(patch);
         let value = ConvergentEventModel::<S>::interpret(
-            DefaultEventModel::new(id.to_owned(), "".to_string()),
+            InMemoryEventModel::new(id.to_owned(), "".to_string()),
             &opset,
         );
         ConvergentEventModel { node, value, opset }
@@ -54,7 +54,7 @@ impl Default for ConvergentEventModel<InMemoryOpSet<Op>> {
         Self::new(
             Uuid::new_v4(),
             "New Event Model",
-            random::<u64>(),
+            random::<u32>(),
             InMemoryOpSet::default(),
         )
     }
@@ -63,7 +63,7 @@ impl Default for ConvergentEventModel<InMemoryOpSet<Op>> {
 // Converge Implementation
 
 impl<S: OpSet<Op>> Interpreter<Op> for ConvergentEventModel<S> {
-    type Interpretation = DefaultEventModel;
+    type Interpretation = InMemoryEventModel;
 
     fn evolve(state: Self::Interpretation, _id: &Id, op: &Op) -> Self::Interpretation {
         match op {
@@ -255,7 +255,12 @@ impl<S: OpSet<Op>> EventModelSchemaModifier for ConvergentEventModel<S> {
         todo!()
     }
 
-    fn added_to_schema_definition(self, schema_id: &SchemaId, index: u32, addition: &str) -> Self {
+    fn added_to_schema_definition(
+        self,
+        schema_id: &SchemaId,
+        index: u32,
+        addition: &str,
+    ) -> Self {
         todo!()
     }
 
@@ -263,7 +268,12 @@ impl<S: OpSet<Op>> EventModelSchemaModifier for ConvergentEventModel<S> {
         todo!()
     }
 
-    fn added_to_schema_description(self, schema_id: &SchemaId, index: u32, addition: &str) -> Self {
+    fn added_to_schema_description(
+        self,
+        schema_id: &SchemaId,
+        index: u32,
+        addition: &str,
+    ) -> Self {
         todo!()
     }
 

@@ -401,41 +401,11 @@ impl EventModelLaneModifier for InMemoryEventModel {
 }
 
 impl EventModelFlowModifier for InMemoryEventModel {
-    fn plus_flow(&mut self, flow_arrow: &FlowArrow) {
-        todo!()
-    }
-
-    fn minus_flow_by_placement_ids(&mut self, from: &PlacementId, to: &PlacementId) {
-        todo!()
+    fn plus_flow(&mut self, flow_arrow: FlowArrow) {
+        self.flows.insert(flow_arrow.id().to_owned(), flow_arrow);
     }
 
     fn minus_flow(&mut self, flow_id: &FlowId) {
-        todo!()
-    }
-}
-
-impl EventModelSchemaModifier for InMemoryEventModel {
-    fn schema_defined(&mut self, schema: &Schema) {
-        todo!()
-    }
-
-    fn added_to_schema_definition(&mut self, schema_id: &SchemaId, index: u32, addition: &str) {
-        todo!()
-    }
-
-    fn deleted_from_schema_definition(&mut self, schema_id: &SchemaId, index: u32) {
-        todo!()
-    }
-
-    fn added_to_schema_description(&mut self, schema_id: &SchemaId, index: u32, addition: &str) {
-        todo!()
-    }
-
-    fn deleted_from_schema_description(&mut self, schema_id: &SchemaId, index: u32) {
-        todo!()
-    }
-
-    fn remove_schema(&mut self, schema_id: &SchemaId) {
-        todo!()
+        self.flows.remove(flow_id);
     }
 }

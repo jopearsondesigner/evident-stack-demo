@@ -30,14 +30,18 @@ pub struct FlowArrow {
     to: Port,
 }
 
+pub fn flow_id(from: &PlacementId, to: &PlacementId) -> FlowId {
+    Uuid::new_v5(from, to.as_bytes())
+}
+
 // TODO: enforce business rules!
 impl FlowArrow {
     fn new(model: &impl EventModel, from: Port, to: Port) -> Result<FlowArrow, EventModelError> {
         let from_placement = model.placements().get(&from.placement);
         let to_placement = model.placements().get(&to.placement);
-        todo!();
+        todo!("Validation of flow arrow");
         Ok(FlowArrow {
-            id: Uuid::new_v5(&from.placement, to.placement.as_bytes()),
+            id: flow_id(&from.placement, &to.placement),
             from,
             to,
         })

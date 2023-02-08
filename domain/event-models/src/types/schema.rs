@@ -26,19 +26,19 @@ impl Default for Schema {
 
 pub type SubSchemaName = String;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CommandSchemaRole {
     CommandSchema,
     ResponseSchema,
     ErrorSchema,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventSchemaRole {
     EventSchema,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ReadModelSchemaRole {
     QuerySchema,
     ReadModelSchema,

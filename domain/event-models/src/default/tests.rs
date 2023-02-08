@@ -29,8 +29,8 @@ fn successful_creation() {
 fn renaming() {
     let id = Uuid::new_v4();
     let initial = InMemoryEventModel::new(id, "foo".to_string());
-    let result = initial.renamed("bar");
-    assert_eq!(result.name, "bar");
+    initial.rename("bar");
+    assert_eq!(initial.name(), "bar");
 }
 
 #[test]

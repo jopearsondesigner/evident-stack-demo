@@ -44,7 +44,7 @@ pub trait Named: Entity {
 
 // Description cannot be an empty string
 pub trait Described: Named {
-    fn description(&self) -> Option<&str>;
+    fn description(&self) -> &str;
     fn set_description(&mut self, description: &str);
 }
 

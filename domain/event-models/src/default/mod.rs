@@ -26,7 +26,7 @@ mod tests;
 pub struct InMemoryEventModel {
     id: EventModelId,
     name: String,
-    description: Option<String>,
+    description: String,
     interfaces: HashMap<InterfaceId, Interface>,
     commands: HashMap<CommandId, Command>,
     events: HashMap<EventId, Event>,
@@ -43,7 +43,7 @@ impl InMemoryEventModel {
         InMemoryEventModel {
             id,
             name,
-            description: None,
+            description: Default::default(),
             interfaces: Default::default(),
             commands: Default::default(),
             events: Default::default(),
@@ -101,16 +101,12 @@ impl Named for InMemoryEventModel {
 }
 
 impl Described for InMemoryEventModel {
-    fn description(&self) -> Option<&str> {
-        self.description.as_deref()
+    fn description(&self) -> &str {
+        &self.description
     }
 
     fn set_description(&mut self, description: &str) {
-        if description.is_empty() {
-            self.description = None
-        } else {
-            self.description = Some(description.to_string());
-        }
+        self.description = description.to_string();
     }
 }
 
@@ -153,48 +149,38 @@ impl EventModel for InMemoryEventModel {
 }
 
 fn add_to_description(described: &mut impl Described, index: u32, addition: &str) {
-    match described.description() {
-        None => {
-            described.set_description(addition);
-        }
-        Some(desc) => {
-            let mut description: String = desc.to_string();
-            description.insert_str(index as usize, addition);
-            described.set_description(&description);
-        }
+    if described.description().is_empty() {
+        described.set_description(addition);
+    } else {
+        let mut description: String = described.description().to_string();
+        description.insert_str(index as usize, addition);
+        described.set_description(&description);
     }
 }
 
 fn delete_from_description(described: &mut impl Described, index: u32) {
-    match described.description() {
-        None => {
-            described.set_description("");
-        }
-        Some(desc) => {
-            let mut description: String = desc.to_string();
-            description.remove(index as usize);
-            described.set_description(&*description);
-        }
+    if !described.description().is_empty() {
+        let mut description: String = described.description().to_string();
+        description.remove(index as usize);
+        described.set_description(&*description);
     }
 }
 
 impl EventModelModifier for InMemoryEventModel {
     fn added_to_description(&mut self, index: u32, addition: &str) {
-        match &mut self.description {
-            None => self.set_description(addition), // Ignore index?
-            Some(desc) => {
-                desc.insert_str(index as usize, addition);
-            }
-        };
+        add_to_description(self, index, addition)
     }
 
     fn deleted_from_description(&mut self, index: u32) {
-        match &mut self.description {
-            None => (),
-            Some(desc) => {
-                desc.remove(index as usize);
-            }
-        };
+        delete_from_description(self, index)
+    }
+
+    fn added_to_schema(&mut self, index: u32, addition: &str) {
+        todo!()
+    }
+
+    fn deleted_from_schema(&mut self, index: u32) {
+        todo!()
     }
 }
 
@@ -301,6 +287,19 @@ impl EventModelComponentModifier for InMemoryEventModel {
             },
         }
     }
+
+    fn added_to_component_schema(
+        &mut self,
+        component_id: &ComponentId,
+        index: u32,
+        addition: &str,
+    ) {
+        todo!()
+    }
+
+    fn deleted_from_component_schema(&mut self, component_id: &ComponentId, index: u32) {
+        todo!()
+    }
 }
 
 impl EventModelPlacementModifier for InMemoryEventModel {
@@ -318,6 +317,19 @@ impl EventModelPlacementModifier for InMemoryEventModel {
 
     fn placement_removed(&mut self, placement_id: &PlacementId) {
         self.placements.remove(placement_id);
+    }
+
+    fn added_to_placement_schema(
+        &mut self,
+        placement_id: &PlacementId,
+        index: u32,
+        addition: &str,
+    ) {
+        todo!()
+    }
+
+    fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: u32) {
+        todo!()
     }
 }
 

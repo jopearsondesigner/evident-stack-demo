@@ -11,7 +11,7 @@ pub type ReadModelId = Uuid;
 pub struct ReadModel {
     id: ReadModelId,
     name: String,
-    description: Option<String>,
+    description: String,
     schema: Schema,
     schema_roles: HashMap<CommandSchemaRole, SubSchemaName>,
 }
@@ -45,15 +45,11 @@ impl Named for ReadModel {
 }
 
 impl Described for ReadModel {
-    fn description(&self) -> Option<&str> {
-        self.description.as_deref()
+    fn description(&self) -> &str {
+        &self.description
     }
 
     fn set_description(&mut self, description: &str) {
-        if description.is_empty() {
-            self.description = None
-        } else {
-            self.description = Some(description.to_string());
-        }
+        self.description = description.to_string();
     }
 }

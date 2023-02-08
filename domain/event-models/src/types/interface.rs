@@ -19,7 +19,7 @@ pub enum InterfaceConfig {
 pub struct Interface {
     id: InterfaceId,
     name: String,
-    description: Option<String>,
+    description: String,
     config: InterfaceConfig,
 }
 
@@ -29,7 +29,7 @@ impl Interface {
         Ok(Interface {
             id,
             name: name.to_string(),
-            description: None,
+            description: Default::default(),
             config: Default::default(),
         })
     }
@@ -52,15 +52,11 @@ impl Named for Interface {
 }
 
 impl Described for Interface {
-    fn description(&self) -> Option<&str> {
-        self.description.as_deref()
+    fn description(&self) -> &str {
+        &self.description
     }
 
     fn set_description(&mut self, description: &str) {
-        if description.is_empty() {
-            self.description = None
-        } else {
-            self.description = Some(description.to_string());
-        }
+        self.description = description.to_string();
     }
 }

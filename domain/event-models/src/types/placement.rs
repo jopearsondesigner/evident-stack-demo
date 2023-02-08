@@ -1,8 +1,11 @@
+use std::collections::HashMap;
+
 use crate::types::audience::AudienceId;
 use crate::types::command::CommandId;
 use crate::types::event::EventId;
 use crate::types::interface::InterfaceId;
 use crate::types::read_model::ReadModelId;
+use crate::types::schema::{CommandSchemaRole, Schema, SubSchemaName};
 use crate::types::stream::StreamId;
 use crate::types::Entity;
 use serde_derive::{Deserialize, Serialize};
@@ -103,6 +106,8 @@ pub struct CommandPlacement {
     id: PlacementId,
     index: PlacementIndex,
     command: CommandId,
+    schema: Schema,
+    schema_roles: HashMap<CommandSchemaRole, SubSchemaName>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -111,6 +116,8 @@ pub struct EventPlacement {
     index: PlacementIndex,
     event: EventId,
     stream: Option<StreamId>,
+    schema: Schema,
+    schema_roles: HashMap<CommandSchemaRole, SubSchemaName>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -118,6 +125,8 @@ pub struct ReadModelPlacement {
     id: PlacementId,
     index: PlacementIndex,
     read_model: ReadModelId,
+    schema: Schema,
+    schema_roles: HashMap<CommandSchemaRole, SubSchemaName>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

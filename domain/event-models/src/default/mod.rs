@@ -9,7 +9,7 @@ use crate::types::flow::{FlowArrow, FlowId};
 use crate::types::interface::{Interface, InterfaceId};
 use crate::types::placement::{Placement, PlacementId, PlacementPosition};
 use crate::types::read_model::{ReadModel, ReadModelId};
-use crate::types::schema::{Schema, SchemaId};
+use crate::types::schema::Schema;
 use crate::types::stream::Stream;
 use crate::types::{
     Component, ComponentId, ComponentMut, Described, Entity, Lane, LaneId, LaneIndex, Named,
@@ -17,7 +17,6 @@ use crate::types::{
 use crate::{
     EventModel, EventModelComponentModifier, EventModelFlowModifier, EventModelId,
     EventModelLaneModifier, EventModelModifier, EventModelPlacementModifier,
-    EventModelSchemaModifier,
 };
 
 #[cfg(test)]

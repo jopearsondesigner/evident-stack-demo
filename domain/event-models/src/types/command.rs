@@ -1,4 +1,7 @@
+use std::collections::HashMap;
+
 use crate::types::errors::EventModelError;
+use crate::types::schema::{CommandSchemaRole, Schema, SubSchemaName};
 use crate::types::{Described, Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -10,6 +13,8 @@ pub struct Command {
     id: CommandId,
     name: String,
     description: Option<String>,
+    schema: Schema,
+    schema_roles: HashMap<CommandSchemaRole, SubSchemaName>,
 }
 
 impl Command {
@@ -19,6 +24,8 @@ impl Command {
             id,
             name: name.to_string(),
             description: None,
+            schema: Schema::default(),
+            schema_roles: HashMap::default(),
         })
     }
 }

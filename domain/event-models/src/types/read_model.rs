@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+
+use crate::types::schema::{CommandSchemaRole, Schema, SubSchemaName};
 use crate::types::{Described, Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -9,6 +12,8 @@ pub struct ReadModel {
     id: ReadModelId,
     name: String,
     description: Option<String>,
+    schema: Schema,
+    schema_roles: HashMap<CommandSchemaRole, SubSchemaName>,
 }
 
 impl ReadModel {
@@ -17,6 +22,8 @@ impl ReadModel {
             id,
             name: name.to_string(),
             description: None,
+            schema: Schema::default(),
+            schema_roles: HashMap::default(),
         }
     }
 }

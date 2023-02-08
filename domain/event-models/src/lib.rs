@@ -14,8 +14,9 @@ use crate::types::placement::{Placement, PlacementId};
 use crate::types::read_model::{ReadModel, ReadModelId};
 use crate::types::schema::{Schema, SchemaId};
 use crate::types::stream::Stream;
-use crate::types::{Component, ComponentId, ComponentMut, Described, Lane, LaneId, LaneIndex};
+use crate::types::{Component, ComponentId, Described, Lane, LaneId, LaneIndex};
 use std::collections::HashMap;
+use types::flow::flow_id;
 use uuid::Uuid;
 
 pub mod application;
@@ -35,13 +36,15 @@ pub trait EventModel: Described {
     fn streams(&self) -> &Vec<Stream>;
     fn placements(&self) -> &HashMap<PlacementId, Placement>;
     fn flows(&self) -> &HashMap<FlowId, FlowArrow>;
-    fn schemas(&self) -> &HashMap<SchemaId, Schema>;
+    fn schema(&self) -> Schema;
 }
 
 pub trait EventModelModifier: EventModel {
     // Name validation must be performed by `decide` prior to this step
     fn added_to_description(&mut self, index: u32, addition: &str);
     fn deleted_from_description(&mut self, index: u32);
+    fn added_to_schema(&mut self, index: u32, addition: &str);
+    fn deleted_from_schema(&mut self, index: u32);
 }
 
 pub trait EventModelComponentModifier: EventModelModifier {
@@ -67,12 +70,28 @@ pub trait EventModelComponentModifier: EventModelModifier {
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
     fn deleted_from_component_description(&mut self, component_id: &ComponentId, index: u32);
+
+    // Validation of presence of component_id must be performed
+    //  by `decide` prior to this step
+    fn added_to_component_schema(&mut self, component_id: &ComponentId, index: u32, addition: &str);
+
+    // Validation of presence of component_id must be performed
+    //  by `decide` prior to this step
+    fn deleted_from_component_schema(&mut self, component_id: &ComponentId, index: u32);
 }
 
 pub trait EventModelPlacementModifier: EventModelModifier {
     fn component_placed(&mut self, placement: &Placement);
     fn placement_moved(&mut self, position: &PlacementPosition);
     fn placement_removed(&mut self, placement_id: &PlacementId);
+
+    // Validation of presence of placement_id must be performed
+    //  by `decide` prior to this step
+    fn added_to_placement_schema(&mut self, placement_id: &PlacementId, index: u32, addition: &str);
+
+    // Validation of presence of placement_id must be performed
+    //  by `decide` prior to this step
+    fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: u32);
 }
 
 pub trait EventModelLaneModifier: EventModelModifier {
@@ -83,20 +102,9 @@ pub trait EventModelLaneModifier: EventModelModifier {
 }
 
 pub trait EventModelFlowModifier: EventModelModifier {
-    fn plus_flow(&mut self, flow_arrow: &FlowArrow);
-    fn minus_flow_by_placement_ids(&mut self, from: &PlacementId, to: &PlacementId);
-
+    fn plus_flow(&mut self, flow_arrow: FlowArrow);
+    fn minus_flow_by_placement_ids(&mut self, from: &PlacementId, to: &PlacementId) {
+        self.minus_flow(&flow_id(from, to));
+    }
     fn minus_flow(&mut self, flow_id: &FlowId);
-}
-
-pub trait EventModelSchemaModifier: EventModelComponentModifier {
-    fn schema_defined(&mut self, schema: &Schema);
-
-    fn added_to_schema_definition(&mut self, schema_id: &SchemaId, index: u32, addition: &str);
-    fn deleted_from_schema_definition(&mut self, schema_id: &SchemaId, index: u32);
-
-    fn added_to_schema_description(&mut self, schema_id: &SchemaId, index: u32, addition: &str);
-    fn deleted_from_schema_description(&mut self, schema_id: &SchemaId, index: u32);
-
-    fn remove_schema(&mut self, schema_id: &SchemaId);
 }

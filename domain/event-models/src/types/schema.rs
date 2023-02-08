@@ -1,44 +1,39 @@
 use serde_derive::{Deserialize, Serialize};
-use uuid::Uuid;
-
-pub type SchemaId = Uuid;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CUESchema {
-    id: SchemaId,
-    definition: String,
-}
+pub struct CUESchema(String);
+
+// #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+// pub struct CDDLSchema(String);
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CDDLSchema {
-    id: SchemaId,
-    definition: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct MalliSchema {
-    id: SchemaId,
-    name: String,
-    definition: String,
-    description: Option<String>,
-}
+pub struct MalliSchema(String);
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Schema {
     CUE(CUESchema),
-    CDDL(CDDLSchema),
+    // CDDL(CDDLSchema),
     Malli(MalliSchema),
 }
 
+// ***** Schema Roles *****
+
+pub type SubSchemaName = String;
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum SchemaRole {
+pub enum CommandSchemaRole {
     CommandSchema,
-    ResultSchema,
+    ResponseSchema,
+    ErrorSchema,
+}
 
-    EventBodySchema,
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum EventSchemaRole {
+    EventSchema,
+}
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ReadModelSchemaRole {
     QuerySchema,
     ReadModelSchema,
-
-    ErrorSchema,
 }

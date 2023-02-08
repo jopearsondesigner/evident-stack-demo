@@ -35,7 +35,7 @@ pub struct InMemoryEventModel {
     streams: Vec<Stream>,
     placements: HashMap<PlacementId, Placement>,
     flows: HashMap<FlowId, FlowArrow>,
-    schemas: HashMap<SchemaId, Schema>,
+    schema: Schema,
 }
 
 impl InMemoryEventModel {
@@ -52,7 +52,7 @@ impl InMemoryEventModel {
             streams: Default::default(),
             placements: Default::default(),
             flows: Default::default(),
-            schemas: Default::default(),
+            schema: Default::default(),
         }
     }
 
@@ -147,8 +147,8 @@ impl EventModel for InMemoryEventModel {
         &self.flows
     }
 
-    fn schemas(&self) -> &HashMap<SchemaId, Schema> {
-        &self.schemas
+    fn schema(&self) -> &Schema {
+        &self.schema
     }
 }
 

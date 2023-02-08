@@ -12,7 +12,7 @@ use crate::types::interface::{Interface, InterfaceId};
 use crate::types::placement::PlacementPosition;
 use crate::types::placement::{Placement, PlacementId};
 use crate::types::read_model::{ReadModel, ReadModelId};
-use crate::types::schema::{Schema, SchemaId};
+use crate::types::schema::Schema;
 use crate::types::stream::Stream;
 use crate::types::{Component, ComponentId, Described, Lane, LaneId, LaneIndex};
 use std::collections::HashMap;
@@ -36,7 +36,7 @@ pub trait EventModel: Described {
     fn streams(&self) -> &Vec<Stream>;
     fn placements(&self) -> &HashMap<PlacementId, Placement>;
     fn flows(&self) -> &HashMap<FlowId, FlowArrow>;
-    fn schema(&self) -> Schema;
+    fn schema(&self) -> &Schema;
 }
 
 pub trait EventModelModifier: EventModel {

@@ -16,6 +16,12 @@ pub enum Schema {
     Malli(MalliSchema),
 }
 
+impl Default for Schema {
+    fn default() -> Self {
+        Schema::CUE(CUESchema(Default::default()))
+    }
+}
+
 // ***** Schema Roles *****
 
 pub type SubSchemaName = String;

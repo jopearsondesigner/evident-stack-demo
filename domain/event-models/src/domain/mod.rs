@@ -7,7 +7,6 @@ use crate::types::{validate_name, Named};
 use crate::{
     EventModel, EventModelComponentModifier, EventModelFlowModifier, EventModelId,
     EventModelLaneModifier, EventModelModifier, EventModelPlacementModifier,
-    EventModelSchemaModifier,
 };
 use epoch::decider::{Decider, Event, Evolver};
 use serde::{Deserialize, Serialize};
@@ -27,8 +26,7 @@ where
         + EventModelComponentModifier
         + EventModelLaneModifier
         + EventModelPlacementModifier
-        + EventModelFlowModifier
-        + EventModelSchemaModifier,
+        + EventModelFlowModifier,
 {
     BeforeCreation,
     EventModel(T),

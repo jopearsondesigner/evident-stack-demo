@@ -21,9 +21,9 @@ impl Event {
         Event {
             id,
             name: name.to_string(),
-            description: None,
-            schema: Schema::default(),
-            schema_roles: HashMap::default(),
+            description: Default::default(),
+            schema: Default::default(),
+            schema_roles: Default::default(),
         }
     }
 }

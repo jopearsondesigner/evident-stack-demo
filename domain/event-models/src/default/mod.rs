@@ -9,7 +9,7 @@ use crate::types::flow::{FlowArrow, FlowId};
 use crate::types::interface::{Interface, InterfaceId};
 use crate::types::placement::{Placement, PlacementId, PlacementPosition};
 use crate::types::read_model::{ReadModel, ReadModelId};
-use crate::types::schema::Schema;
+use crate::types::schema::{HasSchema, Schema};
 use crate::types::stream::Stream;
 use crate::types::{
     Component, ComponentId, ComponentMut, Described, Entity, Lane, LaneId, LaneIndex, Named,
@@ -61,19 +61,18 @@ impl InMemoryEventModel {
             ComponentId::InterfaceComponentId(id) => self
                 .interfaces
                 .get_mut(id)
-                .map(|i| ComponentMut::InterfaceComponentMut(i)),
+                .map(ComponentMut::InterfaceComponentMut),
             ComponentId::CommandComponentId(id) => self
                 .commands
                 .get_mut(id)
-                .map(|i| ComponentMut::CommandComponentMut(i)),
-            ComponentId::EventComponentId(id) => self
-                .events
-                .get_mut(id)
-                .map(|i| ComponentMut::EventComponentMut(i)),
+                .map(ComponentMut::CommandComponentMut),
+            ComponentId::EventComponentId(id) => {
+                self.events.get_mut(id).map(ComponentMut::EventComponentMut)
+            }
             ComponentId::ReadModelComponentId(id) => self
                 .read_models
                 .get_mut(id)
-                .map(|i| ComponentMut::ReadModelComponentMut(i)),
+                .map(ComponentMut::ReadModelComponentMut),
         }
     }
 }
@@ -107,6 +106,30 @@ impl Described for InMemoryEventModel {
 
     fn set_description(&mut self, description: &str) {
         self.description = description.to_string();
+    }
+
+    fn add_to_description(&mut self, index: u32, addition: &str) {
+        if self.description.is_empty() {
+            self.set_description(addition);
+        } else {
+            self.description.insert_str(index as usize, addition);
+        }
+    }
+
+    fn delete_from_description(&mut self, index: u32) {
+        if !self.description.is_empty() {
+            self.description.remove(index as usize);
+        }
+    }
+}
+
+impl HasSchema for InMemoryEventModel {
+    fn schema(&self) -> &Schema {
+        &self.schema
+    }
+
+    fn set_schema(&mut self, schema: Schema) {
+        self.schema = schema
     }
 }
 
@@ -142,45 +165,23 @@ impl EventModel for InMemoryEventModel {
     fn flows(&self) -> &HashMap<FlowId, FlowArrow> {
         &self.flows
     }
-
-    fn schema(&self) -> &Schema {
-        &self.schema
-    }
-}
-
-fn add_to_description(described: &mut impl Described, index: u32, addition: &str) {
-    if described.description().is_empty() {
-        described.set_description(addition);
-    } else {
-        let mut description: String = described.description().to_string();
-        description.insert_str(index as usize, addition);
-        described.set_description(&description);
-    }
-}
-
-fn delete_from_description(described: &mut impl Described, index: u32) {
-    if !described.description().is_empty() {
-        let mut description: String = described.description().to_string();
-        description.remove(index as usize);
-        described.set_description(&*description);
-    }
 }
 
 impl EventModelModifier for InMemoryEventModel {
     fn added_to_description(&mut self, index: u32, addition: &str) {
-        add_to_description(self, index, addition)
+        self.add_to_description(index, addition);
     }
 
     fn deleted_from_description(&mut self, index: u32) {
-        delete_from_description(self, index)
+        self.delete_from_description(index)
     }
 
     fn added_to_schema(&mut self, index: u32, addition: &str) {
-        todo!()
+        self.add_to_schema(index, addition);
     }
 
     fn deleted_from_schema(&mut self, index: u32) {
-        todo!()
+        self.delete_from_schema(index);
     }
 }
 
@@ -203,7 +204,7 @@ impl EventModelComponentModifier for InMemoryEventModel {
     }
 
     fn component_renamed(&mut self, component_id: &ComponentId, name: &str) {
-        match self.component_mut_by_id(&component_id) {
+        match self.component_mut_by_id(component_id) {
             None => {
                 panic!("Component with id {:?} not found", component_id)
             }
@@ -245,44 +246,44 @@ impl EventModelComponentModifier for InMemoryEventModel {
         index: u32,
         addition: &str,
     ) {
-        match self.component_mut_by_id(&component_id) {
+        match self.component_mut_by_id(component_id) {
             None => {
                 panic!("Component with id {:?} not found", component_id)
             }
             Some(component) => match component {
                 ComponentMut::InterfaceComponentMut(i) => {
-                    add_to_description(i, index, addition);
+                    i.add_to_description(index, addition);
                 }
                 ComponentMut::CommandComponentMut(c) => {
-                    add_to_description(c, index, addition);
+                    c.add_to_description(index, addition);
                 }
                 ComponentMut::EventComponentMut(e) => {
-                    add_to_description(e, index, addition);
+                    e.add_to_description(index, addition);
                 }
                 ComponentMut::ReadModelComponentMut(r) => {
-                    add_to_description(r, index, addition);
+                    r.add_to_description(index, addition);
                 }
             },
         }
     }
 
     fn deleted_from_component_description(&mut self, component_id: &ComponentId, index: u32) {
-        match self.component_mut_by_id(&component_id) {
+        match self.component_mut_by_id(component_id) {
             None => {
                 panic!("Component with id {:?} not found", component_id)
             }
             Some(component) => match component {
                 ComponentMut::InterfaceComponentMut(i) => {
-                    delete_from_description(i, index);
+                    i.delete_from_description(index);
                 }
                 ComponentMut::CommandComponentMut(c) => {
-                    delete_from_description(c, index);
+                    c.delete_from_description(index);
                 }
                 ComponentMut::EventComponentMut(e) => {
-                    delete_from_description(e, index);
+                    e.delete_from_description(index);
                 }
                 ComponentMut::ReadModelComponentMut(r) => {
-                    delete_from_description(r, index);
+                    r.delete_from_description(index);
                 }
             },
         }
@@ -294,11 +295,43 @@ impl EventModelComponentModifier for InMemoryEventModel {
         index: u32,
         addition: &str,
     ) {
-        todo!()
+        match self.component_mut_by_id(component_id) {
+            None => {
+                panic!("Component with id {:?} not found", component_id)
+            }
+            Some(component) => match component {
+                ComponentMut::InterfaceComponentMut(i) => (),
+                ComponentMut::CommandComponentMut(c) => {
+                    c.add_to_schema(index, addition);
+                }
+                ComponentMut::EventComponentMut(e) => {
+                    e.add_to_schema(index, addition);
+                }
+                ComponentMut::ReadModelComponentMut(r) => {
+                    r.add_to_schema(index, addition);
+                }
+            },
+        }
     }
 
     fn deleted_from_component_schema(&mut self, component_id: &ComponentId, index: u32) {
-        todo!()
+        match self.component_mut_by_id(component_id) {
+            None => {
+                panic!("Component with id {:?} not found", component_id)
+            }
+            Some(component) => match component {
+                ComponentMut::InterfaceComponentMut(i) => (),
+                ComponentMut::CommandComponentMut(c) => {
+                    c.delete_from_schema(index);
+                }
+                ComponentMut::EventComponentMut(e) => {
+                    e.delete_from_schema(index);
+                }
+                ComponentMut::ReadModelComponentMut(r) => {
+                    r.delete_from_schema(index);
+                }
+            },
+        }
     }
 }
 

@@ -46,6 +46,8 @@ pub trait Named: Entity {
 pub trait Described: Named {
     fn description(&self) -> &str;
     fn set_description(&mut self, description: &str);
+    fn add_to_description(&mut self, index: u32, addition: &str);
+    fn delete_from_description(&mut self, index: u32);
 }
 
 pub type LaneIndex = u32;

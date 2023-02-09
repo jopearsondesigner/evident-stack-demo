@@ -5,6 +5,8 @@ use crate::types::{Described, Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use super::schema::HasSchema;
+
 pub type EventId = Uuid;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -51,5 +53,29 @@ impl Described for Event {
 
     fn set_description(&mut self, description: &str) {
         self.description = description.to_string();
+    }
+
+    fn add_to_description(&mut self, index: u32, addition: &str) {
+        if self.description.is_empty() {
+            self.set_description(addition);
+        } else {
+            self.description.insert_str(index as usize, addition);
+        }
+    }
+
+    fn delete_from_description(&mut self, index: u32) {
+        if !self.description.is_empty() {
+            self.description.remove(index as usize);
+        }
+    }
+}
+
+impl HasSchema for Event {
+    fn schema(&self) -> &Schema {
+        todo!()
+    }
+
+    fn set_schema(&mut self, schema: Schema) {
+        todo!()
     }
 }

@@ -375,7 +375,16 @@ impl EventModelPlacementModifier for InMemoryEventModel {
     }
 
     fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: u32) {
-        todo!()
+        if let Some(placement) = self.placements.get(placement_id) {
+            if let Some(component_mut) = self.component_mut_by_id(&placement.component_id()) {
+                match component_mut {
+                    ComponentMut::InterfaceComponentMut(_) => (),
+                    ComponentMut::CommandComponentMut(c) => c.delete_from_schema(index),
+                    ComponentMut::EventComponentMut(e) => e.delete_from_schema(index),
+                    ComponentMut::ReadModelComponentMut(r) => r.delete_from_schema(index),
+                };
+            }
+        }
     }
 }
 

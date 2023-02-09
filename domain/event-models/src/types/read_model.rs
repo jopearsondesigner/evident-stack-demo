@@ -72,10 +72,14 @@ impl Described for ReadModel {
 
 impl HasSchema for ReadModel {
     fn schema(&self) -> &Schema {
-        todo!()
+        &self.schema
+    }
+
+    fn schema_mut(&mut self) -> &mut Schema {
+        &mut self.schema
     }
 
     fn set_schema(&mut self, schema: Schema) {
-        todo!()
+        self.schema = schema
     }
 }

@@ -1,5 +1,3 @@
-use std::borrow::BorrowMut;
-
 use serde_derive::{Deserialize, Serialize};
 
 use super::Entity;
@@ -52,18 +50,20 @@ pub enum ReadModelSchemaRole {
 
 pub trait HasSchema: Entity {
     fn schema(&self) -> &Schema;
+    fn schema_mut(&mut self) -> &mut Schema;
+
     fn set_schema(&mut self, schema: Schema);
     fn add_to_schema(&mut self, index: u32, addition: &str) {
-        match self.schema() {
-            Schema::CUE(CUESchema(ref mut s)) => s.insert_str(index as usize, addition),
-            Schema::Malli(MalliSchema(ref mut s)) => s.insert_str(index as usize, addition),
+        match self.schema_mut() {
+            Schema::CUE(CUESchema(s)) => s.insert_str(index as usize, addition),
+            Schema::Malli(MalliSchema(s)) => s.insert_str(index as usize, addition),
         };
     }
 
     fn delete_from_schema(&mut self, index: u32) {
-        match self.schema() {
-            Schema::CUE(CUESchema(ref mut s)) => s.remove(index as usize),
-            Schema::Malli(MalliSchema(ref mut s)) => s.remove(index as usize),
+        match self.schema_mut() {
+            Schema::CUE(CUESchema(s)) => s.remove(index as usize),
+            Schema::Malli(MalliSchema(s)) => s.remove(index as usize),
         };
     }
 }

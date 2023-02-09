@@ -11,7 +11,7 @@ use crate::types::Entity;
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use super::LaneId;
+use super::{ComponentId, LaneId};
 
 pub type PlacementIndex = u32;
 pub type PlacementId = Uuid;
@@ -78,6 +78,15 @@ impl Placement {
                 }
             }
             Placement::ReadModel(r) => r.index = index,
+        }
+    }
+
+    pub fn component_id(&self) -> ComponentId {
+        match self {
+            Placement::Interface(p) => ComponentId::InterfaceComponentId(p.interface.to_owned()),
+            Placement::Command(p) => ComponentId::CommandComponentId(p.command.to_owned()),
+            Placement::Event(p) => ComponentId::EventComponentId(p.event.to_owned()),
+            Placement::ReadModel(p) => ComponentId::ReadModelComponentId(p.read_model.to_owned()),
         }
     }
 }

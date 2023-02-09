@@ -128,6 +128,10 @@ impl HasSchema for InMemoryEventModel {
         &self.schema
     }
 
+    fn schema_mut(&mut self) -> &mut Schema {
+        &mut self.schema
+    }
+
     fn set_schema(&mut self, schema: Schema) {
         self.schema = schema
     }
@@ -358,7 +362,16 @@ impl EventModelPlacementModifier for InMemoryEventModel {
         index: u32,
         addition: &str,
     ) {
-        todo!()
+        if let Some(placement) = self.placements.get(placement_id) {
+            if let Some(component_mut) = self.component_mut_by_id(&placement.component_id()) {
+                match component_mut {
+                    ComponentMut::InterfaceComponentMut(_) => (),
+                    ComponentMut::CommandComponentMut(c) => c.add_to_schema(index, addition),
+                    ComponentMut::EventComponentMut(e) => e.add_to_schema(index, addition),
+                    ComponentMut::ReadModelComponentMut(r) => r.add_to_schema(index, addition),
+                };
+            }
+        }
     }
 
     fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: u32) {

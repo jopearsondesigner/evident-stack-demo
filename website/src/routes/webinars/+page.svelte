@@ -1,26 +1,26 @@
 <script lang="ts">
-	import Navbar from '$lib/components/navbar/Navbar.svelte';
-	import NavWrapper from '$lib/components/navbar/NavWrapper.svelte';
-	import Nav from '$lib/components/navbar/Nav.svelte';
-	import NavUl from '$lib/components/navbar/NavUl.svelte';
-	import NavLi from '$lib/components/navbar/NavLi.svelte';
-	import Container from '$lib/components/Container.svelte';
-	import Section from '$lib/components/Section.svelte';
-	import SectionHeader from '$lib/components/typography/SectionHeader.svelte';
-	import SectionCopy from '$lib/components/typography/SectionCopy.svelte';
-	import SectionLabel from '$lib/components/typography/SectionLabel.svelte';
-	import Row from '$lib/components/Row.svelte';
-	import A from '$lib/components/typography/A.svelte';
-	import Column from '$lib/components/Column.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import Icon from '$lib/components/Icon.svelte';
-	import ArrowRight from '$lib/components/icons/ArrowRight.svelte';
-	import Article from '$lib/components/blog/Article.svelte';
-	import FeaturedBadge from '$lib/components/blog/FeaturedBadge.svelte';
-	import BlogCta from '$lib/components/blog/BlogCta.svelte';
-	import FeaturedBlogImage from '$lib/components/assets/images/blog/webinar-mar-2022.png';
-	import BlogImage1 from '$lib/components/assets/images/blog/webinar-dec-2021.png';
-	import BlogImage2 from '$lib/components/assets/images/blog/webinar-nov-2021.png';
+	import Navbar from '$components/navbar/Navbar.svelte';
+	import NavWrapper from '$components/navbar/NavWrapper.svelte';
+	import Nav from '$components/navbar/Nav.svelte';
+	import NavUl from '$components/navbar/NavUl.svelte';
+	import NavLi from '$components/navbar/NavLi.svelte';
+	import Container from '$components/Container.svelte';
+	import Section from '$components/Section.svelte';
+	import SectionHeader from '$components/typography/SectionHeader.svelte';
+	import SectionCopy from '$components/typography/SectionCopy.svelte';
+	import SectionLabel from '$components/typography/SectionLabel.svelte';
+	import Row from '$components/Row.svelte';
+	import A from '$components/typography/A.svelte';
+	import Column from '$components/Column.svelte';
+	import Button from '$components/Button.svelte';
+	import Icon from '$components/Icon.svelte';
+	import ArrowRight from '$components/icons/ArrowRight.svelte';
+	import Article from '$components/blog/Article.svelte';
+	import FeaturedBadge from '$components/blog/FeaturedBadge.svelte';
+	import BlogCta from '$components/blog/BlogCta.svelte';
+	import FeaturedBlogImage from '$components/assets/images/blog/webinar-mar-2022.png';
+	import BlogImage1 from '$components/assets/images/blog/webinar-dec-2021.png';
+	import BlogImage2 from '$components/assets/images/blog/webinar-nov-2021.png';
 </script>
 
 <Navbar navbarClass="w-full bg-black bg-opacity-90 px-4 py-3 sticky top-0 z-10 shadow-md">

@@ -1,15 +1,15 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import Article from '$lib/components/blog/Article.svelte';
-	import ArticleHead from '$lib/components/blog/ArticleHead.svelte';
-	import ArticleBody from '$lib/components/blog/ArticleBody.svelte';
-	import Row from '$lib/components/Row.svelte';
-	import Column from '$lib/components/Row.svelte';
-	import Section from '$lib/components/Section.svelte';
-	import SectionHeader from '$lib/components/typography/SectionHeader.svelte';
-	import SectionCopy from '$lib/components/typography/SectionCopy.svelte';
-	import FeaturedBlogImage from '$lib/components/assets/images/blog/blog-photo-1.png';
-	import A from '$lib/components/typography/A.svelte';
+	import Article from '$components/blog/Article.svelte';
+	import ArticleHead from '$components/blog/ArticleHead.svelte';
+	import ArticleBody from '$components/blog/ArticleBody.svelte';
+	import Row from '$components/Row.svelte';
+	import Column from '$components/Row.svelte';
+	import Section from '$components/Section.svelte';
+	import SectionHeader from '$components/typography/SectionHeader.svelte';
+	import SectionCopy from '$components/typography/SectionCopy.svelte';
+	import FeaturedBlogImage from '$components/assets/images/blog/blog-photo-1.png';
+	import A from '$components/typography/A.svelte';
 	let customSpan: string = 'lg:col-span-3';
 </script>
 

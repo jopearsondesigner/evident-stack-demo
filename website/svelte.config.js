@@ -6,7 +6,7 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		alias: {
-			components: '../components/src/lib'
+			"$components": '../components/src/lib/*'
 		}
 	},
 	preprocess: [

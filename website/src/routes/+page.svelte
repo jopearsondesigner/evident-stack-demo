@@ -1,6 +1,6 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import Hero from '$lib/components/hero/Hero.svelte';
+	import Hero from '$components/hero/Hero.svelte';
 	import HeroContainer from '$lib/components/hero/HeroContainer.svelte';
 	import HeroCopy from '$lib/components/hero/HeroCopy.svelte';
 	import HeroFlexbox from '$lib/components/hero/HeroFlexbox.svelte';

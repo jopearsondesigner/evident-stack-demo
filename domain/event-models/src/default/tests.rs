@@ -1,5 +1,5 @@
 use crate::default::InMemoryEventModel;
-use crate::{EventModel, EventModelComponentModifier, EventModelModifier};
+use crate::{EventModel, EventModelComponentModifier};
 use uuid::Uuid;
 
 use crate::types::command::Command;
@@ -36,7 +36,7 @@ fn adding_to_description() {
     let id = Uuid::new_v4();
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
     assert_eq!(model.description(), "");
-    model.added_to_description(0, "foo bar");
+    model.add_to_description(0, "foo bar");
     assert_eq!(model.description(), "foo bar");
 }
 
@@ -44,8 +44,8 @@ fn adding_to_description() {
 fn deleting_from_description() {
     let id = Uuid::new_v4();
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
-    model.added_to_description(0, "foo bar");
-    model.deleted_from_description(2);
+    model.add_to_description(0, "foo bar");
+    model.delete_from_description(2);
     assert_eq!(model.description(), "fo bar");
 }
 

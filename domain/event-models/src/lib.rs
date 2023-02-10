@@ -38,15 +38,7 @@ pub trait EventModel: Described + HasSchema {
     fn flows(&self) -> &HashMap<FlowId, FlowArrow>;
 }
 
-pub trait EventModelModifier: EventModel {
-    // Name validation must be performed by `decide` prior to this step
-    fn added_to_description(&mut self, index: u32, addition: &str);
-    fn deleted_from_description(&mut self, index: u32);
-    fn added_to_schema(&mut self, index: u32, addition: &str);
-    fn deleted_from_schema(&mut self, index: u32);
-}
-
-pub trait EventModelComponentModifier: EventModelModifier {
+pub trait EventModelComponentModifier: EventModel {
     fn component_defined(&mut self, component: Component);
 
     // Validation of presence of component_id must be performed
@@ -79,7 +71,7 @@ pub trait EventModelComponentModifier: EventModelModifier {
     fn deleted_from_component_schema(&mut self, component_id: &ComponentId, index: u32);
 }
 
-pub trait EventModelPlacementModifier: EventModelModifier {
+pub trait EventModelPlacementModifier: EventModel {
     fn component_placed(&mut self, placement: &Placement);
     fn placement_moved(&mut self, position: &PlacementPosition);
     fn placement_removed(&mut self, placement_id: &PlacementId);
@@ -93,14 +85,14 @@ pub trait EventModelPlacementModifier: EventModelModifier {
     fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: u32);
 }
 
-pub trait EventModelLaneModifier: EventModelModifier {
+pub trait EventModelLaneModifier: EventModel {
     fn lane_added(&mut self, lane: Lane, index: LaneIndex);
     fn lane_renamed(&mut self, lane_id: LaneId, name: &str);
     fn lane_reordered(&mut self, lane_id: LaneId, index: LaneIndex);
     fn lane_removed(&mut self, lane_id: LaneId);
 }
 
-pub trait EventModelFlowModifier: EventModelModifier {
+pub trait EventModelFlowModifier: EventModel {
     fn plus_flow(&mut self, flow_arrow: FlowArrow);
     fn minus_flow_by_placement_ids(&mut self, from: &PlacementId, to: &PlacementId) {
         self.minus_flow(&flow_id(from, to));

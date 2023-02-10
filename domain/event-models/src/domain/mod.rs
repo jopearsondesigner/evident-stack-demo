@@ -6,7 +6,7 @@ use crate::types::errors::EventModelError::IllegalState;
 use crate::types::{validate_name, Named};
 use crate::{
     EventModel, EventModelComponentModifier, EventModelFlowModifier, EventModelId,
-    EventModelLaneModifier, EventModelModifier, EventModelPlacementModifier,
+    EventModelLaneModifier, EventModelPlacementModifier,
 };
 use epoch::decider::{Decider, Event, Evolver};
 use serde::{Deserialize, Serialize};
@@ -22,7 +22,6 @@ pub enum EventModelState<T>
 where
     T: EventModel
         + Debug
-        + EventModelModifier
         + EventModelComponentModifier
         + EventModelLaneModifier
         + EventModelPlacementModifier
@@ -161,7 +160,7 @@ impl Evolver for EventModelDecider {
     type State = EventModelState<InMemoryEventModel>;
     type Evt = EventModelEvent;
 
-    fn evolve(mut state: Self::State, event: &Self::Evt) -> Self::State {
+    fn evolve(state: Self::State, event: &Self::Evt) -> Self::State {
         match state {
             EventModelState::BeforeCreation => match event {
                 EventModelEvent::Created(id, name) => {
@@ -271,7 +270,7 @@ mod tests {
             Created(_id, name) => {
                 assert_eq!(name, "New Event Model");
             }
-            _ => assert!(false, "Wrong Event Type {:?}", &events[0]),
+            _ => panic!("Wrong Event Type {:?}", &events[0]),
         };
 
         for event in &events {
@@ -282,7 +281,7 @@ mod tests {
                 assert_eq!(event_model.name(), "New Event Model");
             }
             EventModelState::BeforeCreation => {
-                assert!(false, "State failed to evolve: {:?}", state)
+                panic!("State failed to evolve: {:?}", state)
             }
         };
     }

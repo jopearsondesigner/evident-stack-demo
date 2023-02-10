@@ -16,7 +16,7 @@ use crate::types::{
 };
 use crate::{
     EventModel, EventModelComponentModifier, EventModelFlowModifier, EventModelId,
-    EventModelLaneModifier, EventModelModifier, EventModelPlacementModifier,
+    EventModelLaneModifier, EventModelPlacementModifier,
 };
 
 #[cfg(test)]
@@ -171,24 +171,6 @@ impl EventModel for InMemoryEventModel {
     }
 }
 
-impl EventModelModifier for InMemoryEventModel {
-    fn added_to_description(&mut self, index: u32, addition: &str) {
-        self.add_to_description(index, addition);
-    }
-
-    fn deleted_from_description(&mut self, index: u32) {
-        self.delete_from_description(index)
-    }
-
-    fn added_to_schema(&mut self, index: u32, addition: &str) {
-        self.add_to_schema(index, addition);
-    }
-
-    fn deleted_from_schema(&mut self, index: u32) {
-        self.delete_from_schema(index);
-    }
-}
-
 impl EventModelComponentModifier for InMemoryEventModel {
     fn component_defined(&mut self, component: Component) {
         match component {
@@ -304,7 +286,7 @@ impl EventModelComponentModifier for InMemoryEventModel {
                 panic!("Component with id {:?} not found", component_id)
             }
             Some(component) => match component {
-                ComponentMut::InterfaceComponentMut(i) => (),
+                ComponentMut::InterfaceComponentMut(_) => (),
                 ComponentMut::CommandComponentMut(c) => {
                     c.add_to_schema(index, addition);
                 }
@@ -324,7 +306,7 @@ impl EventModelComponentModifier for InMemoryEventModel {
                 panic!("Component with id {:?} not found", component_id)
             }
             Some(component) => match component {
-                ComponentMut::InterfaceComponentMut(i) => (),
+                ComponentMut::InterfaceComponentMut(_) => (),
                 ComponentMut::CommandComponentMut(c) => {
                     c.delete_from_schema(index);
                 }

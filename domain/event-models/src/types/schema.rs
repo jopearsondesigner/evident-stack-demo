@@ -50,6 +50,9 @@ pub enum ReadModelSchemaRole {
 
 pub trait HasSchema: Entity {
     fn schema(&self) -> &Schema;
+}
+
+pub trait HasModifiableSchema: HasSchema {
     fn schema_mut(&mut self) -> &mut Schema;
 
     fn set_schema(&mut self, schema: Schema);

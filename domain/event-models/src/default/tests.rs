@@ -1,5 +1,7 @@
 use crate::default::InMemoryEventModel;
-use crate::{EventModel, EventModelComponentModifier};
+use crate::domain::tests::{creating_event_model_succeeds, renaming_event_model_succeeds};
+use crate::domain::EventModelState;
+use crate::{EventModel, ModifiableEventModel};
 use uuid::Uuid;
 
 use crate::types::command::Command;
@@ -9,26 +11,18 @@ use crate::types::read_model::ReadModel;
 use crate::types::ComponentId::{
     CommandComponentId, EventComponentId, InterfaceComponentId, ReadModelComponentId,
 };
-use crate::types::{Component, Described, Entity, Named};
+use crate::types::{Component, Described, Entity, ModifiablyDescribed, Named};
 
 #[test]
-fn successful_creation() {
-    let id = Uuid::new_v4();
-    let name = "foo".to_string();
-    let result = InMemoryEventModel::new(id, name);
-
-    let event_model = result;
-    assert_eq!(event_model.id(), &id);
-    assert_eq!(event_model.name(), "foo");
-    assert_eq!(event_model.description(), "");
+fn creation() {
+    creating_event_model_succeeds(EventModelState::<InMemoryEventModel>::BeforeCreation);
 }
 
 #[test]
 fn renaming() {
-    let id = Uuid::new_v4();
-    let mut model = InMemoryEventModel::new(id, "foo".to_string());
-    model.rename("bar");
-    assert_eq!(model.name(), "bar");
+    let initial = InMemoryEventModel::new(Uuid::new_v4(), "foo".to_string());
+
+    renaming_event_model_succeeds(EventModelState::EventModel(initial));
 }
 
 #[test]

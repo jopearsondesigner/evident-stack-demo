@@ -2,6 +2,8 @@ use crate::types::{Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use super::Renamable;
+
 pub type AudienceId = Uuid;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -20,7 +22,9 @@ impl Named for Audience {
     fn name(&self) -> &str {
         &self.name
     }
+}
 
+impl Renamable for Audience {
     fn rename(&mut self, name: &str) {
         self.name = name.to_string();
     }

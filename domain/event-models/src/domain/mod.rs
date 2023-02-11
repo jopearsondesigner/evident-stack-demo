@@ -1,51 +1,40 @@
-use crate::default::InMemoryEventModel;
 use crate::domain::commands::EventModelCommand;
 use crate::domain::events::EventModelEvent;
 use crate::types::errors::EventModelError;
 use crate::types::errors::EventModelError::IllegalState;
-use crate::types::{validate_name, Named};
-use crate::{
-    EventModel, EventModelComponentModifier, EventModelFlowModifier, EventModelId,
-    EventModelLaneModifier, EventModelPlacementModifier,
-};
-use epoch::decider::{Decider, Event, Evolver};
+use crate::types::validate_name;
+use crate::{EventModel, EventModelId, ModifiableEventModel};
+use epoch::decider::{Decider, Evolver};
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 use uuid::Uuid;
 
 pub mod commands;
 pub mod events;
-pub mod read_models;
+pub mod tests;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum EventModelState<T>
-where
-    T: EventModel
-        + Debug
-        + EventModelComponentModifier
-        + EventModelLaneModifier
-        + EventModelPlacementModifier
-        + EventModelFlowModifier,
-{
+pub enum EventModelState<T: EventModel> {
     BeforeCreation,
     EventModel(T),
 }
 
-impl EventModelState<InMemoryEventModel> {
-    pub fn new(id: EventModelId, name: String) -> Self {
-        EventModelState::EventModel(InMemoryEventModel::new(id, name))
+impl<T: EventModel> EventModelState<T> {
+    fn new(id: EventModelId, name: String) -> Self {
+        Self::EventModel(T::new(id, name))
     }
 }
 
-pub struct EventModelDecider;
-
-impl Decider for EventModelDecider {
+impl<T> Decider for EventModelState<T>
+where
+    T: EventModel + Debug + ModifiableEventModel,
+{
     type Cmd = EventModelCommand;
     type Err = EventModelError;
 
     fn decide(state: &Self::State, cmd: &Self::Cmd) -> Result<Vec<Self::Evt>, Self::Err> {
         match state {
-            EventModelState::BeforeCreation => match cmd {
+            Self::BeforeCreation => match cmd {
                 EventModelCommand::Create(name) => {
                     let valid_name = validate_name(name)?;
                     Ok(vec![EventModelEvent::Created(Uuid::new_v4(), valid_name)])
@@ -55,7 +44,7 @@ impl Decider for EventModelDecider {
                     cmd
                 ))),
             },
-            EventModelState::EventModel(model) => match cmd {
+            Self::EventModel(model) => match cmd {
                 EventModelCommand::Create(_) => {
                     Err(IllegalState(format!("Model already exists: {:?}", model)))
                 }
@@ -150,29 +139,37 @@ impl Decider for EventModelDecider {
                 EventModelCommand::DisconnectFlow(_, _) => {
                     todo!()
                 }
+                EventModelCommand::SetDescription(_, _) => todo!(),
+                EventModelCommand::SetSchema(_, _) => todo!(),
+                EventModelCommand::AddToSchema(_, _, _) => todo!(),
+                EventModelCommand::DeleteFromSchema(_, _) => todo!(),
+                EventModelCommand::SetComponentDescription(_, _, _) => todo!(),
+                EventModelCommand::SetComponentSchema(_, _, _) => todo!(),
+                EventModelCommand::AddToComponentSchema(_, _, _, _) => todo!(),
+                EventModelCommand::DeleteFromComponentSchema(_, _, _) => todo!(),
             },
         }
     }
 }
 
-impl Evolver for EventModelDecider {
-    // eagerly awaiting https://github.com/rust-lang/rust/issues/63063
-    type State = EventModelState<InMemoryEventModel>;
+impl<T> Evolver for EventModelState<T>
+where
+    T: EventModel + Debug + ModifiableEventModel,
+{
+    type State = Self;
     type Evt = EventModelEvent;
 
     fn evolve(state: Self::State, event: &Self::Evt) -> Self::State {
         match state {
-            EventModelState::BeforeCreation => match event {
-                EventModelEvent::Created(id, name) => {
-                    EventModelState::new(id.to_owned(), name.to_owned())
-                }
-                _ => EventModelState::BeforeCreation,
+            Self::BeforeCreation => match event {
+                EventModelEvent::Created(id, name) => Self::new(id.to_owned(), name.to_owned()),
+                _ => Self::BeforeCreation,
             },
-            EventModelState::EventModel(mut model) => match event {
-                EventModelEvent::Created(_, _) => EventModelState::EventModel(model),
+            Self::EventModel(mut model) => match event {
+                EventModelEvent::Created(_, _) => Self::EventModel(model),
                 EventModelEvent::Renamed(_, name) => {
                     model.rename(name);
-                    EventModelState::EventModel(model)
+                    Self::EventModel(model)
                 }
                 EventModelEvent::AddedToDescription(_, _, _) => {
                     todo!()
@@ -229,77 +226,19 @@ impl Evolver for EventModelDecider {
                 EventModelEvent::FlowDisconnected(_, _) => {
                     todo!()
                 }
+                EventModelEvent::DescriptionSet(_, _) => todo!(),
+                EventModelEvent::SchemaSet(_, _) => todo!(),
+                EventModelEvent::AddedToSchema(_, _, _) => todo!(),
+                EventModelEvent::DeletedFromSchema(_, _) => todo!(),
+                EventModelEvent::ComponentDescriptionSet(_, _, _) => todo!(),
+                EventModelEvent::ComponentSchemaSet(_, _, _) => todo!(),
+                EventModelEvent::AddedToComponentSchema(_, _, _, _) => todo!(),
+                EventModelEvent::DeletedFromComponentSchema(_, _, _) => todo!(),
             },
         }
     }
 
     fn init() -> Self::State {
-        EventModelState::BeforeCreation
-    }
-}
-
-impl Event for EventModelEvent {
-    type EntityId = String;
-
-    fn event_type(&self) -> String {
-        todo!()
-    }
-
-    fn get_id(&self) -> Self::EntityId {
-        todo!()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::domain::commands::EventModelCommand::*;
-    use crate::domain::events::EventModelEvent::*;
-    use crate::domain::{EventModelDecider, EventModelState};
-    use crate::{default::InMemoryEventModel, types::Named};
-    use epoch::decider::{Decider, Evolver};
-    use uuid::Uuid;
-
-    #[test]
-    fn creating_event_model() {
-        let mut state: EventModelState<InMemoryEventModel> = EventModelState::BeforeCreation;
-
-        let command = Create("New Event Model".to_string());
-        let events = EventModelDecider::decide(&state, &command).unwrap();
-        assert_eq!(events.len(), 1);
-        match &events[0] {
-            Created(_id, name) => {
-                assert_eq!(name, "New Event Model");
-            }
-            _ => panic!("Wrong Event Type {:?}", &events[0]),
-        };
-
-        for event in &events {
-            state = EventModelDecider::evolve(state, event);
-        }
-        match state {
-            EventModelState::EventModel(event_model) => {
-                assert_eq!(event_model.name(), "New Event Model");
-            }
-            EventModelState::BeforeCreation => {
-                panic!("State failed to evolve: {:?}", state)
-            }
-        };
-    }
-
-    #[test]
-    fn renaming_event_model() {
-        let mut state: EventModelState<InMemoryEventModel> = EventModelState::BeforeCreation;
-        let id = Uuid::new_v4();
-
-        let given_events = vec![Created(id.to_owned(), "Model".to_string())];
-
-        for event in &given_events {
-            state = EventModelDecider::evolve(state, event);
-        }
-
-        let when_command = Rename(id.to_owned(), "Another Name".to_string());
-        let then_result = EventModelDecider::decide(&state, &when_command).unwrap();
-
-        assert_eq!(then_result.len(), 1);
+        Self::BeforeCreation
     }
 }

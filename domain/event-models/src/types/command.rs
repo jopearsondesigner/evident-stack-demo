@@ -6,7 +6,8 @@ use crate::types::{Described, Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use super::schema::HasSchema;
+use super::schema::{HasModifiableSchema, HasSchema};
+use super::{ModifiablyDescribed, Renamable};
 
 pub type CommandId = Uuid;
 
@@ -42,7 +43,9 @@ impl Named for Command {
     fn name(&self) -> &str {
         &self.name
     }
+}
 
+impl Renamable for Command {
     fn rename(&mut self, name: &str) {
         self.name = name.to_string();
     }
@@ -52,7 +55,9 @@ impl Described for Command {
     fn description(&self) -> &str {
         &self.description
     }
+}
 
+impl ModifiablyDescribed for Command {
     fn set_description(&mut self, description: &str) {
         self.description = description.to_string();
     }
@@ -76,7 +81,9 @@ impl HasSchema for Command {
     fn schema(&self) -> &Schema {
         &self.schema
     }
+}
 
+impl HasModifiableSchema for Command {
     fn schema_mut(&mut self) -> &mut Schema {
         &mut self.schema
     }

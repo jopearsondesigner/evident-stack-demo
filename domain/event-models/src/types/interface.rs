@@ -4,6 +4,8 @@ use serde_derive::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
+use super::{ModifiablyDescribed, Renamable};
+
 pub type InterfaceId = Uuid;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -45,7 +47,9 @@ impl Named for Interface {
     fn name(&self) -> &str {
         &self.name
     }
+}
 
+impl Renamable for Interface {
     fn rename(&mut self, name: &str) {
         self.name = name.to_string();
     }
@@ -55,7 +59,9 @@ impl Described for Interface {
     fn description(&self) -> &str {
         &self.description
     }
+}
 
+impl ModifiablyDescribed for Interface {
     fn set_description(&mut self, description: &str) {
         self.description = description.to_string();
     }

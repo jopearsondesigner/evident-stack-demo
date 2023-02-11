@@ -39,12 +39,18 @@ pub fn validate_name(name: &str) -> Result<String, EventModelError> {
 // Name cannot be an empty string
 pub trait Named: Entity {
     fn name(&self) -> &str;
+}
+
+pub trait Renamable: Named {
     fn rename(&mut self, name: &str);
 }
 
 // Description cannot be an empty string
 pub trait Described: Named {
     fn description(&self) -> &str;
+}
+
+pub trait ModifiablyDescribed: Described {
     fn set_description(&mut self, description: &str);
     fn add_to_description(&mut self, index: u32, addition: &str);
     fn delete_from_description(&mut self, index: u32);

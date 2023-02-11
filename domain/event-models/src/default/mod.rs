@@ -9,15 +9,13 @@ use crate::types::flow::{FlowArrow, FlowId};
 use crate::types::interface::{Interface, InterfaceId};
 use crate::types::placement::{Placement, PlacementId, PlacementPosition};
 use crate::types::read_model::{ReadModel, ReadModelId};
-use crate::types::schema::{HasSchema, Schema};
+use crate::types::schema::{HasModifiableSchema, HasSchema, Schema};
 use crate::types::stream::Stream;
 use crate::types::{
-    Component, ComponentId, ComponentMut, Described, Entity, Lane, LaneId, LaneIndex, Named,
+    Component, ComponentId, ComponentMut, Described, Entity, Lane, LaneId, LaneIndex,
+    ModifiablyDescribed, Named, Renamable,
 };
-use crate::{
-    EventModel, EventModelComponentModifier, EventModelFlowModifier, EventModelId,
-    EventModelLaneModifier, EventModelPlacementModifier,
-};
+use crate::{EventModel, EventModelId, ModifiableEventModel};
 
 #[cfg(test)]
 mod tests;
@@ -39,23 +37,6 @@ pub struct InMemoryEventModel {
 }
 
 impl InMemoryEventModel {
-    pub fn new(id: EventModelId, name: String) -> Self {
-        InMemoryEventModel {
-            id,
-            name,
-            description: Default::default(),
-            interfaces: Default::default(),
-            commands: Default::default(),
-            events: Default::default(),
-            read_models: Default::default(),
-            audiences: Default::default(),
-            streams: Default::default(),
-            placements: Default::default(),
-            flows: Default::default(),
-            schema: Default::default(),
-        }
-    }
-
     fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<ComponentMut> {
         match id {
             ComponentId::InterfaceComponentId(id) => self
@@ -93,7 +74,9 @@ impl Named for InMemoryEventModel {
     fn name(&self) -> &str {
         &self.name
     }
+}
 
+impl Renamable for InMemoryEventModel {
     fn rename(&mut self, name: &str) {
         self.name = name.to_string();
     }
@@ -103,7 +86,9 @@ impl Described for InMemoryEventModel {
     fn description(&self) -> &str {
         &self.description
     }
+}
 
+impl ModifiablyDescribed for InMemoryEventModel {
     fn set_description(&mut self, description: &str) {
         self.description = description.to_string();
     }
@@ -127,7 +112,9 @@ impl HasSchema for InMemoryEventModel {
     fn schema(&self) -> &Schema {
         &self.schema
     }
+}
 
+impl HasModifiableSchema for InMemoryEventModel {
     fn schema_mut(&mut self) -> &mut Schema {
         &mut self.schema
     }
@@ -138,6 +125,23 @@ impl HasSchema for InMemoryEventModel {
 }
 
 impl EventModel for InMemoryEventModel {
+    fn new(id: EventModelId, name: String) -> Self {
+        InMemoryEventModel {
+            id,
+            name,
+            description: Default::default(),
+            interfaces: Default::default(),
+            commands: Default::default(),
+            events: Default::default(),
+            read_models: Default::default(),
+            audiences: Default::default(),
+            streams: Default::default(),
+            placements: Default::default(),
+            flows: Default::default(),
+            schema: Default::default(),
+        }
+    }
+
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface> {
         &self.interfaces
     }
@@ -171,7 +175,7 @@ impl EventModel for InMemoryEventModel {
     }
 }
 
-impl EventModelComponentModifier for InMemoryEventModel {
+impl ModifiableEventModel for InMemoryEventModel {
     fn component_defined(&mut self, component: Component) {
         match component {
             Component::InterfaceComponent(i) => {
@@ -319,9 +323,7 @@ impl EventModelComponentModifier for InMemoryEventModel {
             },
         }
     }
-}
 
-impl EventModelPlacementModifier for InMemoryEventModel {
     fn component_placed(&mut self, placement: &Placement) {
         self.placements
             .insert(placement.id().to_owned(), placement.to_owned());
@@ -368,9 +370,7 @@ impl EventModelPlacementModifier for InMemoryEventModel {
             }
         }
     }
-}
 
-impl EventModelLaneModifier for InMemoryEventModel {
     fn lane_added(&mut self, lane: Lane, index: LaneIndex) {
         match lane {
             Lane::Audience(audience) => self.audiences.insert(index as usize, audience),
@@ -447,9 +447,7 @@ impl EventModelLaneModifier for InMemoryEventModel {
             _ => (),
         }
     }
-}
 
-impl EventModelFlowModifier for InMemoryEventModel {
     fn plus_flow(&mut self, flow_arrow: FlowArrow) {
         self.flows.insert(flow_arrow.id().to_owned(), flow_arrow);
     }

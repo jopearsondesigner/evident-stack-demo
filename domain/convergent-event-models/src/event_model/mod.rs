@@ -1,14 +1,10 @@
 use event_models::default::InMemoryEventModel;
 use event_models::types::{
     Audience, Command, CommandId, Described, Entity, Event, EventId, FlowArrow, FlowId, Interface,
-    InterfaceId, Named, Placement, PlacementId, PlacementPosition, ReadModel, ReadModelId, Schema,
-    SchemaId, Stream,
+    InterfaceId, Named, Placement, PlacementId, PlacementPosition, ReadModel, ReadModelId,
+    Renamable, Schema, Stream,
 };
-use event_models::{
-    EventModel, EventModelComponentModifier, EventModelFlowModifier, EventModelId,
-    EventModelLaneModifier, EventModelModifier, EventModelPlacementModifier,
-    EventModelSchemaModifier,
-};
+use event_models::{EventModel, EventModelId, ModifiableEventModel};
 use rand::random;
 use std::collections::HashMap;
 use uuid::Uuid;
@@ -84,7 +80,9 @@ impl<S: OpSet<Op>> Named for ConvergentEventModel<S> {
     fn name(&self) -> &str {
         self.value.name()
     }
+}
 
+impl<S: OpSet<Op>> Renamable for ConvergentEventModel<S> {
     fn rename(&mut self, name: &str) {
         todo!()
     }
@@ -132,13 +130,9 @@ impl<S: OpSet<Op>> EventModel for ConvergentEventModel<S> {
     fn flows(&self) -> &HashMap<FlowId, FlowArrow> {
         todo!()
     }
-
-    fn schemas(&self) -> &HashMap<SchemaId, Schema> {
-        todo!()
-    }
 }
 
-impl<S: OpSet<Op>> EventModelModifier for ConvergentEventModel<S> {
+impl<S: OpSet<Op>> ModifiableEventModel for ConvergentEventModel<S> {
     fn renamed(self, name: &str) -> Self {
         let mut patch: Patch<Op> = HashMap::new();
         patch.insert(self.opset.next_id(&self.node), Op::Named(name.to_owned()));
@@ -255,12 +249,7 @@ impl<S: OpSet<Op>> EventModelSchemaModifier for ConvergentEventModel<S> {
         todo!()
     }
 
-    fn added_to_schema_definition(
-        self,
-        schema_id: &SchemaId,
-        index: u32,
-        addition: &str,
-    ) -> Self {
+    fn added_to_schema_definition(self, schema_id: &SchemaId, index: u32, addition: &str) -> Self {
         todo!()
     }
 
@@ -268,12 +257,7 @@ impl<S: OpSet<Op>> EventModelSchemaModifier for ConvergentEventModel<S> {
         todo!()
     }
 
-    fn added_to_schema_description(
-        self,
-        schema_id: &SchemaId,
-        index: u32,
-        addition: &str,
-    ) -> Self {
+    fn added_to_schema_description(self, schema_id: &SchemaId, index: u32, addition: &str) -> Self {
         todo!()
     }
 

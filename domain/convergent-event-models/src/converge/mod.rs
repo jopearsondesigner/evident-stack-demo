@@ -27,10 +27,7 @@ pub trait OpSet<Op: Clone> {
     fn apply_patch(&mut self, patch: Patch<Op>);
 
     fn max_counter(&self) -> Counter {
-        match self.clock().into_values().max() {
-            Some(counter) => counter,
-            None => 0,
-        }
+        self.clock().into_values().max().unwrap_or(0)
     }
 
     fn next_id(&self, node: &Node) -> Id {
@@ -87,13 +84,11 @@ pub trait Interpreter<Op: Clone> {
 
     fn evolve(state: Self::Interpretation, id: &Id, op: &Op) -> Self::Interpretation;
 
-    fn interpret(
-        mut initial: Self::Interpretation,
-        opset: &impl OpSet<Op>,
-    ) -> Self::Interpretation {
+    fn interpret(initial: Self::Interpretation, opset: &impl OpSet<Op>) -> Self::Interpretation {
+        let mut state = initial;
         for (id, op) in opset.ops() {
-            initial = Self::evolve(initial, id, op);
+            state = Self::evolve(initial, id, op);
         }
-        initial
+        state
     }
 }

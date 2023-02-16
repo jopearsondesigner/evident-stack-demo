@@ -7,8 +7,9 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
+    "release": "npm run check && npm run build",
     "test": "playwright test",
     "test:unit": "vitest",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
@@ -38,6 +39,7 @@
   },
   "dependencies": {
     "classnames": "^2.3.2",
+    "components": "0.1.0",
     "svelte-layout-aware-transitions": "^0.0.5",
     "svelte-use-click-outside": "^1.0.0",
     "yarn": "^1.22.19"

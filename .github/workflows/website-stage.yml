@@ -1,12 +1,10 @@
----
 name: Publish Website to Production
 run-name: Production publish by ${{ github.actor }}
 on:
-  release:
-    types:
-      - published
-    paths:
-      - "website/**"
+  push:
+    branches:
+      - 'npm-workspaces'
+      - 'main'
 jobs:
   Publish:
     runs-on: ubuntu-latest
@@ -40,4 +38,3 @@ jobs:
           projectName: evidentstack-website
           directory: website/.svelte-kit/cloudflare
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          environment: production

@@ -4,52 +4,52 @@ SHELL := bash
 .DELETE_ON_ERROR:
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
-YARN := yarn
+NPM := npm
 
 default: release
 
 # Dependencies
 
 yarn.lock: package.json
-	$(YARN)
+	$(NPM)
 
 node_modules/.yarn-integrity: yarn.lock
-	$(YARN) && $(YARN) upgrade components
+	$(NPM) && $(NPM) upgrade components
 
 # Development Workflow
 
 .PHONY: dev
 dev: node_modules/.yarn-integrity
-	$(YARN) dev
+	$(NPM) run dev
 
 # Code Style
 
 .PHONY: format
 format: node_modules/.yarn-integrity
-	$(YARN) format
+	$(NPM) run format
 
 
 # Testing and Verification
 
 .PHONY: check
 check: node_modules/.yarn-integrity
-	$(YARN) run check && $(YARN) run lint && $(YARN) run test
+	$(NPM) run check && $(NPM) run lint && $(NPM) run test
 
 # Build and Release
 
 .svelte-kit/output/client/vite-manifest.json: node_modules/.yarn-integrity postcss.config.cjs svelte.config.js tailwind.config.cjs vite.config.js $(wildcard src/**/*)
-	$(YARN) run build
+	$(NPM) run build
 
 build: .svelte-kit/output/client/vite-manifest.json
 
 release: check build
 
 preview: release
-	$(YARN) preview
+	$(NPM) run preview
 
 .PHONY: pretty
 pretty:
-	$(YARN) format
+	$(NPM) run format
 
 .PHONY: clean
 clean:

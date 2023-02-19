@@ -1,5 +1,5 @@
 name: Publish Website to Production
-run-name: Production publish by ${{ github.actor }}
+run-name: Stage publish by ${{ github.actor }}
 on:
   push:
     branches:

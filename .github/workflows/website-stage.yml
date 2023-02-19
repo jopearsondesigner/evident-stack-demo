@@ -1,4 +1,4 @@
-name: Publish Website to Production
+name: Publish Website to Stage 
 run-name: Stage publish by ${{ github.actor }}
 on:
   push:

@@ -21,16 +21,19 @@ use types::schema::HasModifiableSchema;
 use types::{ModifiablyDescribed, Renamable};
 use uuid::Uuid;
 
-pub mod application;
-pub mod default;
-pub mod domain;
+pub mod api;
+//pub mod application;
 pub mod grid;
+pub mod implementation;
 pub mod types;
 
 pub type EventModelId = Uuid;
 
+pub trait EventModelCreator<T: EventModel> {
+    fn create(&self, id: EventModelId, name: String) -> T;
+}
+
 pub trait EventModel: Described + HasSchema {
-    fn new(id: EventModelId, name: String) -> Self;
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface>;
     fn commands(&self) -> &HashMap<CommandId, Command>;
     fn events(&self) -> &HashMap<EventId, Event>;

@@ -1,6 +1,6 @@
-use crate::default::InMemoryEventModel;
-use crate::domain::tests::{creating_event_model_succeeds, renaming_event_model_succeeds};
-use crate::domain::EventModelState;
+use crate::api::tests::{creating_event_model_succeeds, renaming_event_model_succeeds};
+use crate::api::EventModelState;
+use crate::implementation::in_memory::InMemoryEventModel;
 use crate::{EventModel, ModifiableEventModel};
 use uuid::Uuid;
 

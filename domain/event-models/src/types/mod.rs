@@ -1,6 +1,6 @@
+pub use crate::api::errors::EventModelError;
 pub use crate::types::audience::{Audience, AudienceId};
 pub use crate::types::command::{Command, CommandId};
-pub use crate::types::errors::EventModelError;
 pub use crate::types::event::{Event, EventId};
 pub use crate::types::flow::{FlowArrow, FlowId};
 pub use crate::types::interface::{Interface, InterfaceId};
@@ -13,7 +13,6 @@ use uuid::Uuid;
 
 pub(crate) mod audience;
 pub(crate) mod command;
-pub(crate) mod errors;
 pub(crate) mod event;
 pub(crate) mod flow;
 pub(crate) mod interface;

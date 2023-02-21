@@ -1,18 +1,21 @@
-use crate::domain::commands::EventModelCommand::*;
-use crate::domain::events::EventModelEvent::*;
-use crate::domain::EventModelState;
-use crate::{EventModel, ModifiableEventModel};
+use crate::api::commands::EventModelCommand::*;
+use crate::api::events::EventModelEvent::*;
+use crate::api::EventModelState;
+use crate::{EventModel, EventModelCreator, ModifiableEventModel};
 use epoch::decider::{Decider, Evolver};
 use std::fmt::Debug;
 use uuid::Uuid;
 
-pub fn creating_event_model_succeeds<T>(initial: EventModelState<T>)
+pub fn creating_event_model_succeeds<c, T>(initial: <T as Evolver>::State)
 where
-    T: EventModel + Debug + ModifiableEventModel,
+    T: EventModel + Debug + ModifiableEventModel + Decider,
+    <T as Decider>::State: EventModelState<C, T>,
+    <T as Decider>::Err: std::fmt::Debug,
+    <T as Evolver>::Evt: std::fmt::Debug,
 {
     let mut state = initial;
     let command = Create("New Event Model".to_string());
-    let events = EventModelState::decide(&state, &command).unwrap();
+    let events = T::decide(&state, &command).unwrap();
     assert_eq!(events.len(), 1);
     match &events[0] {
         Created(_id, name) => {
@@ -28,15 +31,16 @@ where
         EventModelState::EventModel(event_model) => {
             assert_eq!(event_model.name(), "New Event Model");
         }
-        EventModelState::BeforeCreation => {
+        EventModelState::BeforeCreation(_) => {
             panic!("State failed to evolve: {:?}", state)
         }
     };
 }
 
-pub fn renaming_event_model_succeeds<T>(initial: EventModelState<T>)
+pub fn renaming_event_model_succeeds<T, C>(initial: EventModelState<T, C>)
 where
     T: EventModel + Debug + ModifiableEventModel,
+    C: EventModelCreator<T> + Debug,
 {
     let mut state = initial;
     let id = Uuid::new_v4();
@@ -66,7 +70,7 @@ where
         EventModelState::EventModel(event_model) => {
             assert_eq!(event_model.name(), "Another Name");
         }
-        EventModelState::BeforeCreation => {
+        EventModelState::BeforeCreation(_) => {
             panic!("State failed to evolve: {:?}", state)
         }
     };

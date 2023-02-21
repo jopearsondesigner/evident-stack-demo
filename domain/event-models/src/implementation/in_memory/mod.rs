@@ -1,7 +1,12 @@
+use epoch::decider::{Decider, Evolver};
 use serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
 
+use crate::api::commands::EventModelCommand;
+use crate::api::errors::EventModelError;
+use crate::api::events::EventModelEvent;
+use crate::api::{event_model_decide, event_model_evolve, EventModelState};
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
 use crate::types::event::{Event, EventId};
@@ -15,7 +20,7 @@ use crate::types::{
     Component, ComponentId, ComponentMut, Described, Entity, Lane, LaneId, LaneIndex,
     ModifiablyDescribed, Named, Renamable,
 };
-use crate::{EventModel, EventModelId, ModifiableEventModel};
+use crate::{EventModel, EventModelCreator, EventModelId, ModifiableEventModel};
 
 #[cfg(test)]
 mod tests;
@@ -36,7 +41,32 @@ pub struct InMemoryEventModel {
     schema: Schema,
 }
 
+struct InMemoryCreator;
+
+impl EventModelCreator<InMemoryEventModel> for InMemoryCreator {
+    fn create(&self, id: EventModelId, name: String) -> InMemoryEventModel {
+        InMemoryEventModel::new(id, name)
+    }
+}
+
 impl InMemoryEventModel {
+    pub fn new(id: EventModelId, name: String) -> InMemoryEventModel {
+        InMemoryEventModel {
+            id,
+            name,
+            description: Default::default(),
+            interfaces: Default::default(),
+            commands: Default::default(),
+            events: Default::default(),
+            read_models: Default::default(),
+            audiences: Default::default(),
+            streams: Default::default(),
+            placements: Default::default(),
+            flows: Default::default(),
+            schema: Default::default(),
+        }
+    }
+
     fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<ComponentMut> {
         match id {
             ComponentId::InterfaceComponentId(id) => self
@@ -125,23 +155,6 @@ impl HasModifiableSchema for InMemoryEventModel {
 }
 
 impl EventModel for InMemoryEventModel {
-    fn new(id: EventModelId, name: String) -> Self {
-        InMemoryEventModel {
-            id,
-            name,
-            description: Default::default(),
-            interfaces: Default::default(),
-            commands: Default::default(),
-            events: Default::default(),
-            read_models: Default::default(),
-            audiences: Default::default(),
-            streams: Default::default(),
-            placements: Default::default(),
-            flows: Default::default(),
-            schema: Default::default(),
-        }
-    }
-
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface> {
         &self.interfaces
     }
@@ -454,5 +467,27 @@ impl ModifiableEventModel for InMemoryEventModel {
 
     fn minus_flow(&mut self, flow_id: &FlowId) {
         self.flows.remove(flow_id);
+    }
+}
+
+impl Decider for EventModelState<InMemoryEventModel, InMemoryCreator> {
+    type Cmd = EventModelCommand;
+    type Err = EventModelError;
+
+    fn decide(state: &Self::State, cmd: &Self::Cmd) -> Result<Vec<Self::Evt>, Self::Err> {
+        event_model_decide(state, cmd)
+    }
+}
+
+impl Evolver for EventModelState<InMemoryEventModel, InMemoryCreator> {
+    type State = EventModelState<InMemoryEventModel, InMemoryCreator>;
+    type Evt = EventModelEvent;
+
+    fn evolve(state: Self::State, event: &Self::Evt) -> Self::State {
+        event_model_evolve(state, event)
+    }
+
+    fn init() -> Self::State {
+        Self::State::BeforeCreation(InMemoryCreator)
     }
 }

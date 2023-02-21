@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::types::errors::EventModelError;
+use crate::api::errors::EventModelError;
 use crate::types::schema::{CommandSchemaRole, Schema, SubSchemaName};
 use crate::types::{Described, Entity, Named};
 use serde_derive::{Deserialize, Serialize};
@@ -21,8 +21,7 @@ pub struct Command {
 }
 
 impl Command {
-    // TODO:
-    pub fn new(id: Uuid, name: &str) -> Result<Self, EventModelError> {
+    pub fn create(id: Uuid, name: &str) -> Result<Self, EventModelError> {
         Ok(Command {
             id,
             name: name.to_string(),

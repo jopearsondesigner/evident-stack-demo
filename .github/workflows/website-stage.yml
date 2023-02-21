@@ -1,12 +1,10 @@
----
-name: Stage App on Pull Request
-run-name: Pull Request Staged by ${{ github.actor }}
+name: Publish Website to Stage 
+run-name: Stage publish by ${{ github.actor }}
 on:
-  pull_request:
+  push:
     branches:
-      - main
-    paths:
-      - "app/**"
+      - 'npm-workspaces'
+      - 'main'
 jobs:
   Publish:
     runs-on: ubuntu-latest
@@ -22,32 +20,21 @@ jobs:
         with:
           node-version: 16
 
-      - name: Install Parent dependencies
-        run: npm -w components install
-
-      - uses: jetli/wasm-pack-action@v0.4.0
-
-      - name: Build editor-state
-        run: yarn state:build
-        working-directory: app
-
       - name: Install dependencies
-        run: yarn
-        working-directory: app
+        run: npm -w website install
 
       - name: Install playwright browsers
         run: npx playwright install --with-deps
-        working-directory: app
 
       - name: Build
-        run: yarn release
-        working-directory: app
+        run: npm -w website run build
+        working-directory: website
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_PAGES_API_KEY }}
           accountId: 24a2b0f48cf4f2d0cd375521394e63bd
-          projectName: evidentstack-app
-          directory: app/.svelte-kit/cloudflare
+          projectName: evidentstack-website
+          directory: website/.svelte-kit/cloudflare
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

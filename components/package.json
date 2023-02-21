@@ -64,7 +64,20 @@
   },
   "dependencies": {
     "classnames": "^2.3.2",
-    "editor-state": "0.1.0",
     "svelte-layout-aware-transitions": "^0.0.5"
-  }
+  },
+  "description": "Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).",
+  "main": "playwright.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evidentsystems/platform.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/evidentsystems/platform/issues"
+  },
+  "homepage": "https://github.com/evidentsystems/platform#readme"
 }

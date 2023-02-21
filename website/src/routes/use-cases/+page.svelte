@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Container from '$lib/components/Container.svelte';
-	import Row from '$lib/components/Row.svelte';
-	import Column from '$lib/components/Column.svelte';
-	import Section from '$lib/components/Column.svelte';
-	import SectionCopy from '$lib/components/typography/SectionCopy.svelte';
-	import SectionLabel from '$lib/components/typography/SectionLabel.svelte';
+	import Container from '$components/Container.svelte';
+	import Row from '$components/Row.svelte';
+	import Column from '$components/Column.svelte';
+	import Section from '$components/Column.svelte';
+	import SectionCopy from '$components/typography/SectionCopy.svelte';
+	import SectionLabel from '$components/typography/SectionLabel.svelte';
 </script>
 
 <Container class="sm:container pb-4">

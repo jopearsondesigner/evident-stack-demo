@@ -1,4 +1,4 @@
-use crate::types::errors::EventModelError;
+use crate::api::errors::EventModelError;
 use crate::types::placement::PlacementId;
 use crate::types::Entity;
 use crate::EventModel;
@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 pub type FlowId = Uuid;
 
-#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Anchor {
     #[default]
     None,
@@ -17,27 +17,31 @@ pub enum Anchor {
     Right,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Port {
     placement: PlacementId,
     anchor: Anchor, // TODO: InterfaceElement?
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FlowArrow {
     id: FlowId,
     from: Port,
     to: Port,
 }
 
+pub fn flow_id(from: &PlacementId, to: &PlacementId) -> FlowId {
+    Uuid::new_v5(from, to.as_bytes())
+}
+
 // TODO: enforce business rules!
 impl FlowArrow {
-    fn new(model: &impl EventModel, from: Port, to: Port) -> Result<FlowArrow, EventModelError> {
+    fn create(model: &impl EventModel, from: Port, to: Port) -> Result<FlowArrow, EventModelError> {
         let from_placement = model.placements().get(&from.placement);
         let to_placement = model.placements().get(&to.placement);
-        todo!();
+        todo!("Validation of flow arrow");
         Ok(FlowArrow {
-            id: Uuid::new_v5(&from.placement, to.placement.as_bytes()),
+            id: flow_id(&from.placement, &to.placement),
             from,
             to,
         })

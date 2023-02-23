@@ -1,16 +1,18 @@
-use crate::types::audience::{Audience, AudienceId};
-use crate::types::command::{Command, CommandId};
-use crate::types::errors::EventModelError;
-use crate::types::event::{Event, EventId};
-use crate::types::interface::{Interface, InterfaceId};
-use crate::types::read_model::{ReadModel, ReadModelId};
-use crate::types::stream::{Stream, StreamId};
+pub use crate::api::errors::EventModelError;
+pub use crate::types::audience::{Audience, AudienceId};
+pub use crate::types::command::{Command, CommandId};
+pub use crate::types::event::{Event, EventId};
+pub use crate::types::flow::{FlowArrow, FlowId};
+pub use crate::types::interface::{Interface, InterfaceId};
+pub use crate::types::placement::{Placement, PlacementId, PlacementPosition};
+pub use crate::types::read_model::{ReadModel, ReadModelId};
+pub use crate::types::schema::{CommandSchemaRole, EventSchemaRole, ReadModelSchemaRole, Schema};
+pub use crate::types::stream::{Stream, StreamId};
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
 
 pub(crate) mod audience;
 pub(crate) mod command;
-pub mod errors;
 pub(crate) mod event;
 pub(crate) mod flow;
 pub(crate) mod interface;
@@ -33,32 +35,44 @@ pub fn validate_name(name: &str) -> Result<String, EventModelError> {
     }
 }
 
+// Name cannot be an empty string
 pub trait Named: Entity {
     fn name(&self) -> &str;
+}
+
+pub trait Renamable: Named {
     fn rename(&mut self, name: &str);
 }
 
-// TODO: ensure non-blank strings
+// Description cannot be an empty string
 pub trait Described: Named {
-    fn description(&self) -> Option<&str>;
+    fn description(&self) -> &str;
+}
+
+pub trait ModifiablyDescribed: Described {
     fn set_description(&mut self, description: &str);
+    fn add_to_description(&mut self, index: u32, addition: &str);
+    fn delete_from_description(&mut self, index: u32);
 }
 
 pub type LaneIndex = u32;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LaneId {
-    AudienceLaneId(AudienceId),
-    StreamLaneId(StreamId),
+    DefaultAudience,
+    Audience(AudienceId),
+    Timeline,
+    Stream(StreamId),
+    DefaultStream,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Lane {
-    AudienceLane(Audience),
-    StreamLane(Stream),
+    Audience(Audience),
+    Stream(Stream),
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ComponentId {
     InterfaceComponentId(InterfaceId),
     CommandComponentId(CommandId),
@@ -66,7 +80,7 @@ pub enum ComponentId {
     ReadModelComponentId(ReadModelId),
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Component {
     InterfaceComponent(Interface),
     CommandComponent(Command),
@@ -75,7 +89,7 @@ pub enum Component {
 }
 
 #[derive(Debug)]
-pub enum ComponentMut<'a> {
+pub(crate) enum ComponentMut<'a> {
     InterfaceComponentMut(&'a mut Interface),
     CommandComponentMut(&'a mut Command),
     EventComponentMut(&'a mut Event),

@@ -2,17 +2,17 @@
 // use crate::{EventModel, EventModelId};
 // TODO: implement in terms of DTOs, as appropriate
 
-// pub trait EventModelRepository {
+// pub trait EventModelRepository<T: EventModel> {
 //     type Error;
 //
 //     fn all_ids(&self) -> HashSet<EventModelId>;
-//     fn by_id(&self, id: &EventModelId) -> Option<& EventModel>;
-//     fn by_name(&self, id: &str) -> Option<&dyn EventModel>;
+//     fn by_id(&self, id: &EventModelId) -> Option<T>;
+//     fn by_name(&self, id: &str) -> Option<T>;
 //
 //     fn put_by_id(
 //         &self,
 //         id: &EventModelId,
-//         event_model: &dyn EventModel
+//         event_model: &T
 //     ) -> Result<(), Self::Error>;
 // }
 

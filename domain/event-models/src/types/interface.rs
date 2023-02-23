@@ -1,12 +1,14 @@
-use crate::types::errors::EventModelError;
+use crate::api::errors::EventModelError;
 use crate::types::{Described, Entity, Named};
 use serde_derive::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
+use super::{ModifiablyDescribed, Renamable};
+
 pub type InterfaceId = Uuid;
 
-#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum InterfaceConfig {
     #[default]
     None,
@@ -15,21 +17,21 @@ pub enum InterfaceConfig {
     Job,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Interface {
     id: InterfaceId,
     name: String,
-    description: Option<String>,
+    description: String,
     config: InterfaceConfig,
 }
 
 impl Interface {
-    pub fn new(id: Uuid, name: &str) -> Result<Self, EventModelError> {
+    pub fn create(id: Uuid, name: &str) -> Result<Self, EventModelError> {
         // TODO: validate name
         Ok(Interface {
             id,
             name: name.to_string(),
-            description: None,
+            description: Default::default(),
             config: Default::default(),
         })
     }
@@ -45,22 +47,36 @@ impl Named for Interface {
     fn name(&self) -> &str {
         &self.name
     }
+}
 
+impl Renamable for Interface {
     fn rename(&mut self, name: &str) {
         self.name = name.to_string();
     }
 }
 
 impl Described for Interface {
-    fn description(&self) -> Option<&str> {
-        self.description.as_deref()
+    fn description(&self) -> &str {
+        &self.description
+    }
+}
+
+impl ModifiablyDescribed for Interface {
+    fn set_description(&mut self, description: &str) {
+        self.description = description.to_string();
     }
 
-    fn set_description(&mut self, description: &str) {
-        if description.is_empty() {
-            self.description = None
+    fn add_to_description(&mut self, index: u32, addition: &str) {
+        if self.description.is_empty() {
+            self.set_description(addition);
         } else {
-            self.description = Some(description.to_string());
+            self.description.insert_str(index as usize, addition);
+        }
+    }
+
+    fn delete_from_description(&mut self, index: u32) {
+        if !self.description.is_empty() {
+            self.description.remove(index as usize);
         }
     }
 }

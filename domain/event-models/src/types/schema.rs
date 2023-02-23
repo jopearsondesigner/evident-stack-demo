@@ -1,44 +1,72 @@
 use serde_derive::{Deserialize, Serialize};
-use uuid::Uuid;
 
-pub(crate) type SchemaId = Uuid;
+use super::Entity;
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CUESchema {
-    id: SchemaId,
-    definition: String,
-}
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CUESchema(pub String);
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CDDLSchema {
-    id: SchemaId,
-    definition: String,
-}
+// #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+// pub struct CDDLSchema(String);
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct MalliSchema {
-    id: SchemaId,
-    name: String,
-    definition: String,
-    description: Option<String>,
-}
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct MalliSchema(pub String);
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Schema {
     CUE(CUESchema),
-    CDDL(CDDLSchema),
+    // CDDL(CDDLSchema),
     Malli(MalliSchema),
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub enum SchemaRole {
+impl Default for Schema {
+    fn default() -> Self {
+        Schema::CUE(CUESchema(Default::default()))
+    }
+}
+
+// ***** Schema Roles *****
+
+pub type SubSchemaName = String;
+
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub enum CommandSchemaRole {
     CommandSchema,
-    ResultSchema,
+    ResponseSchema,
+    ErrorSchema,
+}
 
-    EventBodySchema,
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub enum EventSchemaRole {
+    EventSchema,
+}
 
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ReadModelSchemaRole {
     QuerySchema,
     ReadModelSchema,
+}
 
-    ErrorSchema,
+// ***** Applying to Entities *****
+
+pub trait HasSchema: Entity {
+    fn schema(&self) -> &Schema;
+}
+
+pub trait HasModifiableSchema: HasSchema {
+    fn schema_mut(&mut self) -> &mut Schema;
+
+    fn set_schema(&mut self, schema: Schema);
+    fn add_to_schema(&mut self, index: u32, addition: &str) {
+        match self.schema_mut() {
+            Schema::CUE(CUESchema(s)) => s.insert_str(index as usize, addition),
+            Schema::Malli(MalliSchema(s)) => s.insert_str(index as usize, addition),
+        };
+    }
+
+    fn delete_from_schema(&mut self, index: u32) {
+        match self.schema_mut() {
+            Schema::CUE(CUESchema(s)) => s.remove(index as usize),
+            Schema::Malli(MalliSchema(s)) => s.remove(index as usize),
+        };
+    }
 }

@@ -7,13 +7,17 @@ use crate::types::ComponentId;
 use crate::EventModelId;
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventModelCommand {
     // Event Model Details
     Create(String),
     Rename(EventModelId, String),
+    SetDescription(EventModelId, String),
     AddToDescription(EventModelId, u32, String),
     DeleteFromDescription(EventModelId, u32),
+    SetSchema(EventModelId, String),
+    AddToSchema(EventModelId, u32, String),
+    DeleteFromSchema(EventModelId, u32),
     Delete(EventModelId),
 
     // Lanes
@@ -44,8 +48,12 @@ pub enum EventModelCommand {
 
     // Component Details
     RenameComponent(EventModelId, ComponentId, String),
+    SetComponentDescription(EventModelId, ComponentId, String),
     AddToComponentDescription(EventModelId, ComponentId, u32, String),
     DeleteFromComponentDescription(EventModelId, ComponentId, u32),
+    SetComponentSchema(EventModelId, ComponentId, String),
+    AddToComponentSchema(EventModelId, ComponentId, u32, String),
+    DeleteFromComponentSchema(EventModelId, ComponentId, u32),
     ConfigureInterface(EventModelId, InterfaceConfig),
 
     // Flows

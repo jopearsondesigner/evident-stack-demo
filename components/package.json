@@ -27,6 +27,7 @@
     "@storybook/addon-essentials": "next",
     "@storybook/addon-interactions": "next",
     "@storybook/addon-links": "next",
+    "@storybook/addon-svelte-csf": "next",
     "@storybook/blocks": "next",
     "@storybook/svelte": "next",
     "@storybook/sveltekit": "next",

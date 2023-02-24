@@ -1,13 +1,13 @@
-import Placement from '../../lib/design/grid/Placement.svelte';
+import Event from '$lib/design/grid/Event.svelte';
 
 export default {
-  title: 'Evident Design/Placement',
-  component: Placement,
+  title: 'Evident Design/Placement/Event',
+  component: Event,
 };
 
 // eslint-disable-next-line no-unused-vars
 const Template = (args) => ({
-  Component: Placement,
+  Component: Event,
   props: args
 });
 
@@ -15,8 +15,7 @@ export const Default = Template.bind({});
 Default.args = {
   cursor: false,
   id: "uuid",
-  type: "command",
-  title: "A Command",
+  title: "An Event",
   row: 1,
   column: 0
 };

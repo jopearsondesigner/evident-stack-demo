@@ -1,13 +1,13 @@
-import Placement from '../../lib/design/grid/Placement.svelte';
+import ReadModel from '$lib/design/grid/ReadModel.svelte';
 
 export default {
-  title: 'Evident Design/Placement',
-  component: Placement,
+  title: 'Evident Design/Placement/Read Model',
+  component: ReadModel,
 };
 
 // eslint-disable-next-line no-unused-vars
 const Template = (args) => ({
-  Component: Placement,
+  Component: ReadModel,
   props: args
 });
 
@@ -15,8 +15,7 @@ export const Default = Template.bind({});
 Default.args = {
   cursor: false,
   id: "uuid",
-  type: "command",
-  title: "A Command",
+  title: "A Read Model",
   row: 1,
   column: 0
 };

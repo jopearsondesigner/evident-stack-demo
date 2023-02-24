@@ -1,13 +1,13 @@
-import Placement from '../../lib/design/grid/Placement.svelte';
+import Command from '$lib/design/grid/Command.svelte';
 
 export default {
-  title: 'Evident Design/Placement',
-  component: Placement,
+  title: 'Evident Design/Placement/Command',
+  component: Command,
 };
 
 // eslint-disable-next-line no-unused-vars
 const Template = (args) => ({
-  Component: Placement,
+  Component: Command,
   props: args
 });
 

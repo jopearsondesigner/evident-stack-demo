@@ -41,8 +41,7 @@
     "classnames": "^2.3.2",
     "components": "0.1.0",
     "svelte-layout-aware-transitions": "^0.0.5",
-    "svelte-use-click-outside": "^1.0.0",
-    "yarn": "^1.22.19"
+    "svelte-use-click-outside": "^1.0.0"
   },
   "description": "Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).",
   "main": ".#svelte.config.js",

@@ -52,7 +52,6 @@
 			<NavHamburger website on:click={() => handleMenu()} />
 			<Nav>
 				<NavUl>
-					<NavLi href="/features">Features</NavLi>
 					<NavLi href="http://docs.onote.com/">Docs</NavLi>
 					<DropdownMenu name="Learn" {website}>
 						<NavUl>
@@ -105,7 +104,6 @@
 							<ThemeSwitch />
 							<CloseButton on:click={() => handleMenu()} />
 						</NavLi>
-						<NavLi hidden href="/features">Features</NavLi>
 						<NavLi hidden href="http://docs.onote.com/">Docs</NavLi>
 						<DropdownMenuMobile name="Learn">
 							<NavUl hidden>
@@ -169,12 +167,12 @@
 					<FooterBrand src={Logo} />
 				</Column>
 				<Column class="flex-none col-span-3">
-					<Row class="grid grid-cols-3 gap-4 py-4">
+					<Row class="grid grid-cols-3 md:grid-cols-4 gap-4 py-4">
 						<Column class="flex">
 							<FooterLinkGroup
 								liClass="pb-2 w-full text-sm font-bold text-body-light dark:text-body-dark"
 							>
-								<FooterLink label="Features" href="/features" />
+								<FooterLink label="Docs" href="http://docs.onote.com/" />
 							</FooterLinkGroup>
 						</Column>
 						<Column class="flex">
@@ -184,15 +182,6 @@
 								<FooterLink label="Conferences" href="/conferences" />
 							</FooterLinkGroup>
 						</Column>
-						<Column class="flex">
-							<FooterLinkGroup
-								liClass="pb-2 w-full text-sm font-bold text-body-light dark:text-body-dark"
-							>
-								<FooterLink label="Docs" href="http://docs.onote.com/" />
-							</FooterLinkGroup>
-						</Column>
-					</Row>
-					<Row class="grid grid-cols-3 gap-4 py-4">
 						<Column class="flex">
 							<FooterLinkGroup label="Service & Support">
 								<FooterLink label="Support" href="https://support.onote.com/" />

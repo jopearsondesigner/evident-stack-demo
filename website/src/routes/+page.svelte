@@ -1,5 +1,6 @@
 <script lang="ts">
 	import classNames from 'classnames';
+	import { Lottie } from 'lottie-svelte';
 	import Hero from '$components/hero/Hero.svelte';
 	import HeroContainer from '$components/hero/HeroContainer.svelte';
 	import HeroCopy from '$components/hero/HeroCopy.svelte';
@@ -26,7 +27,7 @@
 	import LeverageDataStructure from '$components/assets/images/homepage/leverageDataStructure.svg';
 	import PoorSoftwareQuality from '$components/assets/images/homepage/poorSoftwareQuality.svg';
 	let mainClass = 'bg-white dark:bg-dark-1 w-full h-auto z-10 relative pb-[128px]';
-	export let gridClass: string = 'grid lg:grid-cols-2 grid-col-1 mt-[44px]';
+	export let gridClass: string = 'grid lg:grid-cols-1 grid-col-1 mt-[44px]';
 	export let flexClass: string = 'flex justify-center items-center px-4';
 	export let containerClass: string | undefined = 'container pb-[128px]';
 	import SeventyFive from '$components/assets/images/homepage/infoSeventyFive.svg';
@@ -118,7 +119,12 @@
 
 <main class={mainClass}>
 	<Container class={containerClass}>
-		<SectionLabel>The value of Evident Design</SectionLabel>
+		<SectionLabel>The value of Evident Stack</SectionLabel>
+		<Row class={classNames('mt-[44px]', gridClass)}>
+			<Column class="flex mx-auto">
+				<Lottie path="lottie/evidentStackVisualization.json" autoplay={true} loop={true} />
+			</Column>
+		</Row>
 		<Row class={classNames('mt-[44px]', gridClass)}>
 			<Column class="flex order-first mx-auto">
 				<img

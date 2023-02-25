@@ -68,6 +68,8 @@
 
   $: default_stream_row = timeline_row + streams.length + 1;
 
+  $: row_count = default_stream_row + 1;
+
   // List IDs
 
   /**
@@ -107,9 +109,8 @@
   }
 </script>
 
-<h1>Foo</h1>
-
-<div class="p-3 relative grid justify-items-center items-center w-max">
+<div class="p-3 relative grid justify-items-center items-center w-max"
+     style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"> <!-- TODO: make the card size a constant someplace -->
   <Audience row={default_audience_row}>
     {#each default_audience_placements as placement, index (placementOrEmptyCellId(placement, index, default_audience_row)) }
       {@const is_cursor = isCursor(default_audience_row, index)}

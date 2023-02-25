@@ -67,6 +67,14 @@ module.exports = {
           light: '#93d96f'
         }
       },
+      minWidth: {
+        placement: '108px',
+        placementPadded: '132px'
+      },
+      minHeight: {
+        placement: '108px',
+        placementPadded: '132px'
+      },
       fontSize: {
         xs: '0.75rem',
         default: '0.75rem'

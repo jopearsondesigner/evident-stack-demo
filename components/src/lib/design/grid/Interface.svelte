@@ -26,13 +26,15 @@
   export let cursor = false;
 
   $: descriptionHTML = markdown(description);
+  $: gridRow = row + 1;
+  $: gridColumn = column + 1;
 </script>
 
 <div
   id={id}
-  class="placement z-30 flex place-self-center align-items-center p-3"
+  class="placement interface z-30 flex place-self-center align-items-center p-3"
   class:cursor
-  style="grid-row: {row} / {row}; grid-column: {column} / {column};">
+  style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};">
   <MaybeTooltip tip="{descriptionHTML}">
     <div class="interface w-32 h-40 p-3 overflow-visible text-left leading-tight">
       {title}

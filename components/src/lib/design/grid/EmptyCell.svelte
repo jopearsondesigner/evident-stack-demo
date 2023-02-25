@@ -7,10 +7,12 @@
 
   /** @type {boolean} */
   export let cursor = false;
+
+  $: gridRow = row + 1;
+  $: gridColumn = column + 1;
 </script>
 
 <div
-  class="empty-cell z-10 self-stretch relative"
+  class="empty-cell z-10 self-stretch relative min-w-placementPadded min-h-placementPadded"
   class:cursor
-  style="grid-row: {row} / {row}; grid-column: {column} / {column};"
-  />
+  style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};" />

@@ -15,7 +15,7 @@ const Template = (/** @type {any} */ args) => ({
 export const Default = Template.bind({});
 Default.args = {
   default_audience_placements:
-  [,,{id: "1", title: "An interface!", description: "blah *blah* **blah**"},,,
+  [,,{id: "1", title: "An interface!", description: "blah *blah* **blah**"},,,,,,,,,
    {id: "2", title: "Another interface!", description: "blah *blah* **blah**"}],
   audiences: [{title: "A named audience",
                placements: [,,,{id: "3", title: "An interface!", description: "blah *blah* **blah**"},,

@@ -22,12 +22,9 @@
 	import A from '$components/typography/A.svelte';
 	import Row from '$components/Row.svelte';
 	import Column from '$components/Column.svelte';
-	import EnablesDigitalTransformation from '$components/assets/images/homepage/crossFunctionalGraphic.svg';
-	import EmpowerDevelopers from '$components/assets/images/homepage/empowerDev.svg';
-	import LeverageDataStructure from '$components/assets/images/homepage/leverageDataStructure.svg';
 	import PoorSoftwareQuality from '$components/assets/images/homepage/poorSoftwareQuality.svg';
 	let mainClass = 'bg-white dark:bg-dark-1 w-full h-auto z-10 relative pb-[128px]';
-	export let gridClass: string = 'grid lg:grid-cols-1 grid-col-1 mt-[44px]';
+	export let gridClass: string = 'grid lg:grid-cols-2 grid-col-1 mt-[44px]';
 	export let flexClass: string = 'flex justify-center items-center px-4';
 	export let containerClass: string | undefined = 'container pb-[128px]';
 	import SeventyFive from '$components/assets/images/homepage/infoSeventyFive.svg';
@@ -120,94 +117,9 @@
 <main class={mainClass}>
 	<Container class={containerClass}>
 		<SectionLabel>The value of Evident Stack</SectionLabel>
-		<Row class={classNames('mt-[44px]', gridClass)}>
+		<Row class="grid grid-col-1 mt-[44px]">
 			<Column class="flex mx-auto">
 				<Lottie path="lottie/evidentStackVisualization.json" autoplay={true} loop={true} />
-			</Column>
-		</Row>
-		<Row class={classNames('mt-[44px]', gridClass)}>
-			<Column class="flex order-first mx-auto">
-				<img
-					src={EnablesDigitalTransformation}
-					class="md:w-[566.75px] w-[343px]"
-					width="auto"
-					alt="Enables digital transformation"
-				/>
-			</Column>
-			<Column>
-				<Section name="benefit">
-					<SectionHeader
-						tag="h2"
-						class="lg:pl-4 lg:text-left text-center"
-						customSize="text-[1.875rem]"
-					>
-						Enable digital transformation
-					</SectionHeader>
-					<SectionCopy
-						class="text-[18px] lg:pl-4 lg:text-left text-center"
-						textSize="text-[1.125rem]"
-					>
-						Evident Design promotes collaboration between technical and non-technical teams by
-						creating shared visual models that communicate project requirements and the overall
-						business strategy.
-					</SectionCopy>
-				</Section>
-			</Column>
-		</Row>
-		<Row class={classNames('mt-[123px]', gridClass)}>
-			<Column class="flex lg:order-last mx-auto">
-				<img
-					src={EmpowerDevelopers}
-					class="md:w-[450.22px] w-[343px]"
-					width="auto"
-					alt="Empower developers"
-				/>
-			</Column>
-			<Column>
-				<Section name="benefit">
-					<SectionHeader
-						tag="h2"
-						class="lg:pl-4 lg:text-left text-center"
-						customSize="text-[1.875rem]"
-					>
-						Empower developers
-					</SectionHeader>
-					<SectionCopy
-						class="text-[18px] lg:pl-4 lg:text-left text-center"
-						textSize="text-[1.125rem]"
-					>
-						Evident Design empowers developers by providing clear requirements as well as an
-						accurate picture of the business needs, logic, and processes prior to coding.
-					</SectionCopy>
-				</Section>
-			</Column>
-		</Row>
-		<Row class={classNames('mt-[123px]', gridClass)}>
-			<Column class="flex order-first mx-auto">
-				<img
-					src={LeverageDataStructure}
-					class="md:w-[311.42px] w-[213px]"
-					width="213"
-					alt="Leverage data structure"
-				/>
-			</Column>
-			<Column>
-				<Section name="benefit">
-					<SectionHeader
-						tag="h2"
-						class="lg:pl-4 lg:text-left text-center"
-						customSize="text-[1.875rem]"
-					>
-						Leverage data structure
-					</SectionHeader>
-					<SectionCopy
-						class="text-[18px] lg:pl-4 lg:text-left text-center"
-						textSize="text-[1.125rem]"
-					>
-						Evident Design allows teams to leverage data structure to jumpstart other applications
-						and projects you may have.
-					</SectionCopy>
-				</Section>
 			</Column>
 		</Row>
 	</Container>

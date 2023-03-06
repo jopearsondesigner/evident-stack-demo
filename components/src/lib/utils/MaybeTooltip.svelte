@@ -1,11 +1,11 @@
 <script>
-  export let tip;
+	export let tip;
 </script>
 
 <!-- TODO: support HTML (i.e. Markdown output) -->
 
 {#if tip}
-  <div class="tooltip" data-tip="{tip}"><slot/></div>
+	<div class="tooltip before:text-xs before:text-gray-primary" data-tip={tip}><slot /></div>
 {:else}
-  <slot/>
+	<slot />
 {/if}

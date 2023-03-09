@@ -1,26 +1,35 @@
 {
-  "name": "editor-app",
+  "name": "app",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "./state/pkg"
-  ],
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evidentsystems/platform.git"
+  },
+  "author": "Evident Systems LLC",
+  "bugs": {
+    "url": "https://github.com/evidentsystems/platform/issues"
+  },
+  "homepage": "https://github.com/evidentsystems/platform/tree/main/app#readme",
   "scripts": {
     "app:dev": "vite dev",
     "app:build": "vite build",
     "state:dev": "cd state && cargo watch -i .gitignore -i \"pkg/*\" -s \"wasm-pack build --target web\"",
     "state:build": "cd state && wasm-pack build --target web",
-    "dev": "concurrently --kill-others-on-fail \"yarn state:dev\" \"yarn app:dev\"",
-    "preview": "yarn state:build && vite preview",
-    "build": "yarn state:build && yarn app:build",
+    "dev": "concurrently --kill-others-on-fail \"npm run state:dev\" \"npm run app:dev\"",
+    "preview": "npm run state:build && vite preview",
+    "build": "npm run state:build && npm run app:build",
     "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
     "test": "playwright test",
     "test:unit": "vitest",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
-    "release": "yarn state:build && yarn check && yarn test && yarn app:build"
+    "release": "npm run state:build && npm run check && npm run test && npm run app:build"
   },
   "devDependencies": {
     "@playwright/test": "^1.28.1",
@@ -50,19 +59,5 @@
   },
   "dependencies": {
     "editor-state": "0.1.0"
-  },
-  "description": "Powered by:",
-  "main": "playwright.config.js",
-  "directories": {
-    "test": "tests"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/evidentsystems/platform.git"
-  },
-  "author": "",
-  "bugs": {
-    "url": "https://github.com/evidentsystems/platform/issues"
-  },
-  "homepage": "https://github.com/evidentsystems/platform#readme"
+  }
 }

@@ -28,7 +28,7 @@
 
 <div
 	{id}
-	class="placement read-model z-20 flex place-self-center align-items-center p-[1.375rem] border-r border-white -ml-px mb-0.5 hover:bg-focus/[.18] transition duration-200 ease-in"
+	class="placement read-model z-20 flex place-self-center align-items-center p-[1.375rem] border-r border-white dark:border-gray-brand-1 -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
 	class:cursor
 	style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
 >

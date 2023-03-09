@@ -12,7 +12,7 @@
 </h3>
 
 <div
-	class="timeline absolute -top-0.5 -left-3 bottom-0 -right-6 border-t-2 border-b-2 border-gray-brand-2 dark:border-gray-brand-3"
+	class="timeline absolute -top-px -left-3 bottom-0 -right-6 border-t border-b border-gray-brand-2 dark:border-white"
 	style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 />
 

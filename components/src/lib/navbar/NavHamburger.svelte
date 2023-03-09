@@ -7,6 +7,8 @@
 	import Icon from '../Icon.svelte';
 	import CloseSidebar from '../icons/CloseSidebar.svelte';
 	import OpenSidebar from '../icons/OpenSidebar.svelte';
+	import CloseSidebarDark from '../icons/CloseSidebarDark.svelte';
+	import OpenSidebarDark from '../icons/OpenSidebarDark.svelte';
 	const dispatch = createEventDispatcher();
 	function handleClick(event: any) {
 		dispatch('click', event);
@@ -21,12 +23,34 @@
 {#if !website}
 	<button class={hamburgerClass} on:click={() => toggle()} on:click={handleClick}>
 		{#if !hidden}
-			<Icon name="open-sidebar" size={32} viewBox="0 0 28 28" iconColor="text-gray-brand-1"
-				><OpenSidebar /></Icon
+			<Icon
+				name="open-sidebar"
+				size={32}
+				viewBox="0 0 28 28"
+				iconColor="text-gray-brand-1"
+				class="block dark:hidden"><OpenSidebar /></Icon
+			>
+			<Icon
+				name="open-sidebar-dark"
+				size={32}
+				viewBox="0 0 28 28"
+				iconColor="text-gray-primary"
+				class="hidden dark:block"><OpenSidebarDark /></Icon
 			>
 		{:else}
-			<Icon name="close-sidebar" size={32} viewBox="0 0 28 28" iconColor="text-gray-brand-1"
-				><CloseSidebar /></Icon
+			<Icon
+				name="close-sidebar"
+				size={32}
+				viewBox="0 0 28 28"
+				iconColor="text-gray-brand-1"
+				class="block dark:hidden"><CloseSidebar /></Icon
+			>
+			<Icon
+				name="close-sidebar"
+				size={32}
+				viewBox="0 0 28 28"
+				iconColor="text-gray-primary"
+				class="hidden dark:block"><CloseSidebarDark /></Icon
 			>
 		{/if}
 	</button>

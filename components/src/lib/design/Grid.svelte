@@ -115,7 +115,7 @@
 </script>
 
 <div
-	class="p-3 relative grid justify-items-center items-center w-max bg-gray-canvas dark:bg-dark-1"
+	class="p-3 relative h-full w-full grid justify-items-center items-center w-full bg-gray-canvas dark:bg-dark-1"
 	style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
 >
 	<!-- TODO: make the card size a constant someplace -->

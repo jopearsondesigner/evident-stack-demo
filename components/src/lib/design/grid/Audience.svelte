@@ -27,7 +27,7 @@
 {/if}
 
 <div
-	class="audience absolute -top-0.5 -left-3 bottom-0.5 -right-6 border-t-2 border-gray-primary dark:border-gray-brand-3"
+	class="audience absolute -top-px -left-3 bottom-0.5 -right-6 border-t border-gray-primary dark:border-gray-brand-3"
 	style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 />
 

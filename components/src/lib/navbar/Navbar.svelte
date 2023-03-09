@@ -1,7 +1,7 @@
 <script lang="ts">
-	export let navbarClass = 'shadow-md z-30 relative bg-white dark:bg-dark-2';
-	export let navbarWebClass =
-		'relative shadow-header bg-white w-full px-3 py-3.5 text-body z-10';
+	export let navbarClass =
+		'relative shadow-header w-full px-3 py-3.5 text-light dark:text-dark bg-white dark:bg-dark-2 z-50';
+	export let navbarWebClass = 'relative shadow-header bg-white w-full px-3 py-3.5 text-body z-50';
 	export let website: boolean = false;
 </script>
 

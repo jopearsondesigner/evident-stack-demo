@@ -20,17 +20,17 @@ pub fn random_node() -> Node {
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
-pub struct Id(pub Counter, pub Node);
+pub struct OpId(pub Counter, pub Node);
 
-const MIN_ID: Id = Id(0, 0);
-const MAX_ID: Id = Id(Counter::MAX, Node::MAX);
+const MIN_ID: OpId = OpId(0, 0);
+const MAX_ID: OpId = OpId(Counter::MAX, Node::MAX);
 
 pub type Clock = HashMap<Node, Counter>;
-pub type Patch<Op> = HashMap<Id, Op>;
+pub type Patch<Op> = HashMap<OpId, Op>;
 
 pub struct OpSet<Op> {
     id: Uuid,
-    ops: BTreeMap<Id, Op>,
+    ops: BTreeMap<OpId, Op>,
 }
 
 impl<Op> Default for OpSet<Op> {
@@ -43,15 +43,18 @@ impl<Op> Default for OpSet<Op> {
 }
 
 impl<Op: Clone> OpSet<Op> {
-    fn new(id: Uuid, ops: BTreeMap<Id, Op>) -> Self {
-        OpSet { id, ops }
+    fn new(id: Uuid) -> Self {
+        OpSet {
+            id,
+            ops: Default::default(),
+        }
     }
 
     fn id(&self) -> &Uuid {
         &self.id
     }
 
-    fn ops(&self) -> &BTreeMap<Id, Op> {
+    fn ops(&self) -> &BTreeMap<OpId, Op> {
         &self.ops
     }
 
@@ -66,8 +69,8 @@ impl<Op: Clone> OpSet<Op> {
         self.clock().into_values().max().unwrap_or(0)
     }
 
-    fn next_id(&self, node: &Node) -> Id {
-        Id(self.max_counter() + 1, node.to_owned())
+    fn next_id(&self, node: &Node) -> OpId {
+        OpId(self.max_counter() + 1, node.to_owned())
     }
 
     fn clock(&self) -> Clock {
@@ -107,18 +110,28 @@ impl<Op: Clone> OpSet<Op> {
 }
 
 #[async_trait]
-pub trait OpSetStorage<Op> {
+pub trait OpSetReadableStorage<Op> {
     type Err;
 
-    // On success, result conveys the number of ops loaded
-    async fn load_patch(&self) -> Result<u32, Self::Err>; // TODO: rethink this API
+    async fn load_clock(&self, opset_id: Uuid) -> Result<Clock, Self::Err>;
+
+    async fn load_all_ops(&self, opset_id: Uuid) -> Result<Vec<Op>, Self::Err>;
+    async fn load_ops_starting_at(
+        &self,
+        opset_id: Uuid,
+        start_id: OpId,
+    ) -> Result<Vec<Op>, Self::Err>;
+}
+
+#[async_trait]
+pub trait OpSetWriteableStorage<Op>: OpSetReadableStorage<Op> {
     async fn commit_patch(&self, patch: &Patch<Op>) -> Result<(), Self::Err>;
 }
 
 pub trait Interpreter<Op: Clone> {
     type Interpretation;
 
-    fn evolve(state: Self::Interpretation, id: &Id, op: &Op) -> Self::Interpretation;
+    fn evolve(state: Self::Interpretation, id: &OpId, op: &Op) -> Self::Interpretation;
 
     fn interpret(initial: Self::Interpretation, opset: &OpSet<Op>) -> Self::Interpretation {
         opset.ops().iter().fold(initial, Self::evolve_from_op_pair)

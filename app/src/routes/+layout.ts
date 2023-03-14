@@ -1,11 +1,11 @@
 import { browser } from '$app/environment';
+import { LayoutLoad } from './$types';
 
-/** @type {import('./$types').PageLoad} */
-export async function load({ params }) {
+export const load: LayoutLoad = async (event) => {
   if (browser) {
     console.log("loading base +layout.js");
     return {
       dispatch: function(...args) { console.log("Not implemented: ", args) }
     }
   }
-}
+};

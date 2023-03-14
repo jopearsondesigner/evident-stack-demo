@@ -32,6 +32,8 @@
     "release": "npm run state:build && npm run check && npm run test && npm run app:build"
   },
   "devDependencies": {
+    "@auth/core": "^0.5.1",
+    "@auth/sveltekit": "^0.3.0",
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-cloudflare": "^1.0.0",
     "@sveltejs/kit": "^1.0.0",

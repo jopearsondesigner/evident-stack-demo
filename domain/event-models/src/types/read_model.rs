@@ -20,7 +20,7 @@ pub struct ReadModel {
 }
 
 impl ReadModel {
-    pub fn create(id: Uuid, name: &str) -> Self {
+    pub fn new(id: Uuid, name: &str) -> Self {
         ReadModel {
             id,
             name: name.to_string(),

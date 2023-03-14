@@ -1,10 +1,14 @@
-name: Publish Website to Stage 
-run-name: Stage publish by ${{ github.actor }}
+---
+name: Publish Website to Staging
+run-name: Staging publish by ${{ github.actor }}
 on:
   push:
     branches:
-      - 'npm-workspaces'
-      - 'main'
+      - main
+    paths:
+      - 'package-lock.json'
+      - 'components/**'
+      - 'website/**'
 jobs:
   Publish:
     runs-on: ubuntu-latest
@@ -38,3 +42,4 @@ jobs:
           projectName: evidentstack-website
           directory: website/.svelte-kit/cloudflare
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: staging # this is necessary so as not to deploy to production

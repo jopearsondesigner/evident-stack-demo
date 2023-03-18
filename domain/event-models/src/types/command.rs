@@ -21,7 +21,7 @@ pub struct Command {
 }
 
 impl Command {
-    pub fn new(id: Uuid, name: &str) -> Result<Self, EventModelError> {
+    pub fn create(id: Uuid, name: &str) -> Result<Self, EventModelError> {
         Ok(Command {
             id,
             name: name.to_string(),

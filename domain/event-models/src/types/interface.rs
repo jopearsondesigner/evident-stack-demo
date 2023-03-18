@@ -26,7 +26,7 @@ pub struct Interface {
 }
 
 impl Interface {
-    pub fn new(id: Uuid, name: &str) -> Result<Self, EventModelError> {
+    pub fn create(id: Uuid, name: &str) -> Result<Self, EventModelError> {
         // TODO: validate name
         Ok(Interface {
             id,

@@ -11,25 +11,22 @@ where
     T: EventModel + Debug + ModifiableEventModel + Clone,
     C: EventModelCreator<T> + Clone,
 {
-    let command = Create("New Event Model".to_string());
-    let events = EventModelState::decide(&(), &initial, &command).unwrap();
+    // Assert test is starting in the correct state
+    assert_matches!(&initial, EventModelState::BeforeCreation(_));
+
+    let events =
+        EventModelState::decide(&(), &initial, &Create("New Event Model".to_string())).unwrap();
+
     assert_eq!(events.len(), 1);
+    assert_matches!(
+        &events[0],
+        Created(_id, name) if name == "New Event Model"
+    );
 
-    match &events[0] {
-        Created(_id, name) => {
-            assert_eq!(name, "New Event Model");
-        }
-        _ => panic!("Wrong Event Type {:?}", &events[0]),
-    };
-
-    match events.iter().fold(initial.clone(), EventModelState::evolve) {
-        EventModelState::EventModel(event_model) => {
-            assert_eq!(event_model.name(), "New Event Model");
-        }
-        EventModelState::BeforeCreation(_) => {
-            panic!("State failed to evolve: {:?}", initial)
-        }
-    };
+    assert_matches!(
+        events.iter().fold(initial.clone(), EventModelState::evolve),
+        EventModelState::EventModel(event_model) if event_model.name() == "New Event Model"
+    )
 }
 
 pub fn renaming_event_model_succeeds<T, C>(initial: EventModelState<T, C>)
@@ -37,9 +34,10 @@ where
     T: EventModel + Debug + ModifiableEventModel + Clone,
     C: EventModelCreator<T> + Debug + Clone,
 {
-    // let mut state = initial;
-    let id = Uuid::new_v4();
+    // Assert test is starting in the correct state
+    assert_matches!(&initial, EventModelState::EventModel(_));
 
+    let id = Uuid::new_v4();
     let given_events = vec![Created(id.to_owned(), "Model".to_string())];
 
     let state = given_events
@@ -50,24 +48,17 @@ where
     let then_events = EventModelState::decide(&(), &state, &when_command).unwrap();
 
     assert_eq!(then_events.len(), 1);
-
-    match &then_events[0] {
-        Renamed(_id, name) => {
-            assert_eq!(name, "Another Name");
-        }
-        _ => panic!("Wrong Event Type {:?}", &then_events[0]),
-    };
+    assert_matches!(
+        &then_events[0],
+        Renamed(_id, name) if name == "Another Name"
+    );
 
     let state = then_events
         .iter()
         .fold(initial.clone(), EventModelState::evolve);
 
-    match state {
-        EventModelState::EventModel(event_model) => {
-            assert_eq!(event_model.name(), "Another Name");
-        }
-        EventModelState::BeforeCreation(_) => {
-            panic!("State failed to evolve: {:?}", state)
-        }
-    };
+    assert_matches!(
+        state,
+        EventModelState::EventModel(event_model) if event_model.name() == "Another Name"
+    );
 }

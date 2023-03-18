@@ -12,6 +12,8 @@ use uuid::Uuid;
 pub mod commands;
 pub mod errors;
 pub mod events;
+
+#[cfg(test)]
 pub mod tests;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

@@ -4,6 +4,7 @@ use crate::api::errors::EventModelError::IllegalState;
 use crate::api::events::EventModelEvent;
 use crate::types::validate_name;
 use crate::{EventModel, EventModelCreator, ModifiableEventModel};
+use epoch::decider::{Decider, DeciderWithContext, Evolver};
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 use uuid::Uuid;
@@ -17,6 +18,40 @@ pub mod tests;
 pub enum EventModelState<T: EventModel, C: EventModelCreator<T>> {
     BeforeCreation(C),
     EventModel(T),
+}
+
+impl<T: EventModel + ModifiableEventModel, C: EventModelCreator<T>> DeciderWithContext
+    for EventModelState<T, C>
+{
+    type Ctx = ();
+
+    type Cmd = EventModelCommand;
+
+    type Err = EventModelError;
+
+    fn decide(
+        _ctx: &Self::Ctx,
+        state: &Self::State,
+        cmd: &Self::Cmd,
+    ) -> Result<Vec<Self::Evt>, Self::Err> {
+        event_model_decide(state, cmd)
+    }
+}
+
+impl<T: EventModel + ModifiableEventModel, C: EventModelCreator<T>> Evolver
+    for EventModelState<T, C>
+{
+    type State = EventModelState<T, C>;
+
+    type Evt = EventModelEvent;
+
+    fn evolve(state: Self::State, event: &Self::Evt) -> Self::State {
+        event_model_evolve(state, event)
+    }
+
+    fn init() -> Self::State {
+        Self::State::BeforeCreation(C::default())
+    }
 }
 
 pub fn event_model_decide<T, C>(

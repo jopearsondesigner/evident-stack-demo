@@ -15,19 +15,19 @@ use crate::types::{Component, Described, Entity, ModifiablyDescribed, Named};
 
 use super::InMemoryCreator;
 
-// #[test]
-// fn creation() {
-//     creating_event_model_succeeds(
-//         EventModelState::<InMemoryEventModel, InMemoryCreator>::BeforeCreation,
-//     );
-// }
+#[test]
+fn creation() {
+    creating_event_model_succeeds(
+        EventModelState::<InMemoryEventModel, InMemoryCreator>::BeforeCreation(InMemoryCreator::default()),
+    );
+}
 
-// #[test]
-// fn renaming() {
-//     let initial = InMemoryEventModel::new(Uuid::new_v4(), "foo".to_string());
+#[test]
+fn renaming() {
+    let initial = InMemoryEventModel::new(Uuid::new_v4(), "foo".to_string());
 
-//     renaming_event_model_succeeds(EventModelState::EventModel(initial));
-// }
+    renaming_event_model_succeeds(EventModelState::<InMemoryEventModel, InMemoryCreator>::EventModel(initial));
+}
 
 #[test]
 fn adding_to_description() {

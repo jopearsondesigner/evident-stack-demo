@@ -2,12 +2,10 @@ use crate::api::commands::EventModelCommand::*;
 use crate::api::events::EventModelEvent::*;
 use crate::api::EventModelState;
 use crate::{EventModel, EventModelCreator, ModifiableEventModel};
-use epoch::decider::{Decider, Event, Evolver, DeciderWithContext};
+use epoch::decider::{Evolver, DeciderWithContext};
 use std::fmt::Debug;
 use uuid::Uuid;
 
-use super::commands::EventModelCommand;
-use super::events::EventModelEvent;
 
 pub fn creating_event_model_succeeds<C, T>(initial: EventModelState<T, C>)
 where

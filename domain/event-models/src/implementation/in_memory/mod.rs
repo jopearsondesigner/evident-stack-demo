@@ -36,7 +36,7 @@ pub struct InMemoryEventModel {
     schema: Schema,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 struct InMemoryCreator;
 
 impl EventModelCreator<InMemoryEventModel> for InMemoryCreator {

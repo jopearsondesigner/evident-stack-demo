@@ -18,15 +18,19 @@ use super::InMemoryCreator;
 #[test]
 fn creation() {
     creating_event_model_succeeds(
-        EventModelState::<InMemoryEventModel, InMemoryCreator>::BeforeCreation(InMemoryCreator::default()),
+        EventModelState::<InMemoryEventModel, InMemoryCreator>::BeforeCreation(
+            InMemoryCreator::default(),
+        ),
     );
 }
 
 #[test]
 fn renaming() {
-    let initial = InMemoryEventModel::new(Uuid::new_v4(), "foo".to_string());
-
-    renaming_event_model_succeeds(EventModelState::<InMemoryEventModel, InMemoryCreator>::EventModel(initial));
+    renaming_event_model_succeeds(
+        EventModelState::<InMemoryEventModel, InMemoryCreator>::EventModel(
+            InMemoryEventModel::new(Uuid::new_v4(), "foo".to_string()),
+        ),
+    );
 }
 
 #[test]

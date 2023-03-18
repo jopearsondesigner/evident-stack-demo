@@ -4,7 +4,7 @@ use crate::api::errors::EventModelError::IllegalState;
 use crate::api::events::EventModelEvent;
 use crate::types::validate_name;
 use crate::{EventModel, EventModelCreator, ModifiableEventModel};
-use epoch::decider::{Decider, DeciderWithContext, Evolver};
+use epoch::decider::{DeciderWithContext, Evolver};
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 use uuid::Uuid;

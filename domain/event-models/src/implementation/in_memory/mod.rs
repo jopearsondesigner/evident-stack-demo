@@ -1,12 +1,7 @@
-use epoch::decider::{Decider, Evolver};
 use serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
 
-use crate::api::commands::EventModelCommand;
-use crate::api::errors::EventModelError;
-use crate::api::events::EventModelEvent;
-use crate::api::{event_model_decide, event_model_evolve, EventModelState};
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
 use crate::types::event::{Event, EventId};

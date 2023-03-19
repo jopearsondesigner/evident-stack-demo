@@ -79,7 +79,7 @@
 	</NavInner>
 </Navbar>
 
-<span class="lg:block hidden right-0 z-50 fixed pt-4 pr-10"><ThemeSwitch /></span>
+<span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10"><ThemeSwitch /></span>
 <Drawer {hidden}>
 	<Sidebar class={!isClosed ? 'w-[416px]' : 'w-[239px]'} {isClosed}>
 		<SidebarInner>
@@ -122,13 +122,7 @@
 </div>
 
 <Drawer placement="right" bind:hidden={hiddenRight} drawerRight>
-	<Sidebar class="w-[480px]">
-		<SidebarInner>
-			<SidebarGroup>
-				<div>Hello!</div>
-			</SidebarGroup>
-		</SidebarInner>
-	</Sidebar>
+	<div class="bg-white dark:bg-dark-2 w-[480px] p-4 h-screen">Hello please develop me!</div>
 </Drawer>
 
 <main

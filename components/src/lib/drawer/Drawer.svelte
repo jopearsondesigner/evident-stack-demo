@@ -2,10 +2,10 @@
 	import classnames from 'classnames';
 	import { fly } from 'svelte/transition';
 	import { sineOut } from 'svelte/easing';
-	// import { clickOutside } from '$lib/utils/clickOutside';
+	import { clickOutside } from '$lib/utils/clickOutside';
 	export let activateClickOutside = true;
 	export let hidden = true;
-	export let divClass = 'z-40';
+	export let divClass = 'z-40 fixed h-screen';
 	export let leftOffset = 'left-0';
 	export let rightOffset = 'right-0';
 	export let placement = 'left';
@@ -32,13 +32,14 @@
 
 {#if !hidden}
 	{#if !drawerRight}
-		<div transition:fly={transitionParams} class={classnames('absolute', divClass)}>
+		<div transition:fly={transitionParams} class={classnames(divClass)}>
 			<slot />
 		</div>
 	{:else if activateClickOutside}
 		<div
+			use:clickOutside={() => !hidden && handleDrawer()}
 			transition:fly={transitionParamsRight}
-			class={classnames('absolute', divClass, placements[placement])}
+			class={classnames(divClass, placements[placement])}
 		>
 			<slot />
 		</div>

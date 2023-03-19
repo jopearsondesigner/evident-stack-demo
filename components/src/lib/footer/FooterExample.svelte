@@ -11,7 +11,7 @@
 	import Row from '../Row.svelte';
 	let gridClass: string = 'grid lg:grid-cols-2 grid-col-1';
 	import Column from '../Column.svelte';
-	import Logo from '../assets/images/global/evidentDesignLogo.svg';
+	import Logo from '../assets/images/product/design/evidentDesignLogo.svg';
 	export const alt = 'Brand Logo';
 	export const href: string = '';
 	export const product: string = '';

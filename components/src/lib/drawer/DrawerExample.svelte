@@ -1,4 +1,6 @@
 <script>
+	// @ts-nocheck
+
 	import Drawer from './Drawer.svelte';
 	import Sidebar from './Sidebar.svelte';
 	import SidebarInner from './SidebarInner.svelte';

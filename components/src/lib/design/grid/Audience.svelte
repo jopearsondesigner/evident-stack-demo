@@ -1,15 +1,34 @@
 <script>
-  /* @type {number} */
-  export let row = 0;
+	/** @type {number} */
+	export let row = 0;
+	$: gridRow = row + 1;
 
-  /* @type {string} */
-  export let title = "";
+	/** @type {string} */
+	export let title = '';
+
+	$: cursorClass = title ? 'cursor-pointer' : 'cursor-default';
 </script>
 
 {#if title}
-  <h3 class="audience laneTitle" style="grid-row: {row} / {row};">{title}</h3>
+	<h3
+		class="audienceTitle sticky left-3 z-30 justify-self-start self-start cursor-pointer prose text-body-light dark:text-body-dark mt-3"
+		style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
+	>
+		{title}
+	</h3>
+{:else}
+	<!-- TODO: reduce the color to disabled text -->
+	<h3
+		class="audienceTitle sticky left-3 z-30 justify-self-start self-start prose text-body-light dark:text-body-dark mt-3"
+		style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
+	>
+		Default Audience
+	</h3>
 {/if}
 
-<div class="audience" style="grid-row: {row} / {row};" />
+<div
+	class="audience absolute -top-px -left-3 bottom-0.5 -right-6 border-t border-gray-primary dark:border-gray-brand-3"
+	style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
+/>
 
 <slot />

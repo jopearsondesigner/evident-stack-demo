@@ -3,6 +3,9 @@ extern crate core;
 extern crate serde_cbor;
 extern crate url;
 extern crate uuid;
+#[cfg(test)]
+#[macro_use]
+extern crate assert_matches;
 
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
@@ -16,6 +19,7 @@ use crate::types::schema::HasSchema;
 use crate::types::stream::Stream;
 use crate::types::{Component, ComponentId, Described, Lane, LaneId, LaneIndex};
 use std::collections::HashMap;
+use std::fmt::Debug;
 use types::flow::flow_id;
 use types::schema::HasModifiableSchema;
 use types::{ModifiablyDescribed, Renamable};
@@ -29,11 +33,11 @@ pub mod types;
 
 pub type EventModelId = Uuid;
 
-pub trait EventModelCreator<T: EventModel> {
+pub trait EventModelCreator<T: EventModel>: Debug + Default {
     fn create(&self, id: EventModelId, name: String) -> T;
 }
 
-pub trait EventModel: Described + HasSchema {
+pub trait EventModel: Described + HasSchema + Debug {
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface>;
     fn commands(&self) -> &HashMap<CommandId, Command>;
     fn events(&self) -> &HashMap<EventId, Event>;

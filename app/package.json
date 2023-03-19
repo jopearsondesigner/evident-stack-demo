@@ -32,8 +32,6 @@
     "release": "npm run state:build && npm run check && npm run test && npm run app:build"
   },
   "devDependencies": {
-    "@auth/core": "^0.5.1",
-    "@auth/sveltekit": "^0.3.0",
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-cloudflare": "^1.0.0",
     "@sveltejs/kit": "^1.0.0",
@@ -46,6 +44,7 @@
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
+    "firebase": "^9.18.0",
     "postcss": "^8.4.19",
     "prettier": "^2.8.0",
     "prettier-plugin-svelte": "^2.8.1",

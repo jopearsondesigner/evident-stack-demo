@@ -9,9 +9,6 @@
 	import Wrapper from '../utils/Wrapper.svelte';
 	import classNames from 'classnames';
 	import { getContext } from 'svelte';
-	import type { InputType } from '../types';
-
-	export let type: InputType = 'text';
 	export let value: string | number = '';
 	export let size: FormSizeType | undefined = undefined;
 	export let defaultClass: string = 'block w-full disabled:cursor-not-allowed disabled:opacity-50';
@@ -102,7 +99,6 @@
 			on:mouseleave
 			on:paste
 			on:input
-			use:setType={type}
 			class={inputClass}
 		/>
 	</slot>

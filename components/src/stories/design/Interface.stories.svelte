@@ -1,4 +1,6 @@
 <script>
+	// @ts-nocheck
+
 	import { Meta, Story, Template } from '@storybook/addon-svelte-csf';
 
 	import Interface from '../../lib/design/grid/Interface.svelte';

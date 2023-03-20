@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use std::collections::{BTreeMap, HashMap};
+use std::{collections::{BTreeMap, HashMap}, fmt::Debug};
 
 pub(crate) mod opset;
 
@@ -22,7 +22,7 @@ const MAX_ID: Id = Id(Counter::MAX, Node::MAX);
 pub type Clock = HashMap<Node, Counter>;
 pub type Patch<Op> = HashMap<Id, Op>;
 
-pub trait OpSet<Op: Clone> {
+pub trait OpSet<Op: Clone>: Debug {
     fn ops(&self) -> &BTreeMap<Id, Op>;
     fn apply_patch(&mut self, patch: Patch<Op>);
 

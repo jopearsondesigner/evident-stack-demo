@@ -1,12 +1,7 @@
-use epoch::decider::{Decider, Evolver};
 use serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
 
-use crate::api::commands::EventModelCommand;
-use crate::api::errors::EventModelError;
-use crate::api::events::EventModelEvent;
-use crate::api::{event_model_decide, event_model_evolve, EventModelState};
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
 use crate::types::event::{Event, EventId};
@@ -41,7 +36,7 @@ pub struct InMemoryEventModel {
     schema: Schema,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default, Clone)]
 struct InMemoryCreator;
 
 impl EventModelCreator<InMemoryEventModel> for InMemoryCreator {
@@ -468,27 +463,5 @@ impl ModifiableEventModel for InMemoryEventModel {
 
     fn minus_flow(&mut self, flow_id: &FlowId) {
         self.flows.remove(flow_id);
-    }
-}
-
-impl Decider for EventModelState<InMemoryEventModel, InMemoryCreator> {
-    type Cmd = EventModelCommand;
-    type Err = EventModelError;
-
-    fn decide(state: &Self::State, cmd: &Self::Cmd) -> Result<Vec<Self::Evt>, Self::Err> {
-        event_model_decide(state, cmd)
-    }
-}
-
-impl Evolver for EventModelState<InMemoryEventModel, InMemoryCreator> {
-    type State = EventModelState<InMemoryEventModel, InMemoryCreator>;
-    type Evt = EventModelEvent;
-
-    fn evolve(state: Self::State, event: &Self::Evt) -> Self::State {
-        event_model_evolve(state, event)
-    }
-
-    fn init() -> Self::State {
-        Self::State::BeforeCreation(InMemoryCreator)
     }
 }

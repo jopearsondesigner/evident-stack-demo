@@ -1,3 +1,4 @@
+use crate::converge::Node;
 use crate::event_model::ConvergentEventModel;
 use event_models::domain::tests::{creating_event_model_succeeds, renaming_event_model_succeeds};
 use event_models::domain::EventModelState;
@@ -13,6 +14,8 @@ use event_models::types::Interface;
 use event_models::types::ReadModel;
 use event_models::types::{Component, Described, Entity, ModifiablyDescribed, Named};
 
+use super::Op;
+
 #[test]
 fn creation() {
     creating_event_model_succeeds(EventModelState::<ConvergentEventModel>::BeforeCreation);
@@ -20,7 +23,7 @@ fn creation() {
 
 #[test]
 fn renaming() {
-    let initial = ConvergentEventModel::new(Uuid::new_v4(), "foo");
+    let initial = ConvergentEventModel::new(Uuid::new_v4(), "foo", Node::default(), Op::Named("test".to_string());
 
     renaming_event_model_succeeds(EventModelState::EventModel(initial));
 }

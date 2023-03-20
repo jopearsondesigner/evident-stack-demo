@@ -16,11 +16,12 @@ use crate::converge::{Id, Interpreter, Node, OpSet, Patch};
 #[cfg(test)]
 mod tests;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 enum Op {
     Named(String),
 }
 
+#[derive(Debug)]
 struct ConvergentEventModel<S: OpSet<Op>> {
     node: Node,
     opset: S,

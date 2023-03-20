@@ -1,7 +1,8 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, fmt::Debug};
 
 use super::{Id, OpSet};
 
+#[derive(Debug)]
 pub struct InMemoryOpSet<Op> {
     ops: BTreeMap<Id, Op>,
 }
@@ -20,7 +21,7 @@ impl<Op> Default for InMemoryOpSet<Op> {
     }
 }
 
-impl<Op: Clone> OpSet<Op> for InMemoryOpSet<Op> {
+impl<Op: Clone + Debug> OpSet<Op> for InMemoryOpSet<Op> {
     fn ops(&self) -> &BTreeMap<Id, Op> {
         &self.ops
     }

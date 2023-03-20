@@ -80,7 +80,7 @@ pub trait OpSetStorage<Op: Clone>: OpSet<Op> {
 }
 
 pub trait Interpreter<Op: Clone> {
-    type Interpretation;
+    type Interpretation: Clone;
 
     fn evolve(state: Self::Interpretation, id: &Id, op: &Op) -> Self::Interpretation;
 

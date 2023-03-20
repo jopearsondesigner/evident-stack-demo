@@ -1,1 +1,1 @@
-pub(crate) mod in_memory;
+pub mod in_memory;

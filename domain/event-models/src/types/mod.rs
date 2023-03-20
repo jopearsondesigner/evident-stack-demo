@@ -18,7 +18,7 @@ pub(crate) mod flow;
 pub(crate) mod interface;
 pub(crate) mod placement;
 pub(crate) mod read_model;
-pub(crate) mod schema;
+pub mod schema;
 pub(crate) mod stream;
 
 pub trait Entity {

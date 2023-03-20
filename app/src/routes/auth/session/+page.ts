@@ -7,5 +7,5 @@ export const load = (({ url }) => {
   return {
     isSignInLink: isSignInLink(url.href),
     signInEmail: browser ? getSignInEmail() : null
-  };
+  }
 }) satisfies PageLoad;

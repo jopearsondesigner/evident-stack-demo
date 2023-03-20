@@ -1,5 +1,5 @@
 <script>
- const handleClick = function(e) { console.log("clicked", e) };
+  const handleClick = function(e) { console.log("clicked", e) };
 </script>
 
 <h1>Welcome</h1>

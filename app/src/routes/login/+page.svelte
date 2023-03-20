@@ -3,7 +3,7 @@
   import { sendSignInLink } from '$lib/firebase/client';
 
   const onSubmit = async (email: string) => {
-    const redirectUrl = `${window.location.origin}/auth/confirm`
+    const redirectUrl = `${window.location.origin}/auth/session`
     return sendSignInLink(email, redirectUrl)
   }
 </script>

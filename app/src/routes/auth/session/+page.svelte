@@ -4,7 +4,7 @@
   import ConfirmLoginForm, { type FormState } from '$components/auth/ConfirmLoginForm.svelte'
   import { signInWithLink } from '$lib/firebase/client';
   import { clearSignInEmail } from '$lib/localStorage/signInEmail';
-  import { setUser } from '$lib/stores/user';
+  // import { setUser } from '$lib/stores/user';
   import { onMount } from 'svelte';
 
   let email: string | null = $page.data.signInEmail
@@ -13,7 +13,7 @@
       new Error("Invalid sign in link! Please close this page and try again.")
 
   const login = async (email: string) => {
-    let user = signInWithLink(email, window.location.href)
+    let user = await signInWithLink(email, window.location.href)
         .then(credential => credential.user.getIdToken())
         .then(token => fetch('/auth/session', {
 				  method: 'POST',
@@ -23,7 +23,7 @@
         }))
         .then(result => result.json())
 
-    setUser(user)
+    // setUser(user)
     clearSignInEmail()
     goto("/") // TODO: store original intent URL someplace
   }

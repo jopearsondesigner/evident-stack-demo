@@ -2,10 +2,10 @@ extern crate event_models;
 
 mod utils;
 
-use epoch::decider::{Decider, Evolver};
-use event_models::default::DefaultEventModel;
-use event_models::domain::commands::EventModelCommand;
-use event_models::domain::{EventModelDecider, EventModelState};
+// use epoch::decider::{Decider, Evolver};
+// use event_models::default::DefaultEventModel;
+// use event_models::domain::commands::EventModelCommand;
+// use event_models::domain::{EventModelDecider, EventModelState};
 use event_models::EventModelId;
 use js_sys::Function;
 use wasm_bindgen::prelude::*;
@@ -41,17 +41,18 @@ impl EventModelCreationContext {
     }
 
     pub fn dispatch(&self, js_command: JsValue) -> Result<(), JsValue> {
-        let command: EventModelCommand = serde_wasm_bindgen::from_value(js_command)?;
-        log(&format!("Dispatching {:?}", command));
-        let current_state = EventModelState::BeforeCreation;
-        let events = EventModelDecider::decide(&current_state, &command)
-            .map_err(|e| serde_wasm_bindgen::to_value(&e).unwrap())?;
-        let mut next_state: EventModelState<DefaultEventModel> = current_state;
-        for evt in events {
-            next_state = EventModelDecider::evolve(next_state, &evt);
-        }
-        log(&format!("next_state: {:?}", next_state));
-        Ok(())
+        todo!()
+        // let command: EventModelCommand = serde_wasm_bindgen::from_value(js_command)?;
+        // log(&format!("Dispatching {:?}", command));
+        // let current_state = EventModelState::BeforeCreation;
+        // let events = EventModelDecider::decide(&current_state, &command)
+        //     .map_err(|e| serde_wasm_bindgen::to_value(&e).unwrap())?;
+        // let mut next_state: EventModelState<DefaultEventModel> = current_state;
+        // for evt in events {
+        //     next_state = EventModelDecider::evolve(next_state, &evt);
+        // }
+        // log(&format!("next_state: {:?}", next_state));
+        // Ok(())
     }
 }
 
@@ -77,17 +78,17 @@ impl EventModelStateManager {
     }
 
     pub fn dispatch(&self, js_command: JsValue) -> Result<(), JsValue> {
-        let command: EventModelCommand = serde_wasm_bindgen::from_value(js_command)?;
-        log(&format!("Dispatching {:?}...", command));
-        let current_state = EventModelState::BeforeCreation; // TODO: look up current state
-        log(&format!("...against current state {:?}", current_state));
-        let events = EventModelDecider::decide(&current_state, &command)
-            .map_err(|e| serde_wasm_bindgen::to_value(&e).unwrap())?;
-        let mut next_state: EventModelState<DefaultEventModel> = current_state;
-        for evt in events {
-            next_state = EventModelDecider::evolve(next_state, &evt);
-        }
-        log(&format!("next_state: {:?}", next_state));
+        // let command: EventModelCommand = serde_wasm_bindgen::from_value(js_command)?;
+        // log(&format!("Dispatching {:?}...", command));
+        // let current_state = EventModelState::BeforeCreation; // TODO: look up current state
+        // log(&format!("...against current state {:?}", current_state));
+        // let events = EventModelDecider::decide(&current_state, &command)
+        //     .map_err(|e| serde_wasm_bindgen::to_value(&e).unwrap())?;
+        // let mut next_state: EventModelState<DefaultEventModel> = current_state;
+        // for evt in events {
+        //     next_state = EventModelDecider::evolve(next_state, &evt);
+        // }
+        // log(&format!("next_state: {:?}", next_state));
         Ok(())
     }
 

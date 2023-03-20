@@ -75,6 +75,10 @@ module.exports = {
 					dark: '#E4E4E4'
 				}
 			},
+			transitionProperty: {
+				width: 'width',
+				spacing: 'margin, padding, margin-left, margin-right'
+			},
 			minWidth: {
 				placement: '98px',
 				placementPadded: '142px'

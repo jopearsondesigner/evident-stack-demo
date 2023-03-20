@@ -80,15 +80,17 @@ pub trait OpSetStorage<Op: Clone>: OpSet<Op> {
 }
 
 pub trait Interpreter<Op: Clone> {
-    type Interpretation: Clone;
+    type Interpretation;
 
     fn evolve(state: Self::Interpretation, id: &Id, op: &Op) -> Self::Interpretation;
 
     fn interpret(initial: Self::Interpretation, opset: &impl OpSet<Op>) -> Self::Interpretation {
-        let mut state = initial;
-        for (id, op) in opset.ops() {
-            state = Self::evolve(initial, id, op);
-        }
-        state
+        opset.ops()
+            .iter()
+            .fold(initial, Self::evolve_from_op_pair)
+    }
+
+    fn evolve_from_op_pair(state: Self::Interpretation, (id, op): (&Id, &Op)) -> Self::Interpretation {
+        Self::evolve(state, id, op)
     }
 }

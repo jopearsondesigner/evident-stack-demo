@@ -1,9 +1,7 @@
 <script lang="ts">
-	import classNames from 'classnames';
 	import Navbar from './Navbar.svelte';
 	import NavHamburger from './NavHamburger.svelte';
 	import NavBrand from './NavBrand.svelte';
-	import Nav from './Nav.svelte';
 	import NavInner from './NavInner.svelte';
 	import NavToolbar from './NavToolbar.svelte';
 	import Icon from '../Icon.svelte';
@@ -14,7 +12,7 @@
 	import Docs from '../icons/Docs.svelte';
 	import Support from '../icons/Support.svelte';
 	import AdminPortal from '../icons/AdminPortal.svelte';
-	import Logo from '../assets/images/global/evidentDesignLogo.svg';
+	import Logo from '../assets/images/global/evidentStackLogo.svg';
 	import A from '../typography/A.svelte';
 	let website: boolean = false;
 	export let user: boolean = true;

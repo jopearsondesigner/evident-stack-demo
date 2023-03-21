@@ -6,7 +6,11 @@ declare global {
     interface Locals {
       user: User | null
     }
-    // interface PageData {}
+    interface PageData {
+      session: {
+        user: User | null
+      }
+    }
     // interface Platform {}
   }
 }

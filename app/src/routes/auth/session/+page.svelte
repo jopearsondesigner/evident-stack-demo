@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
+  import { goto, invalidateAll } from '$app/navigation';
   import { page } from '$app/stores';
   import ConfirmLoginForm, { type FormState } from '$components/auth/ConfirmLoginForm.svelte'
   import { signInWithLink } from '$lib/firebase/client';
@@ -13,7 +13,7 @@
       new Error("Invalid sign in link! Please close this page and try again.")
 
   const login = async (email: string) => {
-    let user = await signInWithLink(email, window.location.href)
+    return signInWithLink(email, window.location.href)
         .then(credential => credential.user.getIdToken())
         .then(token => fetch('/auth/session', {
 				  method: 'POST',
@@ -21,11 +21,11 @@
 					  authorization: `Bearer ${token}`,
 				  }
         }))
-        .then(result => result.json())
-
-    // setUser(user)
-    clearSignInEmail()
-    goto("/") // TODO: store original intent URL someplace
+      .then(() => {
+        clearSignInEmail()
+        invalidateAll()
+      })
+      .then(() => goto('/')) // TODO: store original intent URL someplace
   }
 
   onMount(async () => {

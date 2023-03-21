@@ -20,7 +20,7 @@ pub struct Event {
 }
 
 impl Event {
-    pub fn new(id: Uuid, name: &str) -> Self {
+    pub fn create(id: Uuid, name: &str) -> Self {
         Event {
             id,
             name: name.to_string(),

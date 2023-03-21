@@ -56,19 +56,19 @@ module.exports = {
 				node: '#333333',
 				gradient: '#93A1A1',
 				command: {
-					DEFAULT: '#2FB6E1',
+					DEFAULT: '#6CCCEA',
 					light: '#C1EAF6',
-					dark: '#1EA4CD'
+					dark: '#2FB6E1'
 				},
 				event: {
-					DEFAULT: '#FB8C3A',
+					DEFAULT: '#FAAC74',
 					light: '#FEDCC3',
-					dark: '#F37121'
+					dark: '#FB8C3A'
 				},
 				readModel: {
-					DEFAULT: '#5FB831',
+					DEFAULT: '#79D04E',
 					light: '#C5EBB2',
-					dark: '#56A92D'
+					dark: '#5FB831'
 				},
 				interfaceColor: {
 					DEFAULT: '#F2F2F2',

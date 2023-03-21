@@ -8,7 +8,7 @@
 	export let name: string;
 	export const child: NavbarType[] = [];
 	export let dropdownDiv: string =
-		'whitespace-nowrap w-auto border-b border-light dark:border-border-dark overflow-hidden bg-white dark:bg-dark-2 px-3';
+		'z-[100] whitespace-nowrap w-auto border-b border-light dark:border-border-dark overflow-hidden bg-white dark:bg-dark-2 px-3';
 	export const dropdownLinkClassWithChild: string | undefined = undefined;
 	export const rel: string | undefined = undefined;
 

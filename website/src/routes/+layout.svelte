@@ -30,7 +30,7 @@
 	import Logo from '$components/assets/images/global/evidentStackLogo.svg';
 	export const alt = 'Brand Logo';
 	let ulClass: string = 'flex space-x-8 items-center';
-	let website: boolean = false;
+	let website: boolean = true;
 	export let hidden: boolean = false;
 	let handleMenu = () => {
 		hidden = !hidden;
@@ -39,7 +39,7 @@
 	export let bgColor: string = 'bg-gray-900';
 	export let bgOpacity: string = 'bg-opacity-75';
 	let backdropDivClass = classNames(
-		'fixed top-0 left-0 z-20 w-full h-full',
+		'fixed top-0 left-0 z-30 w-full h-full',
 		!hidden && bgColor,
 		!hidden && bgOpacity
 	);
@@ -157,7 +157,7 @@
 {#if !hidden}
 	<slot />
 {:else}
-	<div class={backdropDivClass} />
+	<div class={classNames(backdropDivClass)} />
 	<slot />
 {/if}
 

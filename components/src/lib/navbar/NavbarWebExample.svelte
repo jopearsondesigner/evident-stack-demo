@@ -18,7 +18,7 @@
 	import Logo from '../assets/images/global/evidentStackLogo.svg';
 	export let href: string = '';
 	let ulClass: string = 'flex space-x-8 items-center';
-	let website: boolean = false;
+	let website: boolean = true;
 	export let hidden: boolean = false;
 	let handleMenu = () => {
 		hidden = !hidden;

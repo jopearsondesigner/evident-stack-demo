@@ -20,7 +20,7 @@
 
     state = 'submitting'
     try {
-      await onSubmit(email)
+      onSubmit(email)
       state = 'success'
     } catch (error) {
       state = error

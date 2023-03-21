@@ -1,10 +1,12 @@
 <script lang="ts">
   import LoginForm from '$components/auth/LoginForm.svelte'
   import { sendSignInLink } from '$lib/firebase/client';
+  import { setSignInEmail } from '$lib/localStorage/signInEmail';
 
   const onSubmit = async (email: string) => {
     const redirectUrl = `${window.location.origin}/auth/session`
-    return sendSignInLink(email, redirectUrl)
+    await sendSignInLink(email, redirectUrl)
+    setSignInEmail(email)
   }
 </script>
 

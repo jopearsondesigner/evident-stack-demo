@@ -1,9 +1,7 @@
+import { ONE_WEEK_IN_SECONDS, SESSION_COOKIE_NAME } from '$lib/constants';
 import { createSessionCookie, verifyIdToken } from '$lib/firebase/admin';
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-
-const ONE_WEEK_IN_SECONDS = 7 * 24 * 60 * 60
-const SESSION_COOKIE_NAME = 'session'
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
   const authHeader = request.headers.get('Authorization') || ''

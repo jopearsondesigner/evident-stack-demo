@@ -36,3 +36,13 @@ export const verifyIdToken = (token: string): Promise<DecodedIdToken> => {
 	const { auth } = initAdmin()
 	return auth.verifyIdToken(token)
 }
+
+export const getIdTokenFromSessionCookie = (
+	sessionCookie: string | null
+): Promise<DecodedIdToken | null> => {
+	if (!sessionCookie) return Promise.resolve(null)
+
+	const { auth } = initAdmin()
+
+	return auth.verifySessionCookie(sessionCookie, true).catch(() => null)
+}

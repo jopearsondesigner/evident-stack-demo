@@ -2,8 +2,8 @@ use event_models::implementation::in_memory::InMemoryEventModel;
 use event_models::types::schema::{HasModifiableSchema, HasSchema};
 use event_models::types::{
     Audience, Command, CommandId, Described, Entity, Event, EventId, FlowArrow, FlowId, Interface,
-    InterfaceId, Named, Placement, PlacementId, PlacementPosition, ReadModel, ReadModelId,
-    Renamable, Schema, Stream, ModifiablyDescribed,
+    InterfaceId, ModifiablyDescribed, Named, Placement, PlacementId, PlacementPosition, ReadModel,
+    ReadModelId, Renamable, Schema, Stream,
 };
 use event_models::{EventModel, EventModelId, ModifiableEventModel};
 use rand::random;
@@ -68,7 +68,7 @@ impl<S: OpSet<Op>> Interpreter<Op> for ConvergentEventModel<S> {
             Op::Named(name) => {
                 state.rename(name);
                 state
-            },
+            }
         }
     }
 }
@@ -155,15 +155,28 @@ impl<S: OpSet<Op>> ModifiableEventModel for ConvergentEventModel<S> {
         todo!()
     }
 
-    fn deleted_from_component_description(&mut self, component_id: &event_models::types::ComponentId, index: u32) {
+    fn deleted_from_component_description(
+        &mut self,
+        component_id: &event_models::types::ComponentId,
+        index: u32,
+    ) {
         todo!()
     }
 
-    fn added_to_component_schema(&mut self, component_id: &event_models::types::ComponentId, index: u32, addition: &str) {
+    fn added_to_component_schema(
+        &mut self,
+        component_id: &event_models::types::ComponentId,
+        index: u32,
+        addition: &str,
+    ) {
         todo!()
     }
 
-    fn deleted_from_component_schema(&mut self, component_id: &event_models::types::ComponentId, index: u32) {
+    fn deleted_from_component_schema(
+        &mut self,
+        component_id: &event_models::types::ComponentId,
+        index: u32,
+    ) {
         todo!()
     }
 
@@ -179,7 +192,12 @@ impl<S: OpSet<Op>> ModifiableEventModel for ConvergentEventModel<S> {
         todo!()
     }
 
-    fn added_to_placement_schema(&mut self, placement_id: &PlacementId, index: u32, addition: &str) {
+    fn added_to_placement_schema(
+        &mut self,
+        placement_id: &PlacementId,
+        index: u32,
+        addition: &str,
+    ) {
         todo!()
     }
 
@@ -187,7 +205,11 @@ impl<S: OpSet<Op>> ModifiableEventModel for ConvergentEventModel<S> {
         todo!()
     }
 
-    fn lane_added(&mut self, lane: event_models::types::Lane, index: event_models::types::LaneIndex) {
+    fn lane_added(
+        &mut self,
+        lane: event_models::types::Lane,
+        index: event_models::types::LaneIndex,
+    ) {
         todo!()
     }
 
@@ -195,7 +217,11 @@ impl<S: OpSet<Op>> ModifiableEventModel for ConvergentEventModel<S> {
         todo!()
     }
 
-    fn lane_reordered(&mut self, lane_id: event_models::types::LaneId, index: event_models::types::LaneIndex) {
+    fn lane_reordered(
+        &mut self,
+        lane_id: event_models::types::LaneId,
+        index: event_models::types::LaneIndex,
+    ) {
         todo!()
     }
 
@@ -240,14 +266,13 @@ impl<S: OpSet<Op>> ModifiablyDescribed for ConvergentEventModel<S> {
     }
 }
 
-
-impl <S: OpSet<Op>> HasSchema for ConvergentEventModel<S> {
+impl<S: OpSet<Op>> HasSchema for ConvergentEventModel<S> {
     fn schema(&self) -> &Schema {
         todo!()
     }
 }
 
-impl <S: OpSet<Op>> HasModifiableSchema for ConvergentEventModel<S> {
+impl<S: OpSet<Op>> HasModifiableSchema for ConvergentEventModel<S> {
     fn schema_mut(&mut self) -> &mut Schema {
         todo!()
     }

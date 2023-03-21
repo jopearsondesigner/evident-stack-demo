@@ -1,5 +1,8 @@
 use async_trait::async_trait;
-use std::{collections::{BTreeMap, HashMap}, fmt::Debug};
+use std::{
+    collections::{BTreeMap, HashMap},
+    fmt::Debug,
+};
 
 pub(crate) mod opset;
 
@@ -85,12 +88,13 @@ pub trait Interpreter<Op: Clone> {
     fn evolve(state: Self::Interpretation, id: &Id, op: &Op) -> Self::Interpretation;
 
     fn interpret(initial: Self::Interpretation, opset: &impl OpSet<Op>) -> Self::Interpretation {
-        opset.ops()
-            .iter()
-            .fold(initial, Self::evolve_from_op_pair)
+        opset.ops().iter().fold(initial, Self::evolve_from_op_pair)
     }
 
-    fn evolve_from_op_pair(state: Self::Interpretation, (id, op): (&Id, &Op)) -> Self::Interpretation {
+    fn evolve_from_op_pair(
+        state: Self::Interpretation,
+        (id, op): (&Id, &Op),
+    ) -> Self::Interpretation {
         Self::evolve(state, id, op)
     }
 }

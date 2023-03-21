@@ -5,6 +5,7 @@ edition = "2021"
 
 [features]
 cbor = ["serde_cbor"]
+test_utils = []
 
 [dependencies]
 epoch = { git = "https://github.com/Shearerbeard/Epoch", branch = "decider", default-features = false, features = ["in_memory"] }

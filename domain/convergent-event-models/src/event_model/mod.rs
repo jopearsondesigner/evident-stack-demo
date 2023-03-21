@@ -5,7 +5,7 @@ use event_models::types::{
     InterfaceId, ModifiablyDescribed, Named, Placement, PlacementId, PlacementPosition, ReadModel,
     ReadModelId, Renamable, Schema, Stream,
 };
-use event_models::{EventModel, EventModelId, ModifiableEventModel};
+use event_models::{EventModel, EventModelCreator, EventModelId, ModifiableEventModel};
 use rand::random;
 use std::collections::HashMap;
 use uuid::Uuid;
@@ -26,6 +26,15 @@ struct ConvergentEventModel<S: OpSet<Op>> {
     node: Node,
     opset: S,
     value: InMemoryEventModel,
+}
+
+#[derive(Default, Debug)]
+struct ConvergentCreator;
+
+impl<S: OpSet<Op>> EventModelCreator<ConvergentEventModel<S>> for ConvergentCreator {
+    fn create(&self, id: EventModelId, name: String) -> ConvergentEventModel<S> {
+        ConvergentEventModel::new(id, &name, Node::default(), S::default())
+    }
 }
 
 impl<S: OpSet<Op>> ConvergentEventModel<S> {

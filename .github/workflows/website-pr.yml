@@ -6,7 +6,9 @@ on:
     branches:
       - main
     paths:
-      - "website/**"
+      - 'package-lock.json'
+      - 'components/**'
+      - 'website/**'
 jobs:
   Publish:
     runs-on: ubuntu-latest

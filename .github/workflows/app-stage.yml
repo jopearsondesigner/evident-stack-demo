@@ -1,14 +1,14 @@
 ---
-name: Publish Website to Production
+name: Publish App to Production
 run-name: Production publish by ${{ github.actor }}
 on:
-  release:
-    types:
-      - published
+  push:
+    branches:
+      - main
     paths:
       - 'package-lock.json'
       - 'components/**'
-      - 'website/**'
+      - 'app/**'
 jobs:
   Publish:
     runs-on: ubuntu-latest
@@ -24,22 +24,26 @@ jobs:
         with:
           node-version: 16
 
+      - uses: jetli/wasm-pack-action@v0.4.0
+
+      - name: Build editor-state
+        run: npm -w app run state:build
+
       - name: Install dependencies
-        run: npm -w website install
+        run: npm -w app i
 
       - name: Install playwright browsers
         run: npx playwright install --with-deps
 
       - name: Build
-        run: npm -w website run build
-        working-directory: website
+        run: npm -w app run release
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_PAGES_API_KEY }}
           accountId: 24a2b0f48cf4f2d0cd375521394e63bd
-          projectName: evidentstack-website
-          directory: website/.svelte-kit/cloudflare
+          projectName: evidentstack-app
+          directory: app/.svelte-kit/cloudflare
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          environment: production
+          branch: staging # this is necessary so as not to deploy to production

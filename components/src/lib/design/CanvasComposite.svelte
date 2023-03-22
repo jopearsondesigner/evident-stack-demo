@@ -3,6 +3,7 @@
 	import Grid from '$lib/design/Grid.svelte';
 	import Drawer from '$lib/drawer/Drawer.svelte';
 	import Sidebar from '$lib/drawer/Sidebar.svelte';
+	import SidebarWrapper from '$lib/drawer/SidebarWrapper.svelte';
 	import SidebarInner from '$lib/drawer/SidebarInner.svelte';
 	import SidebarGroup from '$lib/drawer/SidebarGroup.svelte';
 	import SidebarDropdownWrapper from '$lib/drawer/SidebarDropdownWrapper.svelte';
@@ -26,6 +27,10 @@
 	import Logo from '$lib/assets/images/global/evidentStackLogo.svg';
 	import A from '$lib/typography/A.svelte';
 	import MaybeTooltip from '$lib/utils/MaybeTooltip.svelte';
+	let DataLogo = '$lib/assets/images/product/data/evidentDataLogo.svg';
+	let DomainFunctionsLogo = '$lib/assets/images/product/data/evidentDomainFunctionsLogo.svg';
+	let DeployLogo = '$lib/assets/images/product/data/evidentDeployLogo.svg';
+	let DatabaseLogo = '$lib/assets/images/product/data/evidentDatabaseLogo.svg';
 	let headerItem = true;
 	let feature = true;
 	let isClosed = true;
@@ -42,6 +47,7 @@
 		isClosed = !isClosed;
 	};
 	let website: boolean = false;
+	let design: boolean = true;
 </script>
 
 <Navbar>
@@ -79,37 +85,47 @@
 	</NavInner>
 </Navbar>
 
-<span class="lg:block hidden right-0 z-50 fixed pt-4 pr-10"><ThemeSwitch /></span>
+<span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10"><ThemeSwitch /></span>
 <Drawer {hidden}>
 	<Sidebar class={!isClosed ? 'w-[416px]' : 'w-[239px]'} {isClosed}>
-		<SidebarInner>
-			<SidebarGroup>
-				<SidebarItem label="Event Models" {headerItem}>
-					<Icon
-						slot="leftIcon"
-						name="event-models"
-						size={16}
-						iconColor="fill-current text-gray-brand-4 dark:text-gray-brand-2"><EventModels /></Icon
+		<SidebarWrapper design>
+			<SidebarInner slot="design">
+				<SidebarGroup>
+					<SidebarItem
+						label="Event Models"
+						sidebarHeaderClass="bg-white dark:bg-dark-2 w-full space-x-3 h-8 cursor-default"
+						headerItem
 					>
-					<Icon
-						slot="rightIcon"
-						name="add-icon"
-						size={20}
-						iconColor="fill-current text-body dark:text-white"><AddIcon /></Icon
-					>
-				</SidebarItem>
-				<SidebarItem label="This is an Event Model!" active />
-				<SidebarDropdownWrapper label="Event Model Schema" on:click={() => handleClick()}>
-					<Icon
-						slot="icon"
-						name="generate-avro"
-						size={16}
-						iconColor="fill-current text-gray-brand-4 dark:text-gray-brand-2"><GenerateAvro /></Icon
-					>
-					<SidebarDropdownItem label="" {feature} />
-				</SidebarDropdownWrapper>
-			</SidebarGroup>
-		</SidebarInner>
+						<Icon
+							slot="leftIcon"
+							name="event-models"
+							size={16}
+							iconColor="fill-current text-gray-brand-4 dark:text-gray-brand-2"
+							><EventModels /></Icon
+						>
+						<Icon
+							slot="rightIcon"
+							name="add-icon"
+							size={20}
+							iconColor="fill-current text-body dark:text-white"><AddIcon /></Icon
+						>
+					</SidebarItem>
+					<SidebarItem label="This is an Event Model!" active />
+				</SidebarGroup>
+				<SidebarGroup>
+					<SidebarDropdownWrapper label="Event Model Schema" on:click={() => handleClick()}>
+						<Icon
+							slot="icon"
+							name="generate-avro"
+							size={16}
+							iconColor="fill-current text-gray-brand-4 dark:text-gray-brand-2"
+							><GenerateAvro /></Icon
+						>
+						<SidebarDropdownItem label="" {feature} />
+					</SidebarDropdownWrapper>
+				</SidebarGroup>
+			</SidebarInner>
+		</SidebarWrapper>
 	</Sidebar>
 </Drawer>
 
@@ -122,13 +138,7 @@
 </div>
 
 <Drawer placement="right" bind:hidden={hiddenRight} drawerRight>
-	<Sidebar class="w-[480px]">
-		<SidebarInner>
-			<SidebarGroup>
-				<div>Hello!</div>
-			</SidebarGroup>
-		</SidebarInner>
-	</Sidebar>
+	<div class="bg-white dark:bg-dark-2 w-[480px] p-4 h-screen">Hello please develop me!</div>
 </Drawer>
 
 <main

@@ -6,7 +6,7 @@
 	import NavArrowLight from '../icons/NavArrowLight.svelte';
 	import ArrowDown from '../icons/ArrowDown.svelte';
 	export let liButtonClass: string =
-		'whitespace-nowrap inline-flex justify-center items-center py-4 text-sm text-body-light dark:text-body-dark hover:text-body-dark dark:hover:text-body-light focus:text-body-dark focus:hover:text-body-light focus:outline-none transition duration-300 ease-in-out';
+		'whitespace-nowrap inline-flex justify-center items-center py-4 text-sm text-body-light dark:text-body-dark hover:text-body-dark dark:hover:text-body-light focus:outline-none transition duration-300 ease-in-out';
 	export let name: string;
 	export const child: NavbarType[] = [];
 	export let dropdownDiv: string =
@@ -16,35 +16,45 @@
 
 	let hidden = true;
 	let block = false;
-	export let website = true;
+	let visible = false;
+	export let website = false;
+	export let product = false;
 
 	const handleDropdown = () => {
 		hidden = !hidden;
 		block = !block;
-		website = !website;
+		visible = !visible;
 	};
 
 	let liClass = '';
 </script>
 
-<li use:clickOutside={() => !hidden && handleDropdown()} class={liClass}>
-	<button on:click={() => handleDropdown()} class={liButtonClass}
-		>{name}
-		<Icon name="arrow-down" class="ml-1 stroke-2" iconColor="fill-current" size={12}
-			><ArrowDown /></Icon
-		>
-		{#if website}
-			<Icon name="nav-arrow-light" class="block dark:hidden z-50 w-6 absolute mt-[37px] transform"
-				><NavArrowLight /></Icon
+{#if website}
+	<li use:clickOutside={() => !hidden && handleDropdown()} class={liClass}>
+		<button on:click={() => handleDropdown()} class={liButtonClass}
+			>{name}
+			<Icon name="arrow-down" class="ml-1 stroke-2" iconColor="fill-current" size={12}
+				><ArrowDown /></Icon
 			>
-			<Icon name="nav-arrow-dark" class="hidden dark:block z-50 w-6 absolute mt-[37px] transform"
-				><NavArrowDark /></Icon
-			>
-		{/if}
-	</button>
+			{#if visible}
+				<Icon name="nav-arrow-light" class="block dark:hidden z-50 w-6 absolute mt-[37px] transform"
+					><NavArrowLight /></Icon
+				>
+				<Icon name="nav-arrow-dark" class="hidden dark:block z-50 w-6 absolute mt-[37px] transform"
+					><NavArrowDark /></Icon
+				>
+			{/if}
+		</button>
 
-	<!-- Dropdown menu -->
-	<div class:hidden class={dropdownDiv}>
-		<slot />
+		<!-- Dropdown menu -->
+		<div class:hidden class={dropdownDiv}>
+			<slot />
+		</div>
+	</li>
+{:else if product}
+	<div class="w-full flex justify-center">
+		<ul class:block class={dropdownDiv}>
+			<slot />
+		</ul>
 	</div>
-</li>
+{/if}

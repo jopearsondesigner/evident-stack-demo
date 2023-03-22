@@ -4,7 +4,7 @@
 	import Grid from '$lib/design/Grid.svelte';
 	import Drawer from '$lib/drawer/Drawer.svelte';
 	import Sidebar from '$lib/drawer/Sidebar.svelte';
-	import SidebarInner from '$lib/drawer/SidebarInner.svelte';
+	import SidebarWrapper from '$lib/drawer/SidebarWrapper.svelte';
 	import SidebarGroup from '$lib/drawer/SidebarGroup.svelte';
 	import SidebarDropdownWrapper from '$lib/drawer/SidebarDropdownWrapper.svelte';
 	import SidebarDropdownItem from '$lib/drawer/SidebarDropdownItem.svelte';
@@ -80,7 +80,7 @@
 <span class="lg:block hidden right-0 z-20 absolute pt-4 pr-10"><ThemeSwitch /></span>
 <Drawer {hidden}>
 	<Sidebar>
-		<SidebarInner slot="eventModel">
+		<SidebarWrapper slot="eventModel">
 			<SidebarGroup>
 				<SidebarItem label="Event Models" {headerItem}>
 					<Icon
@@ -158,7 +158,7 @@
 					</SidebarDropdownItem>
 				</SidebarDropdownWrapper>
 			</SidebarGroup>
-		</SidebarInner>
+		</SidebarWrapper>
 	</Sidebar>
 </Drawer>
 

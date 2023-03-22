@@ -3,7 +3,7 @@
 
 	import Drawer from './Drawer.svelte';
 	import Sidebar from './Sidebar.svelte';
-	import SidebarInner from './SidebarInner.svelte';
+	import SidebarWrapper from './SidebarWrapper.svelte';
 	import SidebarGroup from './SidebarGroup.svelte';
 	import SidebarDropdownWrapper from './SidebarDropdownWrapper.svelte';
 	import SidebarDropdownItem from './SidebarDropdownItem.svelte';
@@ -35,7 +35,7 @@
 
 <Drawer {hidden}>
 	<Sidebar>
-		<SidebarInner slot="eventModel">
+		<SidebarWrapper slot="eventModel">
 			<SidebarGroup>
 				<SidebarDropdownWrapper horizontal label="Design">
 					<Icon slot="icon" name="design" iconColor="fill-current text-brand-4"><Design /></Icon>
@@ -99,8 +99,8 @@
 					<SidebarDropdownItem label="Repo Feature Item" />
 				</SidebarDropdownWrapper>
 			</SidebarGroup>
-		</SidebarInner>
-		<SidebarInner slot="domainModels">
+		</SidebarWrapper>
+		<SidebarWrapper slot="domainModels">
 			<SidebarGroup>
 				<SidebarItem label="Workflows" {headerText}>
 					<Icon slot="icon" name="add-icon" size={20} iconColor="fill-current text-body"
@@ -111,6 +111,6 @@
 				<SidebarItem label="<Workflow 2>" />
 				<SidebarItem label="<Workflow 3>" />
 			</SidebarGroup>
-		</SidebarInner>
+		</SidebarWrapper>
 	</Sidebar>
 </Drawer>

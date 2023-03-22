@@ -61,11 +61,6 @@
 	{...$$restProps}
 	class={buttonClass}
 	on:click={handleClick}
-	on:change
-	on:keydown
-	on:keyup
-	on:mouseenter
-	on:mouseleave
 >
 	<slot name="label">
 		{label || 'Button'}

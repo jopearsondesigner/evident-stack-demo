@@ -1,5 +1,6 @@
 [workspace]
 members = [
   "domain/event-models",
-  "domain/convergent-event-models"
+  # "domain/convergent-event-models"
+  # "app/state"
 ]

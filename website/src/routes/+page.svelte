@@ -39,7 +39,7 @@
 	import SearchDocs from '$components/assets/images/homepage/ico-search-docs.svg';
 	import Icon from '$components/Icon.svelte';
 	import ArrowRight from '$components/icons/ArrowRight.svelte';
-	import Logo from '$components/assets/images/global/evidentDesignLogo.svg';
+	import Logo from '$components/assets/images/product/design/evidentDesignLogo.svg';
 	import Navbar from '$components/navbar/Navbar.svelte';
 	import NavWrapper from '$components/navbar/NavWrapper.svelte';
 	import NabBrand from '$components/navbar/NavBrand.svelte';

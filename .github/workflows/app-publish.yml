@@ -46,3 +46,6 @@ jobs:
           projectName: evidentstack-app
           directory: app/.svelte-kit/cloudflare
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          environment: production
+

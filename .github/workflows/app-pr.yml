@@ -36,7 +36,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Build
-        run: npm -w app run build
+        run: npm -w app run release
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1

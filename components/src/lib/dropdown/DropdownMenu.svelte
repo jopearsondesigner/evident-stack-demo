@@ -52,7 +52,7 @@
 		</div>
 	</li>
 {:else if product}
-	<div class="w-full flex justify-center" use:clickOutside={() => !hidden && handleDropdown()}>
+	<div class="w-full flex justify-center">
 		<ul class:block class={dropdownDiv}>
 			<slot />
 		</ul>

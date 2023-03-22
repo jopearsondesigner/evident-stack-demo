@@ -1,12 +1,10 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	import { createEventDispatcher } from 'svelte';
-	import type { ButtonType } from './types';
 	export let gradient: boolean = false;
 	export let size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 	export let href: string | undefined = undefined;
 	export let btnClass: string | undefined = undefined;
-	export let type: ButtonType = 'button';
 	export let label = '';
 	export let color:
 		| 'default'
@@ -59,7 +57,6 @@
 
 <svelte:element
 	this={href ? 'a' : 'button'}
-	type={href ? undefined : type}
 	{href}
 	{...$$restProps}
 	class={buttonClass}

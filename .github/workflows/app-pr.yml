@@ -6,7 +6,9 @@ on:
     branches:
       - main
     paths:
-      - "app/**"
+      - 'package-lock.json'
+      - 'components/**'
+      - 'app/**'
 jobs:
   Publish:
     runs-on: ubuntu-latest
@@ -22,26 +24,19 @@ jobs:
         with:
           node-version: 16
 
-      - name: Install Parent dependencies
-        run: npm -w components install
-
       - uses: jetli/wasm-pack-action@v0.4.0
 
       - name: Build editor-state
-        run: yarn state:build
-        working-directory: app
+        run: npm -w app run state:build
 
       - name: Install dependencies
-        run: yarn
-        working-directory: app
+        run: npm -w app i
 
       - name: Install playwright browsers
         run: npx playwright install --with-deps
-        working-directory: app
 
       - name: Build
-        run: yarn release
-        working-directory: app
+        run: npm -w app run build
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1

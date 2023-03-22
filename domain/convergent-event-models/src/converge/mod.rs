@@ -1,5 +1,8 @@
 use async_trait::async_trait;
-use std::collections::{BTreeMap, HashMap};
+use std::{
+    collections::{BTreeMap, HashMap},
+    fmt::Debug,
+};
 
 pub(crate) mod opset;
 
@@ -22,7 +25,7 @@ const MAX_ID: Id = Id(Counter::MAX, Node::MAX);
 pub type Clock = HashMap<Node, Counter>;
 pub type Patch<Op> = HashMap<Id, Op>;
 
-pub trait OpSet<Op: Clone> {
+pub trait OpSet<Op: Clone>: Debug + Default {
     fn ops(&self) -> &BTreeMap<Id, Op>;
     fn apply_patch(&mut self, patch: Patch<Op>);
 
@@ -85,10 +88,13 @@ pub trait Interpreter<Op: Clone> {
     fn evolve(state: Self::Interpretation, id: &Id, op: &Op) -> Self::Interpretation;
 
     fn interpret(initial: Self::Interpretation, opset: &impl OpSet<Op>) -> Self::Interpretation {
-        let mut state = initial;
-        for (id, op) in opset.ops() {
-            state = Self::evolve(initial, id, op);
-        }
-        state
+        opset.ops().iter().fold(initial, Self::evolve_from_op_pair)
+    }
+
+    fn evolve_from_op_pair(
+        state: Self::Interpretation,
+        (id, op): (&Id, &Op),
+    ) -> Self::Interpretation {
+        Self::evolve(state, id, op)
     }
 }

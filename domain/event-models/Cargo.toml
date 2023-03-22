@@ -5,13 +5,16 @@ edition = "2021"
 
 [features]
 cbor = ["serde_cbor"]
+test_utils = []
 
 [dependencies]
-# domain_functions = { git = "https://github.com/evidentstack/domain_functions.rs" }
 epoch = { git = "https://github.com/Shearerbeard/Epoch", branch = "decider", default-features = false, features = ["in_memory"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_derive = "1.0"
 serde_cbor = { version = "0.11", optional = true }
+
+[dev-dependencies]
+assert_matches = "1.5"
 
 [dependencies.url]
 version = "2.3"

@@ -4,11 +4,11 @@ use crate::types::interface::InterfaceConfig;
 use crate::types::placement::PlacementId;
 use crate::types::stream::StreamId;
 use crate::types::ComponentId;
-use crate::EventModelId;
+use crate::{EventModel, EventModelId};
 use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum EventModelCommand {
+pub enum EventModelCommand<T: EventModel> {
     // Event Model Details
     Create(String),
     Rename(EventModelId, String),
@@ -19,6 +19,9 @@ pub enum EventModelCommand {
     AddToSchema(EventModelId, u32, String),
     DeleteFromSchema(EventModelId, u32),
     Delete(EventModelId),
+
+    // Composite Actions
+    Import(T),
 
     // Lanes
     AddAudience(EventModelId, u32, String),

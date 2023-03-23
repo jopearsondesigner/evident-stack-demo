@@ -22,12 +22,12 @@ pub enum EventModelState<T: EventModel, C: EventModelCreator<T>> {
     EventModel(T),
 }
 
-impl<T: EventModel + ModifiableEventModel, C: EventModelCreator<T>> DeciderWithContext
+impl<T: EventModel + ModifiableEventModel + Send + Sync, C: EventModelCreator<T>> DeciderWithContext
     for EventModelState<T, C>
 {
     type Ctx = ();
 
-    type Cmd = EventModelCommand;
+    type Cmd = EventModelCommand<T>;
 
     type Err = EventModelError;
 
@@ -58,7 +58,7 @@ impl<T: EventModel + ModifiableEventModel, C: EventModelCreator<T>> Evolver
 
 pub fn event_model_decide<T, C>(
     state: &EventModelState<T, C>,
-    cmd: &EventModelCommand,
+    cmd: &EventModelCommand<T>,
 ) -> Result<Vec<EventModelEvent>, EventModelError>
 where
     T: EventModel + Debug + ModifiableEventModel,
@@ -89,6 +89,7 @@ where
             EventModelCommand::DeleteFromDescription(_, _) => {
                 todo!()
             }
+            EventModelCommand::Import(_) => todo!(),
             EventModelCommand::AddAudience(_, _, _) => {
                 todo!()
             }

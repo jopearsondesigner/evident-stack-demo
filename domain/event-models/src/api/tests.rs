@@ -8,7 +8,7 @@ use uuid::Uuid;
 
 pub fn creating_event_model_succeeds<C, T>(initial: EventModelState<T, C>)
 where
-    T: EventModel + Debug + ModifiableEventModel + Clone,
+    T: EventModel + Debug + ModifiableEventModel + Clone + Send + Sync,
     C: EventModelCreator<T> + Clone,
 {
     // Assert test is starting in the correct state
@@ -31,7 +31,7 @@ where
 
 pub fn renaming_event_model_succeeds<T, C>(initial: EventModelState<T, C>)
 where
-    T: EventModel + Debug + ModifiableEventModel + Clone,
+    T: EventModel + Debug + ModifiableEventModel + Clone + Send + Sync,
     C: EventModelCreator<T> + Debug + Clone,
 {
     // Assert test is starting in the correct state

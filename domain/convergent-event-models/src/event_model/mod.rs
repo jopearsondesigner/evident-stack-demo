@@ -5,13 +5,12 @@ use event_models::types::{
     InterfaceId, ModifiablyDescribed, Named, Placement, PlacementId, PlacementPosition, ReadModel,
     ReadModelId, Renamable, Schema, Stream,
 };
-use event_models::{EventModel, EventModelCreator, EventModelId, ModifiableEventModel};
-use rand::random;
+use event_models::{EventModel, EventModelId, ModifiableEventModel};
 use std::collections::HashMap;
 use uuid::Uuid;
 
-use crate::converge::opset::InMemoryOpSet;
-use crate::converge::{Id, Interpreter, Node, OpSet, Patch};
+use converge::opset::InMemoryOpSet;
+use converge::{Id, Interpreter, Node, OpSet, Patch};
 
 #[cfg(test)]
 mod tests;
@@ -61,7 +60,7 @@ impl Default for ConvergentEventModel<InMemoryOpSet<Op>> {
         Self::new(
             Uuid::new_v4(),
             "New Event Model",
-            random::<u32>(),
+            random_node(),
             InMemoryOpSet::default(),
         )
     }

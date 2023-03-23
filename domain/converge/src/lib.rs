@@ -1,10 +1,9 @@
-use async_trait::async_trait;
-use std::{
-    collections::{BTreeMap, HashMap},
-    fmt::Debug,
-};
+pub mod sync;
 
-pub(crate) mod opset;
+use async_trait::async_trait;
+use rand::random;
+use std::collections::{BTreeMap, HashMap};
+use uuid::Uuid;
 
 // TODO: Snapshot event prunes any component definitions not present in placements
 //  In a api context, we can't know when deleting a placement whether it's
@@ -16,6 +15,10 @@ pub(crate) mod opset;
 pub type Node = u32;
 pub type Counter = u32;
 
+pub fn random_node() -> Node {
+    random::<u32>()
+}
+
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
 pub struct Id(pub Counter, pub Node);
 
@@ -25,9 +28,39 @@ const MAX_ID: Id = Id(Counter::MAX, Node::MAX);
 pub type Clock = HashMap<Node, Counter>;
 pub type Patch<Op> = HashMap<Id, Op>;
 
-pub trait OpSet<Op: Clone>: Debug + Default {
-    fn ops(&self) -> &BTreeMap<Id, Op>;
-    fn apply_patch(&mut self, patch: Patch<Op>);
+pub struct OpSet<Op> {
+    id: Uuid,
+    ops: BTreeMap<Id, Op>,
+}
+
+impl<Op> Default for OpSet<Op> {
+    fn default() -> Self {
+        Self {
+            id: Default::default(),
+            ops: Default::default(),
+        }
+    }
+}
+
+impl<Op: Clone> OpSet<Op> {
+    fn new(id: Uuid, ops: BTreeMap<Id, Op>) -> Self {
+        OpSet { id, ops }
+    }
+
+    fn id(&self) -> &Uuid {
+        &self.id
+    }
+
+    fn ops(&self) -> &BTreeMap<Id, Op> {
+        &self.ops
+    }
+
+    fn apply_patch(&mut self, patch: Patch<Op>) {
+        let ops = &mut self.ops;
+        for (id, op) in patch {
+            ops.insert(id, op);
+        }
+    }
 
     fn max_counter(&self) -> Counter {
         self.clock().into_values().max().unwrap_or(0)
@@ -74,11 +107,11 @@ pub trait OpSet<Op: Clone>: Debug + Default {
 }
 
 #[async_trait]
-pub trait OpSetStorage<Op: Clone>: OpSet<Op> {
+pub trait OpSetStorage<Op> {
     type Err;
 
     // On success, result conveys the number of ops loaded
-    async fn load_ops(&self) -> Result<u32, Self::Err>;
+    async fn load_patch(&self) -> Result<u32, Self::Err>; // TODO: rethink this API
     async fn commit_patch(&self, patch: &Patch<Op>) -> Result<(), Self::Err>;
 }
 
@@ -87,7 +120,7 @@ pub trait Interpreter<Op: Clone> {
 
     fn evolve(state: Self::Interpretation, id: &Id, op: &Op) -> Self::Interpretation;
 
-    fn interpret(initial: Self::Interpretation, opset: &impl OpSet<Op>) -> Self::Interpretation {
+    fn interpret(initial: Self::Interpretation, opset: &OpSet<Op>) -> Self::Interpretation {
         opset.ops().iter().fold(initial, Self::evolve_from_op_pair)
     }
 

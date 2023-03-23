@@ -5,7 +5,7 @@
 	import { clickOutside } from '$lib/utils/clickOutside';
 	export let activateClickOutside = true;
 	export let hidden = true;
-	export let divClass = 'z-40 fixed h-screen';
+	export let divClass = 'z-40 fixed h-auto';
 	export let leftOffset = 'left-0';
 	export let rightOffset = 'right-0';
 	export let placement = 'left';
@@ -32,7 +32,7 @@
 
 {#if !hidden}
 	{#if !drawerRight}
-		<div transition:fly={transitionParams} class={classnames(divClass)}>
+		<div transition:fly={transitionParams} class={classnames('pt-16', divClass)}>
 			<slot />
 		</div>
 	{:else if activateClickOutside}

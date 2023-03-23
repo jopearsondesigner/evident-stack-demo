@@ -6,12 +6,12 @@
 	export let featureTextClass = 'font-medium text-default text-body dark:text-white';
 	export let sidebarItemClass = 'flex items-center pl-4 pr-1 transition duration-200 ease-in';
 	export let sidebarBtnClass =
-		'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] focus:text-body focus:bg-focus/[.20] dark:focus:bg-focus/[.20] transition duration-200 ease-in w-full space-x-3 h-8 pointer-default';
-	export let sidebarDivClass = 'bg-white dark:bg-dark-2 w-full space-x-3 h-8 pointer-default';
+		'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] focus:text-body focus:bg-focus/[.20] dark:focus:bg-focus/[.20] transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
+	export let sidebarDivClass = 'bg-white dark:bg-dark-2 w-full space-x-3 h-8 cursor-default';
 	export let sidebarActiveClass =
-		'bg-focus/[100] text-white dark:bg-focus/[100] hover:bg-focus/[100] dark:hover:bg-focus/[100] focus:bg-focus/[100] dark:focus:bg-focus/[100] transition duration-200 ease-in w-full space-x-3 h-8 pointer-default';
+		'bg-focus/[100] text-white dark:bg-focus/[100] hover:bg-focus/[100] dark:hover:bg-focus/[100] focus:bg-focus/[100] dark:focus:bg-focus/[100] transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
 	export let sidebarLinkClass =
-		'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] focus:text-body focus:bg-focus/[.20] dark:focus:bg-focus/[.20] transition duration-200 ease-in w-full space-x-3 h-8 pointer-default';
+		'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] focus:text-body focus:bg-focus/[.20] dark:focus:bg-focus/[.20] transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
 	export let sidebarSpanClass = 'flex-1 ml-3 text-left whitespace-nowrap';
 	export let active = false;
 	export let feature = false;

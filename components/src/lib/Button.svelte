@@ -5,6 +5,7 @@
 	export let size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 	export let href: string | undefined = undefined;
 	export let btnClass: string | undefined = undefined;
+	export let className: string = '';
 	export let label = '';
 	export let color:
 		| 'default'
@@ -28,7 +29,9 @@
 		brandDesignPrimary:
 			'text-white bg-gradient-to-t from-design-brand-700 via-design-brand-500 to-design-brand-300 hover:to-design-brand-700 hover:via-design-brand-700 hover:from-design-brand-700 ring-design-brand-500',
 		brandStackPrimary:
-			'text-white bg-gradient-to-t from-stack-brand-700 via-stack-brand-500 to-stack-brand-300 hover:to-stack-brand-700 hover:via-stack-brand-700 hover:from-stack-brand-700 ring-stack-brand-500'
+			'text-white bg-gradient-to-t from-stack-brand-700 via-stack-brand-500 to-stack-brand-300 hover:to-stack-brand-700 hover:via-stack-brand-700 hover:from-stack-brand-700 ring-stack-brand-500',
+		ghost:
+			'text-body-light dark:text-body-dark bg-gradient-to-t from-transparent to-transparent hover:to-transparent hover:from-[#E4E4E4]/[.60] hover:dark:to-transparent hover:dark:from-[#E4E4E4]/[.13] ring-focus'
 	};
 	const sizeClasses = {
 		xs: 'px-3 py-1 text-xs',
@@ -42,6 +45,7 @@
 		? btnClass
 		: classNames(
 				'font-primary font-medium rounded uppercase ring-1 h-auto min-h-0 transition duration-200 ease-in',
+				className,
 				// @ts-ignore
 				gradient ? gradientClasses[color] : colorClasses[color],
 				sizeClasses[size],

@@ -15,7 +15,7 @@
 	export let headerTextClass = 'font-extrabold text-default text-body dark:text-white';
 	export let sidebarItemClass = 'flex items-center pl-4 pr-1 transition duration-200 ease-in';
 	export let sidebarBtnClass =
-		'w-full bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] focus:text-body focus:bg-focus/[.20] dark:focus:bg-focus/[.20] transition duration-200 ease-in space-x-3 h-8 pointer-default';
+		'w-full bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] focus:text-body focus:bg-focus/[.20] dark:focus:bg-focus/[.20] transition duration-200 ease-in space-x-3 h-8 cursor-default';
 	export let sidebarSpanClass = 'flex-1 ml-3 text-left whitespace-nowrap';
 	export let label = '';
 	export let horizontal = false;

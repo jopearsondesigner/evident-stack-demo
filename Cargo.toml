@@ -2,5 +2,6 @@
 members = [
   "domain/event-models",
   "domain/convergent-event-models",
+  "domain/event-model-tests",
   "app/state"
 ]

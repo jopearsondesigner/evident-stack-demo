@@ -1,8 +1,8 @@
-use crate::api::commands::EventModelCommand::*;
-use crate::api::events::EventModelEvent::*;
-use crate::api::EventModelState;
-use crate::{EventModel, EventModelCreator, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
+use event_models::api::commands::EventModelCommand::*;
+use event_models::api::events::EventModelEvent::*;
+use event_models::api::EventModelState;
+use event_models::{EventModel, EventModelCreator, ModifiableEventModel};
 use std::fmt::Debug;
 use uuid::Uuid;
 

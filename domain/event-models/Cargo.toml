@@ -13,9 +13,6 @@ serde = { version = "1.0", features = ["derive"] }
 serde_derive = "1.0"
 serde_cbor = { version = "0.11", optional = true }
 
-[dev-dependencies]
-assert_matches = "1.5"
-
 [dependencies.url]
 version = "2.3"
 features = [ "serde" ]

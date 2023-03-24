@@ -13,10 +13,6 @@ pub mod commands;
 pub mod errors;
 pub mod events;
 
-#[cfg(test)]
-#[cfg(feature = "shared_tests")]
-pub mod tests;
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventModelState<T: EventModel, C: EventModelCreator<T>> {
     BeforeCreation(C),

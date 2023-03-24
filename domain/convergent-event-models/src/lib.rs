@@ -11,23 +11,20 @@ use uuid::Uuid;
 
 use converge::{random_node, Interpreter, Node, OpId, OpSet, Patch};
 
-#[cfg(test)]
-mod tests;
-
 #[derive(Clone, Debug)]
-enum Op {
+pub enum Op {
     Named(String),
 }
 
-#[derive(Debug)]
-struct ConvergentEventModel {
+#[derive(Debug, Clone)]
+pub struct ConvergentEventModel {
     node: Node,
     opset: OpSet<Op>,
     value: InMemoryEventModel,
 }
 
-#[derive(Default, Debug)]
-struct ConvergentCreator;
+#[derive(Default, Debug, Clone)]
+pub struct ConvergentCreator;
 
 impl EventModelCreator<ConvergentEventModel> for ConvergentCreator {
     fn create(&self, id: EventModelId, name: String) -> ConvergentEventModel {
@@ -36,7 +33,7 @@ impl EventModelCreator<ConvergentEventModel> for ConvergentCreator {
 }
 
 impl ConvergentEventModel {
-    fn new(id: EventModelId, name: &str, node: Node, mut opset: OpSet<Op>) -> Self {
+    pub fn new(id: EventModelId, name: &str, node: Node, mut opset: OpSet<Op>) -> Self {
         let mut patch: Patch<Op> = Patch::default();
         patch.insert(opset.next_id(&node), Op::Named(name.to_string()));
         opset.apply_patch(patch);
@@ -47,7 +44,7 @@ impl ConvergentEventModel {
         ConvergentEventModel { node, value, opset }
     }
 
-    fn apply_patch(mut self, patch: Patch<Op>) -> Self {
+    pub fn apply_patch(mut self, patch: Patch<Op>) -> Self {
         self.opset.apply_patch(patch);
         self.value = Self::interpret(self.value, &self.opset);
         self

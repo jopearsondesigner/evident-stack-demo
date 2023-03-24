@@ -1,8 +1,11 @@
+use std::{collections::HashMap, fmt::Debug};
+
 use epoch::decider::{Decider, Event, Evolver};
 use uuid::Uuid;
 
 use crate::{Clock, Node, OpSet, Patch};
 
+#[derive(Debug, Clone)]
 pub struct PushPatch<Op> {
     opset_id: Uuid,
     node: Node,
@@ -10,18 +13,21 @@ pub struct PushPatch<Op> {
     patch: Patch<Op>,
 }
 
+#[derive(Debug, Clone)]
 pub enum SyncCommand<Op> {
     PushPatch(PushPatch<Op>),
     //    SnapshotOpSet(Uuid),
     DeleteOpSet(Uuid, Node),
 }
 
+#[derive(Debug, Clone)]
 pub struct OpSetCreated {
     event_id: Uuid,
     opset_id: Uuid,
     node: Node,
 }
 
+#[derive(Debug, Clone)]
 pub struct PatchReceived<Op> {
     event_id: Uuid,
     opset_id: Uuid,
@@ -29,12 +35,14 @@ pub struct PatchReceived<Op> {
     patch: Patch<Op>,
 }
 
+#[derive(Debug, Clone)]
 pub struct OpSetDeleted {
     event_id: Uuid,
     opset_id: Uuid,
     node: Node,
 }
 
+#[derive(Debug, Clone)]
 pub enum SyncEvent<Op> {
     OpSetCreated(OpSetCreated),
     PatchReceived(PatchReceived<Op>),
@@ -47,6 +55,7 @@ pub enum SyncError {
     IllegalState, // TODO: Error Message
 }
 
+#[derive(Debug, Clone)]
 pub enum OpSetState<Op> {
     BeforeCreation,
     Active(OpSet<Op>),
@@ -62,7 +71,7 @@ fn validate_patch<Err, Op>(
     todo!()
 }
 
-impl<Op: Send + Sync + Clone> Decider for OpSetState<Op> {
+impl<Op: Send + Sync + Clone + Debug> Decider for OpSetState<Op> {
     type Cmd = SyncCommand<Op>;
 
     type Err = SyncError;
@@ -80,7 +89,7 @@ impl<Op: Send + Sync + Clone> Decider for OpSetState<Op> {
                         patch.to_owned(),
                         node,
                         node_clock,
-                        &Clock::default(),
+                        &Clock(HashMap::new()),
                     )?;
                     Ok(vec![
                         SyncEvent::OpSetCreated(OpSetCreated {
@@ -135,7 +144,7 @@ impl<Op: Send + Sync + Clone> Decider for OpSetState<Op> {
     }
 }
 
-impl<Op: Clone> Evolver for OpSetState<Op> {
+impl<Op: Clone + Debug> Evolver for OpSetState<Op> {
     type State = OpSetState<Op>;
     type Evt = SyncEvent<Op>;
 

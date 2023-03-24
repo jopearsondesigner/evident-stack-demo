@@ -25,9 +25,25 @@ pub struct OpId(pub Counter, pub Node);
 const MIN_ID: OpId = OpId(0, 0);
 const MAX_ID: OpId = OpId(Counter::MAX, Node::MAX);
 
-pub type Clock = HashMap<Node, Counter>;
-pub type Patch<Op> = HashMap<OpId, Op>;
+#[derive(Debug, Clone)]
+pub struct Clock(HashMap<Node, Counter>);
 
+#[derive(Debug, Clone)]
+pub struct Patch<Op>(HashMap<OpId, Op>);
+
+impl<Op: Clone> Patch<Op> {
+    pub fn insert(&mut self, id: OpId, op: Op) {
+        self.0.insert(id, op);
+    }
+}
+
+impl<Op> Default for Patch<Op> {
+    fn default() -> Self {
+        Patch(HashMap::default())
+    }
+}
+
+#[derive(Debug, Hash, Clone)]
 pub struct OpSet<Op> {
     id: Uuid,
     ops: BTreeMap<OpId, Op>,
@@ -43,54 +59,54 @@ impl<Op> Default for OpSet<Op> {
 }
 
 impl<Op: Clone> OpSet<Op> {
-    fn new(id: Uuid) -> Self {
+    pub fn new(id: Uuid) -> Self {
         OpSet {
             id,
             ops: Default::default(),
         }
     }
 
-    fn id(&self) -> &Uuid {
+    pub fn id(&self) -> &Uuid {
         &self.id
     }
 
-    fn ops(&self) -> &BTreeMap<OpId, Op> {
+    pub fn ops(&self) -> &BTreeMap<OpId, Op> {
         &self.ops
     }
 
-    fn apply_patch(&mut self, patch: Patch<Op>) {
+    pub fn apply_patch(&mut self, patch: Patch<Op>) {
         let ops = &mut self.ops;
-        for (id, op) in patch {
+        for (id, op) in patch.0 {
             ops.insert(id, op);
         }
     }
 
-    fn max_counter(&self) -> Counter {
-        self.clock().into_values().max().unwrap_or(0)
+    pub fn max_counter(&self) -> Counter {
+        self.clock().0.into_values().max().unwrap_or(0)
     }
 
-    fn next_id(&self, node: &Node) -> OpId {
+    pub fn next_id(&self, node: &Node) -> OpId {
         OpId(self.max_counter() + 1, node.to_owned())
     }
 
-    fn clock(&self) -> Clock {
-        let mut clock: Clock = HashMap::new();
+    pub fn clock(&self) -> Clock {
+        let mut clock = Clock(HashMap::new());
         for id in self.ops().keys() {
-            clock.insert(id.1, id.0);
+            clock.0.insert(id.1, id.0);
         }
         clock
     }
 
-    fn patch_from_clock(&self, clock: Clock) -> Patch<Op> {
-        let mut patch: Patch<Op> = HashMap::new();
+    pub fn patch_from_clock(&self, clock: Clock) -> Patch<Op> {
+        let mut patch = Patch(HashMap::new());
         for (id, op) in self.ops() {
-            match clock.get(&id.1) {
+            match clock.0.get(&id.1) {
                 None => {
-                    patch.insert(id.to_owned(), op.to_owned());
+                    patch.0.insert(id.to_owned(), op.to_owned());
                 }
                 Some(counter) => {
                     if &id.0 > counter {
-                        patch.insert(id.to_owned(), op.to_owned());
+                        patch.0.insert(id.to_owned(), op.to_owned());
                     }
                 }
             };
@@ -98,17 +114,18 @@ impl<Op: Clone> OpSet<Op> {
         patch
     }
 
-    fn node_patch_from_counter(&self, node: Node, counter: Counter) -> Patch<Op> {
-        let mut patch: Patch<Op> = HashMap::new();
+    pub fn node_patch_from_counter(&self, node: Node, counter: Counter) -> Patch<Op> {
+        let mut patch = Patch(HashMap::new());
         for (id, op) in self.ops() {
             if id.1 == node && id.0 > counter {
-                patch.insert(id.to_owned(), op.to_owned());
+                patch.0.insert(id.to_owned(), op.to_owned());
             }
         }
         patch
     }
 }
 
+// Bound Op as serde
 #[async_trait]
 pub trait OpSetReadableStorage<Op> {
     type Err;
@@ -123,6 +140,7 @@ pub trait OpSetReadableStorage<Op> {
     ) -> Result<Vec<Op>, Self::Err>;
 }
 
+// Bound Op as serde
 #[async_trait]
 pub trait OpSetWriteableStorage<Op>: OpSetReadableStorage<Op> {
     async fn commit_patch(&self, patch: &Patch<Op>) -> Result<(), Self::Err>;
@@ -139,7 +157,7 @@ pub trait Interpreter<Op: Clone> {
 
     fn evolve_from_op_pair(
         state: Self::Interpretation,
-        (id, op): (&Id, &Op),
+        (id, op): (&OpId, &Op),
     ) -> Self::Interpretation {
         Self::evolve(state, id, op)
     }

@@ -16,3 +16,6 @@ features = [
     "macro-diagnostics",
     "serde"
 ]
+
+[dev-dependencies]
+event-models = { path = "../event-models", features = ["shared_tests"] }

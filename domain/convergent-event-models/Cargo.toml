@@ -3,12 +3,9 @@ name = "convergent-event-models"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 event-models = { path = "../event-models" }
-async-trait = "0.1.53"
-rand = "0.8"
+converge = { path = "../converge" }
 
 [dependencies.uuid]
 version = "1.2.2"

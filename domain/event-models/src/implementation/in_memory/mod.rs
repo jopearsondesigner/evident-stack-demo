@@ -17,9 +17,6 @@ use crate::types::{
 };
 use crate::{EventModel, EventModelCreator, EventModelId, ModifiableEventModel};
 
-#[cfg(test)]
-mod tests;
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct InMemoryEventModel {
     id: EventModelId,
@@ -37,7 +34,7 @@ pub struct InMemoryEventModel {
 }
 
 #[derive(Debug, Default, Clone)]
-struct InMemoryCreator;
+pub struct InMemoryCreator;
 
 impl EventModelCreator<InMemoryEventModel> for InMemoryCreator {
     fn create(&self, id: EventModelId, name: String) -> InMemoryEventModel {

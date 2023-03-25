@@ -2,7 +2,7 @@ use crate::api::errors::EventModelError;
 use crate::types::placement::PlacementId;
 use crate::types::Entity;
 use crate::EventModel;
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 pub type FlowId = Uuid;

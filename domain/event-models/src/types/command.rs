@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::api::errors::EventModelError;
 use crate::types::schema::{CommandSchemaRole, Schema, SubSchemaName};
 use crate::types::{Described, Entity, Named};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::schema::{HasModifiableSchema, HasSchema};

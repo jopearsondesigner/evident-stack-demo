@@ -8,7 +8,7 @@ pub use crate::types::placement::{Placement, PlacementId, PlacementPosition};
 pub use crate::types::read_model::{ReadModel, ReadModelId};
 pub use crate::types::schema::{CommandSchemaRole, EventSchemaRole, ReadModelSchemaRole, Schema};
 pub use crate::types::stream::{Stream, StreamId};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 pub(crate) mod audience;

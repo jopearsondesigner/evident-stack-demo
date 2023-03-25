@@ -1,5 +1,5 @@
 use crate::types::{Entity, Named};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::Renamable;

@@ -1,6 +1,6 @@
 use crate::api::errors::EventModelError;
 use crate::types::{Described, Entity, Named};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 

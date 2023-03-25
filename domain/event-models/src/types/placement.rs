@@ -8,7 +8,7 @@ use crate::types::read_model::ReadModelId;
 use crate::types::schema::{CommandSchemaRole, Schema, SubSchemaName};
 use crate::types::stream::StreamId;
 use crate::types::Entity;
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::{ComponentId, LaneId};

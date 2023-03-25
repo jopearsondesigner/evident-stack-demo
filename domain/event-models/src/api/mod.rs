@@ -14,7 +14,7 @@ pub mod errors;
 pub mod events;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum EventModelState<T, C> {
+pub enum EventModelState<T: EventModel, C: EventModelCreator<T>> {
     BeforeCreation(C),
     EventModel(T),
 }
@@ -24,7 +24,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync, C: EventModelCreator<T>
 {
     type Ctx = ();
 
-    type Cmd = EventModelCommand<T>;
+    type Cmd = EventModelCommand;
 
     type Err = EventModelError;
 

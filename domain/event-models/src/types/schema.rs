@@ -1,26 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-use super::Entity;
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CUESchema(pub String);
-
-// #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-// pub struct CDDLSchema(String);
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct MalliSchema(pub String);
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Schema {
-    CUE(CUESchema),
-    // CDDL(CDDLSchema),
-    Malli(MalliSchema),
+    CUE(String),
+    Malli(String),
 }
 
 impl Default for Schema {
     fn default() -> Self {
-        Schema::CUE(CUESchema(Default::default()))
+        Schema::CUE(Default::default())
     }
 }
 
@@ -58,15 +46,15 @@ pub trait HasModifiableSchema: HasSchema {
     fn set_schema(&mut self, schema: Schema);
     fn add_to_schema(&mut self, index: u32, addition: &str) {
         match self.schema_mut() {
-            Schema::CUE(CUESchema(s)) => s.insert_str(index as usize, addition),
-            Schema::Malli(MalliSchema(s)) => s.insert_str(index as usize, addition),
+            Schema::CUE(s) => s.insert_str(index as usize, addition),
+            Schema::Malli(s) => s.insert_str(index as usize, addition),
         };
     }
 
     fn delete_from_schema(&mut self, index: u32) {
         match self.schema_mut() {
-            Schema::CUE(CUESchema(s)) => s.remove(index as usize),
-            Schema::Malli(MalliSchema(s)) => s.remove(index as usize),
+            Schema::CUE(s) => s.remove(index as usize),
+            Schema::Malli(s) => s.remove(index as usize),
         };
     }
 }

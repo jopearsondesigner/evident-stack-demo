@@ -62,7 +62,8 @@
   },
   "dependencies": {
     "classnames": "^2.3.2",
-    "svelte-layout-aware-transitions": "^0.0.5"
+    "svelte-layout-aware-transitions": "^0.0.5",
+    "svelte-accessible-accordion": "^2.1.0"
   },
   "description": "Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).",
   "main": "playwright.config.js",
@@ -79,3 +80,5 @@
   },
   "homepage": "https://github.com/evidentsystems/platform#readme"
 }
+
+

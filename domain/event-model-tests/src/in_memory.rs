@@ -1,7 +1,7 @@
 use crate::shared::{creating_event_model_succeeds, renaming_event_model_succeeds};
 use event_models::api::EventModelState;
 use event_models::implementation::in_memory::{InMemoryCreator, InMemoryEventModel};
-use event_models::{EventModel, ModifiableEventModel};
+use event_models::{EventModelData, ModifiableEventModel};
 use uuid::Uuid;
 
 use event_models::types::ComponentId::{

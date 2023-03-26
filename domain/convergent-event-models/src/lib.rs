@@ -5,7 +5,9 @@ use event_models::types::{
     InterfaceId, ModifiablyDescribed, Named, Placement, PlacementId, PlacementPosition, ReadModel,
     ReadModelId, Renamable, Schema, Stream,
 };
-use event_models::{EventModel, EventModelCreator, EventModelId, ModifiableEventModel};
+use event_models::{
+    EventModel, EventModelCreator, EventModelData, EventModelId, ModifiableEventModel,
+};
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -103,7 +105,7 @@ impl Described for ConvergentEventModel {
     }
 }
 
-impl EventModel for ConvergentEventModel {
+impl EventModelData for ConvergentEventModel {
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface> {
         todo!()
     }
@@ -136,6 +138,8 @@ impl EventModel for ConvergentEventModel {
         todo!()
     }
 }
+
+impl EventModel for ConvergentEventModel {}
 
 impl ModifiableEventModel for ConvergentEventModel {
     fn component_defined(&mut self, component: event_models::types::Component) {

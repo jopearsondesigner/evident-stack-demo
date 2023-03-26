@@ -5,7 +5,7 @@ use crate::types::interface::InterfaceConfig;
 use crate::types::placement::PlacementId;
 use crate::types::stream::StreamId;
 use crate::types::ComponentId;
-use crate::{EventModel, EventModelId};
+use crate::EventModelId;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -22,7 +22,7 @@ pub enum EventModelCommand {
     Delete(EventModelId),
 
     // Composite Actions
-    Import(JsonImport),
+    Import(Box<JsonImport>),
 
     // Lanes
     AddAudience(EventModelId, u32, String),

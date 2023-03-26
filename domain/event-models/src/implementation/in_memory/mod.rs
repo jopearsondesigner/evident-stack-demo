@@ -15,7 +15,7 @@ use crate::types::{
     Component, ComponentId, ComponentMut, Described, Entity, Lane, LaneId, LaneIndex,
     ModifiablyDescribed, Named, Renamable,
 };
-use crate::{EventModel, EventModelCreator, EventModelId, ModifiableEventModel};
+use crate::{EventModel, EventModelCreator, EventModelData, EventModelId, ModifiableEventModel};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct InMemoryEventModel {
@@ -147,7 +147,9 @@ impl HasModifiableSchema for InMemoryEventModel {
     }
 }
 
-impl EventModel for InMemoryEventModel {
+impl EventModel for InMemoryEventModel {}
+
+impl EventModelData for InMemoryEventModel {
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface> {
         &self.interfaces
     }

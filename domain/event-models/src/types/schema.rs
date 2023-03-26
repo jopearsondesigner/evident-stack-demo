@@ -48,7 +48,7 @@ pub enum ReadModelSchemaRole {
 
 // ***** Applying to Entities *****
 
-pub trait HasSchema: Entity {
+pub trait HasSchema {
     fn schema(&self) -> &Schema;
 }
 

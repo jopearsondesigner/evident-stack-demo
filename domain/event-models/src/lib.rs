@@ -33,7 +33,7 @@ pub trait EventModelCreator<T: EventModel>: Debug + Default {
     fn create(&self, id: EventModelId, name: String) -> T;
 }
 
-pub trait EventModel: Described + HasSchema + Debug {
+pub trait EventModelData: HasSchema + Debug {
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface>;
     fn commands(&self) -> &HashMap<CommandId, Command>;
     fn events(&self) -> &HashMap<EventId, Event>;
@@ -43,6 +43,8 @@ pub trait EventModel: Described + HasSchema + Debug {
     fn placements(&self) -> &HashMap<PlacementId, Placement>;
     fn flows(&self) -> &HashMap<FlowId, FlowArrow>;
 }
+
+pub trait EventModel: Described + EventModelData {}
 
 pub trait ModifiableEventModel:
     EventModel + Renamable + ModifiablyDescribed + HasModifiableSchema

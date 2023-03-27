@@ -22,7 +22,6 @@ use types::{ModifiablyDescribed, Renamable};
 use uuid::Uuid;
 
 pub mod api;
-pub mod grid;
 pub mod implementation;
 pub mod json;
 pub mod types;

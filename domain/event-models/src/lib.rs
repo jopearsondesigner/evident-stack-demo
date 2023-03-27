@@ -14,6 +14,7 @@ use crate::types::read_model::{ReadModel, ReadModelId};
 use crate::types::schema::HasSchema;
 use crate::types::stream::Stream;
 use crate::types::{Component, ComponentId, Described, Lane, LaneId, LaneIndex};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt::Debug;
 use types::flow::flow_id;
@@ -28,8 +29,10 @@ pub mod types;
 
 pub type EventModelId = Uuid;
 
-pub trait EventModelCreator<T: EventModel>: Debug + Default {
-    fn create(&self, id: EventModelId, name: String) -> T;
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum EventModelState<T: EventModel> {
+    BeforeCreation(T::CreationDetails),
+    EventModel(T),
 }
 
 pub trait EventModelData: HasSchema + Debug {
@@ -43,7 +46,11 @@ pub trait EventModelData: HasSchema + Debug {
     fn flows(&self) -> &HashMap<FlowId, FlowArrow>;
 }
 
-pub trait EventModel: Described + EventModelData {}
+pub trait EventModel: Described + EventModelData + Sized {
+    type CreationDetails: Clone + Debug;
+
+    fn create(initial: EventModelState<Self>, id: EventModelId, name: String) -> Self;
+}
 
 pub trait ModifiableEventModel:
     EventModel + Renamable + ModifiablyDescribed + HasModifiableSchema

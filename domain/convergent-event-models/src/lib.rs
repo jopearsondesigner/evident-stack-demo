@@ -6,7 +6,7 @@ use event_models::types::{
     ReadModelId, Renamable, Schema, Stream,
 };
 use event_models::{
-    EventModel, EventModelCreator, EventModelData, EventModelId, ModifiableEventModel,
+    EventModel, EventModelData, EventModelId, EventModelState, ModifiableEventModel,
 };
 use std::collections::HashMap;
 use uuid::Uuid;
@@ -23,15 +23,6 @@ pub struct ConvergentEventModel {
     node: Node,
     opset: OpSet<Op>,
     value: InMemoryEventModel,
-}
-
-#[derive(Default, Debug, Clone)]
-pub struct ConvergentCreator;
-
-impl EventModelCreator<ConvergentEventModel> for ConvergentCreator {
-    fn create(&self, id: EventModelId, name: String) -> ConvergentEventModel {
-        ConvergentEventModel::new(id, &name, Node::default(), OpSet::default())
-    }
 }
 
 impl ConvergentEventModel {
@@ -139,7 +130,31 @@ impl EventModelData for ConvergentEventModel {
     }
 }
 
-impl EventModel for ConvergentEventModel {}
+#[derive(Clone, Debug)]
+pub struct ConvergentCreationDetails {
+    node: Node,
+}
+
+impl ConvergentCreationDetails {
+    pub fn new(node: Node) -> Self {
+        ConvergentCreationDetails { node }
+    }
+}
+
+impl EventModel for ConvergentEventModel {
+    type CreationDetails = ConvergentCreationDetails;
+
+    fn create(initial: EventModelState<Self>, id: EventModelId, name: String) -> Self {
+        match initial {
+            EventModelState::BeforeCreation(details) => {
+                Self::new(id, name.into(), details.node, OpSet::default())
+            }
+            EventModelState::EventModel(_) => {
+                panic!("Illegal initial state when creating Event Model")
+            }
+        }
+    }
+}
 
 impl ModifiableEventModel for ConvergentEventModel {
     fn component_defined(&mut self, component: event_models::types::Component) {

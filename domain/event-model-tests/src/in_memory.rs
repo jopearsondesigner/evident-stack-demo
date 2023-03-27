@@ -1,6 +1,6 @@
 use crate::shared::{creating_event_model_succeeds, renaming_event_model_succeeds};
-use event_models::api::EventModelState;
-use event_models::implementation::in_memory::{InMemoryCreator, InMemoryEventModel};
+use event_models::implementation::in_memory::{InMemoryCreationDetails, InMemoryEventModel};
+use event_models::EventModelState;
 use event_models::{EventModelData, ModifiableEventModel};
 use uuid::Uuid;
 
@@ -14,20 +14,16 @@ use event_models::types::{
 
 #[test]
 fn creation() {
-    creating_event_model_succeeds(
-        EventModelState::<InMemoryEventModel, InMemoryCreator>::BeforeCreation(
-            InMemoryCreator::default(),
-        ),
-    );
+    creating_event_model_succeeds(EventModelState::<InMemoryEventModel>::BeforeCreation(
+        InMemoryCreationDetails,
+    ));
 }
 
 #[test]
 fn renaming() {
-    renaming_event_model_succeeds(
-        EventModelState::<InMemoryEventModel, InMemoryCreator>::EventModel(
-            InMemoryEventModel::new(Uuid::new_v4(), "foo".to_string()),
-        ),
-    );
+    renaming_event_model_succeeds(EventModelState::<InMemoryEventModel>::EventModel(
+        InMemoryEventModel::new(Uuid::new_v4(), "foo".to_string()),
+    ));
 }
 
 #[test]

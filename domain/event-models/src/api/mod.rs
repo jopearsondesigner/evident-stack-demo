@@ -3,9 +3,8 @@ use crate::api::errors::EventModelError;
 use crate::api::errors::EventModelError::IllegalState;
 use crate::api::events::EventModelEvent;
 use crate::types::validate_name;
-use crate::{EventModel, EventModelCreator, ModifiableEventModel};
+use crate::{EventModel, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
-use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 use uuid::Uuid;
 
@@ -13,15 +12,7 @@ pub mod commands;
 pub mod errors;
 pub mod events;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum EventModelState<T: EventModel, C: EventModelCreator<T>> {
-    BeforeCreation(C),
-    EventModel(T),
-}
-
-impl<T: EventModel + ModifiableEventModel + Send + Sync, C: EventModelCreator<T>> DeciderWithContext
-    for EventModelState<T, C>
-{
+impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for EventModelState<T> {
     type Ctx = ();
 
     type Cmd = EventModelCommand;
@@ -153,20 +144,20 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync, C: EventModelCreator<T>
     }
 }
 
-impl<T: EventModel + ModifiableEventModel + Debug, C: EventModelCreator<T>> Evolver
-    for EventModelState<T, C>
-{
-    type State = EventModelState<T, C>;
+impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T> {
+    type State = EventModelState<T>;
 
     type Evt = EventModelEvent;
 
     fn evolve(state: Self::State, event: &Self::Evt) -> Self::State {
         match state {
-            EventModelState::BeforeCreation(creator) => match event {
-                EventModelEvent::Created(id, name) => {
-                    EventModelState::EventModel(creator.create(id.to_owned(), name.to_owned()))
-                }
-                _ => EventModelState::BeforeCreation(creator),
+            EventModelState::BeforeCreation(details) => match event {
+                EventModelEvent::Created(id, name) => EventModelState::EventModel(T::create(
+                    EventModelState::BeforeCreation(details),
+                    id.to_owned(),
+                    name.to_owned(),
+                )),
+                _ => EventModelState::BeforeCreation(details),
             },
             EventModelState::EventModel(mut model) => match event {
                 EventModelEvent::Created(_, _) => EventModelState::EventModel(model),

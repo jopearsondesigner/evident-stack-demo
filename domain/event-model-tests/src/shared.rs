@@ -1,15 +1,14 @@
 use epoch::decider::{DeciderWithContext, Evolver};
 use event_models::api::commands::EventModelCommand::*;
 use event_models::api::events::EventModelEvent::*;
-use event_models::api::EventModelState;
-use event_models::{EventModel, EventModelCreator, ModifiableEventModel};
+use event_models::EventModelState;
+use event_models::{EventModel, ModifiableEventModel};
 use std::fmt::Debug;
 use uuid::Uuid;
 
-pub fn creating_event_model_succeeds<C, T>(initial: EventModelState<T, C>)
+pub fn creating_event_model_succeeds<T>(initial: EventModelState<T>)
 where
     T: EventModel + Debug + ModifiableEventModel + Clone + Send + Sync,
-    C: EventModelCreator<T> + Clone,
 {
     // Assert test is starting in the correct state
     assert_matches!(&initial, EventModelState::BeforeCreation(_));
@@ -29,10 +28,9 @@ where
     )
 }
 
-pub fn renaming_event_model_succeeds<T, C>(initial: EventModelState<T, C>)
+pub fn renaming_event_model_succeeds<T>(initial: EventModelState<T>)
 where
     T: EventModel + Debug + ModifiableEventModel + Clone + Send + Sync,
-    C: EventModelCreator<T> + Debug + Clone,
 {
     // Assert test is starting in the correct state
     assert_matches!(&initial, EventModelState::EventModel(_));

@@ -3,7 +3,7 @@ pub use crate::types::audience::{Audience, AudienceId};
 pub use crate::types::command::{Command, CommandId};
 pub use crate::types::event::{Event, EventId};
 pub use crate::types::flow::{FlowArrow, FlowId};
-pub use crate::types::interface::{Interface, InterfaceId};
+pub use crate::types::interface::{Interface, InterfaceConfig, InterfaceId};
 pub use crate::types::placement::{Placement, PlacementId, PlacementPosition};
 pub use crate::types::read_model::{ReadModel, ReadModelId};
 pub use crate::types::schema::Schema;

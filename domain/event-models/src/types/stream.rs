@@ -2,7 +2,7 @@ use crate::types::{Entity, Named};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use super::Renamable;
+use super::{EventModelError, Renamable};
 
 pub type StreamId = Uuid;
 
@@ -10,6 +10,12 @@ pub type StreamId = Uuid;
 pub struct Stream {
     id: StreamId,
     name: String,
+}
+
+impl Stream {
+    pub fn create(id: StreamId, name: String) -> Result<Self, EventModelError> {
+        Ok(Stream { id, name })
+    }
 }
 
 impl Entity for Stream {

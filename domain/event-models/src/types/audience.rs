@@ -2,7 +2,7 @@ use crate::types::{Entity, Named};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use super::Renamable;
+use super::{EventModelError, Renamable};
 
 pub type AudienceId = Uuid;
 
@@ -10,6 +10,12 @@ pub type AudienceId = Uuid;
 pub struct Audience {
     id: AudienceId,
     name: String,
+}
+
+impl Audience {
+    pub fn create(id: AudienceId, name: String) -> Result<Self, EventModelError> {
+        Ok(Audience { id, name })
+    }
 }
 
 impl Entity for Audience {

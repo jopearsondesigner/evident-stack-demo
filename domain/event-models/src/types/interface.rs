@@ -26,13 +26,18 @@ pub struct Interface {
 }
 
 impl Interface {
-    pub fn create(id: Uuid, name: &str) -> Result<Self, EventModelError> {
+    pub fn create(
+        id: Uuid,
+        name: String,
+        description: String,
+        config: InterfaceConfig,
+    ) -> Result<Self, EventModelError> {
         // TODO: validate name
         Ok(Interface {
             id,
-            name: name.to_string(),
-            description: Default::default(),
-            config: Default::default(),
+            name,
+            description,
+            config,
         })
     }
 }

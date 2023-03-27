@@ -34,9 +34,32 @@ pub fn flow_id(from: &PlacementId, to: &PlacementId) -> FlowId {
     Uuid::new_v5(from, to.as_bytes())
 }
 
-// TODO: enforce business rules!
 impl FlowArrow {
-    fn create(model: &impl EventModel, from: Port, to: Port) -> Result<FlowArrow, EventModelError> {
+    pub fn create(
+        from: PlacementId,
+        from_anchor: Anchor,
+        to: PlacementId,
+        to_anchor: Anchor,
+    ) -> Result<FlowArrow, EventModelError> {
+        Ok(FlowArrow {
+            id: flow_id(&from, &to),
+            from: Port {
+                placement: from,
+                anchor: from_anchor,
+            },
+            to: Port {
+                placement: to,
+                anchor: to_anchor,
+            },
+        })
+    }
+
+    // TODO: enforce business rules!
+    pub fn connect(
+        model: &impl EventModel,
+        from: Port,
+        to: Port,
+    ) -> Result<FlowArrow, EventModelError> {
         let from_placement = model.placements().get(&from.placement);
         let to_placement = model.placements().get(&to.placement);
         todo!("Validation of flow arrow");

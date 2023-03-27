@@ -1,7 +1,5 @@
-use std::collections::HashMap;
-
 use crate::api::errors::EventModelError;
-use crate::types::schema::{CommandSchemaRole, Schema, SubSchemaName};
+use crate::types::schema::Schema;
 use crate::types::{Described, Entity, Named};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -17,17 +15,20 @@ pub struct Command {
     name: String,
     description: String,
     schema: Schema,
-    schema_roles: HashMap<CommandSchemaRole, SubSchemaName>,
 }
 
 impl Command {
-    pub fn create(id: Uuid, name: &str) -> Result<Self, EventModelError> {
+    pub fn create(
+        id: Uuid,
+        name: String,
+        description: String,
+        schema: Schema,
+    ) -> Result<Self, EventModelError> {
         Ok(Command {
             id,
-            name: name.to_string(),
-            description: Default::default(),
-            schema: Default::default(),
-            schema_roles: Default::default(),
+            name,
+            description,
+            schema,
         })
     }
 }

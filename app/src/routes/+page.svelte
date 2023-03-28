@@ -21,3 +21,5 @@
 <pre>
 {JSON.stringify(data.session, null, 2)}
 </pre>
+
+<a href="/design/models/new">Create new Model</a>

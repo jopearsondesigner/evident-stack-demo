@@ -3,18 +3,15 @@ extern crate event_models;
 mod repository;
 mod utils;
 
+use crate::repository::LocalStorageStateRepository;
 use epoch::{repository::state::VersionedStateRepository, strategies::ReifyDecideSave};
 pub use event_models::api::commands::EventModelCommand;
-// use epoch::decider::{Decider, Evolver};
-// use event_models::default::DefaultEventModel;
-// use event_models::domain::commands::EventModelCommand;
-// use event_models::domain::{EventModelDecider, EventModelState};
-use crate::repository::LocalStorageStateRepository;
 use event_models::{
     implementation::in_memory::{InMemoryCreationDetails, InMemoryEventModel},
+    types::Entity,
     EventModelId, EventModelState,
 };
-use js_sys::Function;
+use repository::HasKey;
 use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -29,13 +26,20 @@ extern "C" {
     fn log(s: &str);
 }
 
+impl HasKey for EventModelState<InMemoryEventModel> {
+    fn get_key(&self) -> Option<String> {
+        match self {
+            EventModelState::BeforeCreation(_) => None,
+            EventModelState::EventModel(model) => Some(model.id().to_string()),
+        }
+    }
+}
+
 #[wasm_bindgen]
 #[derive(Debug)]
 pub struct EventModelStateManager {
-    event_model_id: EventModelId,
     repository: LocalStorageStateRepository<EventModelState<InMemoryEventModel>>,
     // node: Node // TODO: convergent creation context details
-    setter: Option<Function>,
 }
 
 pub struct EventModelDecider;
@@ -48,74 +52,40 @@ impl ReifyDecideSave for EventModelDecider {
 impl EventModelStateManager {
     #[wasm_bindgen(constructor)]
     pub fn new(js_id: JsValue) -> Result<EventModelStateManager, JsValue> {
-        let event_model_id: EventModelId = serde_wasm_bindgen::from_value(js_id)?;
+        let event_model_id: Option<EventModelId> = serde_wasm_bindgen::from_value(js_id)?;
         Ok(EventModelStateManager {
-            event_model_id,
             repository: LocalStorageStateRepository::new(
-                event_model_id.to_string(),
+                event_model_id.map(|x| x.to_string()),
                 EventModelState::BeforeCreation(InMemoryCreationDetails),
             ),
-            setter: None,
         })
     }
 
-    pub async fn initialize(&mut self, setter: Function) -> Result<(), JsValue> {
-        log(&format!(
-            "Initializing manager {:?} with setter {:?}",
-            self, setter
-        ));
-        self.setter = Some(setter);
-        let initial_state = match self.repository.reify().await {
-            Ok((state, _)) => state,
-            Err(e) => {
-                return Err(JsValue::from(format!(
-                    "Error while loading initial state: {:?}",
-                    e
-                )))
-            }
-        };
-        self.set(&initial_state);
-        Ok(())
+    pub async fn state(&self) -> Result<JsValue, JsValue> {
+        match self.repository.reify().await {
+            Ok((data, _version)) => Ok(serde_wasm_bindgen::to_value(&data)?),
+            Err(err) => Err(serde_wasm_bindgen::to_value(&err)?),
+        }
     }
 
-    pub async fn dispatch(&mut self, js_command: JsValue) -> Result<(), JsValue> {
+    pub async fn dispatch(&mut self, js_command: JsValue) -> Result<JsValue, JsValue> {
         let command: EventModelCommand = serde_wasm_bindgen::from_value(js_command)?;
         log(&format!("Dispatching {:?}...", command));
         let result =
             EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)
                 .await;
-        return match result {
+        match result {
             Ok(state) => {
-                self.set(&state);
                 log(&format!(
                     "...dispatched command {:?} and got next state {:?}",
                     command, state
                 ));
-                Ok(())
+                Ok(serde_wasm_bindgen::to_value(&state)?)
             }
             Err(err) => Err(JsValue::from(format!(
                 "Error dispatching command {:?}: {:?}",
                 command, err
             ))),
-        };
-    }
-
-    fn set(&self, next_state: &EventModelState<InMemoryEventModel>) {
-        log(&format!(
-            "setting: {:?} via setter {:?}",
-            &next_state, &self.setter
-        ));
-        match &self.setter {
-            None => (),
-            Some(setter) => {
-                setter
-                    .call1(
-                        &JsValue::null(),
-                        &serde_wasm_bindgen::to_value(next_state)
-                            .expect("error serializing state when updating Svelte store"),
-                    )
-                    .expect("error while updating Svelte store");
-            }
-        };
+        }
     }
 }

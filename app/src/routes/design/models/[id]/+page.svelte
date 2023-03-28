@@ -4,4 +4,4 @@
  const store = data.eventModel;
 </script>
 
-<p>{$store}</p>
+<p>{$store?.EventModel.id}</p>

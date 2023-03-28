@@ -1,14 +1,17 @@
-<script>
+<script lang="ts">
+  import { goto } from "$app/navigation";
+
   export let data;
 
   let dispatch = data.dispatch;
 
-  const handleCreateEventModel = async (e) => {
-    const formData = new FormData(e.target);
+  const handleCreateEventModel = async (e: SubmitEvent) => {
+    const formData = new FormData(e.target as HTMLFormElement);
     const data = {
       "Create": formData.get("name")
     };
-    await dispatch(data);
+    let state = await dispatch(data);
+    goto(`./${state.EventModel.id}`)
   };
 </script>
 

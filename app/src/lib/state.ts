@@ -1,19 +1,22 @@
-import type { EventModelCommand } from "app-state";
+import type { EventModelCommand, InMemoryEventModel, EventModelState } from "app-state";
 import { default as init, EventModelStateManager } from "app-state";
-import { readable, derived } from 'svelte/store';
+import { writable, readonly, derived } from 'svelte/store';
 
-const initializeEventModelStore = (id: string) => {
+const initializeEventModelStore = async (id: string | null | undefined) => {
   let manager = new EventModelStateManager(id);
-  let store = readable(null, setter => {
-    manager.initialize(setter);
 
-    return () => console.debug("Unsubscribed last subscriber to Event Model", id);
+  let store = writable(await manager.state(), () => {
+    return () => console.debug("Unsubscribed last subscriber to Event Model State", id);
   });
 
   return {
-    store,
+    state: readonly(store),
     dispatch: async (command: EventModelCommand) => {
-      let result = await manager.dispatch(command)
+      console.log("dispatch command:", command, "to manager:",  manager)
+      let result: EventModelState<InMemoryEventModel> = await manager.dispatch(command)
+      store.set(result)
+      console.log("dispatch result:", result)
+      return result
     }
   };
 }

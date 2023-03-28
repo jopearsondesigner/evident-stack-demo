@@ -1,3 +1,4 @@
+import type { EventModelCommand } from "app-state";
 import { default as init, EventModelStateManager } from "app-state";
 import { readable, derived } from 'svelte/store';
 
@@ -11,7 +12,9 @@ const initializeEventModelStore = (id: string) => {
 
   return {
     store,
-    dispatch: (command: any) => { manager.dispatch(command) }
+    dispatch: async (command: EventModelCommand) => {
+      let result = await manager.dispatch(command)
+    }
   };
 }
 

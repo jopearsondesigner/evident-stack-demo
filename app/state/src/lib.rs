@@ -1,18 +1,15 @@
 extern crate event_models;
 
+mod repository;
 mod utils;
 
-use epoch::{
-    repository::{
-        in_memory::state::versioned::InMemoryStateRepository, state::VersionedStateRepository,
-    },
-    strategies::ReifyDecideSave,
-};
+use epoch::{repository::state::VersionedStateRepository, strategies::ReifyDecideSave};
 pub use event_models::api::commands::EventModelCommand;
 // use epoch::decider::{Decider, Evolver};
 // use event_models::default::DefaultEventModel;
 // use event_models::domain::commands::EventModelCommand;
 // use event_models::domain::{EventModelDecider, EventModelState};
+use crate::repository::LocalStorageStateRepository;
 use event_models::{
     implementation::in_memory::{InMemoryCreationDetails, InMemoryEventModel},
     EventModelId, EventModelState,
@@ -28,16 +25,15 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
 extern "C" {
-    fn alert(s: &str);
-
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
 }
 
 #[wasm_bindgen]
+#[derive(Debug)]
 pub struct EventModelStateManager {
     event_model_id: EventModelId,
-    repository: InMemoryStateRepository<EventModelState<InMemoryEventModel>>,
+    repository: LocalStorageStateRepository<EventModelState<InMemoryEventModel>>,
     // node: Node // TODO: convergent creation context details
     setter: Option<Function>,
 }
@@ -55,14 +51,19 @@ impl EventModelStateManager {
         let event_model_id: EventModelId = serde_wasm_bindgen::from_value(js_id)?;
         Ok(EventModelStateManager {
             event_model_id,
-            repository: InMemoryStateRepository::new(EventModelState::BeforeCreation(
-                InMemoryCreationDetails,
-            )),
+            repository: LocalStorageStateRepository::new(
+                event_model_id.to_string(),
+                EventModelState::BeforeCreation(InMemoryCreationDetails),
+            ),
             setter: None,
         })
     }
 
     pub async fn initialize(&mut self, setter: Function) -> Result<(), JsValue> {
+        log(&format!(
+            "Initializing manager {:?} with setter {:?}",
+            self, setter
+        ));
         self.setter = Some(setter);
         let initial_state = match self.repository.reify().await {
             Ok((state, _)) => state,

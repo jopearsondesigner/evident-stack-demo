@@ -1,4 +1,3 @@
-import { memoize } from 'lodash'
 import {
   PUBLIC_FIREBASE_PROJECT_ID,
   PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -21,22 +20,23 @@ const firebaseConfig = {
   appId: PUBLIC_FIREBASE_APP_ID
 }
 
-export const initFirebase = memoize(() => {
+let firebase: { app: FirebaseApp, auth: Auth, analytics?: Analytics}
+
+export const initFirebase = () => {
   const app = initializeApp(firebaseConfig);
   let auth = getAuth(app)
   setPersistence(auth, inMemoryPersistence)
-  let firebase: { app: FirebaseApp, auth: Auth, analytics?: Analytics} = {
+  firebase = {
     app: app,
     auth: auth
   }
   if (browser) {
     firebase['analytics'] = getAnalytics(app);
   }
-  return firebase
-})
+}
 
 export const sendSignInLink = (email: string, redirectUrl: string) => {
-  let { auth } = initFirebase()
+  let { auth } = firebase
   const actionCodeSettings = {
     url: redirectUrl,
     handleCodeInApp: true,
@@ -45,13 +45,13 @@ export const sendSignInLink = (email: string, redirectUrl: string) => {
 }
 
 export const isSignInLink = (link: string) => {
-  let { auth } = initFirebase()
+  let { auth } = firebase
 
 	return isSignInWithEmailLink(auth, link)
 }
 
 export const signInWithLink = (email: string, link: string) => {
-	let { auth } = initFirebase()
+	let { auth } = firebase
 
 	return signInWithEmailLink(auth, email, link)
 }

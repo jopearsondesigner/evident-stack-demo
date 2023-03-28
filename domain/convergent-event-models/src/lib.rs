@@ -26,7 +26,7 @@ pub struct ConvergentEventModel {
 }
 
 impl ConvergentEventModel {
-    pub fn new(id: EventModelId, name: &str, node: Node, mut opset: OpSet<Op>) -> Self {
+    pub fn new(id: EventModelId, name: String, node: Node, mut opset: OpSet<Op>) -> Self {
         let mut patch: Patch<Op> = Patch::default();
         patch.insert(opset.next_id(&node), Op::Named(name.to_string()));
         opset.apply_patch(patch);
@@ -48,7 +48,7 @@ impl Default for ConvergentEventModel {
     fn default() -> Self {
         Self::new(
             Uuid::new_v4(),
-            "New Event Model",
+            "New Event Model".into(),
             random_node(),
             OpSet::default(),
         )
@@ -147,7 +147,7 @@ impl EventModel for ConvergentEventModel {
     fn create(initial: EventModelState<Self>, id: EventModelId, name: String) -> Self {
         match initial {
             EventModelState::BeforeCreation(details) => {
-                Self::new(id, name.into(), details.node, OpSet::default())
+                Self::new(id, name, details.node, OpSet::default())
             }
             EventModelState::EventModel(_) => {
                 panic!("Illegal initial state when creating Event Model")

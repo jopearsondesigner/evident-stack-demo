@@ -13,8 +13,12 @@ fn creation() {
 
 #[test]
 fn renaming() {
-    let initial =
-        ConvergentEventModel::new(Uuid::new_v4(), "foo", Node::default(), OpSet::default());
+    let initial = ConvergentEventModel::new(
+        Uuid::new_v4(),
+        "foo".into(),
+        Node::default(),
+        OpSet::default(),
+    );
 
     renaming_event_model_succeeds(EventModelState::<ConvergentEventModel>::EventModel(initial));
 }

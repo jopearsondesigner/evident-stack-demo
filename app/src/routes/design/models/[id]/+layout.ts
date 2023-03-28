@@ -1,8 +1,8 @@
 import { initializeEventModelStore } from '$lib/state';
 import { browser } from '$app/environment';
+import type { LayoutLoad } from './$types';
 
-/** @type {import('./$types').PageLoad} */
-export async function load({ params }) {
+export const load: LayoutLoad = async ({ params }) => {
   if (browser) {
     let {store, dispatch} = initializeEventModelStore(params.id);
     return {
@@ -10,4 +10,4 @@ export async function load({ params }) {
       dispatch
     };
   }
-}
+};

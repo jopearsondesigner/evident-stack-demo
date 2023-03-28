@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::types::schema::Schema;
 use crate::types::{Described, Entity, Named};
 use serde::{Deserialize, Serialize};

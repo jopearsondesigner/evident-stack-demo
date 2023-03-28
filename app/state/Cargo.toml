@@ -1,5 +1,5 @@
 [package]
-name = "editor-state"
+name = "app-state"
 version = "0.1.0"
 authors = ["Bobby Calderwood <8336+bobby@users.noreply.github.com>"]
 edition = "2021"
@@ -30,6 +30,7 @@ console_error_panic_hook = { version = "0.1.6", optional = true }
 # compared to the default allocator's ~10K. It is slower than the default
 # allocator, however.
 wee_alloc = { version = "0.4.5", optional = true }
+wasm-bindgen-futures = "0.4.34"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"

@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import { isSignInLink } from '$lib/firebase/client';
+import { isSignInLink } from '$lib/firebase/auth';
 import { getSignInEmail } from '$lib/localStorage/signInEmail';
 import type { PageLoad } from './$types';
 

@@ -1,9 +1,7 @@
 import { SESSION_COOKIE_NAME } from "$lib/constants";
-import { initAdmin, getIdTokenFromSessionCookie } from "$lib/firebase/admin";
+import { getIdTokenFromSessionCookie } from "$lib/firebase/admin/auth";
 import { redirect, type Handle } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
-
-initAdmin()
 
 const authentication = (async ({ event, resolve }) => {
   const { cookies, locals } = event

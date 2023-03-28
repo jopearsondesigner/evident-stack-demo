@@ -2,7 +2,7 @@
   import { goto, invalidateAll } from '$app/navigation';
   import { page } from '$app/stores';
   import ConfirmLoginForm, { type FormState } from '$components/auth/ConfirmLoginForm.svelte'
-  import { signInWithLink } from '$lib/firebase/client';
+  import { signInWithLink } from '$lib/firebase/auth';
   import { clearSignInEmail } from '$lib/localStorage/signInEmail';
   // import { setUser } from '$lib/stores/user';
   import { onMount } from 'svelte';

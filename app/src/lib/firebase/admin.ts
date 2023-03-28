@@ -1,4 +1,3 @@
-import { memoize } from 'lodash'
 import { cert, initializeApp, type App } from 'firebase-admin/app'
 import { Auth, getAuth, type DecodedIdToken } from 'firebase-admin/auth'
 import { PUBLIC_FIREBASE_PROJECT_ID } from '$env/static/public'
@@ -12,19 +11,20 @@ const adminConfig = {
   })
 }
 
-export const initAdmin = memoize(() => {
+let admin: { app: App, auth: Auth };
+
+export const initAdmin = () => {
   const app = initializeApp(adminConfig);
   let auth = getAuth(app)
-  let admin: { app: App, auth: Auth } = {
+  admin = {
     app: app,
     auth: auth
   }
-  return admin
-})
+}
 
 export const createSessionCookie = async (token: string, maxAge: number) => {
   const expiresIn = maxAge * 1000
-  const { auth } = initAdmin()
+  const { auth } = admin
   const sessionCookie = await auth.createSessionCookie(token, { expiresIn })
   const cookieOpts: {path: string, sameSite: 'strict', maxAge: number} =
     {path: '/', sameSite: 'strict', maxAge: maxAge}
@@ -33,7 +33,7 @@ export const createSessionCookie = async (token: string, maxAge: number) => {
 }
 
 export const verifyIdToken = (token: string): Promise<DecodedIdToken> => {
-	const { auth } = initAdmin()
+	const { auth } = admin
 	return auth.verifyIdToken(token)
 }
 
@@ -42,7 +42,7 @@ export const getIdTokenFromSessionCookie = (
 ): Promise<DecodedIdToken | null> => {
 	if (!sessionCookie) return Promise.resolve(null)
 
-	const { auth } = initAdmin()
+	const { auth } = admin
 
 	return auth.verifySessionCookie(sessionCookie, true).catch(() => null)
 }

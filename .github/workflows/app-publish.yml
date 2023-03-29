@@ -7,11 +7,14 @@ on:
       - published
     paths:
       - 'package-lock.json'
+      - 'Cargo.toml'
+      - 'domain/**'
       - 'components/**'
       - 'app/**'
 jobs:
   Publish:
     runs-on: ubuntu-latest
+    environment: evidentstack-app (Production)
     permissions:
       contents: read
       deployments: write
@@ -37,6 +40,15 @@ jobs:
 
       - name: Build
         run: npm -w app run release
+        env:
+          PUBLIC_FIREBASE_API_KEY: AIzaSyBYZKqBSRqPopB-ODLvAAUbtb95CVUw3R8
+          PUBLIC_FIREBASE_AUTH_DOMAIN: evidentstack.firebaseapp.com
+          PUBLIC_FIREBASE_PROJECT_ID: evidentstack
+          PUBLIC_FIREBASE_STORAGE_BUCKET: evidentstack.appspot.com
+          PUBLIC_FIREBASE_MESSAGE_SENDER_ID: 477374372516
+          PUBLIC_FIREBASE_APP_ID: "1:477374372516:web:7d3e296ec79b12d2696431"
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{secrets.FIREBASE_ADMIN_CLIENT_EMAIL}}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{secrets.FIREBASE_ADMIN_PRIVATE_KEY}}
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1

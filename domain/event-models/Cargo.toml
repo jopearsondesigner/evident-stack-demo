@@ -9,7 +9,7 @@ shared_tests = []
 in_memory = []
 
 [dependencies]
-epoch = { git = "https://github.com/Shearerbeard/Epoch", branch = "decider", default-features = false, features = ["in_memory"] }
+epoch = { git = "https://github.com/Shearerbeard/Epoch", rev = "c731f85", default-features = false, features = ["in_memory"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_cbor = { version = "0.11", optional = true }

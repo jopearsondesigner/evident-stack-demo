@@ -231,8 +231,4 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
             },
         }
     }
-
-    fn init() -> Self::State {
-        Self::State::BeforeCreation(C::default())
-    }
 }

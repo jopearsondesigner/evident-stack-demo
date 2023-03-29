@@ -1,7 +1,10 @@
 <script>
- export let data;
+  export let data;
 
- const store = data.eventModel;
+  const eventModel = data.eventModel;
+  const grid = data.grid;
 </script>
 
-<p>{$store?.EventModel.id}</p>
+<h2>{$eventModel?.EventModel.id}</h2>
+
+<pre>{JSON.stringify($grid)}</pre>

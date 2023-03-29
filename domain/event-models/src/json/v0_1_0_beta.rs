@@ -19,7 +19,6 @@ fn as_string(option: Option<String>) -> String {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "interface/type")]
 pub enum Interface {
-    // TODO: Support all other interface types via Blank or some other default
     #[serde(rename = "interface.type/blank")]
     Blank {
         #[serde(rename = "interface/id")]
@@ -101,7 +100,7 @@ impl TryFrom<Interface> for crate::types::Interface {
                 id,
                 name,
                 as_string(description),
-                InterfaceConfig::None,
+                InterfaceConfig::Blank,
             ),
             Interface::Rest {
                 id,
@@ -111,7 +110,7 @@ impl TryFrom<Interface> for crate::types::Interface {
                 id,
                 name,
                 as_string(description),
-                InterfaceConfig::None,
+                InterfaceConfig::Blank,
             ),
             Interface::Html {
                 id,
@@ -121,7 +120,7 @@ impl TryFrom<Interface> for crate::types::Interface {
                 id,
                 name,
                 as_string(description),
-                InterfaceConfig::None,
+                InterfaceConfig::Blank,
             ),
             Interface::Figma {
                 id,
@@ -134,7 +133,7 @@ impl TryFrom<Interface> for crate::types::Interface {
                 id,
                 name,
                 as_string(description),
-                InterfaceConfig::Figma(url, width, height),
+                InterfaceConfig::Figma { url, width, height },
             ),
             Interface::Image {
                 id,
@@ -147,7 +146,7 @@ impl TryFrom<Interface> for crate::types::Interface {
                 id,
                 name,
                 as_string(description),
-                InterfaceConfig::Image(url, width, height),
+                InterfaceConfig::Image { url, width, height },
             ),
             Interface::Job {
                 id,

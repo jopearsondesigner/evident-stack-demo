@@ -18,31 +18,38 @@
 	} from './grid';
 
 	/** @type Array.<{id: string,
-      title: string,
+      interface: string,
+      name: string,
       description: string}> */
 	export let default_audience_placements = new Array(0);
 
-	/** @type Array.<{title: string,
+	/** @type Array.<{id: string,
+      name: string,
       placements: Array.<{id: string,
+      interface: string,
       type: string, // TODO: supported placement types/config here
-      title: string,
+      name: string,
       description: string}>}> */
 	export let audiences = new Array(0);
 
 	/** @type Array<{id: string,
+      component: string,
       type: ('command' | 'readModel'),
-      title: string,
+      name: string,
       description: string}> */
 	export let timeline_placements = new Array(0);
 
-	/** @type Array.<{title: string,
+	/** @type Array.<{id: string,
+      name: string,
       placements: Array.<{id: string,
-      title: string,
-      description: string}>}> */
+                          event: string,
+                          name: string,
+                          description: string}>}> */
 	export let streams = new Array(0);
 
 	/** @type Array.<{id: string,
-      title: string,
+      event: string,
+      name: string,
       description: string}> */
 	export let default_stream_placements = new Array(0);
 
@@ -126,7 +133,7 @@
 			{#if placement}
 				<Interface
 					id={placement.id}
-					title={placement.title}
+					name={placement.name}
 					description={placement.description}
 					row={default_audience_row}
 					column={index}
@@ -140,14 +147,14 @@
 
 	{#each audiences as audience, i}
 		{@const row = i + 1}
-		<Audience {row} title={audience.title}>
+		<Audience {row} name={audience.name}>
 			{#each audience.placements as placement, index (placementOrEmptyCellId(placement, index, row))}
 				{@const is_cursor = isCursor(row, index)}
 				<!-- {@const is_editing = isEditing(row, index)} -->
 				{#if placement}
 					<Interface
 						id={placement.id}
-						title={placement.title}
+						name={placement.name}
 						description={placement.description}
 						{row}
 						column={index}
@@ -167,7 +174,7 @@
 			{#if placement && placement.type === 'command'}
 				<Command
 					id={placement.id}
-					title={placement.title}
+					name={placement.name}
 					description={placement.description}
 					row={timeline_row}
 					column={index}
@@ -176,7 +183,7 @@
 			{:else if placement && placement.type === 'readModel'}
 				<ReadModel
 					id={placement.id}
-					title={placement.title}
+					name={placement.name}
 					description={placement.description}
 					row={timeline_row}
 					column={index}
@@ -190,14 +197,14 @@
 
 	{#each streams as stream, i}
 		{@const row = i + timeline_row + 1}
-		<Stream {row} title={stream.title}>
+		<Stream {row} name={stream.name}>
 			{#each stream.placements as placement, index (placementOrEmptyCellId(placement, index, row))}
 				{@const is_cursor = isCursor(row, index)}
 				<!-- {@const is_editing = isEditing(row, index)} -->
 				{#if placement}
 					<Event
 						id={placement.id}
-						title={placement.title}
+						name={placement.name}
 						description={placement.description}
 						{row}
 						column={index}
@@ -217,7 +224,7 @@
 			{#if placement}
 				<Event
 					id={placement.id}
-					title={placement.title}
+					name={placement.name}
 					description={placement.description}
 					row={default_stream_row}
 					column={index}

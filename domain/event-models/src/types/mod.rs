@@ -57,7 +57,7 @@ pub trait ModifiablyDescribed: Described {
 
 pub type LaneIndex = u32;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LaneId {
     DefaultAudience,
     Audience(AudienceId),

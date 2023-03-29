@@ -11,9 +11,17 @@ pub type InterfaceId = Uuid;
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum InterfaceConfig {
     #[default]
-    None,
-    Figma(Url, Option<u32>, Option<u32>),
-    Image(Url, Option<u32>, Option<u32>),
+    Blank,
+    Figma {
+        url: Url,
+        width: Option<u32>,
+        height: Option<u32>,
+    },
+    Image {
+        url: Url,
+        width: Option<u32>,
+        height: Option<u32>,
+    },
     Job,
 }
 
@@ -39,6 +47,10 @@ impl Interface {
             description,
             config,
         })
+    }
+
+    pub fn config(&self) -> &InterfaceConfig {
+        &self.config
     }
 }
 

@@ -1,5 +1,6 @@
 extern crate event_models;
 
+pub mod grid;
 mod repository;
 mod utils;
 
@@ -11,7 +12,9 @@ use event_models::{
     types::Entity,
     EventModelId, EventModelState,
 };
+use grid::EventModelGrid;
 use repository::HasKey;
+pub use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -46,6 +49,13 @@ pub struct EventModelDecider;
 
 impl ReifyDecideSave for EventModelDecider {
     type Decide = EventModelState<InMemoryEventModel>;
+}
+
+#[wasm_bindgen]
+pub fn event_model_grid(state: JsValue) -> Result<JsValue, JsValue> {
+    let event_model: InMemoryEventModel = serde_wasm_bindgen::from_value(state)?;
+    let grid: EventModelGrid = event_model.into();
+    Ok(serde_wasm_bindgen::to_value(&grid)?)
 }
 
 #[wasm_bindgen]

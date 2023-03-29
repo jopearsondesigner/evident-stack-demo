@@ -1,6 +1,6 @@
 ---
 name: Stage Website on Pull Request
-run-name: Pull Request Staged by ${{ github.actor }}
+run-name: Website Pull Request Staged by ${{ github.actor }}
 on:
   pull_request:
     branches:
@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
-    name: Publish to Cloudflare Pages
+    name: Publish Website to Cloudflare Pages
     steps:
       - name: Checkout
         uses: actions/checkout@v3

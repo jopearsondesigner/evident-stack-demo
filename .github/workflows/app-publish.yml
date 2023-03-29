@@ -1,6 +1,6 @@
 ---
 name: Publish App to Production
-run-name: Production publish by ${{ github.actor }}
+run-name: Production App publish by ${{ github.actor }}
 on:
   release:
     types:
@@ -18,7 +18,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
-    name: Publish to Cloudflare Pages
+    name: Publish App to Cloudflare Pages
     steps:
       - name: Checkout
         uses: actions/checkout@v3

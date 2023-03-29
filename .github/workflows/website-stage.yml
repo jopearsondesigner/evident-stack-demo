@@ -1,6 +1,6 @@
 ---
 name: Publish Website to Staging
-run-name: Staging publish by ${{ github.actor }}
+run-name: Staging Website publish by ${{ github.actor }}
 on:
   push:
     branches:
@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
-    name: Publish to Cloudflare Pages
+    name: Publish Website to Cloudflare Pages
     steps:
       - name: Checkout
         uses: actions/checkout@v3

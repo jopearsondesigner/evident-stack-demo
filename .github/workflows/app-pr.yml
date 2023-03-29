@@ -1,6 +1,6 @@
 ---
 name: Stage App on Pull Request
-run-name: Pull Request Staged by ${{ github.actor }}
+run-name: App Pull Request Staged by ${{ github.actor }}
 on:
   pull_request:
     branches:
@@ -18,7 +18,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
-    name: Publish to Cloudflare Pages
+    name: Publish App to Cloudflare Pages
     steps:
       - name: Checkout
         uses: actions/checkout@v3

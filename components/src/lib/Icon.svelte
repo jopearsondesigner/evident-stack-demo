@@ -15,7 +15,6 @@
 </script>
 
 <svg
-	id={name}
 	data-name={name}
 	xmlns="http://www.w3.org/2000/svg"
 	{viewBox}

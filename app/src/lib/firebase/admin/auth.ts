@@ -14,7 +14,7 @@ export const verifyIdToken = (token: string): Promise<DecodedIdToken> => {
 	return auth.verifyIdToken(token)
 }
 
-export const getIdTokenFromSessionCookie = (
+export const getIdTokenFromSessionCookie = async (
 	sessionCookie: string | null
 ): Promise<DecodedIdToken | null> => {
 	if (!sessionCookie) return Promise.resolve(null)

@@ -1,4 +1,3 @@
-import type { EventModelCommand, InMemoryEventModel, EventModelState } from "app-state";
 import { default as init, EventModelStateManager, event_model_grid } from "app-state";
 import { writable, readonly } from 'svelte/store';
 
@@ -11,9 +10,9 @@ const initializeEventModelStore = async (id: string | null | undefined) => {
 
   return {
     state: readonly(store),
-    dispatch: async (command: EventModelCommand) => {
+    dispatch: async (command: any) => {
       console.log("dispatch command:", command, "to manager:", manager)
-      let result: EventModelState<InMemoryEventModel> = await manager.dispatch(command)
+      let result = await manager.dispatch(command)
       store.set(result)
       console.log("dispatch result:", result)
       return result
@@ -21,7 +20,7 @@ const initializeEventModelStore = async (id: string | null | undefined) => {
   };
 }
 
-export const eventModelGrid = (state: EventModelState<InMemoryEventModel>) => {
+export const eventModelGrid = (state: any) => {
   if (state.EventModel) {
     return event_model_grid(state.EventModel)
   } else {
@@ -29,7 +28,7 @@ export const eventModelGrid = (state: EventModelState<InMemoryEventModel>) => {
   }
 }
 
-const initWasm = async function () {
+const initWasm = async () => {
   await init();
 }
 

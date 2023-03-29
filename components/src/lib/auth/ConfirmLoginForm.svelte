@@ -24,7 +24,7 @@
     try {
       await onSubmit(new FormData(currentTarget).get('email') as string)
     } catch (error) {
-      state = error
+      state = error as Error
     }
   }
 </script>

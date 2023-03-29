@@ -1,19 +1,15 @@
-use crate::api::tests::{creating_event_model_succeeds, renaming_event_model_succeeds};
-use crate::api::EventModelState;
-use crate::implementation::in_memory::InMemoryEventModel;
-use crate::{EventModel, ModifiableEventModel};
+use crate::shared::{creating_event_model_succeeds, renaming_event_model_succeeds};
+use event_models::api::EventModelState;
+use event_models::implementation::in_memory::{InMemoryCreator, InMemoryEventModel};
+use event_models::{EventModel, ModifiableEventModel};
 use uuid::Uuid;
 
-use crate::types::command::Command;
-use crate::types::event::Event;
-use crate::types::interface::Interface;
-use crate::types::read_model::ReadModel;
-use crate::types::ComponentId::{
+use event_models::types::ComponentId::{
     CommandComponentId, EventComponentId, InterfaceComponentId, ReadModelComponentId,
 };
-use crate::types::{Component, Described, Entity, ModifiablyDescribed, Named};
-
-use super::InMemoryCreator;
+use event_models::types::{
+    Command, Component, Described, Entity, Event, Interface, ModifiablyDescribed, Named, ReadModel,
+};
 
 #[test]
 fn creation() {
@@ -151,20 +147,24 @@ fn adding_to_component_description() {
         "a really nice read model",
     );
     assert_eq!(
-        model.interfaces.get(interface.id()).unwrap().description(),
+        model
+            .interfaces()
+            .get(interface.id())
+            .unwrap()
+            .description(),
         "a really nice interface"
     );
     assert_eq!(
-        model.commands.get(command.id()).unwrap().description(),
+        model.commands().get(command.id()).unwrap().description(),
         "a really nice command"
     );
     assert_eq!(
-        model.events.get(event.id()).unwrap().description(),
+        model.events().get(event.id()).unwrap().description(),
         "a really nice event"
     );
     assert_eq!(
         model
-            .read_models
+            .read_models()
             .get(read_model.id())
             .unwrap()
             .description(),
@@ -208,20 +208,24 @@ fn deleting_from_component_description() {
     model.deleted_from_component_description(&ReadModelComponentId(*read_model.id()), 2);
 
     assert_eq!(
-        model.interfaces.get(interface.id()).unwrap().description(),
+        model
+            .interfaces()
+            .get(interface.id())
+            .unwrap()
+            .description(),
         "a eally nice interface"
     );
     assert_eq!(
-        model.commands.get(command.id()).unwrap().description(),
+        model.commands().get(command.id()).unwrap().description(),
         "a eally nice command"
     );
     assert_eq!(
-        model.events.get(event.id()).unwrap().description(),
+        model.events().get(event.id()).unwrap().description(),
         "a eally nice event"
     );
     assert_eq!(
         model
-            .read_models
+            .read_models()
             .get(read_model.id())
             .unwrap()
             .description(),

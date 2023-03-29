@@ -1,5 +1,5 @@
 import { ONE_WEEK_IN_SECONDS, SESSION_COOKIE_NAME } from '$lib/constants';
-import { createSessionCookie, verifyIdToken } from '$lib/firebase/admin';
+import { createSessionCookie, verifyIdToken } from '$lib/firebase/admin/auth';
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 

@@ -3,10 +3,6 @@ extern crate core;
 extern crate serde_cbor;
 extern crate url;
 extern crate uuid;
-#[cfg(test)]
-#[macro_use]
-extern crate assert_matches;
-
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
 use crate::types::event::{Event, EventId};

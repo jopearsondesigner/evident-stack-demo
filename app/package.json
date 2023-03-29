@@ -28,8 +28,7 @@
     "test": "playwright test",
     "test:unit": "vitest",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
-    "format": "prettier --plugin-search-dir . --write .",
-    "release": "npm run state:build && npm run check && npm run test && npm run app:build"
+    "format": "prettier --plugin-search-dir . --write ."
   },
   "devDependencies": {
     "@playwright/test": "^1.28.1",

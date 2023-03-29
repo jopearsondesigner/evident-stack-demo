@@ -38,8 +38,11 @@ jobs:
       - name: Install playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Test
+        run: npm -w app run check && npm -w app run test
+
       - name: Build
-        run: npm -w app run release
+        run: npm -w app run build
         env:
           CF_PAGES: 1
           PUBLIC_FIREBASE_API_KEY: AIzaSyBG1t7Ht62g_wkgy1SfreSBZDCYIczbra4

@@ -11,7 +11,7 @@
       "Create": formData.get("name")
     };
     let state = await dispatch(data);
-    goto(`./${state.EventModel.id}`)
+    goto(`/design/models/${state.EventModel.id}`)
   };
 </script>
 

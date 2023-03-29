@@ -16,9 +16,9 @@ const authentication = (async ({ event, resolve }) => {
 }) satisfies Handle;
 
 const authorization = (async ({ event, resolve }) => {
-  if (!event.url.pathname.startsWith('/login') && !event.url.pathname.startsWith('/auth')) {
+  if (!event.url.pathname.startsWith('/auth')) {
     if (!event.locals.user) {
-      throw redirect(303, '/login')
+      throw redirect(303, '/auth/sign-in')
     }
   }
   return resolve(event)

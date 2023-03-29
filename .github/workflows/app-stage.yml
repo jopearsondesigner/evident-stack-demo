@@ -41,6 +41,7 @@ jobs:
       - name: Build
         run: npm -w app run release
         env:
+          CF_PAGES: 1
           PUBLIC_FIREBASE_API_KEY: AIzaSyBG1t7Ht62g_wkgy1SfreSBZDCYIczbra4
           PUBLIC_FIREBASE_AUTH_DOMAIN: evidentstack-test.firebaseapp.com
           PUBLIC_FIREBASE_PROJECT_ID: evidentstack-test

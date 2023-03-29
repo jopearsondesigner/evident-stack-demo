@@ -32,6 +32,8 @@ jobs:
 
       - name: Build
         run: npm -w website run release
+        env:
+          CF_PAGES: 1
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1

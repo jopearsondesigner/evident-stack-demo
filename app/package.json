@@ -21,7 +21,7 @@
     "state:dev": "cd state && cargo watch -i .gitignore -i \"pkg/*\" -s \"wasm-pack build --target web\"",
     "state:build": "cd state && wasm-pack build --target web",
     "dev": "concurrently -k \"npm:state:dev\" \"npm:app:dev\"",
-    "preview": "npm run state:build && vite preview",
+    "preview": "vite preview",
     "build": "npm run state:build && npm run app:build",
     "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.28.1",
-    "@sveltejs/adapter-cloudflare": "^1.0.0",
+    "@sveltejs/adapter-auto": "^1.0.0",
     "@sveltejs/kit": "^1.0.0",
     "@tailwindcss/line-clamp": "^0.4.2",
     "@tailwindcss/typography": "^0.5.8",

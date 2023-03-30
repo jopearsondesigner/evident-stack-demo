@@ -7,6 +7,13 @@ use self::{v0_1_0_beta::JsonV0_1_0BetaTransfer, v1_0_0::JsonV1_0_0Transfer};
 mod v0_1_0_beta;
 mod v1_0_0;
 
+pub fn as_string(option: Option<String>) -> String {
+    match option {
+        Some(s) => s,
+        None => String::default(),
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "spec-version", content = "event-model")]
 pub enum JsonImport {

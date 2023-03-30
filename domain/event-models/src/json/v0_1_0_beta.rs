@@ -5,14 +5,12 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
-use crate::{Entity, EventModelDataTransfer, EventModelError, InterfaceConfig};
+use crate::{
+    api::errors::EventModelError,
+    types::{interface::InterfaceConfig, Entity, Schema},
+};
 
-fn as_string(option: Option<String>) -> String {
-    match option {
-        Some(s) => s,
-        None => String::default(),
-    }
-}
+use super::as_string;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "interface/type")]

@@ -1,32 +1,29 @@
 use crate::shared::{creating_event_model_succeeds, renaming_event_model_succeeds};
-use event_models::api::EventModelState;
-use event_models::implementation::in_memory::{InMemoryCreator, InMemoryEventModel};
-use event_models::{EventModel, ModifiableEventModel};
+use event_models::implementation::in_memory::{InMemoryCreationDetails, InMemoryEventModel};
+use event_models::EventModelState;
+use event_models::{EventModelData, ModifiableEventModel};
 use uuid::Uuid;
 
 use event_models::types::ComponentId::{
     CommandComponentId, EventComponentId, InterfaceComponentId, ReadModelComponentId,
 };
 use event_models::types::{
-    Command, Component, Described, Entity, Event, Interface, ModifiablyDescribed, Named, ReadModel,
+    Command, Component, Described, Entity, Event, Interface, InterfaceConfig, ModifiablyDescribed,
+    Named, ReadModel, Schema,
 };
 
 #[test]
 fn creation() {
-    creating_event_model_succeeds(
-        EventModelState::<InMemoryEventModel, InMemoryCreator>::BeforeCreation(
-            InMemoryCreator::default(),
-        ),
-    );
+    creating_event_model_succeeds(EventModelState::<InMemoryEventModel>::BeforeCreation(
+        InMemoryCreationDetails,
+    ));
 }
 
 #[test]
 fn renaming() {
-    renaming_event_model_succeeds(
-        EventModelState::<InMemoryEventModel, InMemoryCreator>::EventModel(
-            InMemoryEventModel::new(Uuid::new_v4(), "foo".to_string()),
-        ),
-    );
+    renaming_event_model_succeeds(EventModelState::<InMemoryEventModel>::EventModel(
+        InMemoryEventModel::new(Uuid::new_v4(), "foo".to_string()),
+    ));
 }
 
 #[test]
@@ -52,10 +49,34 @@ fn defining_components() {
     let id = Uuid::new_v4();
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
 
-    let interface = Interface::create(Uuid::new_v4(), "an interface").unwrap();
-    let command = Command::create(Uuid::new_v4(), "a command").unwrap();
-    let event = Event::create(Uuid::new_v4(), "an event");
-    let read_model = ReadModel::create(Uuid::new_v4(), "a read model");
+    let interface = Interface::create(
+        Uuid::new_v4(),
+        "an interface".into(),
+        "".into(),
+        InterfaceConfig::default(),
+    )
+    .expect("failed to create interface");
+    let command = Command::create(
+        Uuid::new_v4(),
+        "a command".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create command");
+    let event = Event::create(
+        Uuid::new_v4(),
+        "an event".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create event");
+    let read_model = ReadModel::create(
+        Uuid::new_v4(),
+        "a read model".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create event");
     model.component_defined(Component::InterfaceComponent(interface.to_owned()));
     model.component_defined(Component::CommandComponent(command.to_owned()));
     model.component_defined(Component::EventComponent(event.to_owned()));
@@ -69,10 +90,34 @@ fn defining_components() {
 #[test]
 fn renaming_components() {
     let id = Uuid::new_v4();
-    let interface = Interface::create(Uuid::new_v4(), "an interface").unwrap();
-    let command = Command::create(Uuid::new_v4(), "a command").unwrap();
-    let event = Event::create(Uuid::new_v4(), "an event");
-    let read_model = ReadModel::create(Uuid::new_v4(), "a read model");
+    let interface = Interface::create(
+        Uuid::new_v4(),
+        "an interface".into(),
+        "".into(),
+        InterfaceConfig::default(),
+    )
+    .expect("failed to create interface");
+    let command = Command::create(
+        Uuid::new_v4(),
+        "a command".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create command");
+    let event = Event::create(
+        Uuid::new_v4(),
+        "an event".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create event");
+    let read_model = ReadModel::create(
+        Uuid::new_v4(),
+        "a read model".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create event");
 
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
     model.component_defined(Component::InterfaceComponent(interface.to_owned()));
@@ -119,10 +164,34 @@ fn renaming_components() {
 #[test]
 fn adding_to_component_description() {
     let id = Uuid::new_v4();
-    let interface = Interface::create(Uuid::new_v4(), "an interface").unwrap();
-    let command = Command::create(Uuid::new_v4(), "a command").unwrap();
-    let event = Event::create(Uuid::new_v4(), "an event");
-    let read_model = ReadModel::create(Uuid::new_v4(), "a read model");
+    let interface = Interface::create(
+        Uuid::new_v4(),
+        "an interface".into(),
+        "".into(),
+        InterfaceConfig::default(),
+    )
+    .expect("failed to create interface");
+    let command = Command::create(
+        Uuid::new_v4(),
+        "a command".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create command");
+    let event = Event::create(
+        Uuid::new_v4(),
+        "an event".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create event");
+    let read_model = ReadModel::create(
+        Uuid::new_v4(),
+        "a read model".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create event");
 
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
     model.component_defined(Component::InterfaceComponent(interface.to_owned()));
@@ -175,10 +244,34 @@ fn adding_to_component_description() {
 #[test]
 fn deleting_from_component_description() {
     let id = Uuid::new_v4();
-    let interface = Interface::create(Uuid::new_v4(), "an interface").unwrap();
-    let command = Command::create(Uuid::new_v4(), "a command").unwrap();
-    let event = Event::create(Uuid::new_v4(), "an event");
-    let read_model = ReadModel::create(Uuid::new_v4(), "a read model");
+    let interface = Interface::create(
+        Uuid::new_v4(),
+        "an interface".into(),
+        "".into(),
+        InterfaceConfig::default(),
+    )
+    .expect("failed to create interface");
+    let command = Command::create(
+        Uuid::new_v4(),
+        "a command".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create command");
+    let event = Event::create(
+        Uuid::new_v4(),
+        "an event".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create event");
+    let read_model = ReadModel::create(
+        Uuid::new_v4(),
+        "a read model".into(),
+        "".into(),
+        Schema::default(),
+    )
+    .expect("failed to create event");
 
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
     model.component_defined(Component::InterfaceComponent(interface.to_owned()));

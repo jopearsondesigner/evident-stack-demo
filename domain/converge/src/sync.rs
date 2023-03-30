@@ -167,10 +167,6 @@ impl<Op: Clone + Debug> Evolver for OpSetState<Op> {
             },
         }
     }
-
-    fn init() -> Self::State {
-        OpSetState::BeforeCreation
-    }
 }
 
 impl<Op> Event for SyncEvent<Op> {

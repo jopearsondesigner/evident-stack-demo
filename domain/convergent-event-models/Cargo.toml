@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-event-models = { path = "../event-models" }
+event-models = { path = "../event-models", features = ["in_memory"] }
 converge = { path = "../converge" }
 
 [dependencies.uuid]

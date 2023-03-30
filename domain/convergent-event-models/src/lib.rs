@@ -5,7 +5,9 @@ use event_models::types::{
     InterfaceId, ModifiablyDescribed, Named, Placement, PlacementId, PlacementPosition, ReadModel,
     ReadModelId, Renamable, Schema, Stream,
 };
-use event_models::{EventModel, EventModelCreator, EventModelId, ModifiableEventModel};
+use event_models::{
+    EventModel, EventModelData, EventModelId, EventModelState, ModifiableEventModel,
+};
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -23,17 +25,8 @@ pub struct ConvergentEventModel {
     value: InMemoryEventModel,
 }
 
-#[derive(Default, Debug, Clone)]
-pub struct ConvergentCreator;
-
-impl EventModelCreator<ConvergentEventModel> for ConvergentCreator {
-    fn create(&self, id: EventModelId, name: String) -> ConvergentEventModel {
-        ConvergentEventModel::new(id, &name, Node::default(), OpSet::default())
-    }
-}
-
 impl ConvergentEventModel {
-    pub fn new(id: EventModelId, name: &str, node: Node, mut opset: OpSet<Op>) -> Self {
+    pub fn new(id: EventModelId, name: String, node: Node, mut opset: OpSet<Op>) -> Self {
         let mut patch: Patch<Op> = Patch::default();
         patch.insert(opset.next_id(&node), Op::Named(name.to_string()));
         opset.apply_patch(patch);
@@ -55,7 +48,7 @@ impl Default for ConvergentEventModel {
     fn default() -> Self {
         Self::new(
             Uuid::new_v4(),
-            "New Event Model",
+            "New Event Model".into(),
             random_node(),
             OpSet::default(),
         )
@@ -103,7 +96,7 @@ impl Described for ConvergentEventModel {
     }
 }
 
-impl EventModel for ConvergentEventModel {
+impl EventModelData for ConvergentEventModel {
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface> {
         todo!()
     }
@@ -134,6 +127,32 @@ impl EventModel for ConvergentEventModel {
 
     fn flows(&self) -> &HashMap<FlowId, FlowArrow> {
         todo!()
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ConvergentCreationDetails {
+    node: Node,
+}
+
+impl ConvergentCreationDetails {
+    pub fn new(node: Node) -> Self {
+        ConvergentCreationDetails { node }
+    }
+}
+
+impl EventModel for ConvergentEventModel {
+    type CreationDetails = ConvergentCreationDetails;
+
+    fn create(initial: EventModelState<Self>, id: EventModelId, name: String) -> Self {
+        match initial {
+            EventModelState::BeforeCreation(details) => {
+                Self::new(id, name, details.node, OpSet::default())
+            }
+            EventModelState::EventModel(_) => {
+                panic!("Illegal initial state when creating Event Model")
+            }
+        }
     }
 }
 

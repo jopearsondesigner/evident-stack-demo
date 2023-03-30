@@ -1,4 +1,4 @@
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -15,7 +15,7 @@ use crate::types::{
     Component, ComponentId, ComponentMut, Described, Entity, Lane, LaneId, LaneIndex,
     ModifiablyDescribed, Named, Renamable,
 };
-use crate::{EventModel, EventModelCreator, EventModelId, ModifiableEventModel};
+use crate::{EventModel, EventModelData, EventModelId, EventModelState, ModifiableEventModel};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct InMemoryEventModel {
@@ -31,15 +31,6 @@ pub struct InMemoryEventModel {
     placements: HashMap<PlacementId, Placement>,
     flows: HashMap<FlowId, FlowArrow>,
     schema: Schema,
-}
-
-#[derive(Debug, Default, Clone)]
-pub struct InMemoryCreator;
-
-impl EventModelCreator<InMemoryEventModel> for InMemoryCreator {
-    fn create(&self, id: EventModelId, name: String) -> InMemoryEventModel {
-        InMemoryEventModel::new(id, name)
-    }
 }
 
 impl InMemoryEventModel {
@@ -147,7 +138,21 @@ impl HasModifiableSchema for InMemoryEventModel {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InMemoryCreationDetails;
+
 impl EventModel for InMemoryEventModel {
+    type CreationDetails = InMemoryCreationDetails;
+
+    fn create(initial: EventModelState<Self>, id: EventModelId, name: String) -> Self {
+        match initial {
+            EventModelState::BeforeCreation(_) => InMemoryEventModel::new(id, name),
+            EventModelState::EventModel(_) => panic!("Illegal state when creating Event Model!"),
+        }
+    }
+}
+
+impl EventModelData for InMemoryEventModel {
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface> {
         &self.interfaces
     }

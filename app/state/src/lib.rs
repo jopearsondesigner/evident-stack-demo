@@ -1,13 +1,20 @@
 extern crate event_models;
 
+pub mod grid;
+mod repository;
 mod utils;
 
-// use epoch::decider::{Decider, Evolver};
-// use event_models::default::DefaultEventModel;
-// use event_models::domain::commands::EventModelCommand;
-// use event_models::domain::{EventModelDecider, EventModelState};
-use event_models::EventModelId;
-use js_sys::Function;
+use crate::repository::LocalStorageStateRepository;
+use epoch::{repository::state::VersionedStateRepository, strategies::ReifyDecideSave};
+pub use event_models::api::commands::EventModelCommand;
+use event_models::{
+    implementation::in_memory::{InMemoryCreationDetails, InMemoryEventModel},
+    types::Entity,
+    EventModelId, EventModelState,
+};
+use grid::EventModelGrid;
+use repository::HasKey;
+pub use utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -18,90 +25,77 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
 extern "C" {
-    fn alert(s: &str);
-
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
 }
 
-#[wasm_bindgen]
-pub struct EventModelCreationContext;
-
-impl Default for EventModelCreationContext {
-    fn default() -> Self {
-        Self::new()
+impl HasKey for EventModelState<InMemoryEventModel> {
+    fn get_key(&self) -> Option<String> {
+        match self {
+            EventModelState::BeforeCreation(_) => None,
+            EventModelState::EventModel(model) => Some(model.id().to_string()),
+        }
     }
 }
 
 #[wasm_bindgen]
-impl EventModelCreationContext {
-    #[wasm_bindgen(constructor)]
-    pub fn new() -> EventModelCreationContext {
-        EventModelCreationContext
-    }
-
-    pub fn dispatch(&self, js_command: JsValue) -> Result<(), JsValue> {
-        todo!()
-        // let command: EventModelCommand = serde_wasm_bindgen::from_value(js_command)?;
-        // log(&format!("Dispatching {:?}", command));
-        // let current_state = EventModelState::BeforeCreation;
-        // let events = EventModelDecider::decide(&current_state, &command)
-        //     .map_err(|e| serde_wasm_bindgen::to_value(&e).unwrap())?;
-        // let mut next_state: EventModelState<DefaultEventModel> = current_state;
-        // for evt in events {
-        //     next_state = EventModelDecider::evolve(next_state, &evt);
-        // }
-        // log(&format!("next_state: {:?}", next_state));
-        // Ok(())
-    }
-}
-
-#[wasm_bindgen]
+#[derive(Debug)]
 pub struct EventModelStateManager {
-    id: EventModelId,
-    setter: Option<Function>,
+    repository: LocalStorageStateRepository<EventModelState<InMemoryEventModel>>,
+    // node: Node // TODO: convergent creation context details
+}
+
+pub struct EventModelDecider;
+
+impl ReifyDecideSave for EventModelDecider {
+    type Decide = EventModelState<InMemoryEventModel>;
+}
+
+#[wasm_bindgen]
+pub fn event_model_grid(state: JsValue) -> Result<JsValue, JsValue> {
+    let event_model: InMemoryEventModel = serde_wasm_bindgen::from_value(state)?;
+    let grid: EventModelGrid = event_model.into();
+    Ok(serde_wasm_bindgen::to_value(&grid)?)
 }
 
 #[wasm_bindgen]
 impl EventModelStateManager {
     #[wasm_bindgen(constructor)]
     pub fn new(js_id: JsValue) -> Result<EventModelStateManager, JsValue> {
-        let id: EventModelId = serde_wasm_bindgen::from_value(js_id)?;
-        Ok(EventModelStateManager { id, setter: None })
+        let event_model_id: Option<EventModelId> = serde_wasm_bindgen::from_value(js_id)?;
+        Ok(EventModelStateManager {
+            repository: LocalStorageStateRepository::new(
+                event_model_id.map(|x| x.to_string()),
+                EventModelState::BeforeCreation(InMemoryCreationDetails),
+            ),
+        })
     }
 
-    pub fn initialize(&mut self, setter: Function) {
-        self.setter = Some(setter);
-        // TODO: load initial state to pass to setter
-        let initial_state = &JsValue::from(1);
-        self.set(initial_state);
+    pub async fn state(&self) -> Result<JsValue, JsValue> {
+        match self.repository.reify().await {
+            Ok((data, _version)) => Ok(serde_wasm_bindgen::to_value(&data)?),
+            Err(err) => Err(serde_wasm_bindgen::to_value(&err)?),
+        }
     }
 
-    pub fn dispatch(&self, js_command: JsValue) -> Result<(), JsValue> {
-        // let command: EventModelCommand = serde_wasm_bindgen::from_value(js_command)?;
-        // log(&format!("Dispatching {:?}...", command));
-        // let current_state = EventModelState::BeforeCreation; // TODO: look up current state
-        // log(&format!("...against current state {:?}", current_state));
-        // let events = EventModelDecider::decide(&current_state, &command)
-        //     .map_err(|e| serde_wasm_bindgen::to_value(&e).unwrap())?;
-        // let mut next_state: EventModelState<DefaultEventModel> = current_state;
-        // for evt in events {
-        //     next_state = EventModelDecider::evolve(next_state, &evt);
-        // }
-        // log(&format!("next_state: {:?}", next_state));
-        Ok(())
-    }
-
-    fn set(&self, next_state: &JsValue) {
-        log(&format!(
-            "setting: {:?} via setter {:?}",
-            &next_state, &self.setter
-        ));
-        match &self.setter {
-            None => (),
-            Some(setter) => {
-                setter.call1(&JsValue::null(), next_state).unwrap(); // TODO: panic on Err?
+    pub async fn dispatch(&mut self, js_command: JsValue) -> Result<JsValue, JsValue> {
+        let command: EventModelCommand = serde_wasm_bindgen::from_value(js_command)?;
+        log(&format!("Dispatching {:?}...", command));
+        let result =
+            EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)
+                .await;
+        match result {
+            Ok(state) => {
+                log(&format!(
+                    "...dispatched command {:?} and got next state {:?}",
+                    command, state
+                ));
+                Ok(serde_wasm_bindgen::to_value(&state)?)
             }
-        };
+            Err(err) => Err(JsValue::from(format!(
+                "Error dispatching command {:?}: {:?}",
+                command, err
+            ))),
+        }
     }
 }

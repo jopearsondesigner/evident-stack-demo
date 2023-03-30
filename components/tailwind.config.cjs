@@ -139,7 +139,6 @@ module.exports = {
 	plugins: [
 		require('@tailwindcss/typography'),
 		require('daisyui'),
-		require('@tailwindcss/line-clamp'),
 		function ({ addComponents }) {
 			addComponents({
 				'.container': {

@@ -1,24 +1,21 @@
-<script>
+<script lang="ts">
 	import MaybeTooltip from '../../utils/MaybeTooltip.svelte';
 	import markdown from '../../utils/markdown.js';
 
 	/* TODO: UUID */
-	/* @type {string} */
-	export let id = '';
+	export let id: string;
 
-	/* @type {string} */
-	export let title = '';
+	/* TODO: UUID */
+	export let command: string;
 
-	/* @type {string | null} */
+	export let name: string;
+
 	export let description = '';
 
-	/* @type {number} */
-	export let row = 0;
+	export let row: number;
 
-	/* @type {number} */
-	export let column = 0;
+	export let column: number;
 
-	/* @type {boolean} */
 	export let cursor = false;
 
 	$: descriptionHTML = markdown(description);
@@ -36,7 +33,7 @@
 		<div
 			class="command w-[6.125rem] h-[6.125rem] p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-command-dark via-command to-command-light"
 		>
-			{title}
+			{name}
 		</div>
 	</MaybeTooltip>
 </div>

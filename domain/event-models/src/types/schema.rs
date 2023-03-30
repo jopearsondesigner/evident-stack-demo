@@ -1,54 +1,17 @@
-use serde_derive::{Deserialize, Serialize};
-
-use super::Entity;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct CUESchema(pub String);
-
-// #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-// pub struct CDDLSchema(String);
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct MalliSchema(pub String);
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum Schema {
-    CUE(CUESchema),
-    // CDDL(CDDLSchema),
-    Malli(MalliSchema),
-}
+pub struct Schema(String);
 
 impl Default for Schema {
     fn default() -> Self {
-        Schema::CUE(CUESchema(Default::default()))
+        Schema(Default::default())
     }
-}
-
-// ***** Schema Roles *****
-
-pub type SubSchemaName = String;
-
-#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
-pub enum CommandSchemaRole {
-    CommandSchema,
-    ResponseSchema,
-    ErrorSchema,
-}
-
-#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
-pub enum EventSchemaRole {
-    EventSchema,
-}
-
-#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ReadModelSchemaRole {
-    QuerySchema,
-    ReadModelSchema,
 }
 
 // ***** Applying to Entities *****
 
-pub trait HasSchema: Entity {
+pub trait HasSchema {
     fn schema(&self) -> &Schema;
 }
 
@@ -57,16 +20,12 @@ pub trait HasModifiableSchema: HasSchema {
 
     fn set_schema(&mut self, schema: Schema);
     fn add_to_schema(&mut self, index: u32, addition: &str) {
-        match self.schema_mut() {
-            Schema::CUE(CUESchema(s)) => s.insert_str(index as usize, addition),
-            Schema::Malli(MalliSchema(s)) => s.insert_str(index as usize, addition),
-        };
+        let Schema(s) = self.schema_mut();
+        s.insert_str(index as usize, addition);
     }
 
     fn delete_from_schema(&mut self, index: u32) {
-        match self.schema_mut() {
-            Schema::CUE(CUESchema(s)) => s.remove(index as usize),
-            Schema::Malli(MalliSchema(s)) => s.remove(index as usize),
-        };
+        let Schema(s) = self.schema_mut();
+        s.remove(index as usize);
     }
 }

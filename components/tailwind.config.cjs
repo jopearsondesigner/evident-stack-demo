@@ -7,7 +7,8 @@ module.exports = {
 			primary: 'lato, san-serif',
 			copy: 'lato, san-serif',
 			sans: 'lato, san-serif',
-			header: 'strokeWeight, sans-serif'
+			header: 'strokeWeight, sans-serif',
+			mono: 'input-mono, Courier New, monospace;'
 		},
 		extend: {
 			colors: {
@@ -95,6 +96,7 @@ module.exports = {
 			boxShadow: {
 				placement: '0 4px 6px -4px rgba(0,0,0,0.83)',
 				interface: '0 2px 2px 0px rgba(0,0,0,0.19)',
+				modal: '0 4px 4px 0px rgba(0,0,0,.25)',
 				header: '0 2px 2px 0 rgba(0, 0, 0, 0.16)',
 				'3xl': '0 35px 35px rgba(0, 0, 0, 0.25)',
 				'4xl': [

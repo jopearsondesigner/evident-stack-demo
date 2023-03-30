@@ -11,6 +11,22 @@
 	src: url('/fonts/font.woff') format('woff-variations');
 }
 
+progress[value] {
+	/* Reset the default appearance */
+	-moz-appearance: none;
+	appearance: none;
+
+	/* leave defaults in for other browsers */
+	background-size: 35px 20px, 100% 100%, 100% 100%;
+	accent-color: #e16005;
+}
+
+progress[value]::-webkit-progress-bar {
+	/*border-radius: 2px; */
+	background-size: 35px 20px, 100% 100%, 100% 100%;
+	accent-color: #e16005;
+}
+
 body {
 	@apply bg-white dark:bg-dark-1;
 	@apply min-h-screen;

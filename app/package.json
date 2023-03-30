@@ -60,6 +60,5 @@
     "vitest": "^0.25.3"
   },
   "dependencies": {
-    "editor-state": "0.1.0"
   }
 }

@@ -15,7 +15,8 @@
 		| 'success'
 		| 'disabled'
 		| 'brandDesignPrimary'
-		| 'brandStackPrimary';
+		| 'brandStackPrimary'
+		| 'ghost';
 
 	const colorClasses = {
 		default: 'text-white bg-focus hover:bg-[#054FDE] ring-focus',

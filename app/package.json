@@ -31,6 +31,7 @@
     "format": "prettier --plugin-search-dir . --write ."
   },
   "devDependencies": {
+    "@marplex/flarebase-auth": "^1.2.0",
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-cloudflare": "2.1.0",
     "@sveltejs/kit": "^1.0.0",
@@ -47,7 +48,6 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "firebase": "^9.18.0",
-    "firebase-admin": "^11.5.0",
     "postcss": "^8.4.19",
     "prettier": "^2.8.0",
     "prettier-plugin-svelte": "^2.8.1",

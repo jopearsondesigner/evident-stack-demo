@@ -10,7 +10,7 @@ const authentication = (async ({ event, resolve }) => {
 
   const token = sessionCookie ? await getIdTokenFromSessionCookie(sessionCookie) : null
 
-  locals.user = token ? { id: token.sub, email: token.email! } : null
+  locals.user = token ? { id: token.sub!, email: token.email! } : null
 
   return resolve(event)
 }) satisfies Handle;

@@ -1,9 +1,8 @@
-import type { DecodedIdToken } from 'firebase-admin/auth'
+import type { DecodedIdToken } from '@marplex/flarebase-auth'
 import { auth } from './init'
 
 export const createSessionCookie = async (token: string, maxAge: number) => {
-  const expiresIn = maxAge * 1000
-  const sessionCookie = await auth.createSessionCookie(token, { expiresIn })
+  const sessionCookie = await auth.createSessionCookie(token, maxAge)
   const cookieOpts: {path: string, sameSite: 'strict', maxAge: number} =
     {path: '/', sameSite: 'strict', maxAge: maxAge}
 
@@ -19,5 +18,5 @@ export const getIdTokenFromSessionCookie = async (
 ): Promise<DecodedIdToken | null> => {
 	if (!sessionCookie) return Promise.resolve(null)
 
-	return auth.verifySessionCookie(sessionCookie, true).catch(() => null)
+	return auth.verifySessionCookie(sessionCookie).catch(() => null)
 }

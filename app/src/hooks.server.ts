@@ -1,5 +1,5 @@
 import { SESSION_COOKIE_NAME } from "$lib/constants";
-import { getIdTokenFromSessionCookie } from "$lib/firebase/admin";
+import { getIdTokenFromSessionCookie } from "$lib/firebase/admin/auth";
 import { redirect, type Handle } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 
@@ -10,7 +10,7 @@ const authentication = (async ({ event, resolve }) => {
 
   const token = sessionCookie ? await getIdTokenFromSessionCookie(sessionCookie) : null
 
-  locals.user = token ? {id: token.sub, email: token.email} : null
+  locals.user = token ? { id: token.sub!, email: token.email! } : null
 
   return resolve(event)
 }) satisfies Handle;

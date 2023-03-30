@@ -4,7 +4,7 @@ use crate::types::placement::{Placement, PlacementId, PlacementPosition};
 use crate::types::{Component, ComponentId, Lane, LaneId};
 use crate::EventModelId;
 use epoch::decider::Event;
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventModelEvent {

@@ -1,6 +1,6 @@
 ---
 name: Stage Website on Pull Request
-run-name: Pull Request Staged by ${{ github.actor }}
+run-name: Website Pull Request Staged by ${{ github.actor }}
 on:
   pull_request:
     branches:
@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
-    name: Publish to Cloudflare Pages
+    name: Publish Website to Cloudflare Pages
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -25,13 +25,16 @@ jobs:
           node-version: 16
 
       - name: Install dependencies
-        run: npm -w website install
+        run: npm -w website i && npm -w components i
 
       - name: Install playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Test
+        run: npm -w website run check && npm -w website run test
+
       - name: Build
-        run: npm -w website run release
+        run: npm -w website run build
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1

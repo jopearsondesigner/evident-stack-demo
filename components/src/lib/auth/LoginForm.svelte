@@ -23,7 +23,7 @@
       onSubmit(email)
       state = 'success'
     } catch (error) {
-      state = error
+      state = error as Error
     }
   }
 </script>

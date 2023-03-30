@@ -3,23 +3,26 @@
 	export let row = 0;
 	$: gridRow = row + 1;
 
-	/** @type {string} */
-	export let title = '';
+	/** @type {string | null} */
+	export let id = null;
 
-	$: cursorClass = title ? 'cursor-pointer' : 'cursor-default';
+	/** @type {string} */
+	export let name = '';
+
+	$: cursorClass = name ? 'cursor-pointer' : 'cursor-default';
 </script>
 
-{#if title}
+{#if name}
 	<h3
-		class="audienceTitle sticky left-3 z-30 justify-self-start self-start cursor-pointer prose text-body-light dark:text-body-dark mt-3"
+		class="audienceName sticky left-3 z-30 justify-self-start self-start cursor-pointer prose text-body-light dark:text-body-dark mt-3"
 		style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 	>
-		{title}
+		{name}
 	</h3>
 {:else}
 	<!-- TODO: reduce the color to disabled text -->
 	<h3
-		class="audienceTitle sticky left-3 z-30 justify-self-start self-start prose text-body-light dark:text-body-dark mt-3"
+		class="audienceName sticky left-3 z-30 justify-self-start self-start prose text-body-light dark:text-body-dark mt-3"
 		style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 	>
 		Default Audience

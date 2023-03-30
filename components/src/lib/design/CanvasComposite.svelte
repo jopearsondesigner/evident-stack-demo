@@ -186,7 +186,7 @@
 		default_audience_placements={[
 			null,
 			null,
-			{ id: '1', title: 'An interface!', description: 'blah *blah* **blah**' },
+			{ id: '1', name: 'An interface!', description: 'blah *blah* **blah**' },
 			null,
 			null,
 			null,
@@ -195,54 +195,54 @@
 			null,
 			null,
 			null,
-			{ id: '2', title: 'Another interface!', description: 'blah *blah* **blah**' }
+			{ id: '2', name: 'Another interface!', description: 'blah *blah* **blah**' }
 		]}
 		audiences={[
 			{
-				title: 'A named audience',
+				name: 'A named audience',
 				placements: [
 					null,
 					null,
 					null,
-					{ id: '3', title: 'An interface!', description: 'blah *blah* **blah**' },
+					{ id: '3', name: 'An interface!', description: 'blah *blah* **blah**' },
 					null,
-					{ id: '4', title: 'Another interface!', description: 'blah *blah* **blah**' }
+					{ id: '4', name: 'Another interface!', description: 'blah *blah* **blah**' }
 				]
 			},
 			{
-				title: 'Another named audience',
+				name: 'Another named audience',
 				placements: [
 					null,
-					{ id: '5', title: 'An interface!', description: 'blah *blah* **blah**' },
+					{ id: '5', name: 'An interface!', description: 'blah *blah* **blah**' },
 					null,
 					null,
 					null,
-					{ id: '6', title: 'Another interface!', description: 'blah *blah* **blah**' }
+					{ id: '6', name: 'Another interface!', description: 'blah *blah* **blah**' }
 				]
 			}
 		]}
 		timeline_placements={[
 			null,
-			{ id: '5', title: 'A command!', type: 'command', description: 'blah *blah* **blah**' },
+			{ id: '5', name: 'A command!', type: 'command', description: 'blah *blah* **blah**' },
 			null,
-			{ id: '6', title: 'A read model!', type: 'readModel', description: 'blah *blah* **blah**' },
+			{ id: '6', name: 'A read model!', type: 'readModel', description: 'blah *blah* **blah**' },
 			null,
-			{ id: '7', title: 'Another command!', type: 'command', description: 'blah *blah* **blah**' },
+			{ id: '7', name: 'Another command!', type: 'command', description: 'blah *blah* **blah**' },
 			{
 				id: '8',
-				title: 'Another read model!',
+				name: 'Another read model!',
 				type: 'readModel',
 				description: 'blah *blah* **blah**'
 			}
 		]}
 		streams={[
 			{
-				title: 'A named stream',
+				name: 'A named stream',
 				placements: [
 					null,
 					null,
 					null,
-					{ id: '9', title: 'An event!', description: 'blah *blah* **blah**' },
+					{ id: '9', name: 'An event!', description: 'blah *blah* **blah**' },
 					null,
 					null,
 					null,
@@ -252,17 +252,17 @@
 					null,
 					null,
 					null,
-					{ id: '10', title: 'Another event!', description: 'blah *blah* **blah**' }
+					{ id: '10', name: 'Another event!', description: 'blah *blah* **blah**' }
 				]
 			}
 		]}
 		default_stream_placements={[
 			null,
 			null,
-			{ id: '11', title: 'An event!', description: 'blah *blah* **blah**' },
+			{ id: '11', name: 'An event!', description: 'blah *blah* **blah**' },
 			null,
 			null,
-			{ id: '12', title: 'Another event!', description: 'blah *blah* **blah**' }
+			{ id: '12', name: 'Another event!', description: 'blah *blah* **blah**' }
 		]}
 	/>
 </main>

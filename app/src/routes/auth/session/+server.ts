@@ -1,5 +1,5 @@
 import { ONE_WEEK_IN_SECONDS, SESSION_COOKIE_NAME } from '$lib/constants';
-import { createSessionCookie, verifyIdToken } from '$lib/firebase/admin';
+import { createSessionCookie, verifyIdToken } from '$lib/firebase/admin/auth';
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
@@ -16,7 +16,8 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     const user = { id: sub, email }
     cookies.set(SESSION_COOKIE_NAME, sessionCookie, cookieOpts)
     return json(user)
-  } catch {
+  } catch (e) {
+    console.error("Authentication error:", e)
     throw error(404) // Return 404 instead of 401, to deter brute-force
   }
 }

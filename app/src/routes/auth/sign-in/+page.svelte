@@ -1,6 +1,6 @@
 <script lang="ts">
   import LoginForm from '$components/auth/LoginForm.svelte'
-  import { sendSignInLink } from '$lib/firebase/client';
+  import { sendSignInLink } from '$lib/firebase/auth';
   import { setSignInEmail } from '$lib/localStorage/signInEmail';
 
   const onSubmit = async (email: string) => {

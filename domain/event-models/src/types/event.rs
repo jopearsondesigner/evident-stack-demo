@@ -1,12 +1,10 @@
-use std::collections::HashMap;
-
-use crate::types::schema::{CommandSchemaRole, Schema, SubSchemaName};
+use crate::types::schema::Schema;
 use crate::types::{Described, Entity, Named};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::schema::{HasModifiableSchema, HasSchema};
-use super::{ModifiablyDescribed, Renamable};
+use super::{EventModelError, ModifiablyDescribed, Renamable};
 
 pub type EventId = Uuid;
 
@@ -16,18 +14,21 @@ pub struct Event {
     name: String,
     description: String,
     schema: Schema,
-    schema_roles: HashMap<CommandSchemaRole, SubSchemaName>,
 }
 
 impl Event {
-    pub fn create(id: Uuid, name: &str) -> Self {
-        Event {
+    pub fn create(
+        id: Uuid,
+        name: String,
+        description: String,
+        schema: Schema,
+    ) -> Result<Self, EventModelError> {
+        Ok(Event {
             id,
-            name: name.to_string(),
-            description: Default::default(),
-            schema: Default::default(),
-            schema_roles: Default::default(),
-        }
+            name,
+            description,
+            schema,
+        })
     }
 }
 

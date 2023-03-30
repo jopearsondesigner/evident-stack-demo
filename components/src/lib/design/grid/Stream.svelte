@@ -3,21 +3,24 @@
 	export let row = 0;
 	$: gridRow = row + 1;
 
+  /** @type {string | null} */
+	export let id = null;
+
 	/** @type {string} */
-	export let title = '';
+	export let name = '';
 </script>
 
-{#if title}
+{#if name}
 	<h3
-		class="streamTitle laneTitle sticky left-3 z-30 justify-self-start self-end cursor-pointer prose text-body-light dark:text-body-dark mb-3"
+		class="streamName laneName sticky left-3 z-30 justify-self-start self-end cursor-pointer prose text-body-light dark:text-body-dark mb-3"
 		style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 	>
-		{title}
+		{name}
 	</h3>
 {:else}
 	<!-- TODO: reduce the color to disabled text -->
 	<h3
-		class="streamTitle sticky left-3 z-30 justify-self-start self-end prose text-body-light dark:text-body-dark mb-3"
+		class="streamName sticky left-3 z-30 justify-self-start self-end prose text-body-light dark:text-body-dark mb-3"
 		style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 	>
 		Default Stream

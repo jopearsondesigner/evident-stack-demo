@@ -129,7 +129,7 @@ impl EventModel for InMemoryEventModel {
     fn create(initial: EventModelState<Self>, id: EventModelId, name: String) -> Self {
         match initial {
             EventModelState::BeforeCreation(_) => InMemoryEventModel::new(id, name),
-            EventModelState::EventModel(_) => panic!("Illegal state when creating Event Model!"),
+            _ => panic!("Illegal state when creating Event Model!"),
         }
     }
 }

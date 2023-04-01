@@ -149,9 +149,7 @@ impl EventModel for ConvergentEventModel {
             EventModelState::BeforeCreation(details) => {
                 Self::new(id, name, details.node, OpSet::default())
             }
-            EventModelState::EventModel(_) => {
-                panic!("Illegal initial state when creating Event Model")
-            }
+            _ => panic!("Illegal initial state when creating Event Model"),
         }
     }
 }

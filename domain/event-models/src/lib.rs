@@ -32,6 +32,7 @@ pub type EventModelId = Uuid;
 pub enum EventModelState<T: EventModel> {
     BeforeCreation(T::CreationDetails),
     EventModel(T),
+    Deleted(EventModelId),
 }
 
 pub trait EventModelData: HasSchema + Debug {

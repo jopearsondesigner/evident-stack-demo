@@ -34,6 +34,7 @@ impl HasKey for EventModelState<InMemoryEventModel> {
         match self {
             EventModelState::BeforeCreation(_) => None,
             EventModelState::EventModel(model) => Some(model.id().to_string()),
+            EventModelState::Deleted(id) => Some(id.to_string()),
         }
     }
 }

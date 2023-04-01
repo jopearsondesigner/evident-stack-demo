@@ -11,7 +11,7 @@ use uuid::Uuid;
 
 use super::{ComponentId, LaneId};
 
-pub type PlacementIndex = u32;
+pub type PlacementIndex = usize;
 pub type PlacementId = Uuid;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

@@ -107,7 +107,7 @@ impl ModifiablyDescribed for InMemoryEventModel {
         self.description = description.to_string();
     }
 
-    fn add_to_description(&mut self, index: u32, addition: &str) {
+    fn add_to_description(&mut self, index: usize, addition: &str) {
         if self.description.is_empty() {
             self.set_description(addition);
         } else {
@@ -115,7 +115,7 @@ impl ModifiablyDescribed for InMemoryEventModel {
         }
     }
 
-    fn delete_from_description(&mut self, index: u32) {
+    fn delete_from_description(&mut self, index: usize) {
         if !self.description.is_empty() {
             self.description.remove(index as usize);
         }
@@ -244,7 +244,7 @@ impl ModifiableEventModel for InMemoryEventModel {
     fn added_to_component_description(
         &mut self,
         component_id: &ComponentId,
-        index: u32,
+        index: usize,
         addition: &str,
     ) {
         match self.component_mut_by_id(component_id) {
@@ -268,7 +268,7 @@ impl ModifiableEventModel for InMemoryEventModel {
         }
     }
 
-    fn deleted_from_component_description(&mut self, component_id: &ComponentId, index: u32) {
+    fn deleted_from_component_description(&mut self, component_id: &ComponentId, index: usize) {
         match self.component_mut_by_id(component_id) {
             None => {
                 panic!("Component with id {:?} not found", component_id)
@@ -293,7 +293,7 @@ impl ModifiableEventModel for InMemoryEventModel {
     fn added_to_component_schema(
         &mut self,
         component_id: &ComponentId,
-        index: u32,
+        index: usize,
         addition: &str,
     ) {
         match self.component_mut_by_id(component_id) {
@@ -315,7 +315,7 @@ impl ModifiableEventModel for InMemoryEventModel {
         }
     }
 
-    fn deleted_from_component_schema(&mut self, component_id: &ComponentId, index: u32) {
+    fn deleted_from_component_schema(&mut self, component_id: &ComponentId, index: usize) {
         match self.component_mut_by_id(component_id) {
             None => {
                 panic!("Component with id {:?} not found", component_id)
@@ -354,7 +354,7 @@ impl ModifiableEventModel for InMemoryEventModel {
     fn added_to_placement_schema(
         &mut self,
         placement_id: &PlacementId,
-        index: u32,
+        index: usize,
         addition: &str,
     ) {
         if let Some(placement) = self.placements.get(placement_id) {
@@ -369,7 +369,7 @@ impl ModifiableEventModel for InMemoryEventModel {
         }
     }
 
-    fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: u32) {
+    fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: usize) {
         if let Some(placement) = self.placements.get(placement_id) {
             if let Some(component_mut) = self.component_mut_by_id(&placement.component_id()) {
                 match component_mut {

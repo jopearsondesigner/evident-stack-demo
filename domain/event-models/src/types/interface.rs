@@ -14,13 +14,13 @@ pub enum InterfaceConfig {
     Blank,
     Figma {
         url: Url,
-        width: Option<u32>,
-        height: Option<u32>,
+        width: Option<usize>,
+        height: Option<usize>,
     },
     Image {
         url: Url,
-        width: Option<u32>,
-        height: Option<u32>,
+        width: Option<usize>,
+        height: Option<usize>,
     },
     Job,
 }
@@ -83,7 +83,7 @@ impl ModifiablyDescribed for Interface {
         self.description = description.to_string();
     }
 
-    fn add_to_description(&mut self, index: u32, addition: &str) {
+    fn add_to_description(&mut self, index: usize, addition: &str) {
         if self.description.is_empty() {
             self.set_description(addition);
         } else {
@@ -91,7 +91,7 @@ impl ModifiablyDescribed for Interface {
         }
     }
 
-    fn delete_from_description(&mut self, index: u32) {
+    fn delete_from_description(&mut self, index: usize) {
         if !self.description.is_empty() {
             self.description.remove(index as usize);
         }

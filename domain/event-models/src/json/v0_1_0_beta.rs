@@ -57,9 +57,9 @@ pub enum Interface {
         #[serde(rename = "interface.type.figma/url")]
         url: Url,
         #[serde(rename = "interface/width")]
-        width: Option<u32>,
+        width: Option<usize>,
         #[serde(rename = "interface/height")]
-        height: Option<u32>,
+        height: Option<usize>,
     },
     #[serde(rename = "interface.type/image")]
     Image {
@@ -72,9 +72,9 @@ pub enum Interface {
         #[serde(rename = "interface.type.image/url")]
         url: Url,
         #[serde(rename = "interface/width")]
-        width: Option<u32>,
+        width: Option<usize>,
         #[serde(rename = "interface/height")]
-        height: Option<u32>,
+        height: Option<usize>,
     },
     #[serde(rename = "interface.type/job")]
     Job {
@@ -270,7 +270,7 @@ pub enum Placement {
         #[serde(rename = "placement/id")]
         id: Uuid,
         #[serde(rename = "placement/index")]
-        index: u32,
+        index: usize,
         #[serde(rename = "interface/id")]
         interface: Uuid,
         #[serde(rename = "interface/audience")]
@@ -280,7 +280,7 @@ pub enum Placement {
         #[serde(rename = "placement/id")]
         id: Uuid,
         #[serde(rename = "placement/index")]
-        index: u32,
+        index: usize,
         #[serde(rename = "command/id")]
         command: Uuid,
     },
@@ -288,7 +288,7 @@ pub enum Placement {
         #[serde(rename = "placement/id")]
         id: Uuid,
         #[serde(rename = "placement/index")]
-        index: u32,
+        index: usize,
         #[serde(rename = "event/id")]
         event: Uuid,
         #[serde(rename = "event/stream")]
@@ -298,7 +298,7 @@ pub enum Placement {
         #[serde(rename = "placement/id")]
         id: Uuid,
         #[serde(rename = "placement/index")]
-        index: u32,
+        index: usize,
         #[serde(rename = "read-model/id")]
         read_model: Uuid,
     },

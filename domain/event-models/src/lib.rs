@@ -72,21 +72,21 @@ pub trait ModifiableEventModel:
     fn added_to_component_description(
         &mut self,
         component_id: &ComponentId,
-        index: u32,
+        index: usize,
         addition: &str,
     );
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn deleted_from_component_description(&mut self, component_id: &ComponentId, index: u32);
+    fn deleted_from_component_description(&mut self, component_id: &ComponentId, index: usize);
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn added_to_component_schema(&mut self, component_id: &ComponentId, index: u32, addition: &str);
+    fn added_to_component_schema(&mut self, component_id: &ComponentId, index: usize, addition: &str);
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn deleted_from_component_schema(&mut self, component_id: &ComponentId, index: u32);
+    fn deleted_from_component_schema(&mut self, component_id: &ComponentId, index: usize);
 
     // ***** Placements *****
 
@@ -96,11 +96,11 @@ pub trait ModifiableEventModel:
 
     // Validation of presence of placement_id must be performed
     //  by `decide` prior to this step
-    fn added_to_placement_schema(&mut self, placement_id: &PlacementId, index: u32, addition: &str);
+    fn added_to_placement_schema(&mut self, placement_id: &PlacementId, index: usize, addition: &str);
 
     // Validation of presence of placement_id must be performed
     //  by `decide` prior to this step
-    fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: u32);
+    fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: usize);
 
     // ***** Lanes *****
 

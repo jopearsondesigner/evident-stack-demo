@@ -19,12 +19,12 @@ pub trait HasModifiableSchema: HasSchema {
     fn schema_mut(&mut self) -> &mut Schema;
 
     fn set_schema(&mut self, schema: Schema);
-    fn add_to_schema(&mut self, index: u32, addition: &str) {
+    fn add_to_schema(&mut self, index: usize, addition: &str) {
         let Schema(s) = self.schema_mut();
         s.insert_str(index as usize, addition);
     }
 
-    fn delete_from_schema(&mut self, index: u32) {
+    fn delete_from_schema(&mut self, index: usize) {
         let Schema(s) = self.schema_mut();
         s.remove(index as usize);
     }

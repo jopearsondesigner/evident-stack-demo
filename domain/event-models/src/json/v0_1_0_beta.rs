@@ -1,13 +1,16 @@
 use std::collections::HashMap;
 
+use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
 use crate::{
     api::errors::EventModelError,
-    types::{interface::InterfaceConfig, Schema},
+    types::{interface::InterfaceConfig, Entity, Schema},
 };
+
+use super::EventModelDataTransfer;
 
 fn as_string(option: Option<String>) -> String {
     match option {
@@ -85,6 +88,19 @@ pub enum Interface {
         #[serde(rename = "interface/description")]
         description: Option<String>,
     },
+}
+
+impl Interface {
+    fn id_into(&self) -> Uuid {
+        match self {
+            Interface::Blank { id, .. } => *id,
+            Interface::Rest { id, .. } => *id,
+            Interface::Html { id, .. } => *id,
+            Interface::Figma { id, .. } => *id,
+            Interface::Image { id, .. } => *id,
+            Interface::Job { id, .. } => *id,
+        }
+    }
 }
 
 impl TryFrom<Interface> for crate::types::Interface {
@@ -418,4 +434,56 @@ pub struct JsonV0_1_0BetaTransfer {
     placements: HashMap<Uuid, Placement>,
     #[serde(rename = "event-model/flows")]
     flows: HashMap<Uuid, FlowArrow>,
+    #[serde(skip)]
+    schema: Schema,
+}
+
+impl TryFrom<JsonV0_1_0BetaTransfer> for EventModelDataTransfer {
+    type Error = EventModelError;
+
+    fn try_from(value: JsonV0_1_0BetaTransfer) -> Result<Self, Self::Error> {
+        Ok(EventModelDataTransfer {
+            schema: value.schema,
+            interfaces: value
+                .interfaces
+                .into_iter()
+                .map(|(_, i)| crate::types::Interface::try_from(i).map(|i| (i.id().to_owned(), i)))
+                .try_collect()?,
+            commands: value
+                .commands
+                .into_iter()
+                .map(|(_, c)| crate::types::Command::try_from(c).map(|c| (c.id().to_owned(), c)))
+                .try_collect()?,
+            events: value
+                .events
+                .into_iter()
+                .map(|(_, e)| crate::types::Event::try_from(e).map(|e| (e.id().to_owned(), e)))
+                .try_collect()?,
+            read_models: value
+                .read_models
+                .into_iter()
+                .map(|(_, r)| crate::types::ReadModel::try_from(r).map(|r| (r.id().to_owned(), r)))
+                .try_collect()?,
+            audiences: value
+                .audiences
+                .into_iter()
+                .map(|a| crate::types::Audience::try_from(a))
+                .try_collect()?,
+            streams: value
+                .streams
+                .into_iter()
+                .map(|s| crate::types::Stream::try_from(s))
+                .try_collect()?,
+            placements: value
+                .placements
+                .into_iter()
+                .map(|(_, p)| crate::types::Placement::try_from(p).map(|p| (p.id().to_owned(), p)))
+                .try_collect()?,
+            flows: value
+                .flows
+                .into_iter()
+                .map(|(_, p)| crate::types::FlowArrow::try_from(p).map(|p| (p.id().to_owned(), p)))
+                .try_collect()?,
+        })
+    }
 }

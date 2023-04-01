@@ -12,10 +12,10 @@ pub enum EventModelEvent {
     Renamed(EventModelId, String),
     DescriptionSet(EventModelId, String),
     AddedToDescription(EventModelId, usize, String),
-    DeletedFromDescription(EventModelId, usize),
+    DeletedFromDescription(EventModelId, usize, usize),
     SchemaSet(EventModelId, String),
     AddedToSchema(EventModelId, usize, String),
-    DeletedFromSchema(EventModelId, usize),
+    DeletedFromSchema(EventModelId, usize, usize),
     Deleted(EventModelId),
 
     // Lanes

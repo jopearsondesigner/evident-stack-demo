@@ -16,13 +16,13 @@ pub enum InterfaceConfig {
     Blank,
     Figma {
         url: String,
-        width: Option<u32>,
-        height: Option<u32>,
+        width: Option<usize>,
+        height: Option<usize>,
     },
     Image {
         url: String,
-        width: Option<u32>,
-        height: Option<u32>,
+        width: Option<usize>,
+        height: Option<usize>,
     },
     Job,
 }
@@ -53,7 +53,7 @@ impl From<&event_models::types::InterfaceConfig> for InterfaceConfig {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct InterfacePlacement {
     id: Uuid,
-    index: u32,
+    index: usize,
     interface: Uuid,
     name: String,
     description: String,
@@ -64,7 +64,7 @@ pub struct InterfacePlacement {
 pub struct Audience {
     id: Uuid,
     name: String,
-    placements: HashMap<u32, InterfacePlacement>,
+    placements: HashMap<usize, InterfacePlacement>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -77,7 +77,7 @@ pub enum TimelinePlacementType {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TimelinePlacement {
     id: Uuid,
-    index: u32,
+    index: usize,
     component: Uuid,
     name: String,
     description: String,
@@ -88,7 +88,7 @@ pub struct TimelinePlacement {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EventPlacement {
     id: Uuid,
-    index: u32,
+    index: usize,
     event: Uuid,
     name: String,
     description: String,
@@ -98,7 +98,7 @@ pub struct EventPlacement {
 pub struct Stream {
     id: Uuid,
     name: String,
-    placements: HashMap<u32, EventPlacement>,
+    placements: HashMap<usize, EventPlacement>,
 }
 
 pub enum GridPlacement {
@@ -191,16 +191,16 @@ pub struct EventModelGrid {
     id: Uuid,
     name: String,
     description: String,
-    default_audience: HashMap<u32, InterfacePlacement>,
+    default_audience: HashMap<usize, InterfacePlacement>,
     audiences: Vec<Audience>,
-    timeline: HashMap<u32, TimelinePlacement>,
+    timeline: HashMap<usize, TimelinePlacement>,
     streams: Vec<Stream>,
-    default_stream: HashMap<u32, EventPlacement>,
+    default_stream: HashMap<usize, EventPlacement>,
 }
 
 impl From<InMemoryEventModel> for EventModelGrid {
     fn from(model: InMemoryEventModel) -> Self {
-        let mut grouped_audiences: HashMap<Uuid, HashMap<u32, InterfacePlacement>> = model
+        let mut grouped_audiences: HashMap<Uuid, HashMap<usize, InterfacePlacement>> = model
             .placements()
             .iter()
             .map(|(_, placement)| (&model, placement.to_owned()))
@@ -219,12 +219,12 @@ impl From<InMemoryEventModel> for EventModelGrid {
                     tuples
                         .into_iter()
                         .map(|(_, index, placement)| (index, placement))
-                        .collect::<HashMap<u32, InterfacePlacement>>(),
+                        .collect::<HashMap<usize, InterfacePlacement>>(),
                 )
             })
             .collect();
 
-        let mut grouped_streams: HashMap<Uuid, HashMap<u32, EventPlacement>> = model
+        let mut grouped_streams: HashMap<Uuid, HashMap<usize, EventPlacement>> = model
             .placements()
             .iter()
             .map(|(_, placement)| (&model, placement.to_owned()))
@@ -243,7 +243,7 @@ impl From<InMemoryEventModel> for EventModelGrid {
                     tuples
                         .into_iter()
                         .map(|(_, index, placement)| (index, placement))
-                        .collect::<HashMap<u32, EventPlacement>>(),
+                        .collect::<HashMap<usize, EventPlacement>>(),
                 )
             })
             .collect();

@@ -50,9 +50,30 @@ pub trait Described: Named {
 }
 
 pub trait ModifiablyDescribed: Described {
-    fn set_description(&mut self, description: &str);
-    fn add_to_description(&mut self, index: usize, addition: &str);
-    fn delete_from_description(&mut self, index: usize);
+    fn description_mut(&mut self) -> &mut String;
+
+    fn set_description(&mut self, description: &str) {
+        let mut desc = self.description_mut();
+        *desc = description.to_string();
+    }
+
+    fn add_to_description(&mut self, index: usize, addition: &str) {
+        let mut desc = self.description_mut();
+        if desc.is_empty() {
+            self.set_description(addition);
+        } else {
+            desc.insert_str(index, addition);
+        }
+    }
+
+    fn delete_from_description(&mut self, index: usize, count: usize) {
+        let mut desc = self.description_mut();
+        if !desc.is_empty() {
+            for i in 0..count {
+                desc.remove(index + i);
+            }
+        }
+    }
 }
 
 pub type LaneIndex = usize;

@@ -2,13 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    types::{
-        schema::HasSchema, Audience, Command, CommandId, Event, EventId, FlowArrow, FlowId,
-        Interface, InterfaceId, Placement, PlacementId, ReadModel, ReadModelId, Schema, Stream,
-    },
-    EventModelData,
-};
+use crate::{api::errors::EventModelError, EventModelDataTransfer};
 
 use self::{v0_1_0_beta::JsonV0_1_0BetaTransfer, v1_0_0::JsonV1_0_0Transfer};
 
@@ -25,49 +19,14 @@ pub enum JsonImport {
     V1_0_0(JsonV1_0_0Transfer),
 }
 
-impl HasSchema for JsonImport {
-    fn schema(&self) -> &Schema {
-        match self {
-            JsonImport::V0_1_0Beta(_) => todo!(),
-            JsonImport::V1_0_0(model) => todo!(),
+impl TryFrom<JsonImport> for EventModelDataTransfer {
+    type Error = EventModelError;
+
+    fn try_from(value: JsonImport) -> Result<Self, Self::Error> {
+        match value {
+            JsonImport::V0_1_0Beta(transfer) => transfer.try_into(),
+            JsonImport::V1_0_0(_) => todo!(),
         }
-    }
-}
-
-impl EventModelData for JsonImport {
-    fn interfaces(&self) -> &HashMap<InterfaceId, Interface> {
-        match self {
-            JsonImport::V0_1_0Beta(_) => todo!(),
-            JsonImport::V1_0_0(model) => todo!(),
-        }
-    }
-
-    fn commands(&self) -> &HashMap<CommandId, Command> {
-        todo!()
-    }
-
-    fn events(&self) -> &HashMap<EventId, Event> {
-        todo!()
-    }
-
-    fn read_models(&self) -> &HashMap<ReadModelId, ReadModel> {
-        todo!()
-    }
-
-    fn audiences(&self) -> &Vec<Audience> {
-        todo!()
-    }
-
-    fn streams(&self) -> &Vec<Stream> {
-        todo!()
-    }
-
-    fn placements(&self) -> &HashMap<PlacementId, Placement> {
-        todo!()
-    }
-
-    fn flows(&self) -> &HashMap<FlowId, FlowArrow> {
-        todo!()
     }
 }
 

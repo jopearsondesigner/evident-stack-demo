@@ -343,6 +343,14 @@ impl ModifiableEventModel for InMemoryEventModel {
         self.placements.remove(placement_id);
     }
 
+    fn placements_shifted(&mut self, offset: &usize, width: &usize) {
+        self.placements.iter_mut().for_each(|(_, placement)| {
+            if placement.index() >= offset {
+                placement.shift_right(*width)
+            }
+        })
+    }
+
     fn added_to_placement_schema(
         &mut self,
         placement_id: &PlacementId,

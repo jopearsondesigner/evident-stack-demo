@@ -4,6 +4,8 @@ pub mod grid;
 mod repository;
 mod utils;
 
+use std::str::FromStr;
+
 use crate::repository::LocalStorageStateRepository;
 use epoch::{repository::state::VersionedStateRepository, strategies::ReifyDecideSave};
 pub use event_models::api::commands::EventModelCommand;
@@ -13,8 +15,10 @@ use event_models::{
     EventModelId, EventModelState,
 };
 use grid::EventModelGrid;
+use js_sys::Uint8Array;
 use repository::HasKey;
 pub use utils::set_panic_hook;
+use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -52,6 +56,11 @@ impl ReifyDecideSave for EventModelDecider {
     type Decide = EventModelState<InMemoryEventModel>;
 }
 
+fn parse_uuid(uuid_str: String) -> Result<Uuid, JsValue> {
+    Uuid::from_str(&uuid_str)
+        .map_err(|e| JsValue::from(format!("Error parsing Uuid from string: {:?}", e)))
+}
+
 #[wasm_bindgen]
 pub fn event_model_grid(state: JsValue) -> Result<JsValue, JsValue> {
     let event_model: InMemoryEventModel = serde_wasm_bindgen::from_value(state)?;
@@ -79,8 +88,28 @@ impl EventModelStateManager {
         }
     }
 
-    pub async fn dispatch(&mut self, js_command: JsValue) -> Result<JsValue, JsValue> {
-        let command: EventModelCommand = serde_wasm_bindgen::from_value(js_command)?;
+    pub async fn create(&mut self, name: String) -> Result<JsValue, JsValue> {
+        self.dispatch(EventModelCommand::Create(name)).await
+    }
+
+    pub async fn delete(&mut self, model_id_str: String) -> Result<JsValue, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        self.dispatch(EventModelCommand::Delete(model_id)).await
+    }
+
+    pub async fn import(
+        &mut self,
+        model_id_str: String,
+        json: Uint8Array,
+        offset: usize,
+    ) -> Result<JsValue, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+
+        self.dispatch(EventModelCommand::Import(model_id, offset, json.to_vec()))
+            .await
+    }
+
+    async fn dispatch(&mut self, command: EventModelCommand) -> Result<JsValue, JsValue> {
         log(&format!("Dispatching {:?}...", command));
         let result =
             EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)

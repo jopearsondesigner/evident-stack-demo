@@ -1,11 +1,10 @@
-use crate::json::JsonImport;
 use crate::types::audience::AudienceId;
 use crate::types::flow::{Anchor, FlowId};
 use crate::types::interface::InterfaceConfig;
 use crate::types::placement::PlacementId;
 use crate::types::stream::StreamId;
 use crate::types::ComponentId;
-use crate::{EventModelDataTransfer, EventModelId};
+use crate::EventModelId;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -22,7 +21,7 @@ pub enum EventModelCommand {
     Delete(EventModelId),
 
     // Composite Actions
-    Import(JsonImport),
+    Import(EventModelId, usize, Vec<u8>),
 
     // Lanes
     AddAudience(EventModelId, usize, String),

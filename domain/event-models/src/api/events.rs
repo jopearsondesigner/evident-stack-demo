@@ -31,6 +31,7 @@ pub enum EventModelEvent {
     PlacementMoved(EventModelId, PlacementPosition),
     PlacementRemoved(EventModelId, PlacementId),
     ComponentRemoved(EventModelId, ComponentId),
+    PlacementsShifted(EventModelId, usize, usize),
 
     // Component Details
     ComponentDescriptionSet(EventModelId, ComponentId, String),

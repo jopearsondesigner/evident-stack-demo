@@ -120,6 +120,7 @@ pub trait ModifiableEventModel:
     fn component_placed(&mut self, placement: &Placement);
     fn placement_moved(&mut self, position: &PlacementPosition);
     fn placement_removed(&mut self, placement_id: &PlacementId);
+    fn placements_shifted(&mut self, offset: &usize, width: &usize);
 
     // Validation of presence of placement_id must be performed
     //  by `decide` prior to this step

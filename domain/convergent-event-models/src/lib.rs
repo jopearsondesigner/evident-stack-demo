@@ -215,6 +215,10 @@ impl ModifiableEventModel for ConvergentEventModel {
         todo!()
     }
 
+    fn placements_shifted(&mut self, offset: &usize, width: &usize) {
+        todo!()
+    }
+
     fn added_to_placement_schema(
         &mut self,
         placement_id: &PlacementId,

@@ -77,6 +77,15 @@ impl Placement {
         }
     }
 
+    pub fn shift_right(&mut self, offset: usize) {
+        match self {
+            Placement::Interface { index, .. } => *index += offset,
+            Placement::Command { index, .. } => *index += offset,
+            Placement::Event { index, .. } => *index += offset,
+            Placement::ReadModel { index, .. } => *index += offset,
+        }
+    }
+
     pub fn relocate(&mut self, idx: PlacementIndex, lane: LaneId) {
         match self {
             Placement::Interface {

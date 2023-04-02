@@ -10,11 +10,19 @@ const initializeEventModelStore = async (id: string | null | undefined) => {
 
   return {
     state: readonly(store),
-    dispatch: async (command: any) => {
-      console.log("dispatch command:", command, "to manager:", manager)
-      let result = await manager.dispatch(command)
+    create_model: async (name: string) => {
+      let result = await manager.create(name)
       store.set(result)
-      console.log("dispatch result:", result)
+      return result
+    },
+    delete_model: async (model_id: string) => {
+      let result = await manager.delete(model_id)
+      store.set(result)
+      return result
+    },
+    import_json: async (model_id: string, json_bytes: Uint8Array, offset: number) => {
+      let result = await manager.import(model_id, json_bytes, offset)
+      store.set(result)
       return result
     }
   };

@@ -9,7 +9,7 @@ use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type")]
 #[serde(rename_all = "camelCase")]
 pub enum InterfaceConfig {
@@ -50,7 +50,7 @@ impl From<&event_models::types::InterfaceConfig> for InterfaceConfig {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct InterfacePlacement {
     id: Uuid,
     index: usize,
@@ -60,21 +60,21 @@ pub struct InterfacePlacement {
     config: InterfaceConfig,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Audience {
     id: Uuid,
     name: String,
     placements: HashMap<usize, InterfacePlacement>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum TimelinePlacementType {
     Command,
     ReadModel,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TimelinePlacement {
     id: Uuid,
     index: usize,
@@ -85,7 +85,7 @@ pub struct TimelinePlacement {
     kind: TimelinePlacementType,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventPlacement {
     id: Uuid,
     index: usize,
@@ -94,7 +94,7 @@ pub struct EventPlacement {
     description: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Stream {
     id: Uuid,
     name: String,
@@ -186,11 +186,12 @@ impl From<(&InMemoryEventModel, Placement)> for GridPlacement {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventModelGrid {
     id: Uuid,
     name: String,
     description: String,
+    // TODO: schema display
     default_audience: HashMap<usize, InterfacePlacement>,
     audiences: Vec<Audience>,
     timeline: HashMap<usize, TimelinePlacement>,

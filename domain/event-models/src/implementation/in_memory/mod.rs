@@ -103,22 +103,8 @@ impl Described for InMemoryEventModel {
 }
 
 impl ModifiablyDescribed for InMemoryEventModel {
-    fn set_description(&mut self, description: &str) {
-        self.description = description.to_string();
-    }
-
-    fn add_to_description(&mut self, index: u32, addition: &str) {
-        if self.description.is_empty() {
-            self.set_description(addition);
-        } else {
-            self.description.insert_str(index as usize, addition);
-        }
-    }
-
-    fn delete_from_description(&mut self, index: u32) {
-        if !self.description.is_empty() {
-            self.description.remove(index as usize);
-        }
+    fn description_mut(&mut self) -> &mut String {
+        &mut self.description
     }
 }
 
@@ -132,10 +118,6 @@ impl HasModifiableSchema for InMemoryEventModel {
     fn schema_mut(&mut self) -> &mut Schema {
         &mut self.schema
     }
-
-    fn set_schema(&mut self, schema: Schema) {
-        self.schema = schema
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -147,7 +129,7 @@ impl EventModel for InMemoryEventModel {
     fn create(initial: EventModelState<Self>, id: EventModelId, name: String) -> Self {
         match initial {
             EventModelState::BeforeCreation(_) => InMemoryEventModel::new(id, name),
-            EventModelState::EventModel(_) => panic!("Illegal state when creating Event Model!"),
+            _ => panic!("Illegal state when creating Event Model!"),
         }
     }
 }
@@ -244,7 +226,7 @@ impl ModifiableEventModel for InMemoryEventModel {
     fn added_to_component_description(
         &mut self,
         component_id: &ComponentId,
-        index: u32,
+        index: usize,
         addition: &str,
     ) {
         match self.component_mut_by_id(component_id) {
@@ -268,23 +250,28 @@ impl ModifiableEventModel for InMemoryEventModel {
         }
     }
 
-    fn deleted_from_component_description(&mut self, component_id: &ComponentId, index: u32) {
+    fn deleted_from_component_description(
+        &mut self,
+        component_id: &ComponentId,
+        index: usize,
+        count: usize,
+    ) {
         match self.component_mut_by_id(component_id) {
             None => {
                 panic!("Component with id {:?} not found", component_id)
             }
             Some(component) => match component {
                 ComponentMut::InterfaceComponentMut(i) => {
-                    i.delete_from_description(index);
+                    i.delete_from_description(index, count);
                 }
                 ComponentMut::CommandComponentMut(c) => {
-                    c.delete_from_description(index);
+                    c.delete_from_description(index, count);
                 }
                 ComponentMut::EventComponentMut(e) => {
-                    e.delete_from_description(index);
+                    e.delete_from_description(index, count);
                 }
                 ComponentMut::ReadModelComponentMut(r) => {
-                    r.delete_from_description(index);
+                    r.delete_from_description(index, count);
                 }
             },
         }
@@ -293,7 +280,7 @@ impl ModifiableEventModel for InMemoryEventModel {
     fn added_to_component_schema(
         &mut self,
         component_id: &ComponentId,
-        index: u32,
+        index: usize,
         addition: &str,
     ) {
         match self.component_mut_by_id(component_id) {
@@ -315,7 +302,12 @@ impl ModifiableEventModel for InMemoryEventModel {
         }
     }
 
-    fn deleted_from_component_schema(&mut self, component_id: &ComponentId, index: u32) {
+    fn deleted_from_component_schema(
+        &mut self,
+        component_id: &ComponentId,
+        index: usize,
+        count: usize,
+    ) {
         match self.component_mut_by_id(component_id) {
             None => {
                 panic!("Component with id {:?} not found", component_id)
@@ -323,13 +315,13 @@ impl ModifiableEventModel for InMemoryEventModel {
             Some(component) => match component {
                 ComponentMut::InterfaceComponentMut(_) => (),
                 ComponentMut::CommandComponentMut(c) => {
-                    c.delete_from_schema(index);
+                    c.delete_from_schema(index, count);
                 }
                 ComponentMut::EventComponentMut(e) => {
-                    e.delete_from_schema(index);
+                    e.delete_from_schema(index, count);
                 }
                 ComponentMut::ReadModelComponentMut(r) => {
-                    r.delete_from_schema(index);
+                    r.delete_from_schema(index, count);
                 }
             },
         }
@@ -351,10 +343,18 @@ impl ModifiableEventModel for InMemoryEventModel {
         self.placements.remove(placement_id);
     }
 
+    fn placements_shifted(&mut self, offset: &usize, width: &usize) {
+        self.placements.iter_mut().for_each(|(_, placement)| {
+            if placement.index() >= offset {
+                placement.shift_right(*width)
+            }
+        })
+    }
+
     fn added_to_placement_schema(
         &mut self,
         placement_id: &PlacementId,
-        index: u32,
+        index: usize,
         addition: &str,
     ) {
         if let Some(placement) = self.placements.get(placement_id) {
@@ -369,14 +369,19 @@ impl ModifiableEventModel for InMemoryEventModel {
         }
     }
 
-    fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: u32) {
+    fn deleted_from_placement_schema(
+        &mut self,
+        placement_id: &PlacementId,
+        index: usize,
+        count: usize,
+    ) {
         if let Some(placement) = self.placements.get(placement_id) {
             if let Some(component_mut) = self.component_mut_by_id(&placement.component_id()) {
                 match component_mut {
                     ComponentMut::InterfaceComponentMut(_) => (),
-                    ComponentMut::CommandComponentMut(c) => c.delete_from_schema(index),
-                    ComponentMut::EventComponentMut(e) => e.delete_from_schema(index),
-                    ComponentMut::ReadModelComponentMut(r) => r.delete_from_schema(index),
+                    ComponentMut::CommandComponentMut(c) => c.delete_from_schema(index, count),
+                    ComponentMut::EventComponentMut(e) => e.delete_from_schema(index, count),
+                    ComponentMut::ReadModelComponentMut(r) => r.delete_from_schema(index, count),
                 };
             }
         }
@@ -384,8 +389,8 @@ impl ModifiableEventModel for InMemoryEventModel {
 
     fn lane_added(&mut self, lane: Lane, index: LaneIndex) {
         match lane {
-            Lane::Audience(audience) => self.audiences.insert(index as usize, audience),
-            Lane::Stream(stream) => self.streams.insert(index as usize, stream),
+            Lane::Audience(audience) => self.audiences.insert(index, audience),
+            Lane::Stream(stream) => self.streams.insert(index, stream),
         }
     }
 
@@ -418,7 +423,7 @@ impl ModifiableEventModel for InMemoryEventModel {
                     .position(|audience| id == *audience.id())
                 {
                     let audience = self.audiences.remove(idx);
-                    self.audiences.insert(index as usize, audience);
+                    self.audiences.insert(index, audience);
                 }
             }
             LaneId::Stream(id) => {
@@ -428,7 +433,7 @@ impl ModifiableEventModel for InMemoryEventModel {
                     .position(|stream| id == *stream.id())
                 {
                     let stream = self.streams.remove(idx);
-                    self.streams.insert(index as usize, stream);
+                    self.streams.insert(index, stream);
                 }
             }
             _ => (),

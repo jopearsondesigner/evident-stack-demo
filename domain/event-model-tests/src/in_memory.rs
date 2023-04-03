@@ -40,7 +40,7 @@ fn deleting_from_description() {
     let id = Uuid::new_v4();
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
     model.add_to_description(0, "foo bar");
-    model.delete_from_description(2);
+    model.delete_from_description(2, 1);
     assert_eq!(model.description(), "fo bar");
 }
 
@@ -295,10 +295,10 @@ fn deleting_from_component_description() {
         0,
         "a really nice read model",
     );
-    model.deleted_from_component_description(&InterfaceComponentId(*interface.id()), 2);
-    model.deleted_from_component_description(&CommandComponentId(*command.id()), 2);
-    model.deleted_from_component_description(&EventComponentId(*event.id()), 2);
-    model.deleted_from_component_description(&ReadModelComponentId(*read_model.id()), 2);
+    model.deleted_from_component_description(&InterfaceComponentId(*interface.id()), 2, 1);
+    model.deleted_from_component_description(&CommandComponentId(*command.id()), 2, 1);
+    model.deleted_from_component_description(&EventComponentId(*event.id()), 2, 1);
+    model.deleted_from_component_description(&ReadModelComponentId(*read_model.id()), 2, 1);
 
     assert_eq!(
         model

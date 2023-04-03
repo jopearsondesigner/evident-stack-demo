@@ -4,17 +4,21 @@ pub mod grid;
 mod repository;
 mod utils;
 
+use std::str::FromStr;
+
 use crate::repository::LocalStorageStateRepository;
 use epoch::{repository::state::VersionedStateRepository, strategies::ReifyDecideSave};
-pub use event_models::api::commands::EventModelCommand;
+use event_models::api::commands::EventModelCommand;
 use event_models::{
     implementation::in_memory::{InMemoryCreationDetails, InMemoryEventModel},
     types::Entity,
     EventModelId, EventModelState,
 };
-use grid::EventModelGrid;
+pub use grid::EventModelGrid;
+use js_sys::Uint8Array;
 use repository::HasKey;
 pub use utils::set_panic_hook;
+use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -34,6 +38,7 @@ impl HasKey for EventModelState<InMemoryEventModel> {
         match self {
             EventModelState::BeforeCreation(_) => None,
             EventModelState::EventModel(model) => Some(model.id().to_string()),
+            EventModelState::Deleted(id) => Some(id.to_string()),
         }
     }
 }
@@ -51,35 +56,63 @@ impl ReifyDecideSave for EventModelDecider {
     type Decide = EventModelState<InMemoryEventModel>;
 }
 
-#[wasm_bindgen]
-pub fn event_model_grid(state: JsValue) -> Result<JsValue, JsValue> {
-    let event_model: InMemoryEventModel = serde_wasm_bindgen::from_value(state)?;
-    let grid: EventModelGrid = event_model.into();
-    Ok(serde_wasm_bindgen::to_value(&grid)?)
+fn parse_uuid(uuid_str: String) -> Result<Uuid, JsValue> {
+    Uuid::from_str(&uuid_str)
+        .map_err(|e| JsValue::from(format!("Error parsing Uuid from string: {:?}", e)))
 }
 
 #[wasm_bindgen]
 impl EventModelStateManager {
     #[wasm_bindgen(constructor)]
-    pub fn new(js_id: JsValue) -> Result<EventModelStateManager, JsValue> {
-        let event_model_id: Option<EventModelId> = serde_wasm_bindgen::from_value(js_id)?;
-        Ok(EventModelStateManager {
-            repository: LocalStorageStateRepository::new(
-                event_model_id.map(|x| x.to_string()),
-                EventModelState::BeforeCreation(InMemoryCreationDetails),
-            ),
-        })
-    }
-
-    pub async fn state(&self) -> Result<JsValue, JsValue> {
-        match self.repository.reify().await {
-            Ok((data, _version)) => Ok(serde_wasm_bindgen::to_value(&data)?),
-            Err(err) => Err(serde_wasm_bindgen::to_value(&err)?),
+    pub fn new(maybe_id_str: Option<String>) -> Result<EventModelStateManager, JsValue> {
+        if let Some(id_str) = maybe_id_str {
+            let event_model_id: EventModelId =
+                Uuid::from_str(&id_str).map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
+            Ok(EventModelStateManager {
+                repository: LocalStorageStateRepository::new(
+                    Some(event_model_id.to_string()),
+                    EventModelState::BeforeCreation(InMemoryCreationDetails),
+                ),
+            })
+        } else {
+            Ok(EventModelStateManager {
+                repository: LocalStorageStateRepository::new(
+                    None,
+                    EventModelState::BeforeCreation(InMemoryCreationDetails),
+                ),
+            })
         }
     }
 
-    pub async fn dispatch(&mut self, js_command: JsValue) -> Result<JsValue, JsValue> {
-        let command: EventModelCommand = serde_wasm_bindgen::from_value(js_command)?;
+    pub async fn state(&self) -> Result<EventModelGrid, JsValue> {
+        match self.repository.reify().await {
+            Ok((state, _version)) => Ok(state.into()),
+            Err(err) => Err(JsValue::from_str(&format!("{:?}", err))),
+        }
+    }
+
+    pub async fn create(&mut self, name: String) -> Result<EventModelGrid, JsValue> {
+        self.dispatch(EventModelCommand::Create(name)).await
+    }
+
+    pub async fn delete(&mut self, model_id_str: String) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        self.dispatch(EventModelCommand::Delete(model_id)).await
+    }
+
+    pub async fn import(
+        &mut self,
+        model_id_str: String,
+        json: Uint8Array,
+        offset: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+
+        self.dispatch(EventModelCommand::Import(model_id, offset, json.to_vec()))
+            .await
+    }
+
+    async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {
         log(&format!("Dispatching {:?}...", command));
         let result =
             EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)
@@ -90,7 +123,7 @@ impl EventModelStateManager {
                     "...dispatched command {:?} and got next state {:?}",
                     command, state
                 ));
-                Ok(serde_wasm_bindgen::to_value(&state)?)
+                Ok(state.into())
             }
             Err(err) => Err(JsValue::from(format!(
                 "Error dispatching command {:?}: {:?}",

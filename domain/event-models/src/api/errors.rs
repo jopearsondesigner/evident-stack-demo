@@ -7,4 +7,5 @@ pub enum EventModelError {
     CreationError(String),
     ModificationError(String),
     IllegalFlowArrow(String),
+    SerializationError(String),
 }

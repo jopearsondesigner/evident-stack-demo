@@ -1,17 +1,18 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
+  import type { PageData } from "./$types";
 
-  export let data;
+  export let data: PageData;
 
-  let dispatch = data.dispatch;
+  let create_model = data.create_model!;
 
   const handleCreateEventModel = async (e: SubmitEvent) => {
     const formData = new FormData(e.target as HTMLFormElement);
-    const data = {
-      "Create": formData.get("name")
-    };
-    let state = await dispatch(data);
-    goto(`/design/models/${state.EventModel.id}`)
+    let name = formData.get("name")?.toString();
+    if (name) {
+      let state = await create_model(name);
+      goto(`/design/models/${state.id()}`)
+    }
   };
 </script>
 

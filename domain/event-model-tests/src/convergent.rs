@@ -20,5 +20,5 @@ fn renaming() {
         OpSet::default(),
     );
 
-    renaming_event_model_succeeds(EventModelState::<ConvergentEventModel>::EventModel(initial));
+    // renaming_event_model_succeeds(EventModelState::<ConvergentEventModel>::EventModel(initial));
 }

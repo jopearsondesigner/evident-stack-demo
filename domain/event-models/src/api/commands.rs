@@ -1,4 +1,3 @@
-use crate::json::JsonImport;
 use crate::types::audience::AudienceId;
 use crate::types::flow::{Anchor, FlowId};
 use crate::types::interface::InterfaceConfig;
@@ -14,50 +13,50 @@ pub enum EventModelCommand {
     Create(String),
     Rename(EventModelId, String),
     SetDescription(EventModelId, String),
-    AddToDescription(EventModelId, u32, String),
-    DeleteFromDescription(EventModelId, u32),
+    AddToDescription(EventModelId, usize, String),
+    DeleteFromDescription(EventModelId, usize),
     SetSchema(EventModelId, String),
-    AddToSchema(EventModelId, u32, String),
-    DeleteFromSchema(EventModelId, u32),
+    AddToSchema(EventModelId, usize, String),
+    DeleteFromSchema(EventModelId, usize),
     Delete(EventModelId),
 
     // Composite Actions
-    Import(Box<JsonImport>),
+    Import(EventModelId, usize, Vec<u8>),
 
     // Lanes
-    AddAudience(EventModelId, u32, String),
+    AddAudience(EventModelId, usize, String),
     RenameAudience(EventModelId, AudienceId, String),
-    ReorderAudience(EventModelId, AudienceId, u32),
+    ReorderAudience(EventModelId, AudienceId, usize),
     RemoveAudience(EventModelId, AudienceId),
-    AddStream(EventModelId, u32, String),
+    AddStream(EventModelId, usize, String),
     RenameStream(EventModelId, StreamId, String),
-    ReorderStream(EventModelId, StreamId, u32),
+    ReorderStream(EventModelId, StreamId, usize),
     RemoveStream(EventModelId, StreamId),
 
     // Canvas
-    DefineAndPlaceInterface(EventModelId, String, u32, Option<AudienceId>),
-    DefineAndPlaceCommand(EventModelId, String, u32),
-    DefineAndPlaceEvent(EventModelId, String, u32, Option<StreamId>),
-    DefineAndPlaceReadModel(EventModelId, String, u32),
+    DefineAndPlaceInterface(EventModelId, String, usize, Option<AudienceId>),
+    DefineAndPlaceCommand(EventModelId, String, usize),
+    DefineAndPlaceEvent(EventModelId, String, usize, Option<StreamId>),
+    DefineAndPlaceReadModel(EventModelId, String, usize),
     RenamePlacement(EventModelId, PlacementId, String),
-    MoveInterfacePlacement(EventModelId, PlacementId, u32, Option<AudienceId>),
-    MoveTimelinePlacement(EventModelId, PlacementId, u32),
-    MoveEventPlacement(EventModelId, PlacementId, u32, Option<StreamId>),
+    MoveInterfacePlacement(EventModelId, PlacementId, usize, Option<AudienceId>),
+    MoveTimelinePlacement(EventModelId, PlacementId, usize),
+    MoveEventPlacement(EventModelId, PlacementId, usize, Option<StreamId>),
     RemovePlacement(EventModelId, PlacementId),
 
     // Clipboard
-    DuplicateInterfacePlacement(EventModelId, PlacementId, u32, Option<AudienceId>),
-    DuplicateTimelinePlacement(EventModelId, PlacementId, u32),
-    DuplicateEventPlacement(EventModelId, PlacementId, u32, Option<StreamId>),
+    DuplicateInterfacePlacement(EventModelId, PlacementId, usize, Option<AudienceId>),
+    DuplicateTimelinePlacement(EventModelId, PlacementId, usize),
+    DuplicateEventPlacement(EventModelId, PlacementId, usize, Option<StreamId>),
 
     // Component Details
     RenameComponent(EventModelId, ComponentId, String),
     SetComponentDescription(EventModelId, ComponentId, String),
-    AddToComponentDescription(EventModelId, ComponentId, u32, String),
-    DeleteFromComponentDescription(EventModelId, ComponentId, u32),
+    AddToComponentDescription(EventModelId, ComponentId, usize, String),
+    DeleteFromComponentDescription(EventModelId, ComponentId, usize),
     SetComponentSchema(EventModelId, ComponentId, String),
-    AddToComponentSchema(EventModelId, ComponentId, u32, String),
-    DeleteFromComponentSchema(EventModelId, ComponentId, u32),
+    AddToComponentSchema(EventModelId, ComponentId, usize, String),
+    DeleteFromComponentSchema(EventModelId, ComponentId, usize),
     ConfigureInterface(EventModelId, InterfaceConfig),
 
     // Flows

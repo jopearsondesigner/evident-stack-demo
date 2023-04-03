@@ -6,20 +6,19 @@ extern crate uuid;
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
 use crate::types::event::{Event, EventId};
-use crate::types::flow::{FlowArrow, FlowId};
+use crate::types::flow::{flow_id, FlowArrow, FlowId};
 use crate::types::interface::{Interface, InterfaceId};
 use crate::types::placement::PlacementPosition;
 use crate::types::placement::{Placement, PlacementId};
 use crate::types::read_model::{ReadModel, ReadModelId};
-use crate::types::schema::HasSchema;
+use crate::types::schema::{HasModifiableSchema, HasSchema, Schema};
 use crate::types::stream::Stream;
-use crate::types::{Component, ComponentId, Described, Lane, LaneId, LaneIndex};
+use crate::types::{
+    Component, ComponentId, Described, Lane, LaneId, LaneIndex, ModifiablyDescribed, Renamable,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt::Debug;
-use types::flow::flow_id;
-use types::schema::HasModifiableSchema;
-use types::{ModifiablyDescribed, Renamable};
 use uuid::Uuid;
 
 pub mod api;
@@ -33,6 +32,7 @@ pub type EventModelId = Uuid;
 pub enum EventModelState<T: EventModel> {
     BeforeCreation(T::CreationDetails),
     EventModel(T),
+    Deleted(EventModelId),
 }
 
 pub trait EventModelData: HasSchema + Debug {
@@ -44,6 +44,18 @@ pub trait EventModelData: HasSchema + Debug {
     fn streams(&self) -> &Vec<Stream>;
     fn placements(&self) -> &HashMap<PlacementId, Placement>;
     fn flows(&self) -> &HashMap<FlowId, FlowArrow>;
+}
+
+struct EventModelDataTransfer {
+    schema: Schema,
+    interfaces: HashMap<InterfaceId, Interface>,
+    commands: HashMap<CommandId, Command>,
+    events: HashMap<EventId, Event>,
+    read_models: HashMap<ReadModelId, ReadModel>,
+    audiences: Vec<Audience>,
+    streams: Vec<Stream>,
+    placements: HashMap<PlacementId, Placement>,
+    flows: HashMap<FlowId, FlowArrow>,
 }
 
 pub trait EventModel: Described + EventModelData + Sized {
@@ -72,35 +84,61 @@ pub trait ModifiableEventModel:
     fn added_to_component_description(
         &mut self,
         component_id: &ComponentId,
-        index: u32,
+        index: usize,
         addition: &str,
     );
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn deleted_from_component_description(&mut self, component_id: &ComponentId, index: u32);
+    fn deleted_from_component_description(
+        &mut self,
+        component_id: &ComponentId,
+        index: usize,
+        count: usize,
+    );
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn added_to_component_schema(&mut self, component_id: &ComponentId, index: u32, addition: &str);
+    fn added_to_component_schema(
+        &mut self,
+        component_id: &ComponentId,
+        index: usize,
+        addition: &str,
+    );
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn deleted_from_component_schema(&mut self, component_id: &ComponentId, index: u32);
+    fn deleted_from_component_schema(
+        &mut self,
+        component_id: &ComponentId,
+        index: usize,
+        count: usize,
+    );
 
     // ***** Placements *****
 
     fn component_placed(&mut self, placement: &Placement);
     fn placement_moved(&mut self, position: &PlacementPosition);
     fn placement_removed(&mut self, placement_id: &PlacementId);
+    fn placements_shifted(&mut self, offset: &usize, width: &usize);
 
     // Validation of presence of placement_id must be performed
     //  by `decide` prior to this step
-    fn added_to_placement_schema(&mut self, placement_id: &PlacementId, index: u32, addition: &str);
+    fn added_to_placement_schema(
+        &mut self,
+        placement_id: &PlacementId,
+        index: usize,
+        addition: &str,
+    );
 
     // Validation of presence of placement_id must be performed
     //  by `decide` prior to this step
-    fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: u32);
+    fn deleted_from_placement_schema(
+        &mut self,
+        placement_id: &PlacementId,
+        index: usize,
+        count: usize,
+    );
 
     // ***** Lanes *****
 

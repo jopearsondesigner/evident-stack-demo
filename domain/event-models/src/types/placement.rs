@@ -11,7 +11,7 @@ use uuid::Uuid;
 
 use super::{ComponentId, LaneId};
 
-pub type PlacementIndex = u32;
+pub type PlacementIndex = usize;
 pub type PlacementId = Uuid;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -74,6 +74,15 @@ impl Placement {
                 None => LaneId::DefaultStream,
             },
             Placement::ReadModel { .. } => LaneId::Timeline,
+        }
+    }
+
+    pub fn shift_right(&mut self, offset: usize) {
+        match self {
+            Placement::Interface { index, .. } => *index += offset,
+            Placement::Command { index, .. } => *index += offset,
+            Placement::Event { index, .. } => *index += offset,
+            Placement::ReadModel { index, .. } => *index += offset,
         }
     }
 

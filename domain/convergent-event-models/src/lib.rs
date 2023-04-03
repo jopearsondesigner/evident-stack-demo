@@ -149,9 +149,7 @@ impl EventModel for ConvergentEventModel {
             EventModelState::BeforeCreation(details) => {
                 Self::new(id, name, details.node, OpSet::default())
             }
-            EventModelState::EventModel(_) => {
-                panic!("Illegal initial state when creating Event Model")
-            }
+            _ => panic!("Illegal initial state when creating Event Model"),
         }
     }
 }
@@ -172,7 +170,7 @@ impl ModifiableEventModel for ConvergentEventModel {
     fn added_to_component_description(
         &mut self,
         component_id: &event_models::types::ComponentId,
-        index: u32,
+        index: usize,
         addition: &str,
     ) {
         todo!()
@@ -181,7 +179,8 @@ impl ModifiableEventModel for ConvergentEventModel {
     fn deleted_from_component_description(
         &mut self,
         component_id: &event_models::types::ComponentId,
-        index: u32,
+        index: usize,
+        count: usize,
     ) {
         todo!()
     }
@@ -189,7 +188,7 @@ impl ModifiableEventModel for ConvergentEventModel {
     fn added_to_component_schema(
         &mut self,
         component_id: &event_models::types::ComponentId,
-        index: u32,
+        index: usize,
         addition: &str,
     ) {
         todo!()
@@ -198,7 +197,8 @@ impl ModifiableEventModel for ConvergentEventModel {
     fn deleted_from_component_schema(
         &mut self,
         component_id: &event_models::types::ComponentId,
-        index: u32,
+        index: usize,
+        count: usize,
     ) {
         todo!()
     }
@@ -215,16 +215,25 @@ impl ModifiableEventModel for ConvergentEventModel {
         todo!()
     }
 
+    fn placements_shifted(&mut self, offset: &usize, width: &usize) {
+        todo!()
+    }
+
     fn added_to_placement_schema(
         &mut self,
         placement_id: &PlacementId,
-        index: u32,
+        index: usize,
         addition: &str,
     ) {
         todo!()
     }
 
-    fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: u32) {
+    fn deleted_from_placement_schema(
+        &mut self,
+        placement_id: &PlacementId,
+        index: usize,
+        count: usize,
+    ) {
         todo!()
     }
 
@@ -276,15 +285,7 @@ impl ModifiableEventModel for ConvergentEventModel {
 }
 
 impl ModifiablyDescribed for ConvergentEventModel {
-    fn set_description(&mut self, description: &str) {
-        todo!()
-    }
-
-    fn add_to_description(&mut self, index: u32, addition: &str) {
-        todo!()
-    }
-
-    fn delete_from_description(&mut self, index: u32) {
+    fn description_mut(&mut self) -> &mut String {
         todo!()
     }
 }

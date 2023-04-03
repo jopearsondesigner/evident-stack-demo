@@ -446,43 +446,43 @@ impl TryFrom<JsonV0_1_0BetaTransfer> for EventModelDataTransfer {
             schema: value.schema,
             interfaces: value
                 .interfaces
-                .into_iter()
-                .map(|(_, i)| crate::types::Interface::try_from(i).map(|i| (i.id().to_owned(), i)))
+                .into_values()
+                .map(|i| crate::types::Interface::try_from(i).map(|i| (i.id().to_owned(), i)))
                 .try_collect()?,
             commands: value
                 .commands
-                .into_iter()
-                .map(|(_, c)| crate::types::Command::try_from(c).map(|c| (c.id().to_owned(), c)))
+                .into_values()
+                .map(|c| crate::types::Command::try_from(c).map(|c| (c.id().to_owned(), c)))
                 .try_collect()?,
             events: value
                 .events
-                .into_iter()
-                .map(|(_, e)| crate::types::Event::try_from(e).map(|e| (e.id().to_owned(), e)))
+                .into_values()
+                .map(|e| crate::types::Event::try_from(e).map(|e| (e.id().to_owned(), e)))
                 .try_collect()?,
             read_models: value
                 .read_models
-                .into_iter()
-                .map(|(_, r)| crate::types::ReadModel::try_from(r).map(|r| (r.id().to_owned(), r)))
+                .into_values()
+                .map(|r| crate::types::ReadModel::try_from(r).map(|r| (r.id().to_owned(), r)))
                 .try_collect()?,
             audiences: value
                 .audiences
                 .into_iter()
-                .map(|a| crate::types::Audience::try_from(a))
+                .map(crate::types::Audience::try_from)
                 .try_collect()?,
             streams: value
                 .streams
                 .into_iter()
-                .map(|s| crate::types::Stream::try_from(s))
+                .map(crate::types::Stream::try_from)
                 .try_collect()?,
             placements: value
                 .placements
-                .into_iter()
-                .map(|(_, p)| crate::types::Placement::try_from(p).map(|p| (p.id().to_owned(), p)))
+                .into_values()
+                .map(|p| crate::types::Placement::try_from(p).map(|p| (p.id().to_owned(), p)))
                 .try_collect()?,
             flows: value
                 .flows
-                .into_iter()
-                .map(|(_, p)| crate::types::FlowArrow::try_from(p).map(|p| (p.id().to_owned(), p)))
+                .into_values()
+                .map(|p| crate::types::FlowArrow::try_from(p).map(|p| (p.id().to_owned(), p)))
                 .try_collect()?,
         })
     }

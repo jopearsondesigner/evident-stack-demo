@@ -126,11 +126,24 @@ pub enum TimelinePlacementType {
 #[derive(Debug, Clone)]
 pub struct TimelinePlacement {
     id: Uuid,
-    index: usize,
+    pub index: usize,
     component: Uuid,
-    name: String,
-    description: String,
-    kind: TimelinePlacementType,
+    pub name: String,
+    pub description: String,
+    pub kind: TimelinePlacementType,
+}
+
+#[wasm_bindgen]
+impl TimelinePlacement {
+    #[wasm_bindgen(getter)]
+    pub fn id(&self) -> String {
+        self.id.to_string()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn component(&self) -> String {
+        self.component.to_string()
+    }
 }
 
 fn command_placement(id: Uuid, index: usize, c: event_models::types::Command) -> TimelinePlacement {
@@ -163,10 +176,23 @@ fn read_model_placement(
 #[derive(Debug, Clone)]
 pub struct EventPlacement {
     id: Uuid,
-    index: usize,
+    pub index: usize,
     event: Uuid,
-    name: String,
-    description: String,
+    pub name: String,
+    pub description: String,
+}
+
+#[wasm_bindgen]
+impl EventPlacement {
+    #[wasm_bindgen(getter)]
+    pub fn id(&self) -> String {
+        self.id.to_string()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn event(&self) -> String {
+        self.event.to_string()
+    }
 }
 
 fn event_placement(id: Uuid, index: usize, e: event_models::types::Event) -> EventPlacement {
@@ -183,8 +209,16 @@ fn event_placement(id: Uuid, index: usize, e: event_models::types::Event) -> Eve
 #[derive(Debug, Clone)]
 pub struct Stream {
     id: Uuid,
-    name: String,
+    pub name: String,
     placements: HashMap<usize, EventPlacement>,
+}
+
+#[wasm_bindgen]
+impl Stream {
+    #[wasm_bindgen(getter)]
+    pub fn id(&self) -> String {
+        self.id.to_string()
+    }
 }
 
 #[wasm_bindgen]
@@ -294,7 +328,7 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                                 stream,
                                 id,
                                 event,
-                                schema,
+                                schema: _,
                             } => model.events().get(event).map(|e| {
                                 (stream, index, event_placement(*id, *index, e.to_owned()))
                             }),
@@ -342,26 +376,20 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                                 index,
                                 id,
                                 command,
-                                schema,
-                            } => {
-                                if let Some(c) = model.commands().get(command) {
-                                    Some((*index, command_placement(*id, *index, c.to_owned())))
-                                } else {
-                                    None
-                                }
-                            }
+                                schema: _,
+                            } => model
+                                .commands()
+                                .get(command)
+                                .map(|c| (*index, command_placement(*id, *index, c.to_owned()))),
                             Placement::ReadModel {
                                 id,
                                 index,
                                 read_model,
-                                schema,
-                            } => {
-                                if let Some(r) = model.read_models().get(read_model) {
-                                    Some((*index, read_model_placement(*id, *index, r.to_owned())))
-                                } else {
-                                    None
-                                }
-                            }
+                                schema: _,
+                            } => model
+                                .read_models()
+                                .get(read_model)
+                                .map(|r| (*index, read_model_placement(*id, *index, r.to_owned()))),
                             _ => None,
                         })
                         .collect(),

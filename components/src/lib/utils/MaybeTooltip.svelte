@@ -1,5 +1,5 @@
-<script>
-	export let tip;
+<script lang="ts">
+	export let tip: string | undefined;
 </script>
 
 <!-- TODO: support HTML (i.e. Markdown output) -->

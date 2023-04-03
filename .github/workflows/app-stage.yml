@@ -1,6 +1,6 @@
 ---
 name: Publish App to Production
-run-name: Production App publish by ${{ github.actor }}
+run-name: Staging App publish by ${{ github.actor }}
 on:
   push:
     branches:

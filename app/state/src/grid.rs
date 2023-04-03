@@ -113,6 +113,11 @@ impl Audience {
     pub fn id(&self) -> String {
         self.id.to_string()
     }
+
+    #[wasm_bindgen(getter)]
+    pub fn placements(&self) -> Vec<InterfacePlacement> {
+        self.placements.values().collect()
+    }
 }
 
 #[wasm_bindgen]

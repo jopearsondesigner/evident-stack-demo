@@ -6,8 +6,9 @@ use event_models::{
     EventModelData, EventModelState,
 };
 use itertools::Itertools;
+use js_sys::Array;
 use uuid::Uuid;
-use wasm_bindgen::prelude::wasm_bindgen;
+use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
@@ -22,13 +23,20 @@ pub enum InterfaceType {
 #[derive(Debug, Clone)]
 pub struct InterfacePlacement {
     id: Uuid,
+    #[wasm_bindgen(readonly)]
     pub index: usize,
     interface: Uuid,
+    #[wasm_bindgen(readonly)]
     pub name: String,
+    #[wasm_bindgen(readonly)]
     pub description: String,
+    #[wasm_bindgen(readonly)]
     pub kind: InterfaceType,
+    #[wasm_bindgen(readonly)]
     pub url: Option<String>,
+    #[wasm_bindgen(readonly)]
     pub width: Option<usize>,
+    #[wasm_bindgen(readonly)]
     pub height: Option<usize>,
 }
 
@@ -99,10 +107,11 @@ fn interface_placement(
     }
 }
 
-#[wasm_bindgen(getter_with_clone)]
+#[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct Audience {
     id: Uuid,
+    #[wasm_bindgen(getter_with_clone, readonly)]
     pub name: String,
     placements: HashMap<usize, InterfacePlacement>,
 }
@@ -113,23 +122,36 @@ impl Audience {
     pub fn id(&self) -> String {
         self.id.to_string()
     }
+
+    #[wasm_bindgen(getter)]
+    pub fn placements(&self) -> Array {
+        let placements = Array::new_with_length(*self.placements.keys().max().unwrap_or(&0) as u32);
+        self.placements.iter().for_each(|(index, placement)| {
+            placements.set(*index as u32, JsValue::from(placement.to_owned()))
+        });
+        placements
+    }
 }
 
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub enum TimelinePlacementType {
-    Command,
-    ReadModel,
+    Command = "command",
+    ReadModel = "readModel",
 }
 
 #[wasm_bindgen(getter_with_clone)]
 #[derive(Debug, Clone)]
 pub struct TimelinePlacement {
     id: Uuid,
+    #[wasm_bindgen(readonly)]
     pub index: usize,
     component: Uuid,
+    #[wasm_bindgen(readonly)]
     pub name: String,
+    #[wasm_bindgen(readonly)]
     pub description: String,
+    #[wasm_bindgen(readonly)]
     pub kind: TimelinePlacementType,
 }
 
@@ -176,9 +198,12 @@ fn read_model_placement(
 #[derive(Debug, Clone)]
 pub struct EventPlacement {
     id: Uuid,
+    #[wasm_bindgen(readonly)]
     pub index: usize,
     event: Uuid,
+    #[wasm_bindgen(readonly)]
     pub name: String,
+    #[wasm_bindgen(readonly)]
     pub description: String,
 }
 
@@ -205,10 +230,11 @@ fn event_placement(id: Uuid, index: usize, e: event_models::types::Event) -> Eve
     }
 }
 
-#[wasm_bindgen(getter_with_clone)]
+#[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct Stream {
     id: Uuid,
+    #[wasm_bindgen(getter_with_clone, readonly)]
     pub name: String,
     placements: HashMap<usize, EventPlacement>,
 }
@@ -218,6 +244,15 @@ impl Stream {
     #[wasm_bindgen(getter)]
     pub fn id(&self) -> String {
         self.id.to_string()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn placements(&self) -> Array {
+        let placements = Array::new_with_length(*self.placements.keys().max().unwrap_or(&0) as u32);
+        self.placements.iter().for_each(|(index, placement)| {
+            placements.set(*index as u32, JsValue::from(placement.to_owned()))
+        });
+        placements
     }
 }
 
@@ -231,9 +266,12 @@ pub enum EventModelGridState {
 #[wasm_bindgen(getter_with_clone)]
 #[derive(Debug, Clone)]
 pub struct EventModelGrid {
+    #[wasm_bindgen(readonly)]
     pub state: EventModelGridState,
     id: Uuid,
+    #[wasm_bindgen(readonly)]
     pub name: String,
+    #[wasm_bindgen(readonly)]
     pub description: String,
 
     default_audience: HashMap<usize, InterfacePlacement>,
@@ -249,12 +287,43 @@ impl EventModelGrid {
         self.id.to_string()
     }
 
-    pub fn name(&self) -> String {
-        self.name.to_string()
+    #[wasm_bindgen(getter)]
+    pub fn default_audience(&self) -> Array {
+        let default_audience =
+            Array::new_with_length(*self.default_audience.keys().max().unwrap_or(&0) as u32);
+        self.default_audience.iter().for_each(|(index, placement)| {
+            default_audience.set(*index as u32, JsValue::from(placement.to_owned()))
+        });
+        default_audience
     }
 
-    pub fn description(&self) -> String {
-        self.description.to_string()
+    #[wasm_bindgen(getter)]
+    pub fn audiences(&self) -> Array {
+        self.audiences.iter().cloned().map(JsValue::from).collect()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn timeline(&self) -> Array {
+        let timeline = Array::new_with_length(*self.timeline.keys().max().unwrap_or(&0) as u32);
+        self.timeline.iter().for_each(|(index, placement)| {
+            timeline.set(*index as u32, JsValue::from(placement.to_owned()))
+        });
+        timeline
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn streams(&self) -> Array {
+        self.streams.iter().cloned().map(JsValue::from).collect()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn default_stream(&self) -> Array {
+        let default_stream =
+            Array::new_with_length(*self.default_stream.keys().max().unwrap_or(&0) as u32);
+        self.default_stream.iter().for_each(|(index, placement)| {
+            default_stream.set(*index as u32, JsValue::from(placement.to_owned()))
+        });
+        default_stream
     }
 }
 

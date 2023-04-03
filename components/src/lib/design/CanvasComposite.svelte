@@ -38,11 +38,9 @@
 	import EventIcon from '$lib/icons/EventIcon.svelte';
 	import CommandIcon from '$lib/icons/CommandIcon.svelte';
 	import ReadModelIcon from '$lib/icons/ReadModelIcon.svelte';
-	import InterfaceIcon from '$lib/icons/InterfaceIcon.svelte';
 	let event = true;
 	let command = false;
 	let readModel = false;
-	let interfaceIcon = false;
 	let isClosed = true;
 	export let user = true;
 	let hidden = true;
@@ -56,7 +54,7 @@
 	let website = false;
 	const hide = (e) => {
 		e.preventDefault();
-		open = false;
+		isClosed = true;
 	};
 	/**
 	 * @type {boolean}
@@ -286,49 +284,37 @@
 >
 	<Grid
 		default_audience_placements={[
-			null,
-			null,
+			,,
 			{ id: '1', name: 'An interface!', description: 'blah *blah* **blah**' },
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
-			null,
+			,,,,,,,,
 			{ id: '2', name: 'Another interface!', description: 'blah *blah* **blah**' }
 		]}
 		audiences={[
 			{
 				name: 'A named audience',
 				placements: [
-					null,
-					null,
-					null,
+					,,,
 					{ id: '3', name: 'An interface!', description: 'blah *blah* **blah**' },
-					null,
+					,
 					{ id: '4', name: 'Another interface!', description: 'blah *blah* **blah**' }
 				]
 			},
 			{
 				name: 'Another named audience',
 				placements: [
-					null,
+					,
 					{ id: '5', name: 'An interface!', description: 'blah *blah* **blah**' },
-					null,
-					null,
-					null,
+					,,,
 					{ id: '6', name: 'Another interface!', description: 'blah *blah* **blah**' }
 				]
 			}
 		]}
 		timeline_placements={[
-			null,
+			,
 			{ id: '5', name: 'A command!', type: 'command', description: 'blah *blah* **blah**' },
-			null,
+			,
 			{ id: '6', name: 'A read model!', type: 'readModel', description: 'blah *blah* **blah**' },
-			null,
+			,
 			{ id: '7', name: 'Another command!', type: 'command', description: 'blah *blah* **blah**' },
 			{
 				id: '8',
@@ -341,29 +327,17 @@
 			{
 				name: 'A named stream',
 				placements: [
-					null,
-					null,
-					null,
+					,,,
 					{ id: '9', name: 'An event!', description: 'blah *blah* **blah**' },
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,
+					,,,,,,,,,
 					{ id: '10', name: 'Another event!', description: 'blah *blah* **blah**' }
 				]
 			}
 		]}
 		default_stream_placements={[
-			null,
-			null,
+			,,
 			{ id: '11', name: 'An event!', description: 'blah *blah* **blah**' },
-			null,
-			null,
+			,,
 			{ id: '12', name: 'Another event!', description: 'blah *blah* **blah**' }
 		]}
 	/>

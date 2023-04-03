@@ -57,6 +57,6 @@
   </NavInner>
 </Navbar>
 
-<div class="md:container md:mx-auto">
+<main>
   <slot />
-</div>
+</main>

@@ -111,8 +111,7 @@ fn interface_placement(
 #[derive(Debug, Clone)]
 pub struct Audience {
     id: Uuid,
-    #[wasm_bindgen(getter_with_clone)]
-    #[wasm_bindgen(readonly)]
+    #[wasm_bindgen(getter_with_clone, readonly)]
     pub name: String,
     placements: HashMap<usize, InterfacePlacement>,
 }
@@ -235,8 +234,7 @@ fn event_placement(id: Uuid, index: usize, e: event_models::types::Event) -> Eve
 #[derive(Debug, Clone)]
 pub struct Stream {
     id: Uuid,
-    #[wasm_bindgen(getter_with_clone)]
-    #[wasm_bindgen(readonly)]
+    #[wasm_bindgen(getter_with_clone, readonly)]
     pub name: String,
     placements: HashMap<usize, EventPlacement>,
 }

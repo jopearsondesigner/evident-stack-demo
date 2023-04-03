@@ -27,17 +27,19 @@
       name: string,
       placements: Array.<{id: string,
       interface: string,
-      type: string, // TODO: supported placement types/config here
+      kind: string, // TODO: supported placement types/config here
       name: string,
       description: string}>}> */
 	export let audiences = new Array(0);
 
 	/** @type Array<{id: string,
       component: string,
-      type: ('command' | 'readModel'),
+      kind: ('command' | 'readModel'),
       name: string,
       description: string}> */
 	export let timeline_placements = new Array(0);
+
+  console.log(timeline_placements);
 
 	/** @type Array.<{id: string,
       name: string,
@@ -121,118 +123,126 @@
 	}
 </script>
 
-<div
-	class="p-3 relative h-full w-full grid justify-items-center items-center w-full bg-gray-canvas dark:bg-dark-1"
-	style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
->
-	<!-- TODO: make the card size a constant someplace -->
-	<Audience row={default_audience_row}>
-		{#each default_audience_placements as placement, index (placementOrEmptyCellId(placement, index, default_audience_row))}
-			{@const is_cursor = isCursor(default_audience_row, index)}
-			<!-- {@const is_editing = isEditing(default_audience_row, index)} -->
-			{#if placement}
-				<Interface
-					id={placement.id}
-					name={placement.name}
-					description={placement.description}
-					row={default_audience_row}
-					column={index}
-					cursor={is_cursor}
-				/>
-			{:else}
-				<EmptyCell row={default_audience_row} column={index} cursor={is_cursor} />
-			{/if}
-		{/each}
-	</Audience>
+<div class="overflow-auto h-full w-full bg-gray-canvas dark:bg-dark-1">
+  <div
+  	class="p-3 relative grid justify-items-center items-center"
+  	style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
+  >
+  	<!-- TODO: make the card size a constant someplace -->
+  	<Audience row={default_audience_row}>
+  		{#each default_audience_placements as placement, index (placementOrEmptyCellId(placement, index, default_audience_row))}
+  			{@const is_cursor = isCursor(default_audience_row, index)}
+  			<!-- {@const is_editing = isEditing(default_audience_row, index)} -->
+  			{#if placement}
+  				<Interface
+  					id={placement.id}
+            interface_id={placement.interface}
+  					name={placement.name}
+  					description={placement.description}
+  					row={default_audience_row}
+  					column={index}
+  					cursor={is_cursor}
+  				/>
+  			{:else}
+  				<EmptyCell row={default_audience_row} column={index} cursor={is_cursor} />
+  			{/if}
+  		{/each}
+  	</Audience>
 
-	{#each audiences as audience, i}
-		{@const row = i + 1}
-		<Audience {row} name={audience.name}>
-			{#each audience.placements as placement, index (placementOrEmptyCellId(placement, index, row))}
-				{@const is_cursor = isCursor(row, index)}
-				<!-- {@const is_editing = isEditing(row, index)} -->
-				{#if placement}
-					<Interface
-						id={placement.id}
-						name={placement.name}
-						description={placement.description}
-						{row}
-						column={index}
-						cursor={is_cursor}
-					/>
-				{:else}
-					<EmptyCell {row} column={index} cursor={is_cursor} />
-				{/if}
-			{/each}
-		</Audience>
-	{/each}
+  	{#each audiences as audience, i}
+  		{@const row = i + 1}
+  		<Audience {row} name={audience.name}>
+  			{#each audience.placements as placement, index (placementOrEmptyCellId(placement, index, row))}
+  				{@const is_cursor = isCursor(row, index)}
+  				<!-- {@const is_editing = isEditing(row, index)} -->
+  				{#if placement}
+  					<Interface
+  						id={placement.id}
+              interface_id={placement.interface}
+  						name={placement.name}
+  						description={placement.description}
+  						{row}
+  						column={index}
+  						cursor={is_cursor}
+  					/>
+  				{:else}
+  					<EmptyCell {row} column={index} cursor={is_cursor} />
+  				{/if}
+  			{/each}
+  		</Audience>
+  	{/each}
 
-	<Timeline row={timeline_row}>
-		{#each timeline_placements as placement, index (placementOrEmptyCellId(placement, index, timeline_row))}
-			{@const is_cursor = isCursor(timeline_row, index)}
-			<!-- {@const is_editing = isEditing(timeline_row, index)} -->
-			{#if placement && placement.type === 'command'}
-				<Command
-					id={placement.id}
-					name={placement.name}
-					description={placement.description}
-					row={timeline_row}
-					column={index}
-					cursor={is_cursor}
-				/>
-			{:else if placement && placement.type === 'readModel'}
-				<ReadModel
-					id={placement.id}
-					name={placement.name}
-					description={placement.description}
-					row={timeline_row}
-					column={index}
-					cursor={is_cursor}
-				/>
-			{:else}
-				<EmptyCell row={timeline_row} column={index} cursor={is_cursor} />
-			{/if}
-		{/each}
-	</Timeline>
+  	<Timeline row={timeline_row}>
+  		{#each timeline_placements as placement, index (placementOrEmptyCellId(placement, index, timeline_row))}
+  			{@const is_cursor = isCursor(timeline_row, index)}
+  			<!-- {@const is_editing = isEditing(timeline_row, index)} -->
+  			{#if placement && placement.kind === 'command'}
+  				<Command
+  					id={placement.id}
+            command={placement.component}
+  					name={placement.name}
+  					description={placement.description}
+  					row={timeline_row}
+  					column={index}
+  					cursor={is_cursor}
+  				/>
+  			{:else if placement && placement.kind === 'readModel'}
+  				<ReadModel
+  					id={placement.id}
+            readModel={placement.component}
+  					name={placement.name}
+  					description={placement.description}
+  					row={timeline_row}
+  					column={index}
+  					cursor={is_cursor}
+  				/>
+  			{:else}
+  				<EmptyCell row={timeline_row} column={index} cursor={is_cursor} />
+  			{/if}
+  		{/each}
+  	</Timeline>
 
-	{#each streams as stream, i}
-		{@const row = i + timeline_row + 1}
-		<Stream {row} name={stream.name}>
-			{#each stream.placements as placement, index (placementOrEmptyCellId(placement, index, row))}
-				{@const is_cursor = isCursor(row, index)}
-				<!-- {@const is_editing = isEditing(row, index)} -->
-				{#if placement}
-					<Event
-						id={placement.id}
-						name={placement.name}
-						description={placement.description}
-						{row}
-						column={index}
-						cursor={is_cursor}
-					/>
-				{:else}
-					<EmptyCell {row} column={index} cursor={is_cursor} />
-				{/if}
-			{/each}
-		</Stream>
-	{/each}
+  	{#each streams as stream, i}
+  		{@const row = i + timeline_row + 1}
+  		<Stream {row} name={stream.name}>
+  			{#each stream.placements as placement, index (placementOrEmptyCellId(placement, index, row))}
+  				{@const is_cursor = isCursor(row, index)}
+  				<!-- {@const is_editing = isEditing(row, index)} -->
+  				{#if placement}
+  					<Event
+  						id={placement.id}
+              event={placement.event}
+  						name={placement.name}
+  						description={placement.description}
+  						{row}
+  						column={index}
+  						cursor={is_cursor}
+  					/>
+  				{:else}
+  					<EmptyCell {row} column={index} cursor={is_cursor} />
+  				{/if}
+  			{/each}
+  		</Stream>
+  	{/each}
 
-	<Stream row={default_stream_row}>
-		{#each default_stream_placements as placement, index (placementOrEmptyCellId(placement, index, default_stream_row))}
-			{@const is_cursor = isCursor(default_stream_row, index)}
-			<!-- {@const is_editing = isEditing(default_stream_row, index)} -->
-			{#if placement}
-				<Event
-					id={placement.id}
-					name={placement.name}
-					description={placement.description}
-					row={default_stream_row}
-					column={index}
-					cursor={is_cursor}
-				/>
-			{:else}
-				<EmptyCell row={default_stream_row} column={index} cursor={is_cursor} />
-			{/if}
-		{/each}
-	</Stream>
+  	<Stream row={default_stream_row}>
+  		{#each default_stream_placements as placement, index (placementOrEmptyCellId(placement, index, default_stream_row))}
+  			{@const is_cursor = isCursor(default_stream_row, index)}
+  			<!-- {@const is_editing = isEditing(default_stream_row, index)} -->
+  			{#if placement}
+  				<Event
+  					id={placement.id}
+            event={placement.event}
+  					name={placement.name}
+  					description={placement.description}
+  					row={default_stream_row}
+  					column={index}
+  					cursor={is_cursor}
+  				/>
+  			{:else}
+  				<EmptyCell row={default_stream_row} column={index} cursor={is_cursor} />
+  			{/if}
+  		{/each}
+  	</Stream>
+  </div>
 </div>

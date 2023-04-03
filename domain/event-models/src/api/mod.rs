@@ -62,12 +62,27 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         })?;
                         let data_transfer: EventModelDataTransfer = import.try_into()?;
                         let mut events: Vec<EventModelEvent> = vec![];
+
                         let Schema(schema_str) = data_transfer.schema;
                         events.push(EventModelEvent::AddedToSchema(
                             *model_id,
                             model.schema().0.len(),
                             schema_str,
                         ));
+
+                        // Shift placements before adding new placements (so that the new placements don't also get shifted...
+                        let placements_shifted_event = EventModelEvent::PlacementsShifted(
+                            *model_id,
+                            *offset,
+                            data_transfer
+                                .placements
+                                .iter()
+                                .map(|(_, placement)| *placement.index())
+                                .max()
+                                .unwrap_or(0),
+                        );
+                        events.push(placements_shifted_event);
+
                         events.extend(data_transfer.interfaces.into_iter().map(
                             |(_, interface)| {
                                 // TODO: what to do when interface w/ id exists?
@@ -121,17 +136,6 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             )
                         }));
 
-                        let placements_shifted_event = EventModelEvent::PlacementsShifted(
-                            *model_id,
-                            *offset,
-                            data_transfer
-                                .placements
-                                .iter()
-                                .map(|(_, placement)| *placement.index())
-                                .max()
-                                .unwrap_or(0),
-                        );
-
                         events.extend(data_transfer.placements.into_iter().map(
                             |(_, mut placement)| {
                                 // TODO: what to do when placement w/ id and/or index,component_id exists?
@@ -144,7 +148,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             // Automatically deduped via id generation
                             EventModelEvent::FlowConnected(*model_id, flow_arrow)
                         }));
-                        events.push(placements_shifted_event);
+
                         Ok(events)
                     }
                     EventModelCommand::AddAudience(_, _, _) => {

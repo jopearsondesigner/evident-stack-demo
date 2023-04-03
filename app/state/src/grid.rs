@@ -137,8 +137,8 @@ impl Audience {
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub enum TimelinePlacementType {
-    Command,
-    ReadModel,
+    Command = "command",
+    ReadModel = "readModel",
 }
 
 #[wasm_bindgen(getter_with_clone)]

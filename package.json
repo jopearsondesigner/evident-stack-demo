@@ -20,8 +20,5 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "devDependencies": {
-    "svelte-accessible-accordion": "^2.1.0"
   }
 }

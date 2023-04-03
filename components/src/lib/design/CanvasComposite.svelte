@@ -10,6 +10,9 @@
 	import SidebarDropdownWrapper from '$lib/drawer/SidebarDropdownWrapper.svelte';
 	import SidebarDropdownItem from '$lib/drawer/SidebarDropdownItem.svelte';
 	import SidebarItem from '$lib/drawer/SidebarItem.svelte';
+	import Textarea from '$lib/form/Textarea.svelte';
+	import Label from '$lib/form/Label.svelte';
+	let code = '"domain" {\n' + '\tfoo: string, \n' + '\tbar: string, \n' + '\tbaz: int\n' + '}';
 	import GenerateAvro from '$lib/icons/GenerateAvro.svelte';
 	import ThemeSwitch from '$lib/utils/ThemeSwitch.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
@@ -32,9 +35,15 @@
 	import DomainFunctionsLogo from '$lib/assets/images/product/DomainFunctions/evidentDomainFunctionsLogo.svg';
 	import DeployLogo from '$lib/assets/images/product/deploy/evidentDeployLogo.svg';
 	import DatabaseLogo from '$lib/assets/images/product/database/evidentDatabaseLogo.svg';
-	let feature = true;
+	import EventIcon from '$lib/icons/EventIcon.svelte';
+	import CommandIcon from '$lib/icons/CommandIcon.svelte';
+	import ReadModelIcon from '$lib/icons/ReadModelIcon.svelte';
+	import InterfaceIcon from '$lib/icons/InterfaceIcon.svelte';
+	let event = true;
+	let command = false;
+	let readModel = false;
+	let interfaceIcon = false;
 	let isClosed = true;
-	export let alt = 'Brand Logo';
 	export let user = true;
 	let hidden = true;
 	let hiddenRight = true;
@@ -45,7 +54,10 @@
 		isClosed = !isClosed;
 	};
 	let website = false;
-
+	const hide = (e) => {
+		e.preventDefault();
+		open = false;
+	};
 	/**
 	 * @type {boolean}
 	 */
@@ -54,20 +66,47 @@
 
 <span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 mt-16"><ThemeSwitch /></span>
 <Drawer {hidden}>
-	<Sidebar class={!isClosed ? 'w-[416px]' : 'w-[239px]'} {isClosed}>
+	<Sidebar class={!isClosed ? 'w-[417px]' : 'w-[240px]'} {isClosed}>
 		<SidebarWrapper>
 			<Accordion>
 				<SidebarContainer src={DesignLogo} title="Design" id="design" bind:expanded>
 					<SidebarGroup>
-						<SidebarDropdownWrapper label="Event Model Schema" on:click={() => handleClick()}>
+						<SidebarDropdownWrapper label="	Schema" on:click={() => handleClick()}>
 							<Icon
 								slot="icon"
 								name="generate-avro"
 								size={16}
-								iconColor="fill-current text-gray-brand-4 dark:text-gray-brand-2"
+								iconColor="fill-current text-gray-brand-4 dark:text-white transition duration-200 ease-in"
 								><GenerateAvro /></Icon
 							>
-							<SidebarDropdownItem label="Hello, please develop me!" {feature} />
+							<Icon
+								slot="icon-open"
+								name="generate-avro"
+								size={16}
+								iconColor="fill-current text-white dark:text-white transition duration-200 ease-in"
+								><GenerateAvro /></Icon
+							>
+							<SidebarDropdownItem feature>
+								<Label class="mt-2 mb-6" color="default"
+									><span class="text-body dark:text-white">Event Model Schema</span>
+									<Textarea
+										placeholder=""
+										value={code}
+										name="description"
+										rows="6"
+										class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
+										style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
+										disabled
+									/>
+								</Label>
+								<div class="mt-6 mx-3 space-x-3 flex justify-end">
+									<button
+										class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
+										on:click>cancel</button
+									>
+									<Button color="default" size="sm" label="Edit" on:click class="" />
+								</div>
+							</SidebarDropdownItem>
 						</SidebarDropdownWrapper>
 						<SidebarItem blank>
 							<Button
@@ -82,7 +121,7 @@
 									slot="icon"
 									name="download"
 									size={12}
-									iconColor="text-body-light dark:text-body-dark"
+									iconColor="text-body-light dark:text-white"
 									class="inline-flex mb-1"><Download /></Icon
 								></Button
 							>
@@ -137,8 +176,71 @@
 	<button on:click={() => (hiddenRight = true)} class="mt-4">Close</button>
 </div>
 
+<!-- backdrop -->
+
 <Drawer placement="right" bind:hidden={hiddenRight} drawerRight>
-	<div class="bg-white dark:bg-dark-2 w-[480px] p-4 h-screen pt-20">Hello please develop me!</div>
+	<aside
+		class="w-[480px] h-auto flex items-center px-6 h-screen bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
+	>
+		<span class="w-full">
+			<h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
+				Placement Details
+			</h3>
+			<div class="w-full p-6 border rounded border-border-light dark:border-border-dark">
+				<div class="inline-flex">
+					{#if event}
+						<Icon name="event-icon" size={48} class=""><EventIcon /></Icon>
+					{:else if command}
+						<Icon name="command-icon" size={48} class=""><CommandIcon /></Icon>
+					{:else if readModel}
+						<Icon name="read-model-icon" size={48} class=""><ReadModelIcon /></Icon>
+					{/if}
+					<h2 class="ml-3 self-end text-xl font-bold text-body-light dark:text-body-dark">
+						Component Name
+					</h2>
+				</div>
+				<p class="my-3 text-sm leading-normal text-body dark:text-white">
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+					ut labore et dolore magna aliqua.
+				</p>
+				<div class="py-3">
+					<Label color="default"
+						><span class="text-body dark:text-white">Component Schema</span>
+						<Textarea
+							placeholder=""
+							value={code}
+							name="description"
+							rows="6"
+							class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
+							style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
+							disabled
+						/>
+					</Label>
+				</div>
+				<div class="py-3">
+					<Label color="default"
+						><span class="text-body dark:text-white">Placement Schema</span>
+						<Textarea
+							placeholder=""
+							value={code}
+							name="description"
+							rows="6"
+							class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
+							style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
+							disabled
+						/>
+					</Label>
+				</div>
+				<div class="mt-6 mx-3 space-x-3 flex justify-end">
+					<button
+						class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
+						on:click>cancel</button
+					>
+					<Button color="default" size="sm" label="Edit" on:click class="" />
+				</div>
+			</div>
+		</span>
+	</aside>
 </Drawer>
 
 <Navbar>

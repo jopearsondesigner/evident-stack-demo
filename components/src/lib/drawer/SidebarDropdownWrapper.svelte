@@ -12,7 +12,8 @@
 	export let horizontalULClass =
 		'sidebarDropdownItem w-60 border-t border-r border-b border-gray-primary dark:border-gray-brand-1';
 	export let horizontalWrapperClass = 'left-full top-0 bottom-auto absolute';
-	export let headerTextClass = 'font-extrabold text-default text-body dark:text-white';
+	export let headerTextClass =
+		'font-extrabold text-default text-body dark:text-white transition duration-200 ease-in';
 	export let sidebarItemClass = 'flex items-center pl-4 pr-1 transition duration-200 ease-in';
 	export let sidebarBtnClass =
 		'w-full bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] focus:text-body focus:bg-focus/[.20] dark:focus:bg-focus/[.20] transition duration-200 ease-in space-x-3 h-8 cursor-default';
@@ -77,12 +78,16 @@
 			class={classNames(sidebarItemClass, sidebarBtnClass)}
 			on:click={() => handleVerticalDropdown()}
 			on:click={handleClick}
+			class:isVerticalOpen
 		>
-			<slot name="icon" />
+			{#if isVerticalOpen}
+				<slot name="icon-open" />
+			{:else}
+				<slot name="icon" />
+			{/if}
 			<span class={classNames(headerTextClass, sidebarSpanClass)}>{label}</span>
 			{#if isVerticalOpen}
-				<Icon name="close-down" size={16} iconColor="text-brand-4 dark:text-white/[.31]"
-					><CloseUp /></Icon
+				<Icon name="close-down" size={16} iconColor="text-brand-4 dark:text-white"><CloseUp /></Icon
 				>
 			{:else}
 				<Icon name="open-down" size={16} iconColor="text-brand-4 dark:text-white/[.31]"
@@ -100,3 +105,21 @@
 		{/if}
 	</li>
 {/if}
+
+<style>
+	.isVerticalOpen {
+		background-color: rgba(30, 106, 255, 1);
+		color: white;
+		transition-property: color, background-color, border-color, text-decoration-color, fill, stroke,
+			opacity, box-shadow, transform, filter, backdrop-filter;
+		transition-duration: 200ms;
+		transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+	}
+	.isVerticalOpen > span {
+		color: white;
+		transition-property: color, background-color, border-color, text-decoration-color, fill, stroke,
+			opacity, box-shadow, transform, filter, backdrop-filter;
+		transition-duration: 200ms;
+		transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+	}
+</style>

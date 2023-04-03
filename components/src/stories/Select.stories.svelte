@@ -3,13 +3,13 @@
 
 	import { Meta, Story, Template } from '@storybook/addon-svelte-csf';
 
-	import SchemaView from '$lib/form/SchemaViewExample.svelte';
+	import Select from '$lib/form/SelectView.svelte';
 </script>
 
-<Meta title="product/Schema View" component={SchemaView} />
+<Meta title="product/Select" component={Select} />
 
 <Template let:args>
-	<SchemaView />
+	<Select {...args} />
 </Template>
 
 <Story name="blank" args={{ type: 'blank' }} />

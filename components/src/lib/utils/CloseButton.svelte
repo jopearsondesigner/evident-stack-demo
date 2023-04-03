@@ -7,9 +7,10 @@
 	function handleClick(event: any) {
 		dispatch('click', event);
 	}
+	export let btnClass = '';
 </script>
 
-<button type="button" on:click={handleClick}>
+<button type="button" on:click={handleClick} class={btnClass}>
 	<span class="sr-only">Close</span>
 	<Icon
 		name="close"

@@ -7,7 +7,7 @@
 	export let sidebarItemClass = 'flex items-center pl-4 pr-1 transition duration-200 ease-in';
 	export let sidebarBtnClass =
 		'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] focus:text-body focus:bg-focus/[.20] dark:focus:bg-focus/[.20] transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
-	export let sidebarDivClass = 'bg-white dark:bg-dark-2 w-full space-x-3 h-8 cursor-default';
+	export let sidebarDivClass = 'px-4 py-4 bg-white dark:bg-dark-2 w-auto cursor-default';
 	export let sidebarActiveClass =
 		'bg-focus/[100] text-white dark:bg-focus/[100] hover:bg-focus/[100] dark:hover:bg-focus/[100] focus:bg-focus/[100] dark:focus:bg-focus/[100] transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
 	export let sidebarLinkClass =
@@ -29,9 +29,8 @@
 				>
 			</button>
 		{:else if feature}
-			<div class={classNames('w-[239px]', sidebarItemClass, sidebarDivClass, featureClass)}>
-				<slot name="icon" />
-				<span class={classNames(featureTextClass, sidebarSpanClass)}>{label}</span>
+			<div class={classNames('w-[239px]', sidebarDivClass, featureClass)}>
+				<slot />
 			</div>
 		{:else}
 			<button class={classNames(sidebarItemClass, sidebarBtnClass)}>

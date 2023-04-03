@@ -32,7 +32,7 @@
 		brandStackPrimary:
 			'text-white bg-gradient-to-t from-stack-brand-700 via-stack-brand-500 to-stack-brand-300 hover:to-stack-brand-700 hover:via-stack-brand-700 hover:from-stack-brand-700 ring-stack-brand-500',
 		ghost:
-			'text-body-light dark:text-body-dark bg-gradient-to-t from-transparent to-transparent hover:to-transparent hover:from-[#E4E4E4]/[.60] hover:dark:to-transparent hover:dark:from-[#E4E4E4]/[.13] ring-focus'
+			'text-body-light dark:text-white bg-gradient-to-t from-transparent to-transparent hover:to-transparent hover:from-[#E4E4E4]/[.60] hover:dark:to-transparent hover:dark:from-focus/[.13] ring-focus'
 	};
 	const sizeClasses = {
 		xs: 'px-3 py-1 text-xs',

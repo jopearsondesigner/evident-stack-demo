@@ -6,7 +6,9 @@
   const grid = data.grid;
   const import_json = data.import_json!;
 
-  $: model_id = $grid?.id;
+  console.log($grid)
+
+  $: model_id = $grid?.id();
 
   const handleDeleteModel = () => { data.delete_model?(model_id) : null; goto('/') };
   const handleImportJson = async (e: SubmitEvent) => {
@@ -15,8 +17,7 @@
     let buffer = await json.arrayBuffer()
     let bytes = new Uint8Array(buffer)
     let offset = formData.get("offset") as string;
-    let state = await import_json(model_id, bytes, parseInt(offset) || 0);
-    goto(`/design/models/${state.EventModel.id}`)
+    await import_json(model_id!, bytes, parseInt(offset) || 0);
   };
 </script>
 

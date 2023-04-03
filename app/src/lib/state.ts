@@ -1,4 +1,4 @@
-import { default as init, EventModelStateManager, event_model_grid } from "app-state";
+import { default as init, EventModelStateManager } from "app-state";
 import { writable, readonly } from 'svelte/store';
 
 const initializeEventModelStore = async (id: string | null | undefined) => {
@@ -26,14 +26,6 @@ const initializeEventModelStore = async (id: string | null | undefined) => {
       return result
     }
   };
-}
-
-export const eventModelGrid = (state: any) => {
-  if (state.EventModel) {
-    return event_model_grid(state.EventModel)
-  } else {
-    return {}
-  }
 }
 
 const initWasm = async () => {

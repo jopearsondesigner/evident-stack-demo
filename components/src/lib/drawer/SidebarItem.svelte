@@ -5,15 +5,18 @@
 	export let headerText = false;
 	export let headerItem = false;
 	export let active = false;
+	export let blank = true;
 	export let headerTextClass = 'font-extrabold text-default text-body dark:text-white';
 	export let featureTextClass = 'font-medium text-default text-body dark:text-white';
 	export let sidebarItemClass = 'sidebarItem flex items-center pl-4 pr-1';
+	export let divClass =
+		'grow min-h-8 items-center pl-4 pr-1 bg-white dark:bg-dark-2 text-body-light dark:text-white w-full space-x-3 cursor-default';
 	export let sidebarBtnClass =
-		'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] dark:text-white focus:text-body focus:bg-focus/[.20] dark:hover:bg-focus/[.20] transition duration-200 ease-in w-full space-x-3 h-8 pointer-default';
+		'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] dark:text-white focus:text-body focus:bg-focus/[.20] dark:hover:bg-focus/[.20] transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
 	export let sidebarActiveClass =
-		'bg-focus hover:bg-focus/[100] text-white focus:text-white focus:bg-focus/[100] transition duration-200 ease-in w-full space-x-3 h-8 pointer-default';
+		'bg-focus hover:bg-focus/[100] text-white focus:text-white focus:bg-focus/[100] transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
 	export let sidebarHeaderClass =
-		'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] dark:text-white transition duration-200 ease-in w-full space-x-3 h-8 pointer-default';
+		'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] dark:text-white transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
 	export let sidebarSpanClass = 'flex-1 ml-3 text-left whitespace-nowrap';
 </script>
 
@@ -46,6 +49,11 @@
 			{/if}
 			<slot name="icon" />
 		</button>
+	{:else if blank}
+		<div class={classNames(divClass)}>
+			<slot />
+			<span class={classNames(featureTextClass)}>{label}</span>
+		</div>
 	{:else}
 		<button class={classNames(sidebarItemClass, sidebarBtnClass)}>
 			{#if headerText}

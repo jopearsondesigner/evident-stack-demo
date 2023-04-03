@@ -12,9 +12,9 @@
 
 	let wrapperClass: string;
 	$: wrapperClass = classNames(
-		'w-full rounded-lg',
-		background ? 'bg-white dark:bg-gray-800' : 'bg-black bg-opacity-[4%]',
-		'text-body-light dark:placeholder-gray-400 dark:text-body-dark ',
+		'w-full rounded-0',
+		background ? 'bg-white dark:bg-dark-2' : 'bg-black bg-opacity-[4%]',
+		'text-body-light dark:placeholder-gray-400 dark:text-white ',
 		'border border-border-light dark:border-border-dark',
 		$$props.class
 	);

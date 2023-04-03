@@ -2,6 +2,8 @@ import { default as init, EventModelStateManager } from "app-state";
 import { writable, readonly } from 'svelte/store';
 
 const initializeEventModelStore = async (id: string | undefined) => {
+  await init();
+
   let manager = new EventModelStateManager(id);
 
   let store = writable(await manager.state(), () => {
@@ -28,8 +30,4 @@ const initializeEventModelStore = async (id: string | undefined) => {
   };
 }
 
-const initWasm = async () => {
-  await init();
-}
-
-export { initWasm, initializeEventModelStore };
+export { initializeEventModelStore };

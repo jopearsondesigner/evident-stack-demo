@@ -1,17 +1,19 @@
-<script lang="ts">
+<script>
 	import 'components/src/app.css';
+	import { Accordion, AccordionItem } from 'svelte-accessible-accordion';
 	import Grid from '$lib/design/Grid.svelte';
 	import Drawer from '$lib/drawer/Drawer.svelte';
 	import Sidebar from '$lib/drawer/Sidebar.svelte';
 	import SidebarWrapper from '$lib/drawer/SidebarWrapper.svelte';
-	import SidebarInner from '$lib/drawer/SidebarInner.svelte';
+	import SidebarContainer from '$lib/drawer/SidebarContainer.svelte';
 	import SidebarGroup from '$lib/drawer/SidebarGroup.svelte';
 	import SidebarDropdownWrapper from '$lib/drawer/SidebarDropdownWrapper.svelte';
 	import SidebarDropdownItem from '$lib/drawer/SidebarDropdownItem.svelte';
 	import SidebarItem from '$lib/drawer/SidebarItem.svelte';
+	import Textarea from '$lib/form/Textarea.svelte';
+	import Label from '$lib/form/Label.svelte';
+	let code = '"domain" {\n' + '\tfoo: string, \n' + '\tbar: string, \n' + '\tbaz: int\n' + '}';
 	import GenerateAvro from '$lib/icons/GenerateAvro.svelte';
-	import EventModels from '$lib/icons/EventModels.svelte';
-	import AddIcon from '$lib/icons/AddIcon.svelte';
 	import ThemeSwitch from '$lib/utils/ThemeSwitch.svelte';
 	import Navbar from '$lib/navbar/Navbar.svelte';
 	import NavHamburger from '$lib/navbar/NavHamburger.svelte';
@@ -20,35 +22,226 @@
 	import NavToolbar from '$lib/navbar/NavToolbar.svelte';
 	import Icon from '$lib/Icon.svelte';
 	import Button from '$lib/Button.svelte';
+	import Download from '$lib/icons/Download.svelte';
 	import IconButton from '$lib/IconButton.svelte';
 	import Avatar from '$lib/Avatar.svelte';
 	import Docs from '$lib/icons/Docs.svelte';
 	import Support from '$lib/icons/Support.svelte';
-	import Logo from '$lib/assets/images/global/evidentStackLogo.svg';
 	import A from '$lib/typography/A.svelte';
 	import MaybeTooltip from '$lib/utils/MaybeTooltip.svelte';
-	let DataLogo = '$lib/assets/images/product/data/evidentDataLogo.svg';
-	let DomainFunctionsLogo = '$lib/assets/images/product/data/evidentDomainFunctionsLogo.svg';
-	let DeployLogo = '$lib/assets/images/product/data/evidentDeployLogo.svg';
-	let DatabaseLogo = '$lib/assets/images/product/data/evidentDatabaseLogo.svg';
-	let headerItem = true;
-	let feature = true;
+	import Logo from '$lib/assets/images/global/evidentStackLogo.svg';
+	import DesignLogo from '$lib/assets/images/product/design/evidentDesignLogo.svg';
+	import DataLogo from '$lib/assets/images/product/data/evidentDataLogo.svg';
+	import DomainFunctionsLogo from '$lib/assets/images/product/DomainFunctions/evidentDomainFunctionsLogo.svg';
+	import DeployLogo from '$lib/assets/images/product/deploy/evidentDeployLogo.svg';
+	import DatabaseLogo from '$lib/assets/images/product/database/evidentDatabaseLogo.svg';
+	import EventIcon from '$lib/icons/EventIcon.svelte';
+	import CommandIcon from '$lib/icons/CommandIcon.svelte';
+	import ReadModelIcon from '$lib/icons/ReadModelIcon.svelte';
+	import InterfaceIcon from '$lib/icons/InterfaceIcon.svelte';
+	let event = true;
+	let command = false;
+	let readModel = false;
+	let interfaceIcon = false;
 	let isClosed = true;
-	export let alt = 'Brand Logo';
 	export let user = true;
 	let hidden = true;
 	let hiddenRight = true;
 	let handleDrawer = () => {
 		hidden = !hidden;
 	};
-	let num: number = 177;
-	let left: number = 239;
 	let handleClick = () => {
 		isClosed = !isClosed;
 	};
-	let website: boolean = false;
-	let design: boolean = true;
+	let website = false;
+	const hide = (e) => {
+		e.preventDefault();
+		open = false;
+	};
+	/**
+	 * @type {boolean}
+	 */
+	let expanded = true;
 </script>
+
+<span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 mt-16"><ThemeSwitch /></span>
+<Drawer {hidden}>
+	<Sidebar class={!isClosed ? 'w-[417px]' : 'w-[240px]'} {isClosed}>
+		<SidebarWrapper>
+			<Accordion>
+				<SidebarContainer src={DesignLogo} title="Design" id="design" bind:expanded>
+					<SidebarGroup>
+						<SidebarDropdownWrapper label="	Schema" on:click={() => handleClick()}>
+							<Icon
+								slot="icon"
+								name="generate-avro"
+								size={16}
+								iconColor="fill-current text-gray-brand-4 dark:text-white transition duration-200 ease-in"
+								><GenerateAvro /></Icon
+							>
+							<Icon
+								slot="icon-open"
+								name="generate-avro"
+								size={16}
+								iconColor="fill-current text-white dark:text-white transition duration-200 ease-in"
+								><GenerateAvro /></Icon
+							>
+							<SidebarDropdownItem feature>
+								<Label class="mt-2 mb-6" color="default"
+									><span class="text-body dark:text-white">Event Model Schema</span>
+									<Textarea
+										placeholder=""
+										value={code}
+										name="description"
+										rows="6"
+										class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
+										style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
+										disabled
+									/>
+								</Label>
+								<div class="mt-6 mx-3 space-x-3 flex justify-end">
+									<button
+										class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
+										on:click>cancel</button
+									>
+									<Button color="default" size="sm" label="Edit" on:click class="" />
+								</div>
+							</SidebarDropdownItem>
+						</SidebarDropdownWrapper>
+						<SidebarItem blank>
+							<Button
+								label="Export"
+								gradient
+								color="ghost"
+								size="sm"
+								className="my-4"
+								on:click
+								class=""
+								><Icon
+									slot="icon"
+									name="download"
+									size={12}
+									iconColor="text-body-light dark:text-white"
+									class="inline-flex mb-1"><Download /></Icon
+								></Button
+							>
+						</SidebarItem>
+					</SidebarGroup>
+				</SidebarContainer>
+				<SidebarContainer src={DataLogo} id="data" title="Data" on:click={() => (isClosed = true)}>
+					<SidebarGroup>
+						<SidebarItem label="Hello, please develop me!" blank />
+					</SidebarGroup>
+				</SidebarContainer>
+				<SidebarContainer
+					src={DomainFunctionsLogo}
+					id="domain-functions"
+					title="Domain Functions"
+					on:click={() => (isClosed = true)}
+				>
+					<SidebarGroup>
+						<SidebarItem label="Hello, please develop me!" blank />
+					</SidebarGroup>
+				</SidebarContainer>
+				<SidebarContainer
+					src={DeployLogo}
+					id="deploy"
+					title="Deploy"
+					on:click={() => (isClosed = true)}
+				>
+					<SidebarGroup>
+						<SidebarItem label="Hello, please develop me!" blank />
+					</SidebarGroup>
+				</SidebarContainer>
+				<SidebarContainer
+					src={DatabaseLogo}
+					id="database"
+					title="Database"
+					on:click={() => (isClosed = true)}
+				>
+					<SidebarGroup>
+						<SidebarItem label="Hello, please develop me!" blank />
+					</SidebarGroup>
+				</SidebarContainer>
+			</Accordion>
+		</SidebarWrapper>
+	</Sidebar>
+</Drawer>
+
+<div class="text-center z-30 absolute inset-x-0 mt-20">
+	<!--For testing-->
+	<Button gradient color="primary" size="sm" on:click={() => (hiddenRight = false)} class=""
+		>Show Sidebar</Button
+	><br />
+	<button on:click={() => (hiddenRight = true)} class="mt-4">Close</button>
+</div>
+
+<!-- backdrop -->
+
+<Drawer placement="right" bind:hidden={hiddenRight} drawerRight>
+	<aside
+		class="w-[480px] h-auto flex items-center px-6 h-screen bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
+	>
+		<span class="w-full">
+			<h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
+				Placement Details
+			</h3>
+			<div class="w-full p-6 border rounded border-border-light dark:border-border-dark">
+				<div class="inline-flex">
+					{#if event}
+						<Icon name="event-icon" size={48} class=""><EventIcon /></Icon>
+					{:else if command}
+						<Icon name="command-icon" size={48} class=""><CommandIcon /></Icon>
+					{:else if readModel}
+						<Icon name="read-model-icon" size={48} class=""><ReadModelIcon /></Icon>
+					{/if}
+					<h2 class="ml-3 self-end text-xl font-bold text-body-light dark:text-body-dark">
+						Component Name
+					</h2>
+				</div>
+				<p class="my-3 text-sm leading-normal text-body dark:text-white">
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+					ut labore et dolore magna aliqua.
+				</p>
+				<div class="py-3">
+					<Label color="default"
+						><span class="text-body dark:text-white">Component Schema</span>
+						<Textarea
+							placeholder=""
+							value={code}
+							name="description"
+							rows="6"
+							class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
+							style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
+							disabled
+						/>
+					</Label>
+				</div>
+				<div class="py-3">
+					<Label color="default"
+						><span class="text-body dark:text-white">Placement Schema</span>
+						<Textarea
+							placeholder=""
+							value={code}
+							name="description"
+							rows="6"
+							class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
+							style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
+							disabled
+						/>
+					</Label>
+				</div>
+				<div class="mt-6 mx-3 space-x-3 flex justify-end">
+					<button
+						class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
+						on:click>cancel</button
+					>
+					<Button color="default" size="sm" label="Edit" on:click class="" />
+				</div>
+			</div>
+		</span>
+	</aside>
+</Drawer>
 
 <Navbar>
 	<NavInner navDivClass="flex justify-between items-center">
@@ -84,62 +277,6 @@
 		</NavToolbar>
 	</NavInner>
 </Navbar>
-
-<span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10"><ThemeSwitch /></span>
-<Drawer {hidden}>
-	<Sidebar class={!isClosed ? 'w-[416px]' : 'w-[239px]'} {isClosed}>
-		<SidebarWrapper design>
-			<SidebarInner slot="design">
-				<SidebarGroup>
-					<SidebarItem
-						label="Event Models"
-						sidebarHeaderClass="bg-white dark:bg-dark-2 w-full space-x-3 h-8 cursor-default"
-						headerItem
-					>
-						<Icon
-							slot="leftIcon"
-							name="event-models"
-							size={16}
-							iconColor="fill-current text-gray-brand-4 dark:text-gray-brand-2"
-							><EventModels /></Icon
-						>
-						<Icon
-							slot="rightIcon"
-							name="add-icon"
-							size={20}
-							iconColor="fill-current text-body dark:text-white"><AddIcon /></Icon
-						>
-					</SidebarItem>
-					<SidebarItem label="This is an Event Model!" active />
-				</SidebarGroup>
-				<SidebarGroup>
-					<SidebarDropdownWrapper label="Event Model Schema" on:click={() => handleClick()}>
-						<Icon
-							slot="icon"
-							name="generate-avro"
-							size={16}
-							iconColor="fill-current text-gray-brand-4 dark:text-gray-brand-2"
-							><GenerateAvro /></Icon
-						>
-						<SidebarDropdownItem label="" {feature} />
-					</SidebarDropdownWrapper>
-				</SidebarGroup>
-			</SidebarInner>
-		</SidebarWrapper>
-	</Sidebar>
-</Drawer>
-
-<div class="text-center z-30 absolute inset-x-0 mt-4">
-	<!--For testing-->
-	<Button gradient color="primary" size="sm" on:click={() => (hiddenRight = false)} class=""
-		>Show Sidebar</Button
-	><br />
-	<button on:click={() => (hiddenRight = true)} class="mt-4">Close</button>
-</div>
-
-<Drawer placement="right" bind:hidden={hiddenRight} drawerRight>
-	<div class="bg-white dark:bg-dark-2 w-[480px] p-4 h-screen">Hello please develop me!</div>
-</Drawer>
 
 <main
 	class="left-0 relative transition-all duration-[200ms] ml-0"
@@ -231,3 +368,9 @@
 		]}
 	/>
 </main>
+
+<style>
+	:global([data-accordion]) {
+		height: 100%;
+	}
+</style>

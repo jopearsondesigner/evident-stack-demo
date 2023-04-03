@@ -1,7 +1,7 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	export let asideClass =
-		'h-screen bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-gray-brand-1 transition-width duration-200 ease-in';
+		'h-screen bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-gray-brand-3 transition-width duration-200 ease-in';
 	export let nameClass =
 		'text-md font-bold text-body-light dark:text-body-dark text-center leading-[1.27] mx-4 mb-2';
 	export let descClass =

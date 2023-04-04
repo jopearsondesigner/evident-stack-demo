@@ -96,7 +96,7 @@
 
   // Keyboard
 
-  import { createKeybindingsHandler } from "../tinykeys"
+  import { createKeybindingsHandler } from "../vendor/tinykeys/tinykeys"
 
   const keyboardHandler = createKeybindingsHandler({
     "ArrowUp": event => {

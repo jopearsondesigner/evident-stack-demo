@@ -9,7 +9,7 @@
 <Meta title="Evident Design/Placement/Interface" component={Interface} />
 
 <Template let:args>
-	<Interface {...args} id="a-uuid" title="A nice Interface" row={1} column={3} cursor={false} />
+	<Interface id="a-uuid" row={1} column={3} {...args} />
 </Template>
 
-<Story name="blank" args={{ type: 'blank' }} />
+<Story name="blank" args={{ type: 'blank', name: 'A nice Interface' }} />

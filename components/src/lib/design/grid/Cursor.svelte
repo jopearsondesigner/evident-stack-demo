@@ -12,7 +12,7 @@
 
   const scrollIntoView = async () => {
     await tick()
-    element.scrollIntoView({behavior: "smooth", block: "start", inline: "center"})
+    element.scrollIntoView({behavior: "smooth", block: "nearest", inline: "center"})
   }
 
   $: if (element && gridRow > 0 && gridColumn > 0) {

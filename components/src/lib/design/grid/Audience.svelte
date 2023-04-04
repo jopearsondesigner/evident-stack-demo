@@ -2,6 +2,13 @@
   import {placementOrEmptyCellId, type Audience} from "../Grid";
   import EmptyCell from "./EmptyCell.svelte";
   import Interface from "./Interface.svelte";
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  const forward = (event: CustomEvent) => {
+    dispatch(event.type, event.detail)
+  }
 
   export let row: number;
   $: gridRow = row + 1;
@@ -39,6 +46,7 @@
 {#each audience.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
   {#if placement}
     <Interface
+      on:navigateCursor={forward}
       id={placement.id}
       interface_id={placement.interface}
       name={placement.name}
@@ -46,6 +54,6 @@
       {row}
       {column} />
   {:else}
-    <EmptyCell {row} {column} />
+    <EmptyCell on:navigateCursor={forward} {row} {column} />
   {/if}
 {/each}

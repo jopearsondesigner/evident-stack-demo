@@ -1,6 +1,8 @@
 <script lang="ts">
 	import MaybeTooltip from '../../utils/MaybeTooltip.svelte';
 	import markdown from '../../utils/markdown.js';
+  import { createEventDispatcher } from 'svelte';
+  import type { MouseEventHandler } from 'svelte/elements';
 
 	export let id: string;
 	export let readModel: string;
@@ -12,10 +14,16 @@
 	$: descriptionHTML = markdown(description);
 	$: gridRow = row + 1;
 	$: gridColumn = column + 1;
+
+  const dispatch = createEventDispatcher();
+  const handleClick: MouseEventHandler<HTMLDivElement> = (_event) => {
+    dispatch('navigateCursor', {row, column})
+  }
 </script>
 
 <div
 	{id}
+  on:click|preventDefault|stopPropagation={handleClick}
 	class="placement read-model z-20 flex place-self-center align-items-center p-[1.375rem] dark:border-gray-brand-1 -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
 	style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
 >

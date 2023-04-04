@@ -2,6 +2,13 @@
   import {placementOrEmptyCellId, type Stream} from "../Grid";
   import EmptyCell from "./EmptyCell.svelte";
   import Event from "./Event.svelte";
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  const forward = (event: CustomEvent) => {
+    dispatch(event.type, event.detail)
+  }
 
   export let row: number;
   $: gridRow = row + 1;
@@ -36,6 +43,7 @@
 {#each stream.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
   {#if placement}
     <Event
+      on:navigateCursor={forward}
       id={placement.id}
       event={placement.event}
       name={placement.name}
@@ -43,6 +51,6 @@
       {row}
       {column} />
   {:else}
-    <EmptyCell {row} {column} />
+    <EmptyCell on:navigateCursor={forward} {row} {column} />
   {/if}
 {/each}

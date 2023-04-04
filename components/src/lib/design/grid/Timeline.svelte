@@ -3,6 +3,13 @@
   import Command from "./Command.svelte";
   import EmptyCell from "./EmptyCell.svelte";
   import ReadModel from "./ReadModel.svelte";
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  const forward = (event: CustomEvent) => {
+    dispatch(event.type, event.detail)
+  }
 
   export let row: number;
   $: gridRow = row + 1;
@@ -27,6 +34,7 @@
 {#each placements as placement, column (placementOrEmptyCellId(placement, column, row))}
   {#if placement && placement.kind === 'command'}
     <Command
+      on:navigateCursor={forward}
       id={placement.id}
       command={placement.component}
       name={placement.name}
@@ -35,6 +43,7 @@
       {column} />
   {:else if placement && placement.kind === 'readModel'}
     <ReadModel
+      on:navigateCursor={forward}
       id={placement.id}
       readModel={placement.component}
       name={placement.name}
@@ -42,6 +51,6 @@
       {row}
       {column} />
   {:else}
-    <EmptyCell {row} {column} />
+    <EmptyCell on:navigateCursor={forward} {row} {column} />
   {/if}
 {/each}

@@ -99,6 +99,7 @@
     cursor_row = default_stream_row
   }
 
+  // TODO: wrap this to support dispatching to different keyboard handlers based on the editing/linking mode
   const keyboardHandler = createKeybindingsHandler({
     "ArrowUp": navUp,
     "k": navUp,
@@ -129,6 +130,12 @@
     "PageDown": navBottom,
     "Shift+G": navBottom,
   })
+
+  const handleNavigateCursor = (event: CustomEvent) => {
+    console.log("navigateCursor", event)
+    cursor_row = event.detail.row
+    cursor_column = event.detail.column
+  }
 </script>
 
 <svelte:window on:keydown={keyboardHandler}/>
@@ -138,17 +145,25 @@
     class="p-3 relative grid justify-items-center items-center"
     style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));">
     <Cursor row={cursor_row} column={cursor_column} />
-    <!-- TODO: make the card size a constant someplace -->
-    <AudienceLane row={default_audience_row} audience={{placements: default_audience_placements}} {max_column} />
 
-    {#each audiences as audience, i} {@const row = i + 1} <AudienceLane {row} {audience} {max_column} />{/each}
+    <AudienceLane
+      on:navigateCursor={handleNavigateCursor}
+      row={default_audience_row}
+      audience={{placements: default_audience_placements}}
+      {max_column} />
 
-    <Timeline row={timeline_row} placements={timeline_placements} {max_column} />
-
-    {#each streams as stream, i} {@const row = i + timeline_row + 1}
-      <StreamLane {row} {stream} {max_column} />
+    {#each audiences as audience, i} {@const row = i + 1}
+      <AudienceLane on:navigateCursor={handleNavigateCursor} {row} {audience} {max_column} />
     {/each}
 
-    <StreamLane row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
+    <Timeline on:navigateCursor={handleNavigateCursor}
+              row={timeline_row}
+              placements={timeline_placements}
+              {max_column} />
+
+    {#each streams as stream, i} {@const row = i + timeline_row + 1}
+      <StreamLane on:navigateCursor={handleNavigateCursor} {row} {stream} {max_column} />
+    {/each}
+    <StreamLane on:navigateCursor={handleNavigateCursor} row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
   </div>
 </div>

@@ -63,6 +63,8 @@ fn parse_uuid(uuid_str: String) -> Result<Uuid, JsValue> {
 
 #[wasm_bindgen]
 impl EventModelStateManager {
+    // TODO: we'll need to store a reference to the Svelte store's
+    // setter here, for non-Command-driven state changes (e.g. background sync)
     #[wasm_bindgen(constructor)]
     pub fn new(maybe_id_str: Option<String>) -> Result<EventModelStateManager, JsValue> {
         if let Some(id_str) = maybe_id_str {

@@ -55,9 +55,10 @@
 			<CloseButton
 				name="Close Placement Details"
 				size={12}
-				btnClass="float-right mt-2 mr-2"
+				btnClass="absolute right-0 mt-3 mr-3"
 				on:click={() => (hidden = true)}
 				color={$$restProps.color}
+				style="margin-top: {navbarHeight}px;"
 			/>
 			<slot />
 		</div>

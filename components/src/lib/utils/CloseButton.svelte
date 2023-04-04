@@ -3,6 +3,7 @@
 	import Close from '../icons/Close.svelte';
 	import { createEventDispatcher } from 'svelte';
 	export let size = 16;
+	export let style = '';
 	const dispatch = createEventDispatcher();
 	function handleClick(event: any) {
 		dispatch('click', event);

@@ -178,13 +178,13 @@
 
 <Drawer placement="right" bind:hidden={hiddenRight} drawerRight>
 	<aside
-		class="w-[480px] h-auto flex items-center px-6 h-screen bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
+		class="w-[480px] h-auto flex flex-col justify-center items-center px-6 h-screen bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
 	>
-		<span class="w-full">
+		<div class="w-full">
 			<h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
 				Placement Details
 			</h3>
-			<div class="w-full p-6 border rounded border-border-light dark:border-border-dark">
+			<div class="w-auto p-6 border rounded border-border-light dark:border-border-dark">
 				<div class="inline-flex">
 					{#if event}
 						<Icon name="event-icon" size={48} class=""><EventIcon /></Icon>
@@ -237,7 +237,7 @@
 					<Button color="default" size="sm" label="Edit" on:click class="" />
 				</div>
 			</div>
-		</span>
+		</div>
 	</aside>
 </Drawer>
 
@@ -284,16 +284,26 @@
 >
 	<Grid
 		default_audience_placements={[
-			,,
+			,
+			,
 			{ id: '1', name: 'An interface!', description: 'blah *blah* **blah**' },
-			,,,,,,,,
+			,
+			,
+			,
+			,
+			,
+			,
+			,
+			,
 			{ id: '2', name: 'Another interface!', description: 'blah *blah* **blah**' }
 		]}
 		audiences={[
 			{
 				name: 'A named audience',
 				placements: [
-					,,,
+					,
+					,
+					,
 					{ id: '3', name: 'An interface!', description: 'blah *blah* **blah**' },
 					,
 					{ id: '4', name: 'Another interface!', description: 'blah *blah* **blah**' }
@@ -304,7 +314,9 @@
 				placements: [
 					,
 					{ id: '5', name: 'An interface!', description: 'blah *blah* **blah**' },
-					,,,
+					,
+					,
+					,
 					{ id: '6', name: 'Another interface!', description: 'blah *blah* **blah**' }
 				]
 			}
@@ -327,17 +339,29 @@
 			{
 				name: 'A named stream',
 				placements: [
-					,,,
+					,
+					,
+					,
 					{ id: '9', name: 'An event!', description: 'blah *blah* **blah**' },
-					,,,,,,,,,
+					,
+					,
+					,
+					,
+					,
+					,
+					,
+					,
+					,
 					{ id: '10', name: 'Another event!', description: 'blah *blah* **blah**' }
 				]
 			}
 		]}
 		default_stream_placements={[
-			,,
+			,
+			,
 			{ id: '11', name: 'An event!', description: 'blah *blah* **blah**' },
-			,,
+			,
+			,
 			{ id: '12', name: 'Another event!', description: 'blah *blah* **blah**' }
 		]}
 	/>

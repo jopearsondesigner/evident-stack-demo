@@ -1,4 +1,4 @@
-use std::{collections::HashMap, ops::Deref};
+use std::{collections::HashMap};
 
 use event_models::{
     implementation::in_memory::InMemoryEventModel,

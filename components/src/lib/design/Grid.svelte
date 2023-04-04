@@ -53,27 +53,67 @@
 
   import { createKeybindingsHandler } from "../vendor/tinykeys/tinykeys"
 
+  const navUp = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_row = Math.max(cursor_row - 1, 0)
+  }
+
+  const navRight = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_column += 1
+  }
+
+  const navDown = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_row = Math.min(cursor_row + 1, default_stream_row)
+  }
+
+  const navLeft = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_column = Math.max(cursor_column - 1, 0)
+  }
+
+  const navHome = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_row = timeline_row
+    cursor_column = 0
+  }
+
+  const navStart = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_column = 0
+  }
+
+  const navEnd = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_column = max_column
+  }
+
+  const navTop = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_row = default_audience_row
+  }
+
+  const navBottom = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_row = default_stream_row
+  }
+
   const keyboardHandler = createKeybindingsHandler({
-    "ArrowUp": event => {
-      event.preventDefault()
-      cursor_row = Math.max(cursor_row - 1, 0)
-      console.log("cursor:", cursor_row, cursor_column)
-    },
-    "ArrowRight": event => {
-      event.preventDefault()
-      cursor_column += 1
-      console.log("cursor:", cursor_row, cursor_column)
-    },
-    "ArrowDown": event => {
-      event.preventDefault()
-      cursor_row = Math.min(cursor_row + 1, default_stream_row)
-      console.log("cursor:", cursor_row, cursor_column)
-    },
-    "ArrowLeft": event => {
-      event.preventDefault()
-      cursor_column = Math.max(cursor_column - 1, 0)
-      console.log("cursor:", cursor_row, cursor_column)
-    },
+    "ArrowUp": navUp,
+    "k": navUp,
+    "ArrowRight": navRight,
+    "l": navRight,
+    "ArrowDown": navDown,
+    "j": navDown,
+    "ArrowLeft": navLeft,
+    "h": navLeft,
+    "Home": navHome,
+    "Control+a": navStart,
+    "End": navEnd,
+    "Control+e": navEnd,
+    "PageUp": navTop,
+    "PageDown": navBottom,
   })
 </script>
 

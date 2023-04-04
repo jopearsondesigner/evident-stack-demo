@@ -132,7 +132,6 @@
   })
 
   const handleNavigateCursor = (event: CustomEvent) => {
-    console.log("navigateCursor", event)
     cursor_row = event.detail.row
     cursor_column = event.detail.column
   }

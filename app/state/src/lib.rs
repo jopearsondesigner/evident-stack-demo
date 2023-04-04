@@ -113,18 +113,11 @@ impl EventModelStateManager {
     }
 
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {
-        log(&format!("Dispatching {:?}...", command));
         let result =
             EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)
                 .await;
         match result {
-            Ok(state) => {
-                log(&format!(
-                    "...dispatched command {:?} and got next state {:?}",
-                    command, state
-                ));
-                Ok(state.into())
-            }
+            Ok(state) => Ok(state.into()),
             Err(err) => Err(JsValue::from(format!(
                 "Error dispatching command {:?}: {:?}",
                 command, err

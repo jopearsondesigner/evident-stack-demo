@@ -1,19 +1,12 @@
 <script lang="ts">
-    import type { Point } from "./types";
+    import type { PathCoordinates } from "./types";
 
 	export let color: string;
-	export let pathCoords: Coordinates;
+	export let pathCoords: PathCoordinates;
 	export let strokeWidth: number;
-	export let dashness: number | undefined;
+	export let dashness: number | undefined;	
 
-	interface Coordinates {
-		to: Point;
-		from: Point;
-		fromBezPoint: Point;
-		toBezPoint: Point;
-	}
-
-	function buildPath({ to, from, fromBezPoint, toBezPoint }: Coordinates): string {
+	function buildPath({ to, from, fromBezPoint, toBezPoint }: PathCoordinates): string {
 		return `M ${from.x} ${from.y}
         C ${fromBezPoint.x} ${fromBezPoint.y},
             ${toBezPoint.x} ${toBezPoint.y},

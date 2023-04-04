@@ -86,7 +86,7 @@
 
   const navEnd = (event: KeyboardEvent) => {
     event.preventDefault()
-    cursor_column = max_column
+    cursor_column = max_column - right_buffer
   }
 
   const navTop = (event: KeyboardEvent) => {

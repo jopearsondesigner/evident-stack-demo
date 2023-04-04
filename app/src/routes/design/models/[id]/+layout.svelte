@@ -23,6 +23,7 @@
 <h2>{model_id}</h2>
 
 <pre>{JSON.stringify($grid)}</pre>
+<pre>{JSON.stringify($grid?.flows)}</pre>
 
 <form on:submit|preventDefault={handleImportJson}>
   <div class="form-control w-full max-w-xs">
@@ -41,6 +42,7 @@
 <button on:click={handleDeleteModel}>Delete This Model</button>
 
 <Grid
+  flow_arrows={$grid?.flows}
   default_audience_placements={$grid?.default_audience}
   audiences={$grid?.audiences}
   timeline_placements={$grid?.timeline}

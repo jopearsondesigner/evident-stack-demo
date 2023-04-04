@@ -6,9 +6,7 @@
   import Timeline from './grid/Timeline.svelte';
   import StreamLane from './grid/Stream.svelte';
 
-  import Event from './grid/Event.svelte';
-  import EmptyCell from './grid/EmptyCell.svelte';
-  import type {Audience, EventPlacement, InterfacePlacement, TimelinePlacement} from './Grid';
+  import type {Audience, EventPlacement, InterfacePlacement, Stream, TimelinePlacement} from './Grid';
 
   export let default_audience_placements: Array<InterfacePlacement> = new Array(0);
   export let audiences: Array<Audience> = new Array(0);

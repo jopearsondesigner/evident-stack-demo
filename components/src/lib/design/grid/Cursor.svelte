@@ -23,5 +23,4 @@
 <div
   bind:this={element}
 	class="cursor z-10 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300"
-	style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
-/>
+	style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};" />

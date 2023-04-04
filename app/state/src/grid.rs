@@ -1,4 +1,4 @@
-use std::{collections::HashMap};
+use std::collections::HashMap;
 
 use event_models::{
     implementation::in_memory::InMemoryEventModel,
@@ -269,7 +269,7 @@ impl From<event_models::types::FlowArrow> for FlowArrow {
         Self {
             id: value.id().to_owned(),
             from: value.from().to_owned().into(),
-            to: value.to().to_owned().into()
+            to: value.to().to_owned().into(),
         }
     }
 }
@@ -278,14 +278,14 @@ impl From<event_models::types::FlowArrow> for FlowArrow {
 #[derive(Debug, Clone)]
 pub struct FlowPort {
     to: Uuid,
-    anchor: FlowAnchor
+    anchor: FlowAnchor,
 }
 
 impl From<event_models::types::flow::Port> for FlowPort {
     fn from(value: event_models::types::flow::Port) -> Self {
         Self {
             to: value.placement_id().to_owned(),
-            anchor: value.anchor().to_owned().into()
+            anchor: value.anchor().to_owned().into(),
         }
     }
 }
@@ -382,6 +382,11 @@ impl EventModelGrid {
             default_stream.set(*index as u32, JsValue::from(placement.to_owned()))
         });
         default_stream
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn flows(&self) -> Array {
+        self.flows.iter().cloned().map(JsValue::from).collect()
     }
 }
 
@@ -537,12 +542,7 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                         })
                         .collect(),
                     default_stream: grouped_streams.remove(&None).unwrap_or_default(),
-                    flows: model
-                        .flows()
-                        .values()
-                        .cloned()
-                        .map(Into::into)
-                        .collect()
+                    flows: model.flows().values().cloned().map(Into::into).collect(),
                 }
             }
         }

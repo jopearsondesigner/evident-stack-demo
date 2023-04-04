@@ -18,6 +18,14 @@
 	} from './grid';
 
 	/** @type Array.<{id: string,
+      from: Object,
+      to: Object}> */
+	export let flow_arrows = new Array(0);
+
+	console.log("flow_arrows");
+	console.log(flow_arrows);
+
+	/** @type Array.<{id: string,
       interface: string,
       name: string,
       description: string}> */
@@ -39,7 +47,7 @@
       description: string}> */
 	export let timeline_placements = new Array(0);
 
-  console.log(timeline_placements);
+	console.log(timeline_placements);
 
 	/** @type Array.<{id: string,
       name: string,

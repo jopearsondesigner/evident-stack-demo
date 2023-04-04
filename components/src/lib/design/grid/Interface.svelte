@@ -24,8 +24,6 @@
 
 	export let column: number;
 
-	export let cursor = false;
-
 	$: descriptionHTML = markdown(description);
 	$: gridRow = row + 1;
 	$: gridColumn = column + 1;
@@ -33,8 +31,7 @@
 
 <div
 	{id}
-	class="placement interface z-20 flex place-self-center align-items-center p-[1.4375rem] border-r border-white -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
-	class:cursor
+	class="placement interface z-20 flex place-self-center align-items-center p-[1.4375rem] -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
 	style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
 >
 	<MaybeTooltip tip={descriptionHTML}>

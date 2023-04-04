@@ -3,7 +3,7 @@ export function setArrayLength(a: Array<any>, length: number): Array<any> {
   return a;
 }
 
-type PlacementContainerArray = Array<{placements: Array<any>}>;
+type PlacementContainerArray = Array<{ placements: Array<any> }>;
 
 export function setAllPlacementArrayLengths(
   a: PlacementContainerArray,

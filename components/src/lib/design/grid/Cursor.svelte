@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { tick } from "svelte";
+
+
   export let row: number;
   export let column: number;
 
@@ -7,8 +10,13 @@
   $: gridRow = row + 1;
 	$: gridColumn = column + 1;
 
+  const scrollIntoView = async () => {
+    await tick()
+    element.scrollIntoView({behavior: "smooth", block: "start", inline: "center"})
+  }
+
   $: if (element && gridRow > 0 && gridColumn > 0) {
-    element.scrollIntoView({behavior: "smooth", block: "center", inline: "center"})
+    scrollIntoView()
   }
 </script>
 

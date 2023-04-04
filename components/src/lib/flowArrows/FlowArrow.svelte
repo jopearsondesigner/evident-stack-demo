@@ -45,6 +45,8 @@
 
     let update = () => {
         console.info(`UPDATE: TO: ${config.to}, FROM: ${config.from}`)
+        console.info("Bounding To: ", toRect);
+        console.info("Bounding From: ", fromRect);
     }
 
 	onDestroy(() => {

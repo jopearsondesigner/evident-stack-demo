@@ -260,8 +260,16 @@ impl Stream {
 #[derive(Debug, Clone)]
 pub struct FlowArrow {
     id: Uuid,
-    from: FlowPort,
-    to: FlowPort,
+    #[wasm_bindgen(getter_with_clone)]
+    pub from: FlowPort,
+    #[wasm_bindgen(getter_with_clone)]
+    pub to: FlowPort,
+}
+
+impl Entity for FlowArrow {
+    fn id(&self) -> &Uuid {
+        &self.id
+    }
 }
 
 impl From<event_models::types::FlowArrow> for FlowArrow {
@@ -278,7 +286,16 @@ impl From<event_models::types::FlowArrow> for FlowArrow {
 #[derive(Debug, Clone)]
 pub struct FlowPort {
     to: Uuid,
-    anchor: FlowAnchor,
+    #[wasm_bindgen(getter_with_clone)]
+    pub anchor: FlowAnchor,
+}
+
+#[wasm_bindgen]
+impl FlowPort {
+    #[wasm_bindgen(getter)]
+    pub fn to(&self) -> String {
+        self.to.to_string()
+    }
 }
 
 impl From<event_models::types::flow::Port> for FlowPort {

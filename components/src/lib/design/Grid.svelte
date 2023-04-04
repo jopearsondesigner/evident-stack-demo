@@ -102,18 +102,32 @@
   const keyboardHandler = createKeybindingsHandler({
     "ArrowUp": navUp,
     "k": navUp,
+
     "ArrowRight": navRight,
     "l": navRight,
+    "Tab": navRight,
+
     "ArrowDown": navDown,
     "j": navDown,
+
     "ArrowLeft": navLeft,
     "h": navLeft,
+    "Shift+Tab": navLeft,
+
     "Home": navHome,
+
     "Control+a": navStart,
+    "0": navStart,
+
     "End": navEnd,
+    "Shift+4": navEnd,
     "Control+e": navEnd,
+
     "PageUp": navTop,
+    "g g": navTop,
+
     "PageDown": navBottom,
+    "Shift+G": navBottom,
   })
 </script>
 

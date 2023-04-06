@@ -5,9 +5,11 @@
   import AudienceLane from './grid/Audience.svelte';
   import Timeline from './grid/Timeline.svelte';
   import StreamLane from './grid/Stream.svelte';
+  import FlowArrow from '$lib/flowArrows/FlowArrow.svelte';
 
-  import type {Audience, EventPlacement, InterfacePlacement, Stream, TimelinePlacement} from './Grid';
+  import type {Audience, EventPlacement, Flow, FlowAnchor, InterfacePlacement, Stream, TimelinePlacement} from './Grid';
 
+  export let flows: Array<Flow> = [];
   export let default_audience_placements: Array<InterfacePlacement> = new Array(0);
   export let audiences: Array<Audience> = new Array(0);
   export let timeline_placements: Array<TimelinePlacement> = new Array(0);
@@ -135,6 +137,9 @@
     cursor_row = event.detail.row
     cursor_column = event.detail.column
   }
+
+  console.warn("FLOWS");
+  console.warn(flows);
 </script>
 
 <svelte:window on:keydown={keyboardHandler}/>
@@ -144,6 +149,14 @@
     class="p-3 relative grid justify-items-center items-center"
     style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));">
     <Cursor row={cursor_row} column={cursor_column} />
+    {#each flows as flow}
+      <FlowArrow config={{
+        from: flow.from.placementId,
+        to: flow.to.placementId,
+        fromAnchor: flow.from.anchor,
+        toAnchor: flow.to.anchor,
+      }} />
+    {/each}
 
     <AudienceLane
       on:navigateCursor={handleNavigateCursor}

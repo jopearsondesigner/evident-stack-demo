@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-  import FlowMarker from './FlowMarker.svelte';
+	import FlowMarker from './FlowMarker.svelte';
 	import type { Id, PathProps } from './types';
 
 	export let config: PathProps;

@@ -1,3 +1,5 @@
+import type { FlowAnchor } from "$lib/design/Grid";
+
 export const RECT_ATTRIBUTES_TO_COMPARE = ['x', 'y', 'width', 'height'];
 
 export type Id = string;
@@ -7,12 +9,12 @@ export interface Point {
     y: number;
 }
 
-export enum Anchor {
-    TOP,
-    LEFT,
-    BOTTOM,
-    RIGHT
-}
+// export enum Anchor {
+//     TOP,
+//     LEFT,
+//     BOTTOM,
+//     RIGHT
+// }
 
 export interface PathCoordinates {
     to: Point;
@@ -25,14 +27,14 @@ export interface PathCoordinates {
 export interface PathProps {
     from: Id,
     to: Id,
-    fromAnchor: Anchor,
-    toAnchor: Anchor,
-    color: string,
-    strokeWidth: number,
-    curveFactor: number,
-    offsetMarket: number,
-    markerSize: number,
-    dashness: boolean,
-    debug: boolean,
+    fromAnchor: FlowAnchor,
+    toAnchor: FlowAnchor,
+    color?: string,
+    strokeWidth?: number,
+    curveFactor?: number,
+    offsetMarket?: number,
+    markerSize?: number,
+    dashness?: boolean,
+    debug?: boolean,
     refreshTime?: number,
 }

@@ -1,3 +1,20 @@
+export enum FlowAnchor {
+    None,
+    Top,
+    Left,
+    Bottom,
+    Right,
+}
+
+export type FlowPort = {
+  placementId: string,
+  anchor: FlowAnchor
+}
+
+export type Flow = {
+  to: FlowPort,
+  from: FlowPort
+}
 export type InterfacePlacement = {
   id: string,
   interface: string,

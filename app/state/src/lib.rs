@@ -110,6 +110,68 @@ impl EventModelStateManager {
         self.dispatch(EventModelCommand::Delete(model_id)).await
     }
 
+    pub async fn define_and_place_interface(
+        &mut self,
+        model_id_str: String,
+        name: String,
+        index: usize,
+        maybe_audience_str: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let audience = match maybe_audience_str {
+            Some(audience_str) => Some(parse_uuid(audience_str)?),
+            None => None,
+        };
+        self.dispatch(EventModelCommand::DefineAndPlaceInterface(
+            model_id, name, index, audience,
+        ))
+        .await
+    }
+
+    pub async fn define_and_place_command(
+        &mut self,
+        model_id_str: String,
+        name: String,
+        index: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        self.dispatch(EventModelCommand::DefineAndPlaceCommand(
+            model_id, name, index,
+        ))
+        .await
+    }
+
+    pub async fn define_and_place_event(
+        &mut self,
+        model_id_str: String,
+        name: String,
+        index: usize,
+        maybe_stream_str: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let stream = match maybe_stream_str {
+            Some(stream_str) => Some(parse_uuid(stream_str)?),
+            None => None,
+        };
+        self.dispatch(EventModelCommand::DefineAndPlaceEvent(
+            model_id, name, index, stream,
+        ))
+        .await
+    }
+
+    pub async fn define_and_place_read_model(
+        &mut self,
+        model_id_str: String,
+        name: String,
+        index: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        self.dispatch(EventModelCommand::DefineAndPlaceReadModel(
+            model_id, name, index,
+        ))
+        .await
+    }
+
     pub async fn import(
         &mut self,
         model_id_str: String,

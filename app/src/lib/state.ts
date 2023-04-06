@@ -15,20 +15,19 @@ const initialize_decider = async (id: string | undefined) => {
     grid: store,
     decider: {
       create_model: async (name: string) => {
-        let result = await manager.create(name)
-        return result
+        return await manager.create(name)
       },
       define_and_place_interface: async (name: string, index: number, audience: string | undefined) => {
-        console.log('define_and_place_interface', name, index, audience)
+        return await manager.define_and_place_interface(id, name, index, audience);
       },
       define_and_place_command: async (name: string, index: number) => {
-        console.log('define_and_place_command', name, index)
+        return await manager.define_and_place_command(id, name, index);
       },
       define_and_place_event: async (name: string, index: number, stream: string | undefined) => {
-        console.log('define_and_place_event', name, index, stream)
+        return await manager.define_and_place_event(id, name, index, stream);
       },
       define_and_place_read_model: async (name: string, index: number) => {
-        console.log('define_and_place_read_model', name, index)
+        return await manager.define_and_place_read_model(id, name, index);
       },
       delete_model: async () => {
         let result = await manager.delete(id)

@@ -3,7 +3,9 @@ use crate::api::errors::EventModelError;
 use crate::api::errors::EventModelError::IllegalState;
 use crate::api::events::EventModelEvent;
 use crate::json::import;
-use crate::types::{validate_name, Component, Lane, Schema};
+use crate::types::{
+    validate_name, Command, Component, Event, Interface, Lane, Placement, ReadModel, Schema,
+};
 use crate::{EventModel, EventModelDataTransfer, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
 use std::fmt::Debug;
@@ -175,20 +177,99 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::RemoveStream(_, _) => {
                         todo!()
                     }
-                    EventModelCommand::DefineAndPlaceInterface(_, _, _, _) => {
-                        todo!()
+                    EventModelCommand::DefineAndPlaceInterface(model_id, name, index, audience) => {
+                        let interface_id = Uuid::new_v4();
+                        let interface = Interface::create(
+                            interface_id,
+                            name.to_owned(),
+                            Default::default(),
+                            Default::default(),
+                        )?;
+                        let component = Component::InterfaceComponent(interface);
+                        let placement = Placement::Interface {
+                            id: Uuid::new_v4(),
+                            index: *index,
+                            interface: interface_id,
+                            audience: *audience,
+                        };
+                        Ok(vec![
+                            EventModelEvent::ComponentDefined(*model_id, component),
+                            EventModelEvent::ComponentPlaced(*model_id, placement),
+                        ])
                     }
-                    EventModelCommand::DefineAndPlaceCommand(_, _, _) => {
-                        todo!()
+                    EventModelCommand::DefineAndPlaceCommand(model_id, name, index) => {
+                        let command_id = Uuid::new_v4();
+                        let command = Command::create(
+                            command_id,
+                            name.to_owned(),
+                            Default::default(),
+                            Default::default(),
+                        )?;
+                        let component = Component::CommandComponent(command);
+                        let placement = Placement::Command {
+                            id: Uuid::new_v4(),
+                            index: *index,
+                            command: command_id,
+                            schema: Default::default(),
+                        };
+                        Ok(vec![
+                            EventModelEvent::ComponentDefined(*model_id, component),
+                            EventModelEvent::ComponentPlaced(*model_id, placement),
+                        ])
                     }
-                    EventModelCommand::DefineAndPlaceEvent(_, _, _, _) => {
-                        todo!()
+                    EventModelCommand::DefineAndPlaceEvent(model_id, name, index, stream) => {
+                        let event_id = Uuid::new_v4();
+                        let event = Event::create(
+                            event_id,
+                            name.to_owned(),
+                            Default::default(),
+                            Default::default(),
+                        )?;
+                        let component = Component::EventComponent(event);
+                        let placement = Placement::Event {
+                            id: Uuid::new_v4(),
+                            index: *index,
+                            event: event_id,
+                            stream: *stream,
+                            schema: Default::default(),
+                        };
+                        Ok(vec![
+                            EventModelEvent::ComponentDefined(*model_id, component),
+                            EventModelEvent::ComponentPlaced(*model_id, placement),
+                        ])
                     }
-                    EventModelCommand::DefineAndPlaceReadModel(_, _, _) => {
-                        todo!()
+                    EventModelCommand::DefineAndPlaceReadModel(model_id, name, index) => {
+                        let read_model_id = Uuid::new_v4();
+                        let read_model = ReadModel::create(
+                            read_model_id,
+                            name.to_owned(),
+                            Default::default(),
+                            Default::default(),
+                        )?;
+                        let component = Component::ReadModelComponent(read_model);
+                        let placement = Placement::ReadModel {
+                            id: Uuid::new_v4(),
+                            index: *index,
+                            read_model: read_model_id,
+                            schema: Default::default(),
+                        };
+                        Ok(vec![
+                            EventModelEvent::ComponentDefined(*model_id, component),
+                            EventModelEvent::ComponentPlaced(*model_id, placement),
+                        ])
                     }
-                    EventModelCommand::RenamePlacement(_, _, _) => {
-                        todo!()
+                    EventModelCommand::RenamePlacement(model_id, placement_id, name) => {
+                        let placement = model.placements().get(placement_id).ok_or(
+                            EventModelError::ModificationError(format!(
+                                "No placement found with id {:?}",
+                                placement_id
+                            )),
+                        )?;
+                        Ok(vec![EventModelEvent::ComponentRenamed(
+                            *model_id,
+                            placement.component_id(),
+                            name.to_string(),
+                        )])
                     }
                     EventModelCommand::MoveInterfacePlacement(_, _, _, _) => {
                         todo!()
@@ -303,8 +384,9 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                     model.component_defined(component.to_owned());
                     EventModelState::EventModel(model)
                 }
-                EventModelEvent::ComponentRenamed(_, _, _) => {
-                    todo!()
+                EventModelEvent::ComponentRenamed(_, component_id, name) => {
+                    model.component_renamed(component_id, name);
+                    EventModelState::EventModel(model)
                 }
                 EventModelEvent::AddedToComponentDescription(_, _, _, _) => {
                     todo!()

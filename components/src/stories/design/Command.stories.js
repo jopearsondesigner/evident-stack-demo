@@ -13,7 +13,6 @@ const Template = (args) => ({
 
 export const Default = Template.bind({});
 Default.args = {
-  cursor: false,
   id: "uuid",
   type: "command",
   title: "A Command",

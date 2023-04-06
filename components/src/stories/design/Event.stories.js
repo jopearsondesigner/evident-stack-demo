@@ -13,7 +13,6 @@ const Template = (/** @type {any} */ args) => ({
 
 export const Default = Template.bind({});
 Default.args = {
-	cursor: false,
 	id: 'uuid',
 	title: 'An Event',
 	row: 1,

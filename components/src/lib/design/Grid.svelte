@@ -1,256 +1,168 @@
 <svelte:options immutable />
 
-<script>
-	import Audience from './grid/Audience.svelte';
-	import Timeline from './grid/Timeline.svelte';
-	import Stream from './grid/Stream.svelte';
+<script lang="ts">
+  import Cursor from "./grid/Cursor.svelte";
+  import AudienceLane from './grid/Audience.svelte';
+  import Timeline from './grid/Timeline.svelte';
+  import StreamLane from './grid/Stream.svelte';
 
-	import Interface from './grid/Interface.svelte';
-	import Command from './grid/Command.svelte';
-	import Event from './grid/Event.svelte';
-	import ReadModel from './grid/ReadModel.svelte';
-	import EmptyCell from './grid/EmptyCell.svelte';
-	import {
-		maxSparseArrayIndex,
-		maxSparseArrayIndexInArray,
-		setAllPlacementArrayLengths,
-		setArrayLength
-	} from './grid';
+  import type {Audience, EventPlacement, InterfacePlacement, Stream, TimelinePlacement} from './Grid';
 
-	/** @type Array.<{id: string,
-      from: Object,
-      to: Object}> */
-	export let flow_arrows = new Array(0);
+  export let default_audience_placements: Array<InterfacePlacement> = new Array(0);
+  export let audiences: Array<Audience> = new Array(0);
+  export let timeline_placements: Array<TimelinePlacement> = new Array(0);
+  export let streams: Array<Stream> = new Array(0);
+  export let default_stream_placements: Array<EventPlacement> = new Array(0);
 
-	console.log("flow_arrows");
-	console.log(flow_arrows);
+  // Rows
 
-	/** @type Array.<{id: string,
-      interface: string,
-      name: string,
-      description: string}> */
-	export let default_audience_placements = new Array(0);
+  const default_audience_row = 0;
+  $: timeline_row = audiences.length + 1;
+  $: default_stream_row = timeline_row + streams.length + 1;
+  $: row_count = default_stream_row + 1;
+  $: cursor_row = timeline_row
 
-	/** @type Array.<{id: string,
-      name: string,
-      placements: Array.<{id: string,
-      interface: string,
-      kind: string, // TODO: supported placement types/config here
-      name: string,
-      description: string}>}> */
-	export let audiences = new Array(0);
+  // Columns
 
-	/** @type Array<{id: string,
-      component: string,
-      kind: ('command' | 'readModel'),
-      name: string,
-      description: string}> */
-	export let timeline_placements = new Array(0);
+  const right_buffer = 10;
 
-	console.log(timeline_placements);
+  let cursor_column = 0;
 
-	/** @type Array.<{id: string,
-      name: string,
-      placements: Array.<{id: string,
-                          event: string,
-                          name: string,
-                          description: string}>}> */
-	export let streams = new Array(0);
+  export function maxSparseArrayIndex(array: Array<any>): number {
+    let max = 0;
+    for (let i in array) {
+      max = Math.max(max, parseInt(i));
+    }
+    return max
+  }
 
-	/** @type Array.<{id: string,
-      event: string,
-      name: string,
-      description: string}> */
-	export let default_stream_placements = new Array(0);
+  export function maxSparseArrayIndexInArray(maps: Array<Array<any>>): number {
+    return Math.max(...maps.map(m => maxSparseArrayIndex(m)))
+  }
 
-	// Columns
+  $: max_column = Math.max(
+    maxSparseArrayIndex(default_audience_placements),
+    maxSparseArrayIndexInArray(audiences.map((a) => a.placements)),
+    maxSparseArrayIndex(timeline_placements),
+    maxSparseArrayIndexInArray(streams.map((s) => s.placements)),
+    maxSparseArrayIndex(default_stream_placements),
+    cursor_column
+  ) + right_buffer;
 
-	const right_buffer = 10;
+  // Keyboard
 
-	$: max_column =
-		Math.max(
-			maxSparseArrayIndex(default_audience_placements),
-			maxSparseArrayIndexInArray(audiences.map((a) => a.placements)),
-			maxSparseArrayIndex(timeline_placements),
-			maxSparseArrayIndexInArray(streams.map((s) => s.placements)),
-			maxSparseArrayIndex(default_stream_placements)
-		) + right_buffer;
+  import { createKeybindingsHandler } from "../vendor/tinykeys/tinykeys"
 
-	$: setArrayLength(default_audience_placements, max_column);
-	$: setAllPlacementArrayLengths(audiences, max_column);
-	$: setArrayLength(timeline_placements, max_column);
-	$: setAllPlacementArrayLengths(streams, max_column);
-	$: setArrayLength(default_stream_placements, max_column);
+  const navUp = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_row = Math.max(cursor_row - 1, 0)
+  }
 
-	// Rows
+  const navRight = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_column += 1
+  }
 
-	const default_audience_row = 0;
+  const navDown = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_row = Math.min(cursor_row + 1, default_stream_row)
+  }
 
-	$: timeline_row = audiences.length + 1;
+  const navLeft = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_column = Math.max(cursor_column - 1, 0)
+  }
 
-	$: default_stream_row = timeline_row + streams.length + 1;
+  const navHome = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_row = timeline_row
+    cursor_column = 0
+  }
 
-	$: row_count = default_stream_row + 1;
+  const navStart = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_column = 0
+  }
 
-	// List IDs
+  const navEnd = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_column = max_column - right_buffer
+  }
 
-	/**
-     @param {{id: string} | undefined | null} placement - the placement
-     @param {number} col - the column index
-     @param {number} row - the row index
-     @returns {string} - returns a string ID, either the placement.id or an empty cell id from row-col
-  */
-	function placementOrEmptyCellId(placement, col, row) {
-		return (placement && placement.id) || `empty-${col}-${row}`;
-	}
+  const navTop = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_row = default_audience_row
+  }
 
-	// Canvas State
+  const navBottom = (event: KeyboardEvent) => {
+    event.preventDefault()
+    cursor_row = default_stream_row
+  }
 
-	/** @type {{row: number, col: number}} */
-	let cursor_position = { row: timeline_row, col: 0 };
+  // TODO: wrap this to support dispatching to different keyboard handlers based on the editing/linking mode
+  const keyboardHandler = createKeybindingsHandler({
+    "ArrowUp": navUp,
+    "k": navUp,
 
-	/**
-     @param {number} col - the column index
-     @param {number} row - the row index
-     @returns {boolean} - whether the given col, row is equal to the current cursor position
-  */
-	function isCursor(col, row) {
-		return row == cursor_position.row && col == cursor_position.col;
-	}
+    "ArrowRight": navRight,
+    "l": navRight,
+    "Tab": navRight,
 
-	/** @type {{row: number, col: number} | null} */
-	let editing_position = null;
+    "ArrowDown": navDown,
+    "j": navDown,
 
-	/**
-     @param {number} col - the column index
-     @param {number} row - the row index
-     @returns {boolean} - whether the given col, row is equal to the current cursor position
-  */
-	function isEditing(col, row) {
-		return !!editing_position && row == editing_position.row && col == editing_position.col;
-	}
+    "ArrowLeft": navLeft,
+    "h": navLeft,
+    "Shift+Tab": navLeft,
+
+    "Home": navHome,
+
+    "Control+a": navStart,
+    "0": navStart,
+
+    "End": navEnd,
+    "Shift+4": navEnd,
+    "Control+e": navEnd,
+
+    "PageUp": navTop,
+    "g g": navTop,
+
+    "PageDown": navBottom,
+    "Shift+G": navBottom,
+  })
+
+  const handleNavigateCursor = (event: CustomEvent) => {
+    cursor_row = event.detail.row
+    cursor_column = event.detail.column
+  }
 </script>
+
+<svelte:window on:keydown={keyboardHandler}/>
 
 <div class="overflow-auto h-full w-full bg-gray-canvas dark:bg-dark-1">
   <div
-  	class="p-3 relative grid justify-items-center items-center"
-  	style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
-  >
-  	<!-- TODO: make the card size a constant someplace -->
-  	<Audience row={default_audience_row}>
-  		{#each default_audience_placements as placement, index (placementOrEmptyCellId(placement, index, default_audience_row))}
-  			{@const is_cursor = isCursor(default_audience_row, index)}
-  			<!-- {@const is_editing = isEditing(default_audience_row, index)} -->
-  			{#if placement}
-  				<Interface
-  					id={placement.id}
-            interface_id={placement.interface}
-  					name={placement.name}
-  					description={placement.description}
-  					row={default_audience_row}
-  					column={index}
-  					cursor={is_cursor}
-  				/>
-  			{:else}
-  				<EmptyCell row={default_audience_row} column={index} cursor={is_cursor} />
-  			{/if}
-  		{/each}
-  	</Audience>
+    class="p-3 relative grid justify-items-center items-center"
+    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));">
+    <Cursor row={cursor_row} column={cursor_column} />
 
-  	{#each audiences as audience, i}
-  		{@const row = i + 1}
-  		<Audience {row} name={audience.name}>
-  			{#each audience.placements as placement, index (placementOrEmptyCellId(placement, index, row))}
-  				{@const is_cursor = isCursor(row, index)}
-  				<!-- {@const is_editing = isEditing(row, index)} -->
-  				{#if placement}
-  					<Interface
-  						id={placement.id}
-              interface_id={placement.interface}
-  						name={placement.name}
-  						description={placement.description}
-  						{row}
-  						column={index}
-  						cursor={is_cursor}
-  					/>
-  				{:else}
-  					<EmptyCell {row} column={index} cursor={is_cursor} />
-  				{/if}
-  			{/each}
-  		</Audience>
-  	{/each}
+    <AudienceLane
+      on:navigateCursor={handleNavigateCursor}
+      row={default_audience_row}
+      audience={{placements: default_audience_placements}}
+      {max_column} />
 
-  	<Timeline row={timeline_row}>
-  		{#each timeline_placements as placement, index (placementOrEmptyCellId(placement, index, timeline_row))}
-  			{@const is_cursor = isCursor(timeline_row, index)}
-  			<!-- {@const is_editing = isEditing(timeline_row, index)} -->
-  			{#if placement && placement.kind === 'command'}
-  				<Command
-  					id={placement.id}
-            command={placement.component}
-  					name={placement.name}
-  					description={placement.description}
-  					row={timeline_row}
-  					column={index}
-  					cursor={is_cursor}
-  				/>
-  			{:else if placement && placement.kind === 'readModel'}
-  				<ReadModel
-  					id={placement.id}
-            readModel={placement.component}
-  					name={placement.name}
-  					description={placement.description}
-  					row={timeline_row}
-  					column={index}
-  					cursor={is_cursor}
-  				/>
-  			{:else}
-  				<EmptyCell row={timeline_row} column={index} cursor={is_cursor} />
-  			{/if}
-  		{/each}
-  	</Timeline>
+    {#each audiences as audience, i} {@const row = i + 1}
+      <AudienceLane on:navigateCursor={handleNavigateCursor} {row} {audience} {max_column} />
+    {/each}
 
-  	{#each streams as stream, i}
-  		{@const row = i + timeline_row + 1}
-  		<Stream {row} name={stream.name}>
-  			{#each stream.placements as placement, index (placementOrEmptyCellId(placement, index, row))}
-  				{@const is_cursor = isCursor(row, index)}
-  				<!-- {@const is_editing = isEditing(row, index)} -->
-  				{#if placement}
-  					<Event
-  						id={placement.id}
-              event={placement.event}
-  						name={placement.name}
-  						description={placement.description}
-  						{row}
-  						column={index}
-  						cursor={is_cursor}
-  					/>
-  				{:else}
-  					<EmptyCell {row} column={index} cursor={is_cursor} />
-  				{/if}
-  			{/each}
-  		</Stream>
-  	{/each}
+    <Timeline on:navigateCursor={handleNavigateCursor}
+              row={timeline_row}
+              placements={timeline_placements}
+              {max_column} />
 
-  	<Stream row={default_stream_row}>
-  		{#each default_stream_placements as placement, index (placementOrEmptyCellId(placement, index, default_stream_row))}
-  			{@const is_cursor = isCursor(default_stream_row, index)}
-  			<!-- {@const is_editing = isEditing(default_stream_row, index)} -->
-  			{#if placement}
-  				<Event
-  					id={placement.id}
-            event={placement.event}
-  					name={placement.name}
-  					description={placement.description}
-  					row={default_stream_row}
-  					column={index}
-  					cursor={is_cursor}
-  				/>
-  			{:else}
-  				<EmptyCell row={default_stream_row} column={index} cursor={is_cursor} />
-  			{/if}
-  		{/each}
-  	</Stream>
+    {#each streams as stream, i} {@const row = i + timeline_row + 1}
+      <StreamLane on:navigateCursor={handleNavigateCursor} {row} {stream} {max_column} />
+    {/each}
+    <StreamLane on:navigateCursor={handleNavigateCursor} row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
   </div>
 </div>

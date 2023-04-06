@@ -184,6 +184,23 @@ impl EventModelStateManager {
             .await
     }
 
+    pub async fn rename_placement(
+        &mut self,
+        model_id_str: String,
+        placement_id_str: String,
+        name: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let placement_id = parse_uuid(placement_id_str)?;
+
+        self.dispatch(EventModelCommand::RenamePlacement(
+            model_id,
+            placement_id,
+            name,
+        ))
+        .await
+    }
+
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {
         let result =
             EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)

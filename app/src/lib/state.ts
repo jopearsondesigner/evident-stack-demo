@@ -30,15 +30,13 @@ const initialize_decider = async (id: string | undefined) => {
         return await manager.define_and_place_read_model(id, name, index);
       },
       delete_model: async () => {
-        let result = await manager.delete(id)
-        return result
+        return await manager.delete(id)
       },
       import_json: async (json_bytes: Uint8Array, offset: number) => {
-        let result = await manager.import(id, json_bytes, offset)
-        return result
+        return await manager.import(id, json_bytes, offset)
       },
-      rename_placement: (placement: string, name: string) => {
-        console.log('rename_placement', placement, name)
+      rename_placement: async (placement: string, name: string) => {
+        return await manager.rename_placement(id, placement, name)
       },
     }
   };

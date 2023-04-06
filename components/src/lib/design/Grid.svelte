@@ -57,7 +57,7 @@
     disambiguation = e.detail;
   }
   const handleRenamePlacement = async (e: CustomEvent) => {
-    await decider.define_and_place_read_model(e.detail.name, e.detail.index);
+    await decider.rename_placement(e.detail.placement, e.detail.name);
     mode = 'navigation'
   }
 
@@ -74,11 +74,11 @@
   onMount(() => {cursor_row = timeline_row})
   let cursor_column = 0;
   $: cursor_item = itemAtCursor(cursor_row, cursor_column,
-                                     default_audience_placements,
-                                     audiences,
-                                     timeline_placements,
-                                     streams,
-                                     default_stream_placements);
+                                default_audience_placements,
+                                audiences,
+                                timeline_placements,
+                                streams,
+                                default_stream_placements);
   $: cursor_is_editing = mode === 'editing';
 
   // Columns
@@ -221,8 +221,8 @@
       navigationKeyboardHandler(e)
     } else if (mode === 'editing') {
       editingKeyboardHandler(e)
-    // } else if (mode === 'linking') {
-    //   linkingKeyboardHandler(e)
+      // } else if (mode === 'linking') {
+      //   linkingKeyboardHandler(e)
     }
   }
 </script>
@@ -260,10 +260,10 @@
   on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
   on:define_and_place_event={handleDefineAndPlaceEvent}
   on:rename_placement={handleRenamePlacement}
-        row={cursor_row}
-        column={cursor_column}
-        item={cursor_item}
-        editing={cursor_is_editing} />
+  row={cursor_row}
+  column={cursor_column}
+  item={cursor_item}
+  editing={cursor_is_editing} />
 {#if mode === 'disambiguating' && disambiguation}
   <TimelineDisambiguation name={disambiguation.name}
                           index={disambiguation.index}
@@ -271,6 +271,6 @@
                           left={disambiguation.left}
                           on:define_and_place_command={handleDefineAndPlaceCommand}
                           on:define_and_place_read_model={handleDefineAndPlaceReadModel} />
-{/if}
-  </div>
+                        {/if}
+                      </div>
 </div>

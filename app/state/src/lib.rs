@@ -15,7 +15,7 @@ use event_models::{
     EventModelId, EventModelState,
 };
 pub use grid::EventModelGrid;
-use js_sys::Uint8Array;
+use js_sys::{Function, Uint8Array};
 use repository::HasKey;
 pub use utils::set_panic_hook;
 use uuid::Uuid;
@@ -48,6 +48,7 @@ impl HasKey for EventModelState<InMemoryEventModel> {
 pub struct EventModelStateManager {
     repository: LocalStorageStateRepository<EventModelState<InMemoryEventModel>>,
     // node: Node // TODO: convergent creation context details
+    store_setter: Option<js_sys::Function>,
 }
 
 pub struct EventModelDecider;
@@ -75,6 +76,7 @@ impl EventModelStateManager {
                     Some(event_model_id.to_string()),
                     EventModelState::BeforeCreation(InMemoryCreationDetails),
                 ),
+                store_setter: None,
             })
         } else {
             Ok(EventModelStateManager {
@@ -82,8 +84,14 @@ impl EventModelStateManager {
                     None,
                     EventModelState::BeforeCreation(InMemoryCreationDetails),
                 ),
+                store_setter: None,
             })
         }
+    }
+
+    #[wasm_bindgen(setter)]
+    pub fn set_store_setter(&mut self, setter: Option<Function>) {
+        self.store_setter = setter
     }
 
     pub async fn state(&self) -> Result<EventModelGrid, JsValue> {
@@ -119,7 +127,14 @@ impl EventModelStateManager {
             EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)
                 .await;
         match result {
-            Ok(state) => Ok(state.into()),
+            Ok(state) => {
+                if let Some(setter) = &self.store_setter {
+                    let this = JsValue::null();
+                    let grid: EventModelGrid = state.clone().into();
+                    let _ = setter.call1(&this, &JsValue::from(grid));
+                }
+                Ok(state.into())
+            }
             Err(err) => Err(JsValue::from(format!(
                 "Error dispatching command {:?}: {:?}",
                 command, err

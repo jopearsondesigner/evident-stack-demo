@@ -8,10 +8,12 @@
   import Timeline from './grid/Timeline.svelte';
   import StreamLane from './grid/Stream.svelte';
 
-  import type {Audience, EventPlacement, InterfacePlacement, Stream, TimelinePlacement} from './Grid';
+  import {type Decider, type Audience, type EventPlacement, type InterfacePlacement, type Stream, type TimelinePlacement, default_decider, type Disambiguation} from './Grid';
   import { onMount } from "svelte";
-  import { placementByRowColumn } from "./Grid";
+  import { itemAtCursor } from "./Grid";
+  import TimelineDisambiguation from "./grid/TimelineDisambiguation.svelte";
 
+  export let decider: Decider = default_decider;
   export let default_audience_placements: Array<InterfacePlacement> = new Array(0);
   export let audiences: Array<Audience> = new Array(0);
   export let timeline_placements: Array<TimelinePlacement> = new Array(0);
@@ -20,11 +22,44 @@
 
   // Grid Mode
 
-  let mode: 'loading' | 'navigation' | 'editing' | 'linking' = 'loading'
+  let mode: 'loading' | 'navigation' | 'editing' | 'disambiguating' | 'linking' = 'loading'
 
   onMount(() => {
     mode = 'navigation'
   })
+
+  // Disambiguation
+
+  let disambiguation: Disambiguation = null;
+
+  // Command Dispatch
+
+  const handleDefineAndPlaceInterface = async (e: CustomEvent) => {
+    await decider.define_and_place_interface(e.detail.name, e.detail.index, e.detail.audience);
+    mode = 'navigation'
+  }
+  const handleDefineAndPlaceCommand = async (e: CustomEvent) => {
+    await decider.define_and_place_command(e.detail.name, e.detail.index);
+    disambiguation = null;
+    mode = 'navigation';
+  }
+  const handleDefineAndPlaceEvent = async (e: CustomEvent) => {
+    await decider.define_and_place_event(e.detail.name, e.detail.index, e.detail.stream);
+    mode = 'navigation'
+  }
+  const handleDefineAndPlaceReadModel = async (e: CustomEvent) => {
+    await decider.define_and_place_read_model(e.detail.name, e.detail.index);
+    disambiguation = null;
+    mode = 'navigation';
+  }
+  const handleDisambiguateTimelineDefinitionAndPlacement = (e: CustomEvent) => {
+    mode = 'disambiguating';
+    disambiguation = e.detail;
+  }
+  const handleRenamePlacement = async (e: CustomEvent) => {
+    await decider.define_and_place_read_model(e.detail.name, e.detail.index);
+    mode = 'navigation'
+  }
 
   // Rows
 
@@ -38,12 +73,12 @@
   let cursor_row = 0;
   onMount(() => {cursor_row = timeline_row})
   let cursor_column = 0;
-  $: cursor_placement = placementByRowColumn(cursor_row, cursor_column,
-                                             default_audience_placements,
-                                             audiences,
-                                             timeline_placements,
-                                             streams,
-                                             default_stream_placements);
+  $: cursor_item = itemAtCursor(cursor_row, cursor_column,
+                                     default_audience_placements,
+                                     audiences,
+                                     timeline_placements,
+                                     streams,
+                                     default_stream_placements);
   $: cursor_is_editing = mode === 'editing';
 
   // Columns
@@ -177,8 +212,8 @@
 
   // Linking
 
-  const linkingKeyboardHandler = createKeybindingsHandler({
-  })
+  // const linkingKeyboardHandler = createKeybindingsHandler({
+  // })
 
   // Keyboard
   const keyboardHandler: EventListener = (e) => {
@@ -186,15 +221,15 @@
       navigationKeyboardHandler(e)
     } else if (mode === 'editing') {
       editingKeyboardHandler(e)
-    } else if (mode === 'linking') {
-      linkingKeyboardHandler(e)
+    // } else if (mode === 'linking') {
+    //   linkingKeyboardHandler(e)
     }
   }
 </script>
 
 <svelte:window on:keydown={keyboardHandler}/>
 
-<h1>{mode}</h1>
+<h3>{mode}</h3>
 
 <div class="overflow-auto h-full w-full bg-gray-canvas dark:bg-dark-1">
   <div
@@ -220,7 +255,22 @@
   <StreamLane on:navigateCursor={handleNavigateCursor} {row} {stream} {max_column} />
 {/each}
 <StreamLane on:navigateCursor={handleNavigateCursor} row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
-    <Cursor row={cursor_row} column={cursor_column} placement={cursor_placement} editing={cursor_is_editing} />
-
+<Cursor
+  on:define_and_place_interface={handleDefineAndPlaceInterface}
+  on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
+  on:define_and_place_event={handleDefineAndPlaceEvent}
+  on:rename_placement={handleRenamePlacement}
+        row={cursor_row}
+        column={cursor_column}
+        item={cursor_item}
+        editing={cursor_is_editing} />
+{#if mode === 'disambiguating' && disambiguation}
+  <TimelineDisambiguation name={disambiguation.name}
+                          index={disambiguation.index}
+                          top={disambiguation.top}
+                          left={disambiguation.left}
+                          on:define_and_place_command={handleDefineAndPlaceCommand}
+                          on:define_and_place_read_model={handleDefineAndPlaceReadModel} />
+{/if}
   </div>
 </div>

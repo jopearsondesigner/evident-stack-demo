@@ -1,3 +1,23 @@
+export type Decider = {
+  define_and_place_interface: (name: string, index: number, audience: string | undefined) => any,
+  define_and_place_command: (name: string, index: number) => any,
+  define_and_place_event: (name: string, index: number, stream: string | undefined) => any,
+  define_and_place_read_model: (name: string, index: number) => any,
+  delete_model: () => any,
+  import_json: (json_bytes: Uint8Array, offset: number) => any,
+  rename_placement: (placement: string, name: string) => any,
+}
+
+export const default_decider: Decider = {
+  define_and_place_interface: console.log,
+  define_and_place_command: console.log,
+  define_and_place_event: console.log,
+  define_and_place_read_model: console.log,
+  delete_model: console.log,
+  import_json: console.log,
+  rename_placement: console.log,
+}
+
 export type InterfacePlacement = {
   id: string,
   interface: string,
@@ -34,28 +54,46 @@ export type Stream = {
   placements: Array<EventPlacement>
 }
 
-export const placementOrEmptyCellId = (placement: { id: string } | null | undefined, col: number, row: number): string => {
-  return (placement && placement.id) || `empty-${col}-${row}`;
+export type PlacementCell = {placement: InterfacePlacement | TimelinePlacement | EventPlacement,
+                             empty?: false, audience?: null, stream?: null}
+export type EmptyInterfaceCell = { placement: null, empty: 'interface', audience?: string, stream?: null }
+export type EmptyTimelineCell = { placement: null, empty: 'timeline', audience?: null, stream?: null }
+export type EmptyEventCell = { placement: null, empty: 'event', stream?: string, audience?: null }
+
+export type ItemAtCursor = PlacementCell | EmptyInterfaceCell | EmptyTimelineCell | EmptyEventCell
+
+export const itemAtCursor = (
+  row: number,
+  column: number,
+  default_audience: Array<InterfacePlacement>,
+  audiences: Array<Audience>,
+  timeline: Array<TimelinePlacement>,
+  streams: Array<Stream>,
+  default_stream: Array<EventPlacement>
+): ItemAtCursor => {
+  if (row === 0) {
+    let placement = default_audience[column];
+    return placement ? {placement} : { empty: 'interface', placement: null };
+  } else if (row - 1 < audiences.length) {
+    let audience = audiences[row - 1];
+    let placement = audience?.placements[column];
+    return placement? {placement} : { empty: 'interface', audience: audience?.id, placement: null };
+  } else if (row === audiences.length + 1) {
+    let placement = timeline[column]
+    return placement ? {placement} : { empty: 'timeline', placement: null };
+  } else if (row - 1 - audiences.length - 1 < streams.length) {
+    let stream = streams[row - 1 - audiences.length - 1]
+    let placement = stream?.placements[column]
+    return placement ? {placement} : { empty: 'event', stream: stream?.id, placement: null };
+  } else if (row === 1 + audiences.length + 1 + streams.length) {
+    let placement = default_stream[column]
+    return placement ? {placement} : { empty: 'event', placement: null };
+  }
+  throw new Error("No valid item at cursor!");
 }
 
-export const placementByRowColumn = (row: number,
-                                     column: number,
-                                     default_audience: Array<InterfacePlacement>,
-                                     audiences: Array<Audience>,
-                                     timeline: Array<TimelinePlacement>,
-                                     streams: Array<Stream>,
-                                     default_stream: Array<EventPlacement>): InterfacePlacement | TimelinePlacement | EventPlacement | null => {
-  if (row === 0) {
-    return default_audience[column];
-  } else if (row - 1 < audiences.length) {
-    return audiences[row - 1].placements[column];
-  } else if (row === audiences.length + 1) {
-    return timeline[column];
-  } else if (row - 1 - audiences.length - 1 < streams.length) {
-    return streams[row - 1 - audiences.length - 1].placements[column];
-  } else if (row === 1 + audiences.length + 1 + streams.length) {
-    return default_stream[column];
-  } else {
-    return null;
-  }
+export type Disambiguation = {name: string, index: number, top: number, left: number} | null
+
+export const placementOrEmptyCellId = (placement: { id: string } | null | undefined, col: number, row: number): string => {
+  return (placement && placement.id) || `empty-${col}-${row}`;
 }

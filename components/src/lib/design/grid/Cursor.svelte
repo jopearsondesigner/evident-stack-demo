@@ -1,13 +1,11 @@
 <script lang="ts">
-  import { tick } from "svelte";
-  import type { EventPlacement, InterfacePlacement, TimelinePlacement } from "../Grid";
+  import { tick, createEventDispatcher } from "svelte";
+  import type { ItemAtCursor } from "../Grid";
 
   export let row: number;
   export let column: number;
   export let editing: boolean;
-  export let placement: InterfacePlacement | TimelinePlacement | EventPlacement | null = null;
-  export let rename_placement: (placement: string, name: string) => any = (p, n) => console.log("rename_placement", p, n);
-  export let place_component: (name: string, kind: 'interface'|'command'|'event'|'readModel') => any = (n, t) => console.log("place_component", n, t)
+  export let item: ItemAtCursor;
 
   $: gridRow = row + 1;
   $: gridColumn = column + 1;
@@ -34,16 +32,23 @@
     scrollIntoView()
   }
 
+  const dispatch = createEventDispatcher();
+
   const handleSubmit = (e: SubmitEvent) => {
-    let data = new FormData(e.target as HTMLFormElement);
+    let form = e.target as HTMLFormElement
+    let data = new FormData(form);
     let name = data.get("name")?.toString();
     if (name) {
-      if (placement) {
-        rename_placement(placement.id, name)
+      if (item.empty === 'interface') {
+        dispatch('define_and_place_interface', {name, index: column, ...item})
+      } else if (item.empty === 'timeline') {
+        // TODO: disambiguation
+        let rect = form.getBoundingClientRect()
+        dispatch('disambiguate_timeline_definition_and_placement', {name, left: rect.left, top: rect.top, index: column, ...item})
+      } else if (item.empty === 'event') {
+        dispatch('define_and_place_event', {name, index: column, ...item})
       } else {
-        // TODO: type from lane, or disambiguation if for timeline
-        const kind = 'command';
-        place_component(name, kind)
+        dispatch('rename_placement', {name, placement: item.placement.id})
       }
     }
   }
@@ -55,7 +60,7 @@
     class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300 bg-gray-canvas dark:bg-dark-1"
     style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};">
     <form class="w-full, h-full" on:submit|preventDefault={handleSubmit}>
-      <input name="name" class="w-full" type="text" value={placement?.name || ''} bind:this={input} />
+      <input name="name" class="w-full" type="text" value={item.placement?.name || ''} bind:this={input} />
     </form>
   </div>
 {:else}

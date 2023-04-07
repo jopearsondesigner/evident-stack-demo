@@ -5,6 +5,7 @@ export type Decider = {
   define_and_place_read_model: (name: string, index: number) => any,
   delete_model: () => any,
   import_json: (json_bytes: Uint8Array, offset: number) => any,
+  remove_placement: (placement: string) => any,
   rename_placement: (placement: string, name: string) => any,
 }
 
@@ -15,6 +16,7 @@ export const default_decider: Decider = {
   define_and_place_read_model: console.log,
   delete_model: console.log,
   import_json: console.log,
+  remove_placement: console.log,
   rename_placement: console.log,
 }
 
@@ -97,3 +99,6 @@ export type Disambiguation = {name: string, index: number, top: number, left: nu
 export const placementOrEmptyCellId = (placement: { id: string } | null | undefined, col: number, row: number): string => {
   return (placement && placement.id) || `empty-${col}-${row}`;
 }
+
+export type GridMode = 'loading' | 'navigation' | 'editing' | 'disambiguating' | 'linking';
+export type CursorMode = 'editing' | 'navigation' | 'linking' | 'other';

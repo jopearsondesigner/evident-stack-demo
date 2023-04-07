@@ -110,6 +110,17 @@ impl EventModelStateManager {
         self.dispatch(EventModelCommand::Delete(model_id)).await
     }
 
+    pub async fn remove_placement(
+        &mut self,
+        model_id_str: String,
+        placement_id_str: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let placement_id = parse_uuid(placement_id_str)?;
+        self.dispatch(EventModelCommand::RemovePlacement(model_id, placement_id))
+            .await
+    }
+
     pub async fn define_and_place_interface(
         &mut self,
         model_id_str: String,

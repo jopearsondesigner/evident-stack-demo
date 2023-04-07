@@ -35,6 +35,9 @@ const initialize_decider = async (id: string | undefined) => {
       import_json: async (json_bytes: Uint8Array, offset: number) => {
         return await manager.import(id!, json_bytes, offset)
       },
+      remove_placement: async (placement: string) => {
+        return await manager.remove_placement(id!, placement)
+      },
       rename_placement: async (placement: string, name: string) => {
         return await manager.rename_placement(id!, placement, name)
       },

@@ -8,7 +8,7 @@
   import Timeline from './grid/Timeline.svelte';
   import StreamLane from './grid/Stream.svelte';
 
-  import {type Decider, type Audience, type EventPlacement, type InterfacePlacement, type Stream, type TimelinePlacement, default_decider, type Disambiguation} from './Grid';
+  import {type Decider, type Audience, type EventPlacement, type InterfacePlacement, type Stream, type TimelinePlacement, default_decider, type Disambiguation, type CursorMode, type GridMode} from './Grid';
   import { onMount } from "svelte";
   import { itemAtCursor } from "./Grid";
   import TimelineDisambiguation from "./grid/TimelineDisambiguation.svelte";
@@ -22,7 +22,7 @@
 
   // Grid Mode
 
-  let mode: 'loading' | 'navigation' | 'editing' | 'disambiguating' | 'linking' = 'loading'
+  let mode: GridMode = 'loading'
 
   onMount(() => {
     mode = 'navigation'
@@ -56,6 +56,12 @@
     mode = 'disambiguating';
     disambiguation = e.detail;
   }
+
+  const handleRemovePlacement = async (e: CustomEvent) => {
+    await decider.remove_placement(e.detail.placement);
+    mode = 'navigation'
+  }
+
   const handleRenamePlacement = async (e: CustomEvent) => {
     await decider.rename_placement(e.detail.placement, e.detail.name);
     mode = 'navigation'
@@ -79,7 +85,19 @@
                                 timeline_placements,
                                 streams,
                                 default_stream_placements);
-  $: cursor_is_editing = mode === 'editing';
+
+  const gridModeToCursorMode = (mode: GridMode): CursorMode => {
+    return mode === 'editing' ? 'editing'
+      : mode === 'navigation' ? 'navigation'
+      : mode === 'linking' ? 'linking'
+      : 'other';
+  }
+  $: cursor_mode = gridModeToCursorMode(mode);
+
+  const handleBeginEditing: EventListener = (e) => {
+    e.preventDefault();
+    mode = 'editing';
+  }
 
   // Columns
 
@@ -200,15 +218,10 @@
 
   // Editing
 
-  const cancelEditing = (event: KeyboardEvent) => {
+  const handleCancelEditing = (event: any) => {
     event.preventDefault();
     mode = 'navigation'
   }
-
-  const editingKeyboardHandler = createKeybindingsHandler({
-    "Escape": cancelEditing,
-    "Control+g": cancelEditing
-  })
 
   // Linking
 
@@ -219,10 +232,6 @@
   const keyboardHandler: EventListener = (e) => {
     if (mode === 'navigation') {
       navigationKeyboardHandler(e)
-    } else if (mode === 'editing') {
-      editingKeyboardHandler(e)
-      // } else if (mode === 'linking') {
-      //   linkingKeyboardHandler(e)
     }
   }
 </script>
@@ -256,14 +265,17 @@
 {/each}
 <StreamLane on:navigateCursor={handleNavigateCursor} row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
 <Cursor
+  on:begin_editing={handleBeginEditing}
   on:define_and_place_interface={handleDefineAndPlaceInterface}
   on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
   on:define_and_place_event={handleDefineAndPlaceEvent}
+  on:remove_placement={handleRemovePlacement}
   on:rename_placement={handleRenamePlacement}
+  on:cancel_editing={handleCancelEditing}
   row={cursor_row}
   column={cursor_column}
   item={cursor_item}
-  editing={cursor_is_editing} />
+  mode={cursor_mode} />
 {#if mode === 'disambiguating' && disambiguation}
   <TimelineDisambiguation name={disambiguation.name}
                           index={disambiguation.index}

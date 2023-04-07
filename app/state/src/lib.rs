@@ -15,7 +15,7 @@ use event_models::{
     EventModelId, EventModelState,
 };
 pub use grid::EventModelGrid;
-use js_sys::Uint8Array;
+use js_sys::{Function, Uint8Array};
 use repository::HasKey;
 pub use utils::set_panic_hook;
 use uuid::Uuid;
@@ -48,6 +48,7 @@ impl HasKey for EventModelState<InMemoryEventModel> {
 pub struct EventModelStateManager {
     repository: LocalStorageStateRepository<EventModelState<InMemoryEventModel>>,
     // node: Node // TODO: convergent creation context details
+    store_setter: Option<js_sys::Function>,
 }
 
 pub struct EventModelDecider;
@@ -75,6 +76,7 @@ impl EventModelStateManager {
                     Some(event_model_id.to_string()),
                     EventModelState::BeforeCreation(InMemoryCreationDetails),
                 ),
+                store_setter: None,
             })
         } else {
             Ok(EventModelStateManager {
@@ -82,8 +84,14 @@ impl EventModelStateManager {
                     None,
                     EventModelState::BeforeCreation(InMemoryCreationDetails),
                 ),
+                store_setter: None,
             })
         }
+    }
+
+    #[wasm_bindgen(setter)]
+    pub fn set_store_setter(&mut self, setter: Option<Function>) {
+        self.store_setter = setter
     }
 
     pub async fn state(&self) -> Result<EventModelGrid, JsValue> {
@@ -102,6 +110,68 @@ impl EventModelStateManager {
         self.dispatch(EventModelCommand::Delete(model_id)).await
     }
 
+    pub async fn define_and_place_interface(
+        &mut self,
+        model_id_str: String,
+        name: String,
+        index: usize,
+        maybe_audience_str: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let audience = match maybe_audience_str {
+            Some(audience_str) => Some(parse_uuid(audience_str)?),
+            None => None,
+        };
+        self.dispatch(EventModelCommand::DefineAndPlaceInterface(
+            model_id, name, index, audience,
+        ))
+        .await
+    }
+
+    pub async fn define_and_place_command(
+        &mut self,
+        model_id_str: String,
+        name: String,
+        index: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        self.dispatch(EventModelCommand::DefineAndPlaceCommand(
+            model_id, name, index,
+        ))
+        .await
+    }
+
+    pub async fn define_and_place_event(
+        &mut self,
+        model_id_str: String,
+        name: String,
+        index: usize,
+        maybe_stream_str: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let stream = match maybe_stream_str {
+            Some(stream_str) => Some(parse_uuid(stream_str)?),
+            None => None,
+        };
+        self.dispatch(EventModelCommand::DefineAndPlaceEvent(
+            model_id, name, index, stream,
+        ))
+        .await
+    }
+
+    pub async fn define_and_place_read_model(
+        &mut self,
+        model_id_str: String,
+        name: String,
+        index: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        self.dispatch(EventModelCommand::DefineAndPlaceReadModel(
+            model_id, name, index,
+        ))
+        .await
+    }
+
     pub async fn import(
         &mut self,
         model_id_str: String,
@@ -114,12 +184,36 @@ impl EventModelStateManager {
             .await
     }
 
+    pub async fn rename_placement(
+        &mut self,
+        model_id_str: String,
+        placement_id_str: String,
+        name: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let placement_id = parse_uuid(placement_id_str)?;
+
+        self.dispatch(EventModelCommand::RenamePlacement(
+            model_id,
+            placement_id,
+            name,
+        ))
+        .await
+    }
+
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {
         let result =
             EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)
                 .await;
         match result {
-            Ok(state) => Ok(state.into()),
+            Ok(state) => {
+                if let Some(setter) = &self.store_setter {
+                    let this = JsValue::null();
+                    let grid: EventModelGrid = state.clone().into();
+                    let _ = setter.call1(&this, &JsValue::from(grid));
+                }
+                Ok(state.into())
+            }
             Err(err) => Err(JsValue::from(format!(
                 "Error dispatching command {:?}: {:?}",
                 command, err

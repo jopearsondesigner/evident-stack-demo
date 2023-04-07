@@ -20,6 +20,25 @@ export const default_decider: Decider = {
   rename_placement: console.log,
 }
 
+export type Flow = {
+  id: string,
+  to: FlowPort,
+  from: FlowPort,
+}
+
+export type FlowPort = {
+  placement_id: string,
+  anchor: FlowAnchor
+}
+
+export enum FlowAnchor {
+  None,
+  Top,
+  Left,
+  Bottom,
+  Right,
+}
+
 export type InterfacePlacement = {
   id: string,
   interface: string,

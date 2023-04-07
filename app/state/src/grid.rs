@@ -285,7 +285,7 @@ impl From<event_models::types::FlowArrow> for FlowArrow {
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct FlowPort {
-    to: Uuid,
+    placement_id: Uuid,
     #[wasm_bindgen(getter_with_clone)]
     pub anchor: FlowAnchor,
 }
@@ -293,15 +293,15 @@ pub struct FlowPort {
 #[wasm_bindgen]
 impl FlowPort {
     #[wasm_bindgen(getter)]
-    pub fn to(&self) -> String {
-        self.to.to_string()
+    pub fn placement_id(&self) -> String {
+        self.placement_id.to_string()
     }
 }
 
 impl From<event_models::types::flow::Port> for FlowPort {
     fn from(value: event_models::types::flow::Port) -> Self {
         Self {
-            to: value.placement_id().to_owned(),
+            placement_id: value.placement_id().to_owned(),
             anchor: value.anchor().to_owned().into(),
         }
     }

@@ -53,21 +53,16 @@ impl InMemoryEventModel {
 
     fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<ComponentMut> {
         match id {
-            ComponentId::InterfaceComponentId(id) => self
-                .interfaces
-                .get_mut(id)
-                .map(ComponentMut::InterfaceComponentMut),
-            ComponentId::CommandComponentId(id) => self
-                .commands
-                .get_mut(id)
-                .map(ComponentMut::CommandComponentMut),
-            ComponentId::EventComponentId(id) => {
-                self.events.get_mut(id).map(ComponentMut::EventComponentMut)
+            ComponentId::InterfaceComponentId(id) => {
+                self.interfaces.get_mut(id).map(ComponentMut::Interface)
             }
-            ComponentId::ReadModelComponentId(id) => self
-                .read_models
-                .get_mut(id)
-                .map(ComponentMut::ReadModelComponentMut),
+            ComponentId::CommandComponentId(id) => {
+                self.commands.get_mut(id).map(ComponentMut::Command)
+            }
+            ComponentId::EventComponentId(id) => self.events.get_mut(id).map(ComponentMut::Event),
+            ComponentId::ReadModelComponentId(id) => {
+                self.read_models.get_mut(id).map(ComponentMut::ReadModel)
+            }
         }
     }
 }
@@ -192,16 +187,16 @@ impl ModifiableEventModel for InMemoryEventModel {
                 panic!("Component with id {:?} not found", component_id)
             }
             Some(component) => match component {
-                ComponentMut::InterfaceComponentMut(i) => {
+                ComponentMut::Interface(i) => {
                     i.rename(name);
                 }
-                ComponentMut::CommandComponentMut(c) => {
+                ComponentMut::Command(c) => {
                     c.rename(name);
                 }
-                ComponentMut::EventComponentMut(e) => {
+                ComponentMut::Event(e) => {
                     e.rename(name);
                 }
-                ComponentMut::ReadModelComponentMut(r) => r.rename(name),
+                ComponentMut::ReadModel(r) => r.rename(name),
             },
         }
     }
@@ -234,16 +229,16 @@ impl ModifiableEventModel for InMemoryEventModel {
                 panic!("Component with id {:?} not found", component_id)
             }
             Some(component) => match component {
-                ComponentMut::InterfaceComponentMut(i) => {
+                ComponentMut::Interface(i) => {
                     i.add_to_description(index, addition);
                 }
-                ComponentMut::CommandComponentMut(c) => {
+                ComponentMut::Command(c) => {
                     c.add_to_description(index, addition);
                 }
-                ComponentMut::EventComponentMut(e) => {
+                ComponentMut::Event(e) => {
                     e.add_to_description(index, addition);
                 }
-                ComponentMut::ReadModelComponentMut(r) => {
+                ComponentMut::ReadModel(r) => {
                     r.add_to_description(index, addition);
                 }
             },
@@ -261,16 +256,16 @@ impl ModifiableEventModel for InMemoryEventModel {
                 panic!("Component with id {:?} not found", component_id)
             }
             Some(component) => match component {
-                ComponentMut::InterfaceComponentMut(i) => {
+                ComponentMut::Interface(i) => {
                     i.delete_from_description(index, count);
                 }
-                ComponentMut::CommandComponentMut(c) => {
+                ComponentMut::Command(c) => {
                     c.delete_from_description(index, count);
                 }
-                ComponentMut::EventComponentMut(e) => {
+                ComponentMut::Event(e) => {
                     e.delete_from_description(index, count);
                 }
-                ComponentMut::ReadModelComponentMut(r) => {
+                ComponentMut::ReadModel(r) => {
                     r.delete_from_description(index, count);
                 }
             },
@@ -288,14 +283,14 @@ impl ModifiableEventModel for InMemoryEventModel {
                 panic!("Component with id {:?} not found", component_id)
             }
             Some(component) => match component {
-                ComponentMut::InterfaceComponentMut(_) => (),
-                ComponentMut::CommandComponentMut(c) => {
+                ComponentMut::Interface(_) => (),
+                ComponentMut::Command(c) => {
                     c.add_to_schema(index, addition);
                 }
-                ComponentMut::EventComponentMut(e) => {
+                ComponentMut::Event(e) => {
                     e.add_to_schema(index, addition);
                 }
-                ComponentMut::ReadModelComponentMut(r) => {
+                ComponentMut::ReadModel(r) => {
                     r.add_to_schema(index, addition);
                 }
             },
@@ -313,14 +308,14 @@ impl ModifiableEventModel for InMemoryEventModel {
                 panic!("Component with id {:?} not found", component_id)
             }
             Some(component) => match component {
-                ComponentMut::InterfaceComponentMut(_) => (),
-                ComponentMut::CommandComponentMut(c) => {
+                ComponentMut::Interface(_) => (),
+                ComponentMut::Command(c) => {
                     c.delete_from_schema(index, count);
                 }
-                ComponentMut::EventComponentMut(e) => {
+                ComponentMut::Event(e) => {
                     e.delete_from_schema(index, count);
                 }
-                ComponentMut::ReadModelComponentMut(r) => {
+                ComponentMut::ReadModel(r) => {
                     r.delete_from_schema(index, count);
                 }
             },
@@ -360,10 +355,10 @@ impl ModifiableEventModel for InMemoryEventModel {
         if let Some(placement) = self.placements.get(placement_id) {
             if let Some(component_mut) = self.component_mut_by_id(&placement.component_id()) {
                 match component_mut {
-                    ComponentMut::InterfaceComponentMut(_) => (),
-                    ComponentMut::CommandComponentMut(c) => c.add_to_schema(index, addition),
-                    ComponentMut::EventComponentMut(e) => e.add_to_schema(index, addition),
-                    ComponentMut::ReadModelComponentMut(r) => r.add_to_schema(index, addition),
+                    ComponentMut::Interface(_) => (),
+                    ComponentMut::Command(c) => c.add_to_schema(index, addition),
+                    ComponentMut::Event(e) => e.add_to_schema(index, addition),
+                    ComponentMut::ReadModel(r) => r.add_to_schema(index, addition),
                 };
             }
         }
@@ -378,10 +373,10 @@ impl ModifiableEventModel for InMemoryEventModel {
         if let Some(placement) = self.placements.get(placement_id) {
             if let Some(component_mut) = self.component_mut_by_id(&placement.component_id()) {
                 match component_mut {
-                    ComponentMut::InterfaceComponentMut(_) => (),
-                    ComponentMut::CommandComponentMut(c) => c.delete_from_schema(index, count),
-                    ComponentMut::EventComponentMut(e) => e.delete_from_schema(index, count),
-                    ComponentMut::ReadModelComponentMut(r) => r.delete_from_schema(index, count),
+                    ComponentMut::Interface(_) => (),
+                    ComponentMut::Command(c) => c.delete_from_schema(index, count),
+                    ComponentMut::Event(e) => e.delete_from_schema(index, count),
+                    ComponentMut::ReadModel(r) => r.delete_from_schema(index, count),
                 };
             }
         }

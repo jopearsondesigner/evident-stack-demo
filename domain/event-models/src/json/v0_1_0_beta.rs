@@ -90,19 +90,6 @@ pub enum Interface {
     },
 }
 
-impl Interface {
-    fn id_into(&self) -> Uuid {
-        match self {
-            Interface::Blank { id, .. } => *id,
-            Interface::Rest { id, .. } => *id,
-            Interface::Html { id, .. } => *id,
-            Interface::Figma { id, .. } => *id,
-            Interface::Image { id, .. } => *id,
-            Interface::Job { id, .. } => *id,
-        }
-    }
-}
-
 impl TryFrom<Interface> for crate::types::Interface {
     type Error = EventModelError;
 

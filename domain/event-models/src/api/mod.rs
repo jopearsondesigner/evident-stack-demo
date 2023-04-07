@@ -259,12 +259,12 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         ])
                     }
                     EventModelCommand::RenamePlacement(model_id, placement_id, name) => {
-                        let placement = model.placements().get(placement_id).ok_or(
+                        let placement = model.placements().get(placement_id).ok_or_else(|| {
                             EventModelError::ModificationError(format!(
                                 "No placement found with id {:?}",
                                 placement_id
-                            )),
-                        )?;
+                            ))
+                        })?;
                         Ok(vec![EventModelEvent::ComponentRenamed(
                             *model_id,
                             placement.component_id(),
@@ -280,8 +280,11 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::MoveEventPlacement(_, _, _, _) => {
                         todo!()
                     }
-                    EventModelCommand::RemovePlacement(_, _) => {
-                        todo!()
+                    EventModelCommand::RemovePlacement(model_id, placement_id) => {
+                        Ok(vec![EventModelEvent::PlacementRemoved(
+                            *model_id,
+                            *placement_id,
+                        )])
                     }
                     EventModelCommand::DuplicateInterfacePlacement(_, _, _, _) => {
                         todo!()
@@ -412,8 +415,9 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                 EventModelEvent::PlacementMoved(_, _) => {
                     todo!()
                 }
-                EventModelEvent::PlacementRemoved(_, _) => {
-                    todo!()
+                EventModelEvent::PlacementRemoved(_, placement_id) => {
+                    model.placement_removed(placement_id);
+                    EventModelState::EventModel(model)
                 }
                 EventModelEvent::PlacementsShifted(_, offset, width) => {
                     model.placements_shifted(offset, width);

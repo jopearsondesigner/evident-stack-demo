@@ -5,6 +5,7 @@ export type Decider = {
   define_and_place_read_model: (name: string, index: number) => any,
   delete_model: () => any,
   import_json: (json_bytes: Uint8Array, offset: number) => any,
+  remove_placement: (placement: string) => any,
   rename_placement: (placement: string, name: string) => any,
 }
 
@@ -15,6 +16,7 @@ export const default_decider: Decider = {
   define_and_place_read_model: console.log,
   delete_model: console.log,
   import_json: console.log,
+  remove_placement: console.log,
   rename_placement: console.log,
 }
 

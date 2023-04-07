@@ -56,6 +56,12 @@
     mode = 'disambiguating';
     disambiguation = e.detail;
   }
+
+  const handleRemovePlacement = async (e: CustomEvent) => {
+    await decider.remove_placement(e.detail.placement);
+    mode = 'navigation'
+  }
+
   const handleRenamePlacement = async (e: CustomEvent) => {
     await decider.rename_placement(e.detail.placement, e.detail.name);
     mode = 'navigation'
@@ -79,7 +85,8 @@
                                 timeline_placements,
                                 streams,
                                 default_stream_placements);
-  $: cursor_is_editing = mode === 'editing';
+  let cursor_mode: 'editing' | 'navigation' | 'linking' | 'other';
+  $: cursor_mode = mode === 'editing' ? 'editing' : mode === 'navigation' ? 'navigation' : mode === 'linking' ? 'linking' : 'other';
 
   // Columns
 
@@ -250,12 +257,13 @@
   on:define_and_place_interface={handleDefineAndPlaceInterface}
   on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
   on:define_and_place_event={handleDefineAndPlaceEvent}
+  on:remove_placement={handleRemovePlacement}
   on:rename_placement={handleRenamePlacement}
   on:cancel_editing={handleCancelEditing}
   row={cursor_row}
   column={cursor_column}
   item={cursor_item}
-  editing={cursor_is_editing} />
+  mode={cursor_mode} />
 {#if mode === 'disambiguating' && disambiguation}
   <TimelineDisambiguation name={disambiguation.name}
                           index={disambiguation.index}

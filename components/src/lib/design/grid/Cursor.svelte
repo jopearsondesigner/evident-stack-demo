@@ -5,11 +5,13 @@
 
   export let row: number;
   export let column: number;
-  export let editing: boolean;
+  export let mode: 'editing' | 'navigation' | 'linking' | 'other';
   export let item: ItemAtCursor;
 
   $: gridRow = row + 1;
   $: gridColumn = column + 1;
+
+  // Input Focus on Edit
 
   let input: HTMLInputElement;
 
@@ -18,9 +20,12 @@
     input.focus();
   }
 
-  $: if (editing) {
+  $: if (mode === 'editing') {
     focusInput()
   }
+
+
+  // Scroll Into View
 
   let element: HTMLDivElement;
 
@@ -32,6 +37,8 @@
   $: if (element && gridRow > 0 && gridColumn > 0) {
     scrollIntoView()
   }
+
+  // Dispatch
 
   const dispatch = createEventDispatcher();
 
@@ -63,14 +70,29 @@
     }
   }
 
+  const removePlacement: EventListener = (event) => {
+    event.preventDefault();
+    let placement = item.placement?.id;
+    if (placement) {
+      dispatch('remove_placement', {placement});
+    }
+  }
+
+  const navigationKeyboardHandler = createKeybindingsHandler({
+    "Delete": removePlacement,
+    "Backspace": removePlacement
+  })
+
   const editingKeyboardHandler = createKeybindingsHandler({
     "Escape": cancelEditing,
     "Control+g": cancelEditing
   })
 
   const keyboardHandler: EventListener = (e) => {
-    if (editing) {
+    if (mode === 'editing') {
       editingKeyboardHandler(e)
+    } else if (mode === 'navigation') {
+      navigationKeyboardHandler(e)
     }
   }
 
@@ -79,7 +101,7 @@
 
 <svelte:window on:keydown={keyboardHandler}/>
 
-{#if editing}
+{#if mode === 'editing'}
   <div
     bind:this={element}
     class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300 bg-gray-canvas dark:bg-dark-1"

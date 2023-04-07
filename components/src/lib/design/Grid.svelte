@@ -8,7 +8,7 @@
   import Timeline from './grid/Timeline.svelte';
   import StreamLane from './grid/Stream.svelte';
 
-  import {type Decider, type Audience, type EventPlacement, type InterfacePlacement, type Stream, type TimelinePlacement, default_decider, type Disambiguation, type CursorMode, type GridMode} from './Grid';
+  import {type Decider, type Audience, type EventPlacement, type InterfacePlacement, type Stream, type TimelinePlacement, default_decider, type Disambiguation, type CursorMode, type GridMode, type Flow} from './Grid';
   import { onMount } from "svelte";
   import { itemAtCursor } from "./Grid";
   import TimelineDisambiguation from "./grid/TimelineDisambiguation.svelte";
@@ -19,6 +19,7 @@
   export let timeline_placements: Array<TimelinePlacement> = new Array(0);
   export let streams: Array<Stream> = new Array(0);
   export let default_stream_placements: Array<EventPlacement> = new Array(0);
+  export let flows: Array<Flow> = [];
 
   // Grid Mode
 

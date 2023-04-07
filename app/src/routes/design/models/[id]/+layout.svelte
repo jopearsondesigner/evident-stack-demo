@@ -15,6 +15,8 @@
     let offset = formData.get("offset") as string;
     await decider?.import_json(bytes, parseInt(offset) || 0);
   };
+  console.warn("FLOWS");
+  console.warn($grid?.flows);
 </script>
 
 <form on:submit|preventDefault={handleImportJson}>
@@ -40,6 +42,7 @@
   timeline_placements={$grid?.timeline}
   streams={$grid?.streams}
   default_stream_placements={$grid?.default_stream}
+  flows={$grid?.flows}
   />
 
 <slot />

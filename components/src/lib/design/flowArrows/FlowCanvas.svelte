@@ -15,13 +15,13 @@
   $: markerConfig = { color, markerSize };
 </script>
 
-<svg width="100%" height="100%" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+<svg class="absolute" width="100%" height="100%" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     {#each flows as { id }}
       <FlowMarker {...{ ...markerConfig, id }} />
     {/each}
   </defs>
-  {#each flows as flow}
-    <FlowPath {...{ ...pathConfig, ...flow }} />
+  {#each flows as { id, to, from }}
+    <FlowPath {...{id, to, from, ...pathConfig}} />
   {/each}
 </svg>

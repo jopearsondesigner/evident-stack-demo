@@ -1,6 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
+	import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from "../vendor/tinykeys/tinykeys"
 
   import Cursor from "./grid/Cursor.svelte";
@@ -242,10 +243,10 @@
 <h3>{mode}</h3>
 
 <div class="overflow-auto h-full w-full bg-gray-canvas dark:bg-dark-1">
+  <FlowCanvas flows={flows} />
   <div
     class="p-3 relative grid justify-items-center items-center"
     style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));">
-
     <AudienceLane
       on:navigateCursor={handleNavigateCursor}
       row={default_audience_row}

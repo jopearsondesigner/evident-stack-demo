@@ -4,26 +4,18 @@
   import Grid from "$components/design/Grid.svelte";
 
   export let data: PageData;
-  const grid = data.grid;
-  const import_json = data.import_json!;
+  const {grid, decider} = data;
 
-  $: model_id = $grid?.id();
-
-  const handleDeleteModel = () => { data.delete_model?(model_id) : null; goto('/') };
+  const handleDeleteModel = async () => { await decider?.delete_model(); goto('/') };
   const handleImportJson = async (e: SubmitEvent) => {
     const formData = new FormData(e.target as HTMLFormElement);
     let json = formData.get("json") as File;
     let buffer = await json.arrayBuffer()
     let bytes = new Uint8Array(buffer)
     let offset = formData.get("offset") as string;
-    await import_json(model_id!, bytes, parseInt(offset) || 0);
+    await decider?.import_json(bytes, parseInt(offset) || 0);
   };
 </script>
-
-<h2>{model_id}</h2>
-
-<pre>{JSON.stringify($grid)}</pre>
-<pre>{JSON.stringify($grid?.flows)}</pre>
 
 <form on:submit|preventDefault={handleImportJson}>
   <div class="form-control w-full max-w-xs">
@@ -42,7 +34,7 @@
 <button on:click={handleDeleteModel}>Delete This Model</button>
 
 <Grid
-  flows={$grid?.flows}
+  {decider}
   default_audience_placements={$grid?.default_audience}
   audiences={$grid?.audiences}
   timeline_placements={$grid?.timeline}

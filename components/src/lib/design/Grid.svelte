@@ -8,7 +8,7 @@
   import Timeline from './grid/Timeline.svelte';
   import StreamLane from './grid/Stream.svelte';
 
-  import {type Decider, type Audience, type EventPlacement, type InterfacePlacement, type Stream, type TimelinePlacement, default_decider, type Disambiguation} from './Grid';
+  import {type Decider, type Audience, type EventPlacement, type InterfacePlacement, type Stream, type TimelinePlacement, default_decider, type Disambiguation, type CursorMode, type GridMode} from './Grid';
   import { onMount } from "svelte";
   import { itemAtCursor } from "./Grid";
   import TimelineDisambiguation from "./grid/TimelineDisambiguation.svelte";
@@ -22,7 +22,7 @@
 
   // Grid Mode
 
-  let mode: 'loading' | 'navigation' | 'editing' | 'disambiguating' | 'linking' = 'loading'
+  let mode: GridMode = 'loading'
 
   onMount(() => {
     mode = 'navigation'
@@ -85,8 +85,19 @@
                                 timeline_placements,
                                 streams,
                                 default_stream_placements);
-  let cursor_mode: 'editing' | 'navigation' | 'linking' | 'other';
-  $: cursor_mode = mode === 'editing' ? 'editing' : mode === 'navigation' ? 'navigation' : mode === 'linking' ? 'linking' : 'other';
+
+  const gridModeToCursorMode = (mode: GridMode): CursorMode => {
+    return mode === 'editing' ? 'editing'
+      : mode === 'navigation' ? 'navigation'
+      : mode === 'linking' ? 'linking'
+      : 'other';
+  }
+  $: cursor_mode = gridModeToCursorMode(mode);
+
+  const handleBeginEditing: EventListener = (e) => {
+    e.preventDefault();
+    mode = 'editing';
+  }
 
   // Columns
 
@@ -254,6 +265,7 @@
 {/each}
 <StreamLane on:navigateCursor={handleNavigateCursor} row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
 <Cursor
+  on:begin_editing={handleBeginEditing}
   on:define_and_place_interface={handleDefineAndPlaceInterface}
   on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
   on:define_and_place_event={handleDefineAndPlaceEvent}

@@ -1,11 +1,11 @@
 <script lang="ts">
   import { createKeybindingsHandler } from "../../vendor/tinykeys/tinykeys";
   import { tick, createEventDispatcher } from "svelte";
-  import type { ItemAtCursor } from "../Grid";
+  import type { CursorMode, ItemAtCursor } from "../Grid";
 
   export let row: number;
   export let column: number;
-  export let mode: 'editing' | 'navigation' | 'linking' | 'other';
+  export let mode: CursorMode;
   export let item: ItemAtCursor;
 
   $: gridRow = row + 1;
@@ -24,7 +24,6 @@
     focusInput()
   }
 
-
   // Scroll Into View
 
   let element: HTMLDivElement;
@@ -42,6 +41,11 @@
 
   const dispatch = createEventDispatcher();
 
+  const beginEditing: EventListener = (event) => {
+    event.preventDefault();
+    dispatch('begin_editing')
+  }
+
   const cancelEditing: EventListener = (event) => {
     event.preventDefault();
     dispatch('cancel_editing')
@@ -55,7 +59,6 @@
       if (item.empty === 'interface') {
         dispatch('define_and_place_interface', {name, index: column, ...item})
       } else if (item.empty === 'timeline') {
-        // TODO: disambiguation
         let rect = form.getBoundingClientRect()
         dispatch('disambiguate_timeline_definition_and_placement', {name, left: rect.left, top: rect.top, index: column, ...item})
       } else if (item.empty === 'event') {
@@ -95,8 +98,6 @@
       navigationKeyboardHandler(e)
     }
   }
-
-  // TODO: clickaway listener cancels edit
 </script>
 
 <svelte:window on:keydown={keyboardHandler}/>
@@ -112,6 +113,7 @@
   </div>
 {:else}
   <div
+    on:click={beginEditing}
     bind:this={element}
     class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300"
     style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};" />

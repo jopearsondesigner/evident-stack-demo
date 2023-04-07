@@ -99,3 +99,6 @@ export type Disambiguation = {name: string, index: number, top: number, left: nu
 export const placementOrEmptyCellId = (placement: { id: string } | null | undefined, col: number, row: number): string => {
   return (placement && placement.id) || `empty-${col}-${row}`;
 }
+
+export type GridMode = 'loading' | 'navigation' | 'editing' | 'disambiguating' | 'linking';
+export type CursorMode = 'editing' | 'navigation' | 'linking' | 'other';

@@ -200,15 +200,10 @@
 
   // Editing
 
-  const cancelEditing = (event: KeyboardEvent) => {
+  const handleCancelEditing = (event: any) => {
     event.preventDefault();
     mode = 'navigation'
   }
-
-  const editingKeyboardHandler = createKeybindingsHandler({
-    "Escape": cancelEditing,
-    "Control+g": cancelEditing
-  })
 
   // Linking
 
@@ -219,10 +214,6 @@
   const keyboardHandler: EventListener = (e) => {
     if (mode === 'navigation') {
       navigationKeyboardHandler(e)
-    } else if (mode === 'editing') {
-      editingKeyboardHandler(e)
-      // } else if (mode === 'linking') {
-      //   linkingKeyboardHandler(e)
     }
   }
 </script>
@@ -260,6 +251,7 @@
   on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
   on:define_and_place_event={handleDefineAndPlaceEvent}
   on:rename_placement={handleRenamePlacement}
+  on:cancel_editing={handleCancelEditing}
   row={cursor_row}
   column={cursor_column}
   item={cursor_item}

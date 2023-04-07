@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createKeybindingsHandler } from "../../vendor/tinykeys/tinykeys";
   import { tick, createEventDispatcher } from "svelte";
   import type { ItemAtCursor } from "../Grid";
 
@@ -34,6 +35,11 @@
 
   const dispatch = createEventDispatcher();
 
+  const cancelEditing: EventListener = (event) => {
+    event.preventDefault();
+    dispatch('cancel_editing')
+  }
+
   const handleSubmit = (e: SubmitEvent) => {
     let form = e.target as HTMLFormElement
     let data = new FormData(form);
@@ -48,11 +54,30 @@
       } else if (item.empty === 'event') {
         dispatch('define_and_place_event', {name, index: column, ...item})
       } else {
-        dispatch('rename_placement', {name, placement: item.placement.id})
+        if (item.placement.name != name) {
+          dispatch('rename_placement', {name, placement: item.placement.id})
+        } else {
+          cancelEditing(e)
+        }
       }
     }
   }
+
+  const editingKeyboardHandler = createKeybindingsHandler({
+    "Escape": cancelEditing,
+    "Control+g": cancelEditing
+  })
+
+  const keyboardHandler: EventListener = (e) => {
+    if (editing) {
+      editingKeyboardHandler(e)
+    }
+  }
+
+  // TODO: clickaway listener cancels edit
 </script>
+
+<svelte:window on:keydown={keyboardHandler}/>
 
 {#if editing}
   <div

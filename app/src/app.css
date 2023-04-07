@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply bg-white dark:bg-dark-1;
+  @apply min-h-screen;
+  @apply flex;
+  @apply flex-col;
+}

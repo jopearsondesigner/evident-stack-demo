@@ -17,21 +17,28 @@
 
   const dispatch = createEventDispatcher();
   const handleClick: MouseEventHandler<HTMLDivElement> = (_event) => {
-    dispatch('navigateCursor', {row, column})
-  }
+    dispatch('navigateCursor', { row, column });
+  };
 </script>
 
 <div
   {id}
   on:click|preventDefault|stopPropagation={handleClick}
-  class="placement event z-20 flex place-self-center align-items-center p-[1.375rem] dark:border-gray-brand-1 -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
+  class="placement event z-20 flex place-self-center align-items-center col-border ring-white p-[1.375rem] -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
   style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
-  >
+>
   <MaybeTooltip tip={descriptionHTML}>
     <div
       class="event w-[6.125rem] h-[6.125rem] p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-event-dark via-event to-event-light"
-      >
+    >
       {name}
     </div>
   </MaybeTooltip>
 </div>
+
+<style>
+  /* Grid column */
+  .col-border {
+    box-shadow: 1px 0px 0px var(--tw-ring-color) inset;
+  }
+</style>

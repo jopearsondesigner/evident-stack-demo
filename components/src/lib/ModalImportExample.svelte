@@ -12,7 +12,7 @@
 	let popupModal = false;
 </script>
 
-<div class="w-full text-center mt-4">
+<div class="w-full text-center pt-12">
 	<Button
 		color="default"
 		size="sm"

@@ -15,8 +15,6 @@
     let offset = formData.get("offset") as string;
     await decider?.import_json(bytes, parseInt(offset) || 0);
   };
-  console.warn("FLOWS");
-  console.warn($grid?.flows);
 </script>
 
 <form on:submit|preventDefault={handleImportJson}>

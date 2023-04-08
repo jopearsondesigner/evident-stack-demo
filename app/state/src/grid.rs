@@ -266,6 +266,14 @@ pub struct FlowArrow {
     pub to: FlowPort,
 }
 
+#[wasm_bindgen]
+impl FlowArrow {
+    #[wasm_bindgen(getter)]
+    pub fn id(&self) -> String {
+        self.id.to_string()
+    }
+}
+
 impl Entity for FlowArrow {
     fn id(&self) -> &Uuid {
         &self.id

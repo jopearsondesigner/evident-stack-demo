@@ -2,11 +2,11 @@
   import { onDestroy } from 'svelte';
   import type { FlowPort } from '../Grid';
   import {
+    anchorPoint,
     bezierControlPoint,
     findMidPoint,
     makeMarkerId,
     makePathId,
-    pointFromRect
   } from './util';
 
   export let id: string;
@@ -17,6 +17,8 @@
   export let dashness: boolean;
   export let refreshTime: number;
   export let curveShapeFactor: number;
+  export let boundingParent: SVGSVGElement;
+  export let markerSize: number;
 
   type MaybeRect = DOMRect | undefined;
 
@@ -50,40 +52,37 @@
     if (!toRect || !fromRect) {
       toRect = nextTo;
       fromRect = nextFrom;
-      update();
     } else if (rectsUpdated(toRect, nextTo) || rectsUpdated(fromRect, nextFrom)) {
       toRect = nextTo;
       fromRect = nextFrom;
-      update();
     }
   }, refreshTime);
-
-  let update = () => {
-    console.info(`UPDATE: TO: ${to.placement_id}, FROM: ${from.placement_id}`);
-    console.info('Bounding To: ', toRect);
-    console.info('Bounding From: ', fromRect);
-  };
 
   const pathGeometry = (toRect: MaybeRect, fromRect: MaybeRect): string | undefined => {
     if (!toRect || !fromRect) {
       return;
     }
 
-    const toPoint = pointFromRect(toRect);
-    const fromPoint = pointFromRect(fromRect);
-    const midPoint = findMidPoint(toPoint, fromPoint);
-
-    const fromBezPoint = bezierControlPoint(fromPoint, midPoint, from.anchor, curveShapeFactor);
-    const toBezPoint = bezierControlPoint(toPoint, midPoint, to.anchor, curveShapeFactor);
+    const pathHeadOffset = Math.abs(markerSize / 2);
+    const toAnchorPoint = anchorPoint(boundingParent, to.anchor, toRect, pathHeadOffset);
+    const fromAnchorPoint = anchorPoint(boundingParent, from.anchor, fromRect, 0, markerSize * 2);
+    const midPoint = findMidPoint(toAnchorPoint, fromAnchorPoint);
+    const fromBezPoint = bezierControlPoint(
+      fromAnchorPoint,
+      midPoint,
+      from.anchor,
+      curveShapeFactor
+    );
+    const toBezPoint = bezierControlPoint(toAnchorPoint, midPoint, to.anchor, curveShapeFactor);
 
     if (!fromBezPoint || !toBezPoint) {
       return;
     }
 
-    return `M ${fromPoint.x} ${fromPoint.y}
+    return `M ${fromAnchorPoint.x} ${fromAnchorPoint.y}
         C ${fromBezPoint.x} ${fromBezPoint.y},
             ${toBezPoint.x} ${toBezPoint.y},
-            ${toPoint.x} ${toPoint.y}`;
+            ${toAnchorPoint.x} ${toAnchorPoint.y}`;
   };
 
   onDestroy(() => {

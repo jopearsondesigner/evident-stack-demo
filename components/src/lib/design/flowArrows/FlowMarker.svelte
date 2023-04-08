@@ -30,7 +30,8 @@
   $: markerId = makeMarkerId(id);
 </script>
 
-<marker id={markerId}>
+<marker
+  id={markerId}
   viewBox={geometry.viewBox}
   refX={geometry.refX}
   refY={geometry.refY}

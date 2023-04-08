@@ -11,17 +11,34 @@
   export let curveShapeFactor: number = 0.1;
   export let markerSize: number = 10;
 
-  $: pathConfig = { color, strokeWidth, dashness, refreshTime, curveShapeFactor };
+  let containerRef: SVGSVGElement;
+
+  $: pathConfig = {
+    color,
+    strokeWidth,
+    dashness,
+    refreshTime,
+    curveShapeFactor,
+    markerSize,
+    boundingParent: containerRef
+  };
   $: markerConfig = { color, markerSize };
 </script>
 
-<svg class="absolute" width="100%" height="100%" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+<svg
+  bind:this={containerRef}
+  class="absolute"
+  width="100%"
+  height="100%"
+  preserveAspectRatio="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
   <defs>
     {#each flows as { id }}
       <FlowMarker {...{ ...markerConfig, id }} />
     {/each}
   </defs>
   {#each flows as { id, to, from }}
-    <FlowPath {...{id, to, from, ...pathConfig}} />
+    <FlowPath {...{ id, to, from, ...pathConfig }} />
   {/each}
 </svg>

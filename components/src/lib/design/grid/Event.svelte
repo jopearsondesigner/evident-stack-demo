@@ -24,7 +24,7 @@
 <div
   {id}
   on:click|preventDefault|stopPropagation={handleClick}
-  class="placement event z-20 flex place-self-center align-items-center col-border ring-white p-[1.375rem] -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
+  class="placement event z-20 flex place-self-center align-items-center col-border ring-white dark:ring-gray-brand-1 p-[1.375rem] -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
   style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
 >
   <MaybeTooltip tip={descriptionHTML}>

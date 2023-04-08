@@ -47,8 +47,10 @@
   let readModel = false;
   let isClosed = true;
   let hidden = true;
+  let expanded = true;
   let handleDrawer = () => {
     hidden = !hidden;
+    expanded = true;
   };
   let handleClick = () => {
     isClosed = !isClosed;
@@ -57,7 +59,7 @@
     e.preventDefault();
     isClosed = true;
   };
-  let expanded = true;
+
   let code = '"domain" {\n' + '\tfoo: string, \n' + '\tbar: string, \n' + '\tbaz: int\n' + '}';
 
   export let data: LayoutData;
@@ -132,7 +134,7 @@
 <Drawer {hidden}>
   <Sidebar class={!isClosed ? 'w-[417px]' : 'w-[240px]'} {isClosed}>
     <SidebarWrapper>
-      <Accordion>
+      <Accordion class="flex flex-col" style="height: calc(100vh - 183px);">
         <SidebarContainer src={DesignLogo} title="Design" id="design" bind:expanded>
           <SidebarGroup>
             <SidebarDropdownWrapper label="	Schema" on:click={() => handleClick()}>

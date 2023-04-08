@@ -211,7 +211,6 @@
 
 <!-- backdrop -->
 
-<<<<<<< HEAD
 <Drawer placement="right" className="mt-4" bind:hidden={hiddenRight} drawerRight>
   <aside
     class="w-[480px] h-full flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
@@ -275,71 +274,6 @@
       </div>
     </span>
   </aside>
-=======
-<Drawer placement="right" bind:hidden={hiddenRight} drawerRight>
-	<aside
-		class="w-[480px] h-auto flex flex-col justify-center items-center px-6 h-screen bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
-	>
-		<div class="w-full">
-			<h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
-				Placement Details
-			</h3>
-			<div class="w-auto p-6 border rounded border-border-light dark:border-border-dark">
-				<div class="inline-flex">
-					{#if event}
-						<Icon name="event-icon" size={48} class=""><EventIcon /></Icon>
-					{:else if command}
-						<Icon name="command-icon" size={48} class=""><CommandIcon /></Icon>
-					{:else if readModel}
-						<Icon name="read-model-icon" size={48} class=""><ReadModelIcon /></Icon>
-					{/if}
-					<h2 class="ml-3 self-end text-xl font-bold text-body-light dark:text-body-dark">
-						Component Name
-					</h2>
-				</div>
-				<p class="my-3 text-sm leading-normal text-body dark:text-white">
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-					ut labore et dolore magna aliqua.
-				</p>
-				<div class="py-3">
-					<Label color="default"
-						><span class="text-body dark:text-white">Component Schema</span>
-						<Textarea
-							placeholder=""
-							value={code}
-							name="description"
-							rows="6"
-							class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
-							style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
-							disabled
-						/>
-					</Label>
-				</div>
-				<div class="py-3">
-					<Label color="default"
-						><span class="text-body dark:text-white">Placement Schema</span>
-						<Textarea
-							placeholder=""
-							value={code}
-							name="description"
-							rows="6"
-							class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
-							style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
-							disabled
-						/>
-					</Label>
-				</div>
-				<div class="mt-6 mx-3 space-x-3 flex justify-end">
-					<button
-						class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-						on:click>cancel</button
-					>
-					<Button color="default" size="sm" label="Edit" on:click class="" />
-				</div>
-			</div>
-		</div>
-	</aside>
->>>>>>> 1ee7d0f61df6b24b779798654431badc51036aef
 </Drawer>
 
 <main
@@ -348,7 +282,6 @@
   class:ml-[177px]={!isClosed}
   class:ease-in={!isClosed}
 >
-<<<<<<< HEAD
   <Grid
     default_audience_placements={[
       ,
@@ -432,91 +365,6 @@
       { id: '12', name: 'Another event!', description: 'blah *blah* **blah**' }
     ]}
   />
-=======
-	<Grid
-		default_audience_placements={[
-			,
-			,
-			{ id: '1', name: 'An interface!', description: 'blah *blah* **blah**' },
-			,
-			,
-			,
-			,
-			,
-			,
-			,
-			,
-			{ id: '2', name: 'Another interface!', description: 'blah *blah* **blah**' }
-		]}
-		audiences={[
-			{
-				name: 'A named audience',
-				placements: [
-					,
-					,
-					,
-					{ id: '3', name: 'An interface!', description: 'blah *blah* **blah**' },
-					,
-					{ id: '4', name: 'Another interface!', description: 'blah *blah* **blah**' }
-				]
-			},
-			{
-				name: 'Another named audience',
-				placements: [
-					,
-					{ id: '5', name: 'An interface!', description: 'blah *blah* **blah**' },
-					,
-					,
-					,
-					{ id: '6', name: 'Another interface!', description: 'blah *blah* **blah**' }
-				]
-			}
-		]}
-		timeline_placements={[
-			,
-			{ id: '5', name: 'A command!', type: 'command', description: 'blah *blah* **blah**' },
-			,
-			{ id: '6', name: 'A read model!', type: 'readModel', description: 'blah *blah* **blah**' },
-			,
-			{ id: '7', name: 'Another command!', type: 'command', description: 'blah *blah* **blah**' },
-			{
-				id: '8',
-				name: 'Another read model!',
-				type: 'readModel',
-				description: 'blah *blah* **blah**'
-			}
-		]}
-		streams={[
-			{
-				name: 'A named stream',
-				placements: [
-					,
-					,
-					,
-					{ id: '9', name: 'An event!', description: 'blah *blah* **blah**' },
-					,
-					,
-					,
-					,
-					,
-					,
-					,
-					,
-					,
-					{ id: '10', name: 'Another event!', description: 'blah *blah* **blah**' }
-				]
-			}
-		]}
-		default_stream_placements={[
-			,
-			,
-			{ id: '11', name: 'An event!', description: 'blah *blah* **blah**' },
-			,
-			,
-			{ id: '12', name: 'Another event!', description: 'blah *blah* **blah**' }
-		]}
-	/>
->>>>>>> 1ee7d0f61df6b24b779798654431badc51036aef
 </main>
 
 <style>

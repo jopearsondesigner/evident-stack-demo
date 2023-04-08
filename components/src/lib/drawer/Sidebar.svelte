@@ -33,6 +33,6 @@
     border: none;
   }
   [contenteditable]:focus {
-    outline: 2px solid #1e6aff;
+    outline: 1px solid #1e6aff;
   }
 </style>

@@ -15,7 +15,7 @@
 
 <div
   on:click|preventDefault|stopPropagation={handleClick}
-  class="empty-cell z-20 self-stretch relative min-w-placementPadded min-h-placementPadded col-border ring-white -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
+  class="empty-cell z-20 self-stretch relative min-w-placementPadded min-h-placementPadded col-border ring-white dark:ring-gray-brand-1 -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
   style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
 />
 

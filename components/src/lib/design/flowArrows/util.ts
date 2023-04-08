@@ -54,5 +54,4 @@ export const pointFromRect = ({ x, y }: DOMRect): Point => ({
     x, y
 })
 
-export const makeMarkerId = (id: string): string => `flow-marker-${id}`;
 export const makePathId = (id: string): string => `flow-path-${id}`

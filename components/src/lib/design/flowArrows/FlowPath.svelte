@@ -5,7 +5,6 @@
     anchorPoint,
     bezierControlPoint,
     findMidPoint,
-    makeMarkerId,
     makePathId,
   } from './util';
 
@@ -90,7 +89,6 @@
   });
 
   $: pathId = makePathId(id);
-  $: markerId = makeMarkerId(id);
   $: pathCoords = pathGeometry(toRect, fromRect);
   $: dashArray = dashness ? 6 * strokeWidth : null;
 </script>
@@ -103,6 +101,6 @@
     stroke-width={strokeWidth}
     stroke-dasharray={dashArray}
     fill="none"
-    marker-end={`url(#${markerId})`}
+    marker-end={"url(#flow-marker-arrow)"}
   />
 {/if}

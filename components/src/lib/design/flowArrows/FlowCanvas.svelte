@@ -34,9 +34,7 @@
   xmlns="http://www.w3.org/2000/svg"
 >
   <defs>
-    {#each flows as { id }}
-      <FlowMarker {...{ ...markerConfig, id }} />
-    {/each}
+    <FlowMarker {...markerConfig } />
   </defs>
   {#each flows as { id, to, from }}
     <FlowPath {...{ id, to, from, ...pathConfig }} />

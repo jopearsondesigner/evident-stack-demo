@@ -1,7 +1,4 @@
 <script lang="ts">
-  import { makeMarkerId } from './util';
-
-  export let id: string;
   export let color: string;
   export let markerSize: number;
 
@@ -27,11 +24,10 @@
   };
 
   $: geometry = markerGeometry(markerSize);
-  $: markerId = makeMarkerId(id);
 </script>
 
 <marker
-  id={markerId}
+  id="flow-marker-arrow"
   viewBox={geometry.viewBox}
   refX={geometry.refX}
   refY={geometry.refY}

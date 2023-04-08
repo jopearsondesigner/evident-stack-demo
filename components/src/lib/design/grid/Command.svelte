@@ -22,13 +22,13 @@
 </script>
 
 <div
-  {id}
   on:click|preventDefault|stopPropagation={handleClick}
   class="placement command z-20 flex place-self-center align-items-center p-[1.375rem] dark:border-gray-brand-1 -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
   style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
   >
   <MaybeTooltip tip={descriptionHTML}>
     <div
+      {id}
       class="command w-[6.125rem] h-[6.125rem] p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-command-dark via-command to-command-light"
       >
       {name}

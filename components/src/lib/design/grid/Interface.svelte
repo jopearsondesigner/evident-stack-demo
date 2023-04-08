@@ -29,13 +29,13 @@
 </script>
 
 <div
-  {id}
   on:click|preventDefault|stopPropagation={handleClick}
   class="placement interface z-20 flex place-self-center align-items-center p-[1.4375rem] -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
   style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
   >
   <MaybeTooltip tip={descriptionHTML}>
     <div
+      {id}
       class="interface w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary"
       >
       {name}

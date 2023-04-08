@@ -23,6 +23,16 @@ pub struct Port {
     anchor: Anchor, // TODO: InterfaceElement?
 }
 
+impl Port {
+    pub fn placement_id(&self) -> &PlacementId {
+        &self.placement
+    }
+
+    pub fn anchor(&self) -> &Anchor {
+        &self.anchor
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FlowArrow {
     id: FlowId,
@@ -68,6 +78,14 @@ impl FlowArrow {
             from,
             to,
         })
+    }
+
+    pub fn to(&self) -> &Port {
+        &self.to
+    }
+
+    pub fn from(&self) -> &Port {
+        &self.from
     }
 
     // fun build(

@@ -258,6 +258,88 @@ impl Stream {
 
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
+pub struct FlowArrow {
+    id: Uuid,
+    #[wasm_bindgen(getter_with_clone)]
+    pub from: FlowPort,
+    #[wasm_bindgen(getter_with_clone)]
+    pub to: FlowPort,
+}
+
+#[wasm_bindgen]
+impl FlowArrow {
+    #[wasm_bindgen(getter)]
+    pub fn id(&self) -> String {
+        self.id.to_string()
+    }
+}
+
+impl Entity for FlowArrow {
+    fn id(&self) -> &Uuid {
+        &self.id
+    }
+}
+
+impl From<event_models::types::FlowArrow> for FlowArrow {
+    fn from(value: event_models::types::FlowArrow) -> Self {
+        Self {
+            id: value.id().to_owned(),
+            from: value.from().to_owned().into(),
+            to: value.to().to_owned().into(),
+        }
+    }
+}
+
+#[wasm_bindgen]
+#[derive(Debug, Clone)]
+pub struct FlowPort {
+    placement_id: Uuid,
+    #[wasm_bindgen(getter_with_clone)]
+    pub anchor: FlowAnchor,
+}
+
+#[wasm_bindgen]
+impl FlowPort {
+    #[wasm_bindgen(getter)]
+    pub fn placement_id(&self) -> String {
+        self.placement_id.to_string()
+    }
+}
+
+impl From<event_models::types::flow::Port> for FlowPort {
+    fn from(value: event_models::types::flow::Port) -> Self {
+        Self {
+            placement_id: value.placement_id().to_owned(),
+            anchor: value.anchor().to_owned().into(),
+        }
+    }
+}
+
+#[wasm_bindgen]
+#[derive(Debug, Clone, Default)]
+pub enum FlowAnchor {
+    #[default]
+    None,
+    Top,
+    Left,
+    Bottom,
+    Right,
+}
+
+impl From<event_models::types::flow::Anchor> for FlowAnchor {
+    fn from(value: event_models::types::flow::Anchor) -> Self {
+        match value {
+            event_models::types::flow::Anchor::None => Self::None,
+            event_models::types::flow::Anchor::Top => Self::Top,
+            event_models::types::flow::Anchor::Left => Self::Left,
+            event_models::types::flow::Anchor::Bottom => Self::Bottom,
+            event_models::types::flow::Anchor::Right => Self::Right,
+        }
+    }
+}
+
+#[wasm_bindgen]
+#[derive(Debug, Clone)]
 pub enum EventModelGridState {
     Available,
     Unavailable,
@@ -275,6 +357,7 @@ pub struct EventModelGrid {
     pub description: String,
 
     default_audience: HashMap<usize, InterfacePlacement>,
+    flows: Vec<FlowArrow>,
     audiences: Vec<Audience>,
     timeline: HashMap<usize, TimelinePlacement>,
     streams: Vec<Stream>,
@@ -325,6 +408,11 @@ impl EventModelGrid {
         });
         default_stream
     }
+
+    #[wasm_bindgen(getter)]
+    pub fn flows(&self) -> Array {
+        self.flows.iter().cloned().map(JsValue::from).collect()
+    }
 }
 
 impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
@@ -339,6 +427,7 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                 audiences: Default::default(),
                 timeline: Default::default(),
                 streams: Default::default(),
+                flows: Default::default(),
                 default_stream: Default::default(),
             },
             EventModelState::Deleted(id) => EventModelGrid {
@@ -350,6 +439,7 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                 audiences: Default::default(),
                 timeline: Default::default(),
                 streams: Default::default(),
+                flows: Default::default(),
                 default_stream: Default::default(),
             },
             EventModelState::EventModel(model) => {
@@ -477,6 +567,7 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                         })
                         .collect(),
                     default_stream: grouped_streams.remove(&None).unwrap_or_default(),
+                    flows: model.flows().values().cloned().map(Into::into).collect(),
                 }
             }
         }

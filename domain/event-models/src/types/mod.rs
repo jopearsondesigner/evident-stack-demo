@@ -14,7 +14,7 @@ use uuid::Uuid;
 pub(crate) mod audience;
 pub(crate) mod command;
 pub(crate) mod event;
-pub(crate) mod flow;
+pub mod flow;
 pub(crate) mod interface;
 pub(crate) mod placement;
 pub(crate) mod read_model;

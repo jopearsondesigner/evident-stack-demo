@@ -40,6 +40,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
             },
             EventModelState::EventModel(model) => {
                 match cmd {
+                    // Event Model lifecyle and attributes
                     EventModelCommand::Create(_) => {
                         Err(IllegalState(format!("Model already exists: {:?}", model)))
                     }
@@ -55,6 +56,12 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::DeleteFromDescription(_, _) => {
                         todo!()
                     }
+                    EventModelCommand::SetDescription(_, _) => todo!(),
+                    EventModelCommand::SetSchema(_, _) => todo!(),
+                    EventModelCommand::AddToSchema(_, _, _) => todo!(),
+                    EventModelCommand::DeleteFromSchema(_, _) => todo!(),
+
+                    // Import
                     EventModelCommand::Import(model_id, offset, json) => {
                         let import = import(json).map_err(|e| {
                             EventModelError::SerializationError(format!(
@@ -153,6 +160,8 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
 
                         Ok(events)
                     }
+
+                    // Lanes
                     EventModelCommand::AddAudience(_, _, _) => {
                         todo!()
                     }
@@ -177,6 +186,8 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::RemoveStream(_, _) => {
                         todo!()
                     }
+
+                    // Placements
                     EventModelCommand::DefineAndPlaceInterface(model_id, name, index, audience) => {
                         let interface_id = Uuid::new_v4();
                         let interface = Interface::create(
@@ -295,9 +306,15 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::DuplicateEventPlacement(_, _, _, _) => {
                         todo!()
                     }
+
+                    // Components
                     EventModelCommand::RenameComponent(_, _, _) => {
                         todo!()
                     }
+                    EventModelCommand::SetComponentDescription(_, _, _) => todo!(),
+                    EventModelCommand::SetComponentSchema(_, _, _) => todo!(),
+                    EventModelCommand::AddToComponentSchema(_, _, _, _) => todo!(),
+                    EventModelCommand::DeleteFromComponentSchema(_, _, _) => todo!(),
                     EventModelCommand::AddToComponentDescription(_, _, _, _) => {
                         todo!()
                     }
@@ -307,20 +324,14 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::ConfigureInterface(_, _) => {
                         todo!()
                     }
+
+                    // Flows
                     EventModelCommand::ConnectFlow(_, _, _, _, _) => {
                         todo!()
                     }
                     EventModelCommand::DisconnectFlow(_, _) => {
                         todo!()
                     }
-                    EventModelCommand::SetDescription(_, _) => todo!(),
-                    EventModelCommand::SetSchema(_, _) => todo!(),
-                    EventModelCommand::AddToSchema(_, _, _) => todo!(),
-                    EventModelCommand::DeleteFromSchema(_, _) => todo!(),
-                    EventModelCommand::SetComponentDescription(_, _, _) => todo!(),
-                    EventModelCommand::SetComponentSchema(_, _, _) => todo!(),
-                    EventModelCommand::AddToComponentSchema(_, _, _, _) => todo!(),
-                    EventModelCommand::DeleteFromComponentSchema(_, _, _) => todo!(),
                 }
             }
             EventModelState::Deleted(_) => Ok(vec![]),

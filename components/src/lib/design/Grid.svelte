@@ -266,7 +266,7 @@
       audience={{placements: default_audience_placements}}
       {max_column} />
 
-    {#each audiences as audience, i} {@const row = i + 1}
+    {#each audiences as audience, i (audience.id)} {@const row = i + 1}
       <AudienceLane
         on:navigate_cursor={handleNavigateCursor}
         on:move_interface_placement={handleMoveInterfacePlacement}
@@ -279,7 +279,7 @@
           placements={timeline_placements}
           {max_column} />
 
-{#each streams as stream, i} {@const row = i + timeline_row + 1}
+{#each streams as stream, i (stream.id)} {@const row = i + timeline_row + 1}
   <StreamLane on:navigate_cursor={handleNavigateCursor}
               on:move_event_placement={handleMoveEventPlacement}
               {row} {stream} {max_column} />

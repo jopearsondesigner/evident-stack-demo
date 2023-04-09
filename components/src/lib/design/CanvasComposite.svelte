@@ -74,16 +74,23 @@
       {#if user}
         <MaybeTooltip tip="Docs">
           <IconButton
-            ><Icon name="docs" size={18} iconColor="text-body-light dark:text-body-dark"
-              ><Docs /></Icon
+            ><Icon
+              name="docs"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Docs}
+            />
             ></IconButton
           >
         </MaybeTooltip>
         <MaybeTooltip tip="Support">
           <IconButton
-            ><Icon name="support" size={18} iconColor="text-body-light dark:text-body-dark"
-              ><Support /></Icon
-            ></IconButton
+            ><Icon
+              name="support"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Support}
+            /></IconButton
           >
         </MaybeTooltip>
         <span class="flex justify-center px-3">
@@ -222,11 +229,11 @@
       <div class="w-full p-6 border rounded border-border-light dark:border-border-dark">
         <div class="inline-flex">
           {#if event}
-            <Icon name="event-icon" size={48} class=""><EventIcon /></Icon>
+            <Icon name="event-icon" size={48} class="" pathName={EventIcon} />
           {:else if command}
-            <Icon name="command-icon" size={48} class=""><CommandIcon /></Icon>
+            <Icon name="command-icon" size={48} class="" pathName={CommandIcon} />
           {:else if readModel}
-            <Icon name="read-model-icon" size={48} class=""><ReadModelIcon /></Icon>
+            <Icon name="read-model-icon" size={48} class="" pathName={ReadModelIcon} />
           {/if}
           <h2 class="ml-3 self-end text-xl font-bold text-body-light dark:text-body-dark">
             Component Name

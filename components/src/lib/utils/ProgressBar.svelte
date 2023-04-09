@@ -1,29 +1,14 @@
 <script>
-	import { tweened } from 'svelte/motion';
-	import { cubicOut } from 'svelte/easing';
+  import { tweened } from 'svelte/motion';
+  import { cubicOut } from 'svelte/easing';
 
-	const progress = tweened(0, {
-		duration: 400,
-		easing: cubicOut
-	});
+  export let progressClass =
+    '[&::-webkit-progress-bar]:rounded-lg [&::-webkit-progress-value]:rounded-l-lg [&::-webkit-progress-bar]:bg-[#e6e6e6] [&::-webkit-progress-bar]:dark:bg-gray-brand-1 [&::-webkit-progress-value]:bg-green [&::-moz-progress-bar]:bg-[#e6e6e6]/ [&::-moz-progress-bar]:dark:bg-gray-brand-1/ [&::-moz-progress-value]:bg-green/ block w-full h-1 mx-2';
+
+  const progress = tweened(0, {
+    duration: 400,
+    easing: cubicOut
+  });
 </script>
 
-<progress value={$progress} />
-
-<style>
-	progress {
-		display: block;
-		width: 100%;
-		height: 4px;
-		margin-right: 8px;
-		margin-left: 8px;
-	}
-	progress::-webkit-progress-bar {
-		accent-color: #00ff00;
-		background: #e6e6e6;
-	}
-	progress::-moz-progress-bar {
-		accent-color: #00ff00;
-		background: #e6e6e6;
-	}
-</style>
+<progress value={$progress} class={progressClass} />

@@ -16,6 +16,7 @@
   import Docs from '$components/icons/Docs.svelte';
   import Support from '$components/icons/Support.svelte';
   import AdminPortal from '$components/icons/AdminPortal.svelte';
+  import Profile from '$components/icons/Profile.svelte';
   import Logo from '$components/assets/images/global/evidentStackLogo.svg';
 
   import ThemeSwitch from '$components/utils/ThemeSwitch.svelte';
@@ -80,10 +81,13 @@
       >
         <MaybeTooltip tip="Home" position="tooltip-bottom">
           <IconButton href="/"
-            ><Icon name="home" size={16} iconColor="text-body-light dark:text-body-dark"
-              ><Home /></Icon
-            ></IconButton
-          >
+            ><Icon
+              name="home"
+              size={16}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Home}
+            />
+          </IconButton>
         </MaybeTooltip>
       </div>
     </NavToolbar>
@@ -93,27 +97,45 @@
       {#if data.session.user}
         <MaybeTooltip tip="Docs" position="tooltip-bottom">
           <IconButton
-            ><Icon name="docs" size={18} iconColor="text-body-light dark:text-body-dark"
-              ><Docs /></Icon
-            ></IconButton
-          >
+            ><Icon
+              name="docs"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Docs}
+            />
+          </IconButton>
         </MaybeTooltip>
         <MaybeTooltip tip="Support" position="tooltip-bottom">
           <IconButton
-            ><Icon name="support" size={18} iconColor="text-body-light dark:text-body-dark"
-              ><Support /></Icon
-            ></IconButton
-          >
+            ><Icon
+              name="support"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Support}
+            />
+          </IconButton>
         </MaybeTooltip>
         <MaybeTooltip tip="Admin" position="tooltip-bottom">
           <IconButton
-            ><Icon name="admin-portal" size={18} iconColor="text-body-light dark:text-body-dark"
-              ><AdminPortal /></Icon
-            ></IconButton
-          >
+            ><Icon
+              name="admin-portal"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={AdminPortal}
+            />
+          </IconButton>
         </MaybeTooltip>
         <span class="flex justify-center px-3">
-          <Avatar />
+          <IconButton
+            ><Icon
+              name="profile"
+              size={32}
+              viewBox="0 0 32 32"
+              class="vertical-middle"
+              iconColor=""
+              pathName={Profile}
+            />
+          </IconButton>
         </span>
       {:else}
         <Button
@@ -129,7 +151,7 @@
   </NavInner>
 </Navbar>
 
-<span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 m-16"><ThemeSwitch /></span>
+<span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 mt-16"><ThemeSwitch /></span>
 
 <Drawer {hidden}>
   <Sidebar class={!isClosed ? 'w-[417px]' : 'w-[240px]'} {isClosed}>
@@ -143,15 +165,15 @@
                 name="schema"
                 size={16}
                 iconColor="fill-current text-gray-brand-4 dark:text-white transition duration-200 ease-in"
-                ><Schema /></Icon
-              >
+                pathName={Schema}
+              />
               <Icon
                 slot="icon-open"
                 name="schema"
                 size={16}
                 iconColor="fill-current text-white dark:text-white transition duration-200 ease-in"
-                ><Schema /></Icon
-              >
+                pathName={Schema}
+              />
               <SidebarDropdownItem feature>
                 <Label class="mt-2 mb-6" color="default"
                   ><span class="text-body dark:text-white">Event Model Schema</span>
@@ -188,8 +210,9 @@
                   name="download"
                   size={12}
                   iconColor="text-body-light dark:text-white"
-                  class="inline-flex mb-1"><Download /></Icon
-                ></Button
+                  class="inline-flex mb-1"
+                  pathName={Download}
+                /></Button
               >
             </SidebarItem>
           </SidebarGroup>

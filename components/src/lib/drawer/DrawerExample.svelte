@@ -38,43 +38,63 @@
     <SidebarWrapper slot="eventModel">
       <SidebarGroup>
         <SidebarDropdownWrapper horizontal label="Design">
-          <Icon slot="icon" name="design" iconColor="fill-current text-brand-4"><Design /></Icon>
+          <Icon slot="icon" name="design" iconColor="fill-current text-brand-4" pathName={Design} />
           <SidebarDropdownItem label="Start a Collaboration">
-            <Icon slot="icon" name="collaborations" iconColor="fill-current text-brand-4"
-              ><Collaborations /></Icon
-            >
+            <Icon
+              slot="icon"
+              name="collaborations"
+              iconColor="fill-current text-brand-4"
+              pathName={Collaborations}
+            />
           </SidebarDropdownItem>
           <SidebarDropdownItem label="Manage Schemas">
-            <Icon slot="icon" name="manage-schemas" iconColor="fill-current text-brand-4"
-              ><ManageSchemas /></Icon
-            >
+            <Icon
+              slot="icon"
+              name="manage-schemas"
+              iconColor="fill-current text-brand-4"
+              pathName={ManageSchemas}
+            />
           </SidebarDropdownItem>
           <SidebarDropdownItem label="Get Design PowerUps" {aLink}>
-            <Icon slot="icon" name="powerup"><Powerup /></Icon>
+            <Icon slot="icon" name="powerup" pathName={Powerup} />
           </SidebarDropdownItem>
         </SidebarDropdownWrapper>
         <SidebarDropdownWrapper horizontal label="Implement">
-          <Icon slot="icon" name="implement" iconColor="fill-current text-brand-4"
-            ><Implement /></Icon
-          >
+          <Icon
+            slot="icon"
+            name="implement"
+            iconColor="fill-current text-brand-4"
+            pathName={Implement}
+          />
           <SidebarDropdownItem label="Export JSON">
-            <Icon slot="icon" name="export-jason" iconColor="fill-current text-brand-4"
-              ><ExportJson /></Icon
-            >
+            <Icon
+              slot="icon"
+              name="export-jason"
+              iconColor="fill-current text-brand-4"
+              pathName={ExportJson}
+            />
           </SidebarDropdownItem>
           <SidebarDropdownItem label="Generate Avro">
-            <Icon slot="icon" name="generate-avro" iconColor="fill-current text-brand-4"
-              ><Schema /></Icon
-            >
+            <Icon
+              slot="icon"
+              name="generate-avro"
+              iconColor="fill-current text-brand-4"
+              pathName={Schema}
+            />
           </SidebarDropdownItem>
           <SidebarDropdownItem label="Get Implement PowerUps" {aLink}>
-            <Icon slot="icon" name="powerup"><Powerup /></Icon>
+            <Icon slot="icon" name="powerup" pathName={Powerup} />
           </SidebarDropdownItem>
         </SidebarDropdownWrapper>
         <SidebarDropdownWrapper horizontal label="Operate">
-          <Icon slot="icon" name="operate" iconColor="fill-current text-brand-4"><Operate /></Icon>
+          <Icon
+            slot="icon"
+            name="operate"
+            iconColor="fill-current text-brand-4"
+            pathName={Operate}
+          />
           <SidebarDropdownItem label="Get Operate PowerUps" {aLink}>
-            <Icon slot="icon" name="powerup"><Powerup /></Icon>
+            <Icon slot="icon" name="powerup" pathName={Powerup} />
           </SidebarDropdownItem>
         </SidebarDropdownWrapper>
       </SidebarGroup>
@@ -103,9 +123,13 @@
     <SidebarWrapper slot="domainModels">
       <SidebarGroup>
         <SidebarItem label="Workflows" {headerText}>
-          <Icon slot="icon" name="add-icon" size={20} iconColor="fill-current text-body"
-            ><AddIcon /></Icon
-          >
+          <Icon
+            slot="icon"
+            name="add-icon"
+            size={20}
+            iconColor="fill-current text-body"
+            pathName={AddIcon}
+          />
         </SidebarItem>
         <SidebarItem label="<Workflow 1>" />
         <SidebarItem label="<Workflow 2>" />

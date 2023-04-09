@@ -17,6 +17,7 @@
     {size}
     viewBox="0 0 20 20"
     class="stroke-2"
-    iconColor="text-body-light dark:text-gray-primary"><Close /></Icon
-  >
+    iconColor="text-body-light dark:text-gray-primary"
+    pathName={Close}
+  />
 </button>

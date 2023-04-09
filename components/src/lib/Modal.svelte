@@ -1,9 +1,9 @@
 <script>
   import classNames from 'classnames';
-  import Frame from '$lib/utils/Frame.svelte';
+  import Frame from './utils/Frame.svelte';
   import { createEventDispatcher } from 'svelte';
-  import CloseButton from '$lib/utils/CloseButton';
-  import focusTrap from '$lib/utils/focusTrap.js';
+  import CloseButton from './utils/CloseButton.svelte';
+  import focusTrap from './utils/focusTrap';
   export let open = false;
   export let title = '';
   export let size = 'md';
@@ -68,7 +68,10 @@
     open = false;
   };
   let frameClass;
-  $: frameClass = classNames('relative flex flex-col mx-auto', $$props.class);
+  $: frameClass = classNames(
+    'relative flex flex-col mx-auto border border-border-light dark:border-border-dark',
+    $$props.class
+  );
   const isScrollable = (e) => [
     e.scrollWidth > e.clientWidth && ['scroll', 'auto'].indexOf(getComputedStyle(e).overflowX) >= 0,
     e.scrollHeight > e.clientHeight &&
@@ -109,11 +112,11 @@
         {#if $$slots.header || title}
           <Frame
             color={$$restProps.color}
-            class="flex justify-between items-center p-3 border-b border-border-light"
+            class="flex justify-between items-center p-3 border-b border-border-light dark:border-border-dark"
           >
             <slot name="header">
               <h3
-                class="text-default w-full text-center font-extrabold {$$restProps.color
+                class="text-default w-full text-center font-extrabold {$$restProps.color}
                   ? ''
                   : 'text-body-light dark:text-body-dark'} p-0"
               >
@@ -149,7 +152,7 @@
         {#if $$slots.footer}
           <Frame
             color={$$restProps.color}
-            class="bg-white dark:bg-dark-2 text-body dark:text-body-dark  border-border-light dark:border-border-dark flex items-end justify-end px-6 pt-3 pb-6 space-x-3"
+            class="flex items-end justify-end px-6 pt-3 pb-6 space-x-3"
           >
             <slot name="footer" />
           </Frame>

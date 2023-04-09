@@ -54,16 +54,22 @@
       {#if user}
         <MaybeTooltip tip="Docs">
           <IconButton
-            ><Icon name="docs" size={18} iconColor="text-body-light dark:text-body-dark"
-              ><Docs /></Icon
-            ></IconButton
+            ><Icon
+              name="docs"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Docs}
+            /></IconButton
           >
         </MaybeTooltip>
         <MaybeTooltip tip="Support">
           <IconButton
-            ><Icon name="support" size={18} iconColor="text-body-light dark:text-body-dark"
-              ><Support /></Icon
-            ></IconButton
+            ><Icon
+              name="support"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Support}
+            /></IconButton
           >
         </MaybeTooltip>
         <span class="flex justify-center px-3">
@@ -87,14 +93,16 @@
             slot="leftIcon"
             name="event-models"
             size={16}
-            iconColor="fill-current text-gray-brand-4 dark:text-gray-brand-2"><EventModels /></Icon
-          >
+            iconColor="fill-current text-gray-brand-4 dark:text-gray-brand-2"
+            pathName={EventModels}
+          />
           <Icon
             slot="rightIcon"
             name="add-icon"
             size={20}
-            iconColor="fill-current text-body dark:text-white"><AddIcon /></Icon
-          >
+            iconColor="fill-current text-body dark:text-white"
+            pathName={AddIcon}
+          />
         </SidebarItem>
         <SidebarItem label="This is an Event Model!" active />
         <SidebarDropdownWrapper label="Collaborations">
@@ -103,8 +111,8 @@
             name="collaborations"
             size={16}
             iconColor="fill-current text-gray-brand-4 dark:text-gray-brand-2"
-            ><Collaborations /></Icon
-          >
+            pathName={Collaborations}
+          />
           <SidebarDropdownItem label="This is a Collaboration!" />
         </SidebarDropdownWrapper>
       </SidebarGroup>
@@ -114,23 +122,26 @@
             slot="icon"
             name="design"
             iconColor="fill-current text-gray-brand-4 dark:text-brand-gray-2"
-            size={15}><Design /></Icon
-          >
+            size={15}
+            pathName={Design}
+          />
           <SidebarDropdownItem label="Start a Collaboration">
             <Icon
               slot="icon"
               name="collaborations"
               iconColor="fill-current text-gray-brand-4 dark:text-brand-gray-2"
-              size={16}><Collaborations /></Icon
-            >
+              size={16}
+              pathName={Collaborations}
+            />
           </SidebarDropdownItem>
           <SidebarDropdownItem label="Manage Schemas">
             <Icon
               slot="icon"
               name="manage-schemas"
               iconColor="fill-current text-gray-brand-4 dark:text-brand-gray-2"
-              size={16}><ManageSchemas /></Icon
-            >
+              size={16}
+              pathName={ManageSchemas}
+            />
           </SidebarDropdownItem>
         </SidebarDropdownWrapper>
         <SidebarDropdownWrapper horizontal label="Implement">
@@ -138,23 +149,26 @@
             slot="icon"
             name="implement"
             iconColor="fill-current text-gray-brand-4 dark:text-brand-gray-2"
-            size={16}><Implement /></Icon
-          >
+            size={16}
+            pathName={Implement}
+          />
           <SidebarDropdownItem label="Export JSON">
             <Icon
               slot="icon"
               name="export-jason"
               iconColor="fill-current text-gray-brand-4 dark:text-brand-gray-2"
-              size={16}><ExportJson /></Icon
-            >
+              size={16}
+              pathName={ExportJson}
+            />
           </SidebarDropdownItem>
           <SidebarDropdownItem label="Generate Avro">
             <Icon
               slot="icon"
               name="generate-avro"
               iconColor="fill-current text-gray-brand-4 dark:text-brand-gray-2"
-              size={16}><Schema /></Icon
-            >
+              size={16}
+              pathName={Schema}
+            />
           </SidebarDropdownItem>
         </SidebarDropdownWrapper>
       </SidebarGroup>

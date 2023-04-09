@@ -2,7 +2,7 @@
   import MaybeTooltip from '../../utils/MaybeTooltip.svelte';
   import markdown from '../../utils/markdown.js';
   import { createEventDispatcher } from 'svelte';
-  import type { MouseEventHandler } from 'svelte/elements';
+  import type { DragEventHandler, MouseEventHandler } from 'svelte/elements';
 
   export let id: string;
   export let interface_id: string;
@@ -24,7 +24,16 @@
 
   const dispatch = createEventDispatcher();
   const handleClick: MouseEventHandler<HTMLDivElement> = (_event) => {
-    dispatch('navigateCursor', {row, column})
+    dispatch('navigate_cursor', {row, column})
+  }
+
+  const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
+    let transfer = e.dataTransfer;
+    if (transfer) {
+      transfer.dropEffect = 'move';
+      transfer.setData('kind', 'interface')
+      transfer.setData('id', id)
+    }
   }
 </script>
 
@@ -36,8 +45,9 @@
   <MaybeTooltip tip={descriptionHTML}>
     <div
       {id}
-      class="interface w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary"
-      >
+      draggable=true
+      on:dragstart={handleDragStart}
+      class="interface w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary" >
       {name}
     </div>
   </MaybeTooltip>

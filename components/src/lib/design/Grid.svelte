@@ -59,6 +59,18 @@
     disambiguation = e.detail;
   }
 
+  const handleMoveInterfacePlacement = async (e: CustomEvent) => {
+    await decider.move_interface_placement(e.detail.id, e.detail.index, e.detail.audience);
+  }
+
+  const handleMoveTimelinePlacement = async (e: CustomEvent) => {
+    await decider.move_timeline_placement(e.detail.id, e.detail.index);
+  }
+
+  const handleMoveEventPlacement = async (e: CustomEvent) => {
+    await decider.move_event_placement(e.detail.id, e.detail.index, e.detail.stream);
+  }
+
   const handleRemovePlacement = async (e: CustomEvent) => {
     await decider.remove_placement(e.detail.placement);
     mode = 'navigation'
@@ -248,24 +260,33 @@
     class="p-3 relative grid justify-items-center items-center"
     style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));">
     <AudienceLane
-      on:navigateCursor={handleNavigateCursor}
+      on:navigate_cursor={handleNavigateCursor}
+      on:move_interface_placement={handleMoveInterfacePlacement}
       row={default_audience_row}
       audience={{placements: default_audience_placements}}
       {max_column} />
 
     {#each audiences as audience, i} {@const row = i + 1}
-      <AudienceLane on:navigateCursor={handleNavigateCursor} {row} {audience} {max_column} />
+      <AudienceLane
+        on:navigate_cursor={handleNavigateCursor}
+        on:move_interface_placement={handleMoveInterfacePlacement}
+        {row} {audience} {max_column} />
     {/each}
 
-<Timeline on:navigateCursor={handleNavigateCursor}
+<Timeline on:navigate_cursor={handleNavigateCursor}
+          on:move_timeline_placement={handleMoveTimelinePlacement}
           row={timeline_row}
           placements={timeline_placements}
           {max_column} />
 
 {#each streams as stream, i} {@const row = i + timeline_row + 1}
-  <StreamLane on:navigateCursor={handleNavigateCursor} {row} {stream} {max_column} />
+  <StreamLane on:navigate_cursor={handleNavigateCursor}
+              on:move_event_placement={handleMoveEventPlacement}
+              {row} {stream} {max_column} />
 {/each}
-<StreamLane on:navigateCursor={handleNavigateCursor} row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
+<StreamLane on:navigate_cursor={handleNavigateCursor}
+            on:move_event_placement={handleMoveEventPlacement}
+            row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
 <Cursor
   on:begin_editing={handleBeginEditing}
   on:define_and_place_interface={handleDefineAndPlaceInterface}

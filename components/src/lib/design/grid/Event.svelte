@@ -2,7 +2,7 @@
   import MaybeTooltip from '../../utils/MaybeTooltip.svelte';
   import markdown from '../../utils/markdown.js';
   import { createEventDispatcher } from 'svelte';
-  import type { MouseEventHandler } from 'svelte/elements';
+  import type { DragEventHandler, MouseEventHandler, TouchEventHandler } from 'svelte/elements';
 
   export let id: string;
   export let event: string;
@@ -17,7 +17,16 @@
 
   const dispatch = createEventDispatcher();
   const handleClick: MouseEventHandler<HTMLDivElement> = (_event) => {
-    dispatch('navigateCursor', {row, column})
+    dispatch('navigate_cursor', {row, column})
+  }
+
+  const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
+    let transfer = e.dataTransfer;
+    if (transfer) {
+      transfer.dropEffect = 'move';
+      transfer.setData('kind', 'event')
+      transfer.setData('id', id)
+    }
   }
 </script>
 
@@ -29,8 +38,9 @@
   <MaybeTooltip tip={descriptionHTML}>
     <div
       {id}
-      class="event w-[6.125rem] h-[6.125rem] p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-event-dark via-event to-event-light"
-      >
+      draggable=true
+      on:dragstart={handleDragStart}
+      class="event w-[6.125rem] h-[6.125rem] p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-event-dark via-event to-event-light" >
       {name}
     </div>
   </MaybeTooltip>

@@ -5,6 +5,9 @@ export type Decider = {
   define_and_place_read_model: (name: string, index: number) => any,
   delete_model: () => any,
   import_json: (json_bytes: Uint8Array, offset: number) => any,
+  move_interface_placement: (placement_id: string, index: number, audience: string | undefined) => any,
+  move_timeline_placement: (placement_id: string, index: number) => any,
+  move_event_placement: (placement_id: string, index: number, stream: string | undefined) => any,
   remove_placement: (placement: string) => any,
   rename_placement: (placement: string, name: string) => any,
 }
@@ -16,6 +19,9 @@ export const default_decider: Decider = {
   define_and_place_read_model: console.log,
   delete_model: console.log,
   import_json: console.log,
+  move_interface_placement: console.log,
+  move_timeline_placement: console.log,
+  move_event_placement: console.log,
   remove_placement: console.log,
   rename_placement: console.log,
 }
@@ -74,6 +80,8 @@ export type Stream = {
   name?: string,
   placements: Array<EventPlacement>
 }
+
+export type CellType = 'interface' | 'timeline' | 'event'
 
 export type PlacementCell = {placement: InterfacePlacement | TimelinePlacement | EventPlacement,
                              empty?: false, audience?: null, stream?: null}

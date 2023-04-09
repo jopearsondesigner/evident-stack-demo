@@ -46,7 +46,7 @@
 {#each audience.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
   {#if placement}
     <Interface
-      on:navigateCursor={forward}
+      on:navigate_cursor={forward}
       id={placement.id}
       interface_id={placement.interface}
       name={placement.name}
@@ -54,6 +54,8 @@
       {row}
       {column} />
   {:else}
-    <EmptyCell on:navigateCursor={forward} {row} {column} />
+    <EmptyCell {row} {column} kind='interface' lane={audience.id}
+               on:navigate_cursor={forward}
+               on:move_interface_placement={forward} />
   {/if}
 {/each}

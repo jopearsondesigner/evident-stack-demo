@@ -110,17 +110,6 @@ impl EventModelStateManager {
         self.dispatch(EventModelCommand::Delete(model_id)).await
     }
 
-    pub async fn remove_placement(
-        &mut self,
-        model_id_str: String,
-        placement_id_str: String,
-    ) -> Result<EventModelGrid, JsValue> {
-        let model_id = parse_uuid(model_id_str)?;
-        let placement_id = parse_uuid(placement_id_str)?;
-        self.dispatch(EventModelCommand::RemovePlacement(model_id, placement_id))
-            .await
-    }
-
     pub async fn define_and_place_interface(
         &mut self,
         model_id_str: String,
@@ -192,6 +181,77 @@ impl EventModelStateManager {
         let model_id = parse_uuid(model_id_str)?;
 
         self.dispatch(EventModelCommand::Import(model_id, offset, json.to_vec()))
+            .await
+    }
+
+    pub async fn move_interface_placement(
+        &mut self,
+        model_id_str: String,
+        placement_id_str: String,
+        index: usize,
+        maybe_audience_str: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let placement_id = parse_uuid(placement_id_str)?;
+        let audience = match maybe_audience_str {
+            Some(audience_str) => Some(parse_uuid(audience_str)?),
+            None => None,
+        };
+        self.dispatch(EventModelCommand::MoveInterfacePlacement(
+            model_id,
+            placement_id,
+            index,
+            audience,
+        ))
+        .await
+    }
+
+    pub async fn move_timeline_placement(
+        &mut self,
+        model_id_str: String,
+        placement_id_str: String,
+        index: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let placement_id = parse_uuid(placement_id_str)?;
+        self.dispatch(EventModelCommand::MoveTimelinePlacement(
+            model_id,
+            placement_id,
+            index,
+        ))
+        .await
+    }
+
+    pub async fn move_event_placement(
+        &mut self,
+        model_id_str: String,
+        placement_id_str: String,
+        index: usize,
+        maybe_stream_str: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let placement_id = parse_uuid(placement_id_str)?;
+        let stream = match maybe_stream_str {
+            Some(stream_str) => Some(parse_uuid(stream_str)?),
+            None => None,
+        };
+        self.dispatch(EventModelCommand::MoveEventPlacement(
+            model_id,
+            placement_id,
+            index,
+            stream,
+        ))
+        .await
+    }
+
+    pub async fn remove_placement(
+        &mut self,
+        model_id_str: String,
+        placement_id_str: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let placement_id = parse_uuid(placement_id_str)?;
+        self.dispatch(EventModelCommand::RemovePlacement(model_id, placement_id))
             .await
     }
 

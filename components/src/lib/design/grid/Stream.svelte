@@ -43,7 +43,7 @@
 {#each stream.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
   {#if placement}
     <Event
-      on:navigateCursor={forward}
+      on:navigate_cursor={forward}
       id={placement.id}
       event={placement.event}
       name={placement.name}
@@ -51,6 +51,8 @@
       {row}
       {column} />
   {:else}
-    <EmptyCell on:navigateCursor={forward} {row} {column} />
+    <EmptyCell {row} {column} kind='event' lane={stream.id}
+               on:navigate_cursor={forward}
+               on:move_event_placement={forward} />
   {/if}
 {/each}

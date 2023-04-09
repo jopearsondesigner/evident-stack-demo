@@ -9,8 +9,7 @@
   import Grid from '$components/design/Grid.svelte';
 
   export let data: PageData;
-  const grid = data.grid;
-  const import_json = data.import_json!;
+  const { grid, decider } = data;
 
   $: model_id = $grid?.id();
 
@@ -129,6 +128,7 @@
 </Modal>
 
 <Grid
+  {decider}
   default_audience_placements={$grid?.default_audience}
   audiences={$grid?.audiences}
   timeline_placements={$grid?.timeline}

@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 use crate::{api::errors::EventModelError, EventModelDataTransfer};
@@ -39,7 +37,7 @@ pub enum JsonExport {
     V1_0_0(JsonV1_0_0Transfer),
 }
 
-pub fn export(model: &JsonExport) -> String {
+pub fn export(_model: &JsonExport) -> String {
     todo!()
 }
 

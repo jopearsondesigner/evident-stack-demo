@@ -1,6 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
+	import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from "../vendor/tinykeys/tinykeys"
 
   import Cursor from "./grid/Cursor.svelte";
@@ -8,7 +9,7 @@
   import Timeline from './grid/Timeline.svelte';
   import StreamLane from './grid/Stream.svelte';
 
-  import {type Decider, type Audience, type EventPlacement, type InterfacePlacement, type Stream, type TimelinePlacement, default_decider, type Disambiguation, type CursorMode, type GridMode} from './Grid';
+  import {type Decider, type Audience, type EventPlacement, type InterfacePlacement, type Stream, type TimelinePlacement, default_decider, type Disambiguation, type CursorMode, type GridMode, type Flow} from './Grid';
   import { onMount } from "svelte";
   import { itemAtCursor } from "./Grid";
   import TimelineDisambiguation from "./grid/TimelineDisambiguation.svelte";
@@ -19,6 +20,7 @@
   export let timeline_placements: Array<TimelinePlacement> = new Array(0);
   export let streams: Array<Stream> = new Array(0);
   export let default_stream_placements: Array<EventPlacement> = new Array(0);
+  export let flows: Array<Flow> = [];
 
   // Grid Mode
 
@@ -55,6 +57,30 @@
   const handleDisambiguateTimelineDefinitionAndPlacement = (e: CustomEvent) => {
     mode = 'disambiguating';
     disambiguation = e.detail;
+  }
+
+  const handleMoveInterfacePlacement = async (e: CustomEvent) => {
+    await decider.move_interface_placement(e.detail.id, e.detail.index, e.detail.audience);
+  }
+
+  const handleDuplicateInterfacePlacement = async (e: CustomEvent) => {
+    await decider.duplicate_interface_placement(e.detail.id, e.detail.index, e.detail.audience);
+  }
+
+  const handleMoveTimelinePlacement = async (e: CustomEvent) => {
+    await decider.move_timeline_placement(e.detail.id, e.detail.index);
+  }
+
+  const handleDuplicateTimelinePlacement = async (e: CustomEvent) => {
+    await decider.duplicate_timeline_placement(e.detail.id, e.detail.index);
+  }
+
+  const handleMoveEventPlacement = async (e: CustomEvent) => {
+    await decider.move_event_placement(e.detail.id, e.detail.index, e.detail.stream);
+  }
+
+  const handleDuplicateEventPlacement = async (e: CustomEvent) => {
+    await decider.duplicate_event_placement(e.detail.id, e.detail.index, e.detail.stream);
   }
 
   const handleRemovePlacement = async (e: CustomEvent) => {
@@ -241,37 +267,57 @@
 <h3>{mode}</h3>
 
 <div class="overflow-auto h-full w-full bg-gray-canvas dark:bg-dark-1">
+  <FlowCanvas flows={flows} />
   <div
     class="p-3 relative grid justify-items-center items-center"
     style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));">
-
     <AudienceLane
-      on:navigateCursor={handleNavigateCursor}
+      on:navigate_cursor={handleNavigateCursor}
+      on:move_interface_placement={handleMoveInterfacePlacement}
+      on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
       row={default_audience_row}
       audience={{placements: default_audience_placements}}
       {max_column} />
 
-    {#each audiences as audience, i} {@const row = i + 1}
-      <AudienceLane on:navigateCursor={handleNavigateCursor} {row} {audience} {max_column} />
+    {#each audiences as audience, i (audience.id)} {@const row = i + 1}
+      <AudienceLane
+        on:navigate_cursor={handleNavigateCursor}
+        on:move_interface_placement={handleMoveInterfacePlacement}
+        on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
+        {row} {audience} {max_column} />
     {/each}
 
-<Timeline on:navigateCursor={handleNavigateCursor}
+<Timeline on:navigate_cursor={handleNavigateCursor}
+          on:move_timeline_placement={handleMoveTimelinePlacement}
+          on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
           row={timeline_row}
           placements={timeline_placements}
           {max_column} />
 
-{#each streams as stream, i} {@const row = i + timeline_row + 1}
-  <StreamLane on:navigateCursor={handleNavigateCursor} {row} {stream} {max_column} />
+{#each streams as stream, i (stream.id)} {@const row = i + timeline_row + 1}
+  <StreamLane on:navigate_cursor={handleNavigateCursor}
+              on:move_event_placement={handleMoveEventPlacement}
+              on:duplicate_event_placement={handleDuplicateEventPlacement}
+              {row} {stream} {max_column} />
 {/each}
-<StreamLane on:navigateCursor={handleNavigateCursor} row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
+<StreamLane on:navigate_cursor={handleNavigateCursor}
+            on:move_event_placement={handleMoveEventPlacement}
+            on:duplicate_event_placement={handleDuplicateEventPlacement}
+            row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
 <Cursor
   on:begin_editing={handleBeginEditing}
+  on:cancel_editing={handleCancelEditing}
   on:define_and_place_interface={handleDefineAndPlaceInterface}
-  on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
   on:define_and_place_event={handleDefineAndPlaceEvent}
+  on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
   on:remove_placement={handleRemovePlacement}
   on:rename_placement={handleRenamePlacement}
-  on:cancel_editing={handleCancelEditing}
+  on:move_interface_placement={handleMoveInterfacePlacement}
+  on:move_timeline_placement={handleMoveTimelinePlacement}
+  on:move_event_placement={handleMoveEventPlacement}
+  on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
+  on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
+  on:duplicate_event_placement={handleDuplicateEventPlacement}
   row={cursor_row}
   column={cursor_column}
   item={cursor_item}

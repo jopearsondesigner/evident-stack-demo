@@ -3,6 +3,7 @@
   import EmptyCell from "./EmptyCell.svelte";
   import Interface from "./Interface.svelte";
   import { createEventDispatcher } from 'svelte';
+  import Cell from "./Cell.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -40,20 +41,20 @@
 <div
   id={audience.id}
   class="audience absolute -top-px -left-3 bottom-0.5 -right-6 border-t border-gray-primary dark:border-gray-brand-3"
-  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
-  />
+  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};" />
 
 {#each audience.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
-  {#if placement}
-    <Interface
-      on:navigateCursor={forward}
-      id={placement.id}
-      interface_id={placement.interface}
-      name={placement.name}
-      description={placement.description}
-      {row}
-      {column} />
-  {:else}
-    <EmptyCell on:navigateCursor={forward} {row} {column} />
-  {/if}
+  <Cell {row} {column} on:navigate_cursor={forward}>
+    {#if placement}
+      <Interface
+        id={placement.id}
+        interface_id={placement.interface}
+        name={placement.name}
+        description={placement.description} />
+    {:else}
+      <EmptyCell {column} kind='interface' lane={audience.id}
+                 on:move_interface_placement={forward}
+                 on:duplicate_interface_placement={forward} />
+    {/if}
+  </Cell>
 {/each}

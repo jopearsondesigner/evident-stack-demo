@@ -1,27 +1,73 @@
 <script lang="ts">
-  export let row: number;
-  export let column: number;
   import { createEventDispatcher } from 'svelte';
-  import type { MouseEventHandler } from 'svelte/elements';
+  import type { DragEventHandler } from 'svelte/elements';
+  import type { CellType } from '../Grid';
 
-  $: gridRow = row + 1;
-  $: gridColumn = column + 1;
+  export let column: number;
+  export let kind: CellType;
+  export let lane: string | undefined = undefined;
 
   const dispatch = createEventDispatcher();
-  const handleClick: MouseEventHandler<HTMLDivElement> = (_event) => {
-    dispatch('navigateCursor', { row, column });
+
+  let drop_target: 'target' | 'bad-target' | 'none' = 'none';
+
+  $: good_target = drop_target == 'target';
+  $: bad_target = drop_target == 'bad-target';
+
+  const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
+    let transfer = e.dataTransfer;
+    if (transfer) {
+      if (transfer.getData('kind') == kind) {
+        e.preventDefault();
+        transfer.dropEffect = transfer.effectAllowed == 'copy' ? 'copy' : 'move';
+        drop_target = 'target';
+      } else {
+        transfer.dropEffect = 'none';
+        drop_target = 'bad-target';
+      }
+    }
+  };
+
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (_e) => {
+    drop_target = 'none';
+  };
+
+  const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
+    handleDragLeave(e);
+    let transfer = e.dataTransfer;
+    if (transfer && transfer.getData('kind') == kind) {
+      let id = transfer.getData('id');
+      if (kind == 'interface') {
+        if (transfer.dropEffect == 'move')
+          dispatch('move_interface_placement', { id: id, index: column, audience: lane });
+        else if (transfer.dropEffect == 'copy') {
+          dispatch('duplicate_interface_placement', { id: id, index: column, audience: lane });
+        }
+      } else if (kind == 'timeline') {
+        if (transfer.dropEffect == 'move')
+          dispatch('move_timeline_placement', { id: id, index: column });
+        else if (transfer.dropEffect == 'copy') {
+          dispatch('duplicate_timeline_placement', { id: id, index: column });
+        }
+      } else if (kind == 'event') {
+        if (transfer.dropEffect == 'move')
+          dispatch('move_event_placement', { id: id, index: column, stream: lane });
+        else if (transfer.dropEffect == 'copy') {
+          dispatch('duplicate_event_placement', { id: id, index: column, stream: lane });
+        }
+      }
+    }
   };
 </script>
 
 <div
-  on:click|preventDefault|stopPropagation={handleClick}
-  class="empty-cell z-20 self-stretch relative min-w-placementPadded min-h-placementPadded col-border ring-white dark:ring-gray-brand-1 -ml-px mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
-  style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
+  on:dragenter={handleDragEnter}
+  on:dragover={(e) => {
+    e.preventDefault();
+  }}
+  on:dragleave={handleDragLeave}
+  on:drop={handleDragDrop}
+  class:bg-emerald-200={good_target}
+  class:bg-rose-400={bad_target}
+  class="empty-cell min-w-placementPadded min-h-placementPadded"
 />
-
-<style>
-  /* Grid column */
-  .col-border {
-    box-shadow: 1px 0px 0px var(--tw-ring-color) inset;
-  }
-</style>

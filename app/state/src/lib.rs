@@ -172,6 +172,66 @@ impl EventModelStateManager {
         .await
     }
 
+    pub async fn duplicate_interface_placement(
+        &mut self,
+        model_id_str: String,
+        placement_id_str: String,
+        index: usize,
+        maybe_audience_str: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let placement_id = parse_uuid(placement_id_str)?;
+        let audience = match maybe_audience_str {
+            Some(audience_str) => Some(parse_uuid(audience_str)?),
+            None => None,
+        };
+        self.dispatch(EventModelCommand::DuplicateInterfacePlacement(
+            model_id,
+            placement_id,
+            index,
+            audience,
+        ))
+        .await
+    }
+
+    pub async fn duplicate_timeline_placement(
+        &mut self,
+        model_id_str: String,
+        placement_id_str: String,
+        index: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let placement_id = parse_uuid(placement_id_str)?;
+        self.dispatch(EventModelCommand::DuplicateTimelinePlacement(
+            model_id,
+            placement_id,
+            index,
+        ))
+        .await
+    }
+
+    pub async fn duplicate_event_placement(
+        &mut self,
+        model_id_str: String,
+        placement_id_str: String,
+        index: usize,
+        maybe_stream_str: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let placement_id = parse_uuid(placement_id_str)?;
+        let stream = match maybe_stream_str {
+            Some(stream_str) => Some(parse_uuid(stream_str)?),
+            None => None,
+        };
+        self.dispatch(EventModelCommand::DuplicateEventPlacement(
+            model_id,
+            placement_id,
+            index,
+            stream,
+        ))
+        .await
+    }
+
     pub async fn import(
         &mut self,
         model_id_str: String,

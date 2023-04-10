@@ -47,7 +47,9 @@
       name={placement.name}
       description={placement.description} />
   {:else}
-    <EmptyCell {column} kind='timeline' on:move_timeline_placement={forward} />
+    <EmptyCell {column} kind='timeline'
+               on:move_timeline_placement={forward}
+               on:duplicate_timeline_placement={forward} />
   {/if}
   </Cell>
 {/each}

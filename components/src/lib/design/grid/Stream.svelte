@@ -50,7 +50,9 @@
       name={placement.name}
       description={placement.description} />
   {:else}
-    <EmptyCell {column} kind='event' lane={stream.id} on:move_event_placement={forward} />
+    <EmptyCell {column} kind='event' lane={stream.id}
+               on:move_event_placement={forward}
+               on:duplicate_event_placement={forward} />
   {/if}
   </Cell>
 {/each}

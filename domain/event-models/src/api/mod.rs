@@ -365,14 +365,108 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             *placement_id,
                         )])
                     }
-                    EventModelCommand::DuplicateInterfacePlacement(_, _, _, _) => {
-                        todo!()
+                    EventModelCommand::DuplicateInterfacePlacement(
+                        model_id,
+                        placement_id,
+                        index,
+                        maybe_audience_id,
+                    ) => {
+                        let interface = match model.placements().get(placement_id) {
+                            Some(Placement::Interface { interface, .. }) => Ok(interface),
+                            _ => Err(EventModelError::ModificationError(format!(
+                                "No interface placement found with id {:?}",
+                                placement_id
+                            ))),
+                        }?;
+                        let audience = if let Some(id) = maybe_audience_id {
+                            match model.audiences().iter().find(|a| a.id() == id) {
+                                Some(a) => Ok(Some(a.id().to_owned())),
+                                None => Err(EventModelError::ModificationError(format!(
+                                    "No audience found with id {:?}",
+                                    maybe_audience_id
+                                ))),
+                            }
+                        } else {
+                            Ok(None)
+                        }?;
+
+                        Ok(vec![EventModelEvent::ComponentPlaced(
+                            *model_id,
+                            Placement::Interface {
+                                id: Uuid::new_v4(),
+                                index: *index,
+                                interface: *interface,
+                                audience,
+                            },
+                        )])
                     }
-                    EventModelCommand::DuplicateTimelinePlacement(_, _, _) => {
-                        todo!()
-                    }
-                    EventModelCommand::DuplicateEventPlacement(_, _, _, _) => {
-                        todo!()
+                    EventModelCommand::DuplicateTimelinePlacement(
+                        model_id,
+                        placement_id,
+                        index,
+                    ) => match model.placements().get(placement_id) {
+                        Some(Placement::Command { command, .. }) => {
+                            Ok(vec![EventModelEvent::ComponentPlaced(
+                                *model_id,
+                                Placement::Command {
+                                    id: Uuid::new_v4(),
+                                    index: *index,
+                                    command: *command,
+                                    schema: Default::default(),
+                                },
+                            )])
+                        }
+                        Some(Placement::ReadModel { read_model, .. }) => {
+                            Ok(vec![EventModelEvent::ComponentPlaced(
+                                *model_id,
+                                Placement::ReadModel {
+                                    id: Uuid::new_v4(),
+                                    index: *index,
+                                    read_model: *read_model,
+                                    schema: Default::default(),
+                                },
+                            )])
+                        }
+                        _ => Err(EventModelError::ModificationError(format!(
+                            "No timeline placement found with id {:?}",
+                            placement_id
+                        ))),
+                    },
+                    EventModelCommand::DuplicateEventPlacement(
+                        model_id,
+                        placement_id,
+                        index,
+                        maybe_stream_id,
+                    ) => {
+                        let event = match model.placements().get(placement_id) {
+                            Some(Placement::Event { event, .. }) => Ok(event),
+                            _ => Err(EventModelError::ModificationError(format!(
+                                "No event placement found with id {:?}",
+                                placement_id
+                            ))),
+                        }?;
+                        let stream = if let Some(id) = maybe_stream_id {
+                            match model.streams().iter().find(|a| a.id() == id) {
+                                Some(a) => Ok(Some(a.id().to_owned())),
+                                None => Err(EventModelError::ModificationError(format!(
+                                    "No stream found with id {:?}",
+                                    maybe_stream_id
+                                ))),
+                            }
+                        } else {
+                            Ok(None)
+                        }?;
+
+                        Ok(vec![EventModelEvent::ComponentPlaced(
+                            *model_id,
+                            Placement::Event {
+                                id: Uuid::new_v4(),
+                                index: *index,
+                                event: *event,
+                                schema: Default::default(),
+                                stream,
+                            },
+                        )])
                     }
 
                     // Components

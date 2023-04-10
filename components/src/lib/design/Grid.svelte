@@ -63,12 +63,24 @@
     await decider.move_interface_placement(e.detail.id, e.detail.index, e.detail.audience);
   }
 
+  const handleDuplicateInterfacePlacement = async (e: CustomEvent) => {
+    await decider.duplicate_interface_placement(e.detail.id, e.detail.index, e.detail.audience);
+  }
+
   const handleMoveTimelinePlacement = async (e: CustomEvent) => {
     await decider.move_timeline_placement(e.detail.id, e.detail.index);
   }
 
+  const handleDuplicateTimelinePlacement = async (e: CustomEvent) => {
+    await decider.duplicate_timeline_placement(e.detail.id, e.detail.index);
+  }
+
   const handleMoveEventPlacement = async (e: CustomEvent) => {
     await decider.move_event_placement(e.detail.id, e.detail.index, e.detail.stream);
+  }
+
+  const handleDuplicateEventPlacement = async (e: CustomEvent) => {
+    await decider.duplicate_event_placement(e.detail.id, e.detail.index, e.detail.stream);
   }
 
   const handleRemovePlacement = async (e: CustomEvent) => {
@@ -262,6 +274,7 @@
     <AudienceLane
       on:navigate_cursor={handleNavigateCursor}
       on:move_interface_placement={handleMoveInterfacePlacement}
+      on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
       row={default_audience_row}
       audience={{placements: default_audience_placements}}
       {max_column} />
@@ -270,11 +283,13 @@
       <AudienceLane
         on:navigate_cursor={handleNavigateCursor}
         on:move_interface_placement={handleMoveInterfacePlacement}
+        on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
         {row} {audience} {max_column} />
     {/each}
 
 <Timeline on:navigate_cursor={handleNavigateCursor}
           on:move_timeline_placement={handleMoveTimelinePlacement}
+          on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
           row={timeline_row}
           placements={timeline_placements}
           {max_column} />
@@ -282,10 +297,12 @@
 {#each streams as stream, i (stream.id)} {@const row = i + timeline_row + 1}
   <StreamLane on:navigate_cursor={handleNavigateCursor}
               on:move_event_placement={handleMoveEventPlacement}
+              on:duplicate_event_placement={handleDuplicateEventPlacement}
               {row} {stream} {max_column} />
 {/each}
 <StreamLane on:navigate_cursor={handleNavigateCursor}
             on:move_event_placement={handleMoveEventPlacement}
+            on:duplicate_event_placement={handleDuplicateEventPlacement}
             row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
 <Cursor
   on:begin_editing={handleBeginEditing}
@@ -298,6 +315,9 @@
   on:move_interface_placement={handleMoveInterfacePlacement}
   on:move_timeline_placement={handleMoveTimelinePlacement}
   on:move_event_placement={handleMoveEventPlacement}
+  on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
+  on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
+  on:duplicate_event_placement={handleDuplicateEventPlacement}
   row={cursor_row}
   column={cursor_column}
   item={cursor_item}

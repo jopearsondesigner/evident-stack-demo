@@ -32,6 +32,18 @@ const initialize_decider = async (id: string | undefined) => {
       delete_model: async () => {
         return await manager.delete(id!)
       },
+      duplicate_interface_placement: async (placement_id: string, index: number, audience: string | undefined) => {
+        return await manager.duplicate_interface_placement(id!, placement_id, index, audience)
+      },
+      duplicate_timeline_placement: async (placement_id: string, index: number) => {
+        return await manager.duplicate_timeline_placement(id!, placement_id, index)
+      },
+      duplicate_event_placement: async (placement_id: string, index: number, stream: string | undefined) => {
+        return await manager.duplicate_event_placement(id!, placement_id, index, stream)
+      },
+      import_json: async (json_bytes: Uint8Array, offset: number) => {
+        return await manager.import(id!, json_bytes, offset)
+      },
       move_interface_placement: async (placement_id: string, index: number, audience: string | undefined) => {
         return await manager.move_interface_placement(id!, placement_id, index, audience)
       },
@@ -40,9 +52,6 @@ const initialize_decider = async (id: string | undefined) => {
       },
       move_event_placement: async (placement_id: string, index: number, stream: string | undefined) => {
         return await manager.move_event_placement(id!, placement_id, index, stream)
-      },
-      import_json: async (json_bytes: Uint8Array, offset: number) => {
-        return await manager.import(id!, json_bytes, offset)
       },
       remove_placement: async (placement: string) => {
         return await manager.remove_placement(id!, placement)

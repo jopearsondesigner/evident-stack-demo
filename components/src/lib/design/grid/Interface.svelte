@@ -23,9 +23,9 @@
       transfer.setData('kind', 'interface')
       transfer.setData('id', id)
       if (e.ctrlKey) {
-        transfer.effectAllowed = "copy";
+        transfer.effectAllowed = 'copy';
       } else {
-        transfer.effectAllowed = "move";
+        transfer.effectAllowed = 'move';
       }
     }
   }

@@ -158,7 +158,10 @@
       <EmptyCell {column} kind={item.type} lane={item.audience || item.stream}
                  on:move_interface_placement={forward}
                  on:move_timeline_placement={forward}
-                 on:move_event_placement={forward}/>
+                 on:move_event_placement={forward}
+                 on:duplicate_interface_placement={forward}
+                 on:duplicate_timeline_placement={forward}
+                 on:duplicate_event_placement={forward} />
     {/if}
   </div>
 {/if}

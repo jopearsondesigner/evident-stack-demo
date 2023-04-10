@@ -44,7 +44,7 @@
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};" />
 
 {#each audience.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
-  <Cell {row} {column} on:navigate_cursor={forward} on:navigate_cursor={forward}>
+  <Cell {row} {column} on:navigate_cursor={forward}>
     {#if placement}
       <Interface
         id={placement.id}
@@ -52,7 +52,9 @@
         name={placement.name}
         description={placement.description} />
     {:else}
-      <EmptyCell {column} kind='interface' lane={audience.id} on:move_interface_placement={forward} />
+      <EmptyCell {column} kind='interface' lane={audience.id}
+                 on:move_interface_placement={forward}
+                 on:duplicate_interface_placement={forward} />
     {/if}
   </Cell>
 {/each}

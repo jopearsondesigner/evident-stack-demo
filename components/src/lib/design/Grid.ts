@@ -45,6 +45,12 @@ export enum FlowAnchor {
   Right,
 }
 
+export type Audience = {
+  id?: string,
+  name?: string,
+  placements: Array<InterfacePlacement>
+}
+
 export type InterfacePlacement = {
   id: string,
   interface: string,
@@ -53,12 +59,6 @@ export type InterfacePlacement = {
   // TODO: supported placement types/config here
   kind: string
 };
-
-export type Audience = {
-  id?: string,
-  name?: string,
-  placements: Array<InterfacePlacement>
-}
 
 export type TimelinePlacement = {
   id: string,
@@ -83,13 +83,12 @@ export type Stream = {
 
 export type CellType = 'interface' | 'timeline' | 'event'
 
-export type PlacementCell = {placement: InterfacePlacement | TimelinePlacement | EventPlacement,
-                             empty?: false, audience?: null, stream?: null}
-export type EmptyInterfaceCell = { placement: null, empty: 'interface', audience?: string, stream?: null }
-export type EmptyTimelineCell = { placement: null, empty: 'timeline', audience?: null, stream?: null }
-export type EmptyEventCell = { placement: null, empty: 'event', stream?: string, audience?: null }
+export type InterfacePlacementCell = {type: 'interface', placement: InterfacePlacement}
+export type TimelinePlacementCell  = {type: 'timeline',  placement: TimelinePlacement}
+export type EventPlacementCell     = {type: 'event',     placement: EventPlacement}
+export type EmptyCell = { type: CellType, placement?: undefined, audience?: string, stream?: string }
 
-export type ItemAtCursor = PlacementCell | EmptyInterfaceCell | EmptyTimelineCell | EmptyEventCell
+export type ItemAtCursor = InterfacePlacementCell | TimelinePlacementCell | EventPlacementCell | EmptyCell
 
 export const itemAtCursor = (
   row: number,
@@ -102,21 +101,21 @@ export const itemAtCursor = (
 ): ItemAtCursor => {
   if (row === 0) {
     let placement = default_audience[column];
-    return placement ? {placement} : { empty: 'interface', placement: null };
+    return {type: 'interface', placement};
   } else if (row - 1 < audiences.length) {
     let audience = audiences[row - 1];
     let placement = audience?.placements[column];
-    return placement? {placement} : { empty: 'interface', audience: audience?.id, placement: null };
+    return placement ? { type: 'interface', placement} : { type: 'interface', audience: audience?.id };
   } else if (row === audiences.length + 1) {
     let placement = timeline[column]
-    return placement ? {placement} : { empty: 'timeline', placement: null };
+    return placement ? {type: 'timeline', placement} : { type: 'timeline' };
   } else if (row - 1 - audiences.length - 1 < streams.length) {
     let stream = streams[row - 1 - audiences.length - 1]
     let placement = stream?.placements[column]
-    return placement ? {placement} : { empty: 'event', stream: stream?.id, placement: null };
+    return placement ? {type: 'event', placement} : { type: 'event', stream: stream?.id };
   } else if (row === 1 + audiences.length + 1 + streams.length) {
     let placement = default_stream[column]
-    return placement ? {placement} : { empty: 'event', placement: null };
+    return placement ? {type: 'event', placement} : { type: 'event' };
   }
   throw new Error("No valid item at cursor!");
 }

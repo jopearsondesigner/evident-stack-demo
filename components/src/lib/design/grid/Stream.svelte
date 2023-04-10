@@ -3,6 +3,7 @@
   import EmptyCell from "./EmptyCell.svelte";
   import Event from "./Event.svelte";
   import { createEventDispatcher } from 'svelte';
+  import Cell from "./Cell.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -22,7 +23,7 @@
 
 {#if stream.name}
   <h3
-    class="streamName laneName sticky left-3 z-30 justify-self-start self-end cursor-pointer prose text-body-light dark:text-body-dark mb-3"
+    class="streamName laneName sticky left-3 z-30 justify-self-start self-end cursor-pointer prose text-body-light nndark:text-body-dark mb-3"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};">
     {stream.name}
   </h3>
@@ -41,18 +42,15 @@
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};" />
 
 {#each stream.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
+  <Cell {row} {column} on:navigate_cursor={forward}>
   {#if placement}
     <Event
-      on:navigate_cursor={forward}
       id={placement.id}
       event={placement.event}
       name={placement.name}
-      description={placement.description}
-      {row}
-      {column} />
+      description={placement.description} />
   {:else}
-    <EmptyCell {row} {column} kind='event' lane={stream.id}
-               on:navigate_cursor={forward}
-               on:move_event_placement={forward} />
+    <EmptyCell {column} kind='event' lane={stream.id} on:move_event_placement={forward} />
   {/if}
+  </Cell>
 {/each}

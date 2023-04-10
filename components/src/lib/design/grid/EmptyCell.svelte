@@ -1,57 +1,70 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import type { DragEventHandler, MouseEventHandler } from 'svelte/elements';
+  import type { DragEventHandler } from 'svelte/elements';
   import type { CellType } from '../Grid';
 
-  export let row: number;
   export let column: number;
   export let kind: CellType;
   export let lane: string | undefined = undefined;
 
-  $: gridRow = row + 1;
-  $: gridColumn = column + 1;
-
   const dispatch = createEventDispatcher();
 
-  const handleClick: MouseEventHandler<HTMLDivElement> = (_event) => {
-    dispatch('navigate_cursor', {row, column})
-  }
+  let drop_target: 'target' | 'bad-target' | 'none' = 'none';
 
-  let drop_target = false;
+  $: good_target = drop_target == 'target'
+  $: bad_target = drop_target == 'bad-target'
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
-    if (transfer && transfer.getData('kind') == kind) {
-      e.preventDefault();
-      drop_target = true;
+    if (transfer) {
+      if (transfer.getData('kind') == kind) {
+        e.preventDefault();
+        transfer.dropEffect = transfer.effectAllowed == 'copy' ? 'copy' : 'move';
+        drop_target = 'target';
+      } else {
+        transfer.dropEffect = 'none';
+        drop_target = 'bad-target';
+      }
     }
   }
 
-  const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
-    drop_target = false;
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (_e) => {
+    drop_target = 'none';
   }
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
+    handleDragLeave(e);
     let transfer = e.dataTransfer;
     if (transfer && transfer.getData('kind') == kind) {
       let id = transfer.getData('id');
       if (kind == 'interface') {
-        dispatch('move_interface_placement', {id: id, index: column, audience: lane})
+        if (transfer.dropEffect == 'move')
+          dispatch('move_interface_placement', {id: id, index: column, audience: lane})
+        else if (transfer.dropEffect == 'copy') {
+          dispatch('duplicate_interface_placement', {id: id, index: column, audience: lane})
+        }
       } else if (kind == 'timeline') {
-        dispatch('move_timeline_placement', {id: id, index: column})
+        if (transfer.dropEffect == 'move')
+          dispatch('move_timeline_placement', {id: id, index: column})
+        else if (transfer.dropEffect == 'copy') {
+          dispatch('duplicate_timeline_placement', {id: id, index: column})
+        }
       } else if (kind == 'event') {
-        dispatch('move_event_placement', {id: id, index: column, stream: lane})
+        if (transfer.dropEffect == 'move')
+          dispatch('move_event_placement', {id: id, index: column, stream: lane})
+        else if (transfer.dropEffect == 'copy') {
+          dispatch('duplicate_event_placement', {id: id, index: column, stream: lane})
+        }
       }
     }
   }
 </script>
 
 <div
-  on:click|preventDefault|stopPropagation={handleClick}
   on:dragenter={handleDragEnter}
   on:dragover={(e) => {e.preventDefault()}}
   on:dragleave={handleDragLeave}
   on:drop={handleDragDrop}
-  class:bg-pink-200={drop_target}
-  class="empty-cell z-10 self-stretch relative min-w-placementPadded min-h-placementPadded dark:border-gray-brand-1 mb-px hover:bg-focus/[.18] transition duration-200 ease-in"
-  style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};" />
+  class:bg-emerald-200={good_target}
+  class:bg-rose-400={bad_target}
+  class="empty-cell min-w-placementPadded min-h-placementPadded" />

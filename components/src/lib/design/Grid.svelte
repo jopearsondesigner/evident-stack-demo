@@ -289,12 +289,15 @@
             row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
 <Cursor
   on:begin_editing={handleBeginEditing}
+  on:cancel_editing={handleCancelEditing}
   on:define_and_place_interface={handleDefineAndPlaceInterface}
-  on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
   on:define_and_place_event={handleDefineAndPlaceEvent}
+  on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
   on:remove_placement={handleRemovePlacement}
   on:rename_placement={handleRenamePlacement}
-  on:cancel_editing={handleCancelEditing}
+  on:move_interface_placement={handleMoveInterfacePlacement}
+  on:move_timeline_placement={handleMoveTimelinePlacement}
+  on:move_event_placement={handleMoveEventPlacement}
   row={cursor_row}
   column={cursor_column}
   item={cursor_item}

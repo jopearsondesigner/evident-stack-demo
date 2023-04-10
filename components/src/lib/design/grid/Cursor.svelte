@@ -2,6 +2,11 @@
   import { createKeybindingsHandler } from "../../vendor/tinykeys/tinykeys";
   import { tick, createEventDispatcher } from "svelte";
   import type { CursorMode, ItemAtCursor } from "../Grid";
+  import Interface from "./Interface.svelte";
+  import Command from "./Command.svelte";
+  import Event from "./Event.svelte";
+  import ReadModel from "./ReadModel.svelte";
+  import EmptyCell from "./EmptyCell.svelte";
 
   export let row: number;
   export let column: number;
@@ -41,6 +46,10 @@
 
   const dispatch = createEventDispatcher();
 
+  const forward = (event: CustomEvent) => {
+    dispatch(event.type, event.detail)
+  }
+
   const beginEditing: EventListener = (event) => {
     event.preventDefault();
     dispatch('begin_editing')
@@ -56,19 +65,19 @@
     let data = new FormData(form);
     let name = data.get("name")?.toString();
     if (name) {
-      if (item.empty === 'interface') {
-        dispatch('define_and_place_interface', {name, index: column, ...item})
-      } else if (item.empty === 'timeline') {
-        let rect = form.getBoundingClientRect()
-        dispatch('disambiguate_timeline_definition_and_placement', {name, left: rect.left, top: rect.top, index: column, ...item})
-      } else if (item.empty === 'event') {
-        dispatch('define_and_place_event', {name, index: column, ...item})
-      } else {
+      if (item.placement) {
         if (item.placement.name != name) {
           dispatch('rename_placement', {name, placement: item.placement.id})
         } else {
           cancelEditing(e)
         }
+      } else if (item.type === 'interface') {
+        dispatch('define_and_place_interface', {name, index: column, ...item})
+      } else if (item.type === 'timeline') {
+        let rect = form.getBoundingClientRect()
+        dispatch('disambiguate_timeline_definition_and_placement', {name, left: rect.left, top: rect.top, index: column, ...item})
+      } else if (item.type === 'event') {
+        dispatch('define_and_place_event', {name, index: column, ...item})
       }
     }
   }
@@ -113,8 +122,43 @@
   </div>
 {:else}
   <div
-    on:click={beginEditing}
     bind:this={element}
+    on:click={beginEditing}
     class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300"
-    style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};" />
-  {/if}
+    style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};">
+    {#if item.placement}
+      {#if item.type == 'interface'}
+        <Interface
+          id={item.placement.id}
+          interface_id={item.placement.interface}
+          name={item.placement.name}
+          description={item.placement.description} />
+      {:else if item.type == 'timeline'}
+        {#if item.placement.kind == 'command'}
+          <Command
+            id={item.placement.id}
+            command={item.placement.component}
+            name={item.placement.name}
+            description={item.placement.description} />
+        {:else if item.placement.kind == 'readModel'}
+          <ReadModel
+            id={item.placement.id}
+            readModel={item.placement.component}
+            name={item.placement.name}
+            description={item.placement.description} />
+        {/if}
+      {:else if item.type == 'event'}
+        <Event
+          id={item.placement.id}
+          event={item.placement.event}
+          name={item.placement.name}
+          description={item.placement.description} />
+      {/if}
+    {:else}
+      <EmptyCell {column} kind={item.type} lane={item.audience || item.stream}
+                 on:move_interface_placement={forward}
+                 on:move_timeline_placement={forward}
+                 on:move_event_placement={forward}/>
+    {/if}
+  </div>
+{/if}

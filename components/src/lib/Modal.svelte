@@ -112,7 +112,7 @@
         {#if $$slots.header || title}
           <Frame
             color={$$restProps.color}
-            class="flex justify-between items-center p-3 border-b border-border-light dark:border-border-dark"
+            class="flex justify-between items-center p-3 border-b border-border-gray-secondary dark:border-border-dark"
           >
             <slot name="header">
               <h3

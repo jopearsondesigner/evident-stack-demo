@@ -3,27 +3,29 @@
   import type { PageData } from './$types';
   import Modal from '$components/Modal.svelte';
   import Button from '$components/Button.svelte';
+  import ProgressBar from '$components/utils/ProgressBar.svelte';
   import Icon from '$components/Icon.svelte';
   import Warning from '$components/icons/Warning.svelte';
+  import File from '$components/icons/File.svelte';
   import Checkmark from '$components/icons/Checkmark.svelte';
   import Grid from '$components/design/Grid.svelte';
 
   export let data: PageData;
   const { grid, decider } = data;
 
-  $: model_id = $grid?.id();
+  $: Modal_id = $grid?.id();
 
-  let popupModal = false;
-  let done = false;
+  let deleteModal = false;
+  let importModal = false;
+  let done = true;
   export let open = false;
-
   const hide = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     open = false;
   };
 
-  const handleDeleteModel = () => {
-    data.delete_model ? model_id : null;
+  const handleDeleteModel = async () => {
+    await decider?.delete_model();
     goto('/');
   };
   const handleImportJson = async (e: SubmitEvent) => {
@@ -32,38 +34,36 @@
     let buffer = await json.arrayBuffer();
     let bytes = new Uint8Array(buffer);
     let offset = formData.get('offset') as string;
-    await import_json(model_id!, bytes, parseInt(offset) || 0);
+    await decider?.import_json(bytes, parseInt(offset) || 0);
   };
+
+  const handleImportModel = () => (importModal = !importModal);
 </script>
 
-<h2 class="mt-16">{model_id}</h2>
-
-<pre>{JSON.stringify($grid)}</pre>
-
-<form on:submit|preventDefault={handleImportJson}>
-  <div class="form-control w-full max-w-xs">
+<form id="importModel" on:submit|preventDefault={handleImportJson}>
+  <div class="w-full max-w-xs mt-16">
     <label class="label" for="json">
-      <span class="label-text">Event Model JSON File</span>
+      <span class="label-text">Event Modal JSON File</span>
     </label>
-    <input type="file" name="json" accept="application/json" />
+    <input type="file" name="json" accept="application/json" on:change={handleImportModel} />
     <label class="label" for="offset">
       <span class="label-text">Offset</span>
     </label>
     <input type="number" name="offset" class="input input-bordered w-full max-w-xs" />
   </div>
-  <button type="submit">Import</button>
+  <input type="submit" id="submit-form" class="hidden" on:click={handleImportModel} />
 </form>
 
 <button
   class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-  on:click={() => (popupModal = true)}>Delete This Model</button
+  on:click={() => (deleteModal = true)}>Delete This Modal</button
 >
 
-<Modal bind:open={popupModal} size="xs" autoclose title="Delete Event Model">
+<Modal bind:open={deleteModal} size="xs" autoclose title="Delete Event Modal">
   <div class="text-center w-full inline-flex justify-center items-center p px-6">
     <Icon name="warning" pathName={Warning} class="mr-1" />
     <span class="whitespace-nowrap text-sm text-body"
-      >Are you sure you want to delete this Event Model?</span
+      >Are you sure you want to delete this Event Modal?</span
     >
   </div>
   <div class="my-3 text-center w-full inline-flex justify-center items-center p px-6">
@@ -78,27 +78,18 @@
         pathName={Checkmark}
       />
     {/if}
-    <span class="text-default text-body dark:text-white">{model_id}</span>
+    <span class="text-default text-body dark:text-white">{Modal_id}</span>
   </div>
   <div slot="footer" class="mx-3 flex items-end space-x-3">
     <Button color="default" size="sm" on:click={hide} class="" label="Cancel" />
-    <Button
-      gradient
-      color="ghost"
-      size="sm"
-      on:click={handleDeleteModel}
-      class=""
-      label="Confirm"
-    />
+    <Button gradient color="ghost" size="sm" label="confirm" on:click={handleDeleteModel} />
   </div>
 </Modal>
 
-<Modal bind:open={popupModal} size="xs" autoclose title="Delete Event Model">
+<Modal bind:open={importModal} size="xs" autoclose title="Import JSON File">
   <div class="text-center w-full inline-flex justify-center items-center p px-6">
-    <Icon name="warning" pathName={Warning} class="mr-2" />
-    <span class="whitespace-nowrap text-default text-body dark:text-white"
-      >Are you sure you want to delete this Event Model?</span
-    >
+    <Icon name="file" pathName={File} class="mr-1" />
+    <ProgressBar done />
   </div>
   <div class="my-3 text-center w-full inline-flex justify-center items-center p px-6">
     {#if done}
@@ -112,18 +103,14 @@
         pathName={Checkmark}
       />
     {/if}
-    <span class="text-default text-body dark:text-body-dark">{model_id}</span>
+    <span class="text-default text-body dark:text-white">{Modal_id}</span>
   </div>
   <div slot="footer" class="mx-3 flex items-end space-x-3">
-    <Button color="default" size="sm" on:click={hide} class="" label="Cancel" />
-    <Button
-      gradient
-      color="ghost"
-      size="sm"
-      on:click={handleDeleteModel}
-      class=""
-      label="Confirm"
-    />
+    <button
+      class="text-sm text-focus hover:text-[#054FDE] transition duration-200 ease-in underline"
+      on:click={hide}>Cancel</button
+    >
+    <Button input boundTo="submit-form" tabindex={0} color="default" size="sm" label="Done" />
   </div>
 </Modal>
 

@@ -4,7 +4,8 @@ use crate::api::errors::EventModelError::IllegalState;
 use crate::api::events::EventModelEvent;
 use crate::json::import;
 use crate::types::{
-    validate_name, Command, Component, Event, Interface, Lane, Placement, ReadModel, Schema,
+    validate_name, Command, Component, Entity, Event, Interface, Lane, LaneId, Placement,
+    PlacementPosition, ReadModel, Schema,
 };
 use crate::{EventModel, EventModelDataTransfer, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
@@ -40,6 +41,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
             },
             EventModelState::EventModel(model) => {
                 match cmd {
+                    // Event Model lifecyle and attributes
                     EventModelCommand::Create(_) => {
                         Err(IllegalState(format!("Model already exists: {:?}", model)))
                     }
@@ -55,6 +57,12 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::DeleteFromDescription(_, _) => {
                         todo!()
                     }
+                    EventModelCommand::SetDescription(_, _) => todo!(),
+                    EventModelCommand::SetSchema(_, _) => todo!(),
+                    EventModelCommand::AddToSchema(_, _, _) => todo!(),
+                    EventModelCommand::DeleteFromSchema(_, _) => todo!(),
+
+                    // Import
                     EventModelCommand::Import(model_id, offset, json) => {
                         let import = import(json).map_err(|e| {
                             EventModelError::SerializationError(format!(
@@ -153,6 +161,8 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
 
                         Ok(events)
                     }
+
+                    // Lanes
                     EventModelCommand::AddAudience(_, _, _) => {
                         todo!()
                     }
@@ -177,6 +187,8 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::RemoveStream(_, _) => {
                         todo!()
                     }
+
+                    // Placements
                     EventModelCommand::DefineAndPlaceInterface(model_id, name, index, audience) => {
                         let interface_id = Uuid::new_v4();
                         let interface = Interface::create(
@@ -271,33 +283,200 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             name.to_string(),
                         )])
                     }
-                    EventModelCommand::MoveInterfacePlacement(_, _, _, _) => {
-                        todo!()
+                    EventModelCommand::MoveInterfacePlacement(
+                        model_id,
+                        placement_id,
+                        index,
+                        maybe_audience_id,
+                    ) => {
+                        let _ = match model.placements().get(placement_id) {
+                            Some(Placement::Interface { id, .. }) => Ok(id),
+                            _ => Err(EventModelError::ModificationError(format!(
+                                "No interface placement found with id {:?}",
+                                placement_id
+                            ))),
+                        }?;
+                        let audience = if let Some(id) = maybe_audience_id {
+                            match model.audiences().iter().find(|a| a.id() == id) {
+                                Some(a) => Ok(LaneId::Audience(*a.id())),
+                                None => Err(EventModelError::ModificationError(format!(
+                                    "No audience found with id {:?}",
+                                    maybe_audience_id
+                                ))),
+                            }
+                        } else {
+                            Ok(LaneId::DefaultAudience)
+                        }?;
+
+                        Ok(vec![EventModelEvent::PlacementMoved(
+                            *model_id,
+                            PlacementPosition(*placement_id, *index, audience),
+                        )])
                     }
-                    EventModelCommand::MoveTimelinePlacement(_, _, _) => {
-                        todo!()
+                    EventModelCommand::MoveTimelinePlacement(model_id, placement_id, index) => {
+                        let _ = match model.placements().get(placement_id) {
+                            Some(Placement::Command { id, .. }) => Ok(id),
+                            Some(Placement::ReadModel { id, .. }) => Ok(id),
+                            _ => Err(EventModelError::ModificationError(format!(
+                                "No timeline placement found with id {:?}",
+                                placement_id
+                            ))),
+                        }?;
+
+                        Ok(vec![EventModelEvent::PlacementMoved(
+                            *model_id,
+                            PlacementPosition(*placement_id, *index, LaneId::Timeline),
+                        )])
                     }
-                    EventModelCommand::MoveEventPlacement(_, _, _, _) => {
-                        todo!()
+                    EventModelCommand::MoveEventPlacement(
+                        model_id,
+                        placement_id,
+                        index,
+                        maybe_stream_id,
+                    ) => {
+                        let _ = match model.placements().get(placement_id) {
+                            Some(Placement::Event { id, .. }) => Ok(id),
+                            _ => Err(EventModelError::ModificationError(format!(
+                                "No event placement found with id {:?}",
+                                placement_id
+                            ))),
+                        }?;
+                        let stream = if let Some(id) = maybe_stream_id {
+                            match model.streams().iter().find(|a| a.id() == id) {
+                                Some(a) => Ok(LaneId::Stream(*a.id())),
+                                None => Err(EventModelError::ModificationError(format!(
+                                    "No stream found with id {:?}",
+                                    maybe_stream_id
+                                ))),
+                            }
+                        } else {
+                            Ok(LaneId::DefaultStream)
+                        }?;
+
+                        Ok(vec![EventModelEvent::PlacementMoved(
+                            *model_id,
+                            PlacementPosition(*placement_id, *index, stream),
+                        )])
                     }
                     EventModelCommand::RemovePlacement(model_id, placement_id) => {
+                        // TODO: test that placement with given id exists
                         Ok(vec![EventModelEvent::PlacementRemoved(
                             *model_id,
                             *placement_id,
                         )])
                     }
-                    EventModelCommand::DuplicateInterfacePlacement(_, _, _, _) => {
-                        todo!()
+                    EventModelCommand::DuplicateInterfacePlacement(
+                        model_id,
+                        placement_id,
+                        index,
+                        maybe_audience_id,
+                    ) => {
+                        let interface = match model.placements().get(placement_id) {
+                            Some(Placement::Interface { interface, .. }) => Ok(interface),
+                            _ => Err(EventModelError::ModificationError(format!(
+                                "No interface placement found with id {:?}",
+                                placement_id
+                            ))),
+                        }?;
+                        let audience = if let Some(id) = maybe_audience_id {
+                            match model.audiences().iter().find(|a| a.id() == id) {
+                                Some(a) => Ok(Some(a.id().to_owned())),
+                                None => Err(EventModelError::ModificationError(format!(
+                                    "No audience found with id {:?}",
+                                    maybe_audience_id
+                                ))),
+                            }
+                        } else {
+                            Ok(None)
+                        }?;
+
+                        Ok(vec![EventModelEvent::ComponentPlaced(
+                            *model_id,
+                            Placement::Interface {
+                                id: Uuid::new_v4(),
+                                index: *index,
+                                interface: *interface,
+                                audience,
+                            },
+                        )])
                     }
-                    EventModelCommand::DuplicateTimelinePlacement(_, _, _) => {
-                        todo!()
+                    EventModelCommand::DuplicateTimelinePlacement(
+                        model_id,
+                        placement_id,
+                        index,
+                    ) => match model.placements().get(placement_id) {
+                        Some(Placement::Command { command, .. }) => {
+                            Ok(vec![EventModelEvent::ComponentPlaced(
+                                *model_id,
+                                Placement::Command {
+                                    id: Uuid::new_v4(),
+                                    index: *index,
+                                    command: *command,
+                                    schema: Default::default(),
+                                },
+                            )])
+                        }
+                        Some(Placement::ReadModel { read_model, .. }) => {
+                            Ok(vec![EventModelEvent::ComponentPlaced(
+                                *model_id,
+                                Placement::ReadModel {
+                                    id: Uuid::new_v4(),
+                                    index: *index,
+                                    read_model: *read_model,
+                                    schema: Default::default(),
+                                },
+                            )])
+                        }
+                        _ => Err(EventModelError::ModificationError(format!(
+                            "No timeline placement found with id {:?}",
+                            placement_id
+                        ))),
+                    },
+                    EventModelCommand::DuplicateEventPlacement(
+                        model_id,
+                        placement_id,
+                        index,
+                        maybe_stream_id,
+                    ) => {
+                        let event = match model.placements().get(placement_id) {
+                            Some(Placement::Event { event, .. }) => Ok(event),
+                            _ => Err(EventModelError::ModificationError(format!(
+                                "No event placement found with id {:?}",
+                                placement_id
+                            ))),
+                        }?;
+                        let stream = if let Some(id) = maybe_stream_id {
+                            match model.streams().iter().find(|a| a.id() == id) {
+                                Some(a) => Ok(Some(a.id().to_owned())),
+                                None => Err(EventModelError::ModificationError(format!(
+                                    "No stream found with id {:?}",
+                                    maybe_stream_id
+                                ))),
+                            }
+                        } else {
+                            Ok(None)
+                        }?;
+
+                        Ok(vec![EventModelEvent::ComponentPlaced(
+                            *model_id,
+                            Placement::Event {
+                                id: Uuid::new_v4(),
+                                index: *index,
+                                event: *event,
+                                schema: Default::default(),
+                                stream,
+                            },
+                        )])
                     }
-                    EventModelCommand::DuplicateEventPlacement(_, _, _, _) => {
-                        todo!()
-                    }
+
+                    // Components
                     EventModelCommand::RenameComponent(_, _, _) => {
                         todo!()
                     }
+                    EventModelCommand::SetComponentDescription(_, _, _) => todo!(),
+                    EventModelCommand::SetComponentSchema(_, _, _) => todo!(),
+                    EventModelCommand::AddToComponentSchema(_, _, _, _) => todo!(),
+                    EventModelCommand::DeleteFromComponentSchema(_, _, _) => todo!(),
                     EventModelCommand::AddToComponentDescription(_, _, _, _) => {
                         todo!()
                     }
@@ -307,20 +486,14 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::ConfigureInterface(_, _) => {
                         todo!()
                     }
+
+                    // Flows
                     EventModelCommand::ConnectFlow(_, _, _, _, _) => {
                         todo!()
                     }
                     EventModelCommand::DisconnectFlow(_, _) => {
                         todo!()
                     }
-                    EventModelCommand::SetDescription(_, _) => todo!(),
-                    EventModelCommand::SetSchema(_, _) => todo!(),
-                    EventModelCommand::AddToSchema(_, _, _) => todo!(),
-                    EventModelCommand::DeleteFromSchema(_, _) => todo!(),
-                    EventModelCommand::SetComponentDescription(_, _, _) => todo!(),
-                    EventModelCommand::SetComponentSchema(_, _, _) => todo!(),
-                    EventModelCommand::AddToComponentSchema(_, _, _, _) => todo!(),
-                    EventModelCommand::DeleteFromComponentSchema(_, _, _) => todo!(),
                 }
             }
             EventModelState::Deleted(_) => Ok(vec![]),
@@ -412,8 +585,9 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                     model.component_placed(placement);
                     EventModelState::EventModel(model)
                 }
-                EventModelEvent::PlacementMoved(_, _) => {
-                    todo!()
+                EventModelEvent::PlacementMoved(_, position) => {
+                    model.placement_moved(position);
+                    EventModelState::EventModel(model)
                 }
                 EventModelEvent::PlacementRemoved(_, placement_id) => {
                     model.placement_removed(placement_id);

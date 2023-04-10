@@ -340,6 +340,7 @@
 			,,
 			{ id: '12', name: 'Another event!', description: 'blah *blah* **blah**' }
 		]}
+		flows={[]}
 	/>
 </main>
 

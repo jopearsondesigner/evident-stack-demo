@@ -4,6 +4,7 @@
   import EmptyCell from "./EmptyCell.svelte";
   import ReadModel from "./ReadModel.svelte";
   import { createEventDispatcher } from 'svelte';
+  import Cell from "./Cell.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -32,25 +33,23 @@
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};" />
 
 {#each placements as placement, column (placementOrEmptyCellId(placement, column, row))}
+  <Cell {row} {column} on:navigate_cursor={forward}>
   {#if placement && placement.kind === 'command'}
     <Command
-      on:navigateCursor={forward}
       id={placement.id}
       command={placement.component}
       name={placement.name}
-      description={placement.description}
-      {row}
-      {column} />
+      description={placement.description} />
   {:else if placement && placement.kind === 'readModel'}
     <ReadModel
-      on:navigateCursor={forward}
       id={placement.id}
       readModel={placement.component}
       name={placement.name}
-      description={placement.description}
-      {row}
-      {column} />
+      description={placement.description} />
   {:else}
-    <EmptyCell on:navigateCursor={forward} {row} {column} />
+    <EmptyCell {column} kind='timeline'
+               on:move_timeline_placement={forward}
+               on:duplicate_timeline_placement={forward} />
   {/if}
+  </Cell>
 {/each}

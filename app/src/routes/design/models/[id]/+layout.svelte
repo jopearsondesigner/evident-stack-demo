@@ -40,6 +40,7 @@
   timeline_placements={$grid?.timeline}
   streams={$grid?.streams}
   default_stream_placements={$grid?.default_stream}
+  flows={$grid?.flows}
   />
 
 <slot />

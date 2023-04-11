@@ -95,7 +95,6 @@ module.exports = {
         node: '0.8125rem'
       },
       boxShadow: {
-        placement: '0 4px 6px -4px rgba(0,0,0,0.83)',
         interface: '0 2px 2px 0px rgba(0,0,0,0.19)',
         modal: '0 4px 4px 0px rgba(0,0,0,.25)',
         header: '0 2px 2px 0 rgba(0, 0, 0, 0.16)',
@@ -105,6 +104,9 @@ module.exports = {
           '0 4px 5px 0 rgba(0, 0, 0, 0.14)',
           '0 1px 10px 0 rgba(0, 0, 0, 0.12)'
         ]
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))'
       },
       container: {
         padding: {

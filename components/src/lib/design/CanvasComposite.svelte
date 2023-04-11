@@ -289,7 +289,7 @@
   class:ml-[177px]={!isClosed}
   class:ease-in={!isClosed}
 >
-  <Grid
+  <!-- <Grid
     default_audience_placements={[
       ,
       ,
@@ -372,7 +372,8 @@
       { id: '12', name: 'Another event!', description: 'blah *blah* **blah**' }
     ]}
     flows={[]}
-  />
+  /> -->
+  <Grid />
 </main>
 
 <style>

@@ -13,6 +13,7 @@
   {...$$restProps}
   class={iconBtnClass}
   style="width: {size}px; height: {size}px;"
+  on:click
 >
   <slot />
 </svelte:element>

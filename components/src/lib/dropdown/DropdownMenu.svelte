@@ -1,4 +1,6 @@
 <script lang="ts">
+  import classNames from 'classnames';
+  import { fade } from 'svelte/transition';
   import type { NavbarType } from '../types';
   import { clickOutside } from '../utils/clickOutside';
   import Icon from '../Icon.svelte';
@@ -9,8 +11,11 @@
     'whitespace-nowrap inline-flex justify-center items-center py-4 text-sm text-body-light dark:text-body-dark hover:text-body-dark dark:hover:text-body-light focus:outline-none transition duration-300 ease-in-out';
   export let name: string;
   export const child: NavbarType[] = [];
-  export let dropdownDiv: string =
-    'absolute whitespace-nowrap z-40 -ml-4 -mt-1 transform w-auto rounded-lg shadow-xl border border-light dark:border-border-dark overflow-hidden bg-white dark:bg-dark-2 px-4 py-4 sm:gap-8 sm:p-8';
+  export let dropdownClass: string =
+    'absolute whitespace-nowrap z-40 transform w-auto rounded-lg border border-light dark:border-border-dark overflow-hidden bg-white dark:bg-dark-2';
+  export let divClass: string = '-ml-4 -mt-1 shadow-xl px-4 py-4 sm:gap-8 sm:p-8';
+  export let ulClass: string = 'shadow py-3';
+  export let marginTop: string = '';
   export const dropdownLinkClassWithChild: string | undefined = undefined;
   export const rel: string | undefined = undefined;
 
@@ -55,14 +60,18 @@
     </button>
 
     <!-- Dropdown menu -->
-    <div class:hidden class={dropdownDiv}>
+    <div class:hidden class={classNames(dropdownClass, divClass, marginTop)}>
       <slot />
     </div>
   </li>
 {:else if product}
-  <div class="w-full flex justify-center">
-    <ul class:block class={dropdownDiv}>
+  <ul
+    class:block
+    class={classNames('flex justify-center', dropdownClass, ulClass, marginTop)}
+    transition:fade={{ duration: 100 }}
+  >
+    <li>
       <slot />
-    </ul>
-  </div>
+    </li>
+  </ul>
 {/if}

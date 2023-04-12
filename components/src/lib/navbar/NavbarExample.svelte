@@ -14,14 +14,13 @@
   import AdminPortal from '../icons/AdminPortal.svelte';
   import Logo from '../assets/images/global/evidentStackLogo.svg';
   import A from '../typography/A.svelte';
-  let website: boolean = false;
   export let user: boolean = true;
 </script>
 
-<Navbar website>
+<Navbar website={false}>
   <NavInner navDivClass="flex justify-between items-center">
     <NavToolbar navClass="px-3 h-9 inline-flex space-x-4 mx-3 items-center">
-      <NavHamburger {website} />
+      <NavHamburger website={false} />
       <NavBrand src={Logo} height={28} logoClass="flex no-underline mx-3" />
       <div class="px-3 h-9 border-x border-gray-secondary flex items-center">
         <IconButton iconBtnClass="hover:bg-gray-brand-1/0">

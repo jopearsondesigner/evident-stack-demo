@@ -4,7 +4,7 @@
   import NavWrapper from './NavWrapper.svelte';
   import NabBrand from './NavBrand.svelte';
   import NavHamburger from './NavHamburger.svelte';
-  import CloseButton from '$lib/utils/CloseButton';
+  import CloseButton from '$lib/utils/CloseButton.svelte';
   import ThemeSwitch from '../utils/ThemeSwitch.svelte';
   import Nav from './Nav.svelte';
   import MobileNav from './MobileNav.svelte';
@@ -29,28 +29,28 @@
   {#if !hidden}
     <NavWrapper {hidden}>
       <NabBrand src={Logo} {href} height={32} />
-      <NavHamburger website on:click={() => handleMenu()} />
+      <NavHamburger website={true} on:click={() => handleMenu()} />
       <Nav>
         <NavUl>
-          <DropdownMenu name="Why Design?" {website}>
+          <DropdownMenu name="Why Design?" website={true}>
             <NavUl>
               <NavLi>Features</NavLi>
             </NavUl>
           </DropdownMenu>
           <NavLi href="#">Docs</NavLi>
-          <DropdownMenu name="Learn" {website}>
+          <DropdownMenu name="Learn" website={true}>
             <NavUl>
               <NavLi href="#">Blog</NavLi>
               <NavLi href="#">Webinars</NavLi>
               <NavLi href="#">Conferences</NavLi>
             </NavUl>
           </DropdownMenu>
-          <DropdownMenu name="Service & Support" {website}>
+          <DropdownMenu name="Service & Support" website={true}>
             <NavUl>
               <NavLi href="#">Support</NavLi>
             </NavUl>
           </DropdownMenu>
-          <DropdownMenu name="Company" {website}>
+          <DropdownMenu name="Company" website={true}>
             <NavUl>
               <NavLi href="#">Team</NavLi>
               <NavLi href="#">Contact</NavLi>
@@ -73,8 +73,9 @@
                 slot="icon"
                 class="stroke-2 ml-1"
                 iconColor="fill-current"
-                size={12}><ArrowRight /></Icon
-              >
+                size={12}
+                pathName={ArrowRight}
+              />
             </Button>
           </NavLi>
         </NavUl>
@@ -129,8 +130,9 @@
                 slot="icon"
                 class="stroke-2 ml-1"
                 iconColor="fill-current"
-                size={12}><ArrowRight /></Icon
-              >
+                size={12}
+                pathName={ArrowRight}
+              />
             </Button>
           </NavLi>
         </NavUl>

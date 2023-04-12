@@ -16,6 +16,8 @@ export type Decider = {
   rename_lane: (kind: Lane, lane_id: string, name: string) => any,
   reorder_lane: (kind: Lane, lane_id: string, index: number) => any,
   remove_lane: (kind: Lane, lane_id: string) => any,
+  add_to_description: () => any,
+  delete_from_description: () => any,
 }
 
 export const default_decider: Decider = {
@@ -36,6 +38,8 @@ export const default_decider: Decider = {
   rename_lane: console.log,
   reorder_lane: console.log,
   remove_lane: console.log,
+  add_to_description: console.log,
+  delete_from_description: console.log,
 }
 
 export type Flow = {

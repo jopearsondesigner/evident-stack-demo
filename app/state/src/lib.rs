@@ -2,6 +2,7 @@ extern crate event_models;
 
 pub mod grid;
 mod repository;
+mod utils;
 
 use std::str::FromStr;
 
@@ -17,6 +18,7 @@ use event_models::{
 pub use grid::EventModelGrid;
 use js_sys::{Function, Uint8Array};
 use repository::HasKey;
+pub use utils::set_panic_hook;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 

@@ -43,7 +43,7 @@
 
 {#each stream.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
   <Cell {row} {column} on:navigate_cursor={forward}>
-  {#if placement}
+  {#if placement?.id}
     <Event
       id={placement.id}
       event={placement.event}

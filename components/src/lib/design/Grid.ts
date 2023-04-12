@@ -96,6 +96,10 @@ export type EmptyCell = { type: CellType, placement?: undefined, audience?: stri
 
 export type ItemAtCursor = InterfacePlacementCell | TimelinePlacementCell | EventPlacementCell | EmptyCell
 
+export const placementIsEmptyCell = (placement: object) => {
+  return placement == undefined || placement.constructor.name == "EmptyCell";
+}
+
 export const itemAtCursor = (
   row: number,
   column: number,
@@ -106,27 +110,47 @@ export const itemAtCursor = (
   default_stream: Array<EventPlacement>
 ): ItemAtCursor => {
   if (row === 0) {
-    let placement = default_audience[column];
-    return {type: 'interface', placement};
+    let placement = default_audience[column]
+    if (placementIsEmptyCell(placement)) {
+      return {type: 'interface'};
+    } else {
+      return {type: 'interface', placement};
+    }
   } else if (row - 1 < audiences.length) {
     let audience = audiences[row - 1];
     let placement = audience?.placements[column];
-    return placement ? { type: 'interface', placement} : { type: 'interface', audience: audience?.id };
+    if (placementIsEmptyCell(placement)) {
+      return { type: 'interface', audience: audience?.id };
+    } else {
+      return { type: 'interface', placement};
+    }
   } else if (row === audiences.length + 1) {
-    let placement = timeline[column]
-    return placement ? {type: 'timeline', placement} : { type: 'timeline' };
+    let placement = timeline[column];
+    if (placementIsEmptyCell(placement)) {
+      return { type: 'timeline' };
+    } else {
+      return {type: 'timeline', placement};
+      }
   } else if (row - 1 - audiences.length - 1 < streams.length) {
-    let stream = streams[row - 1 - audiences.length - 1]
-    let placement = stream?.placements[column]
-    return placement ? {type: 'event', placement} : { type: 'event', stream: stream?.id };
+    let stream = streams[row - 1 - audiences.length - 1];
+    let placement = stream?.placements[column];
+    if (placementIsEmptyCell(placement)) {
+      return { type: 'event', stream: stream?.id };
+    } else {
+      return {type: 'event', placement};
+    }
   } else if (row === 1 + audiences.length + 1 + streams.length) {
-    let placement = default_stream[column]
-    return placement ? {type: 'event', placement} : { type: 'event' };
+    let placement = default_stream[column];
+    if (placementIsEmptyCell(placement)) {
+      return { type: 'event' };
+    } else {
+      return {type: 'event', placement};
+    }
   }
   throw new Error("No valid item at cursor!");
 }
 
-export type Disambiguation = {name: string, index: number, top: number, left: number} | null
+export type Disambiguation = {name: string, index: number, top: number, left: number} | null;
 
 export const placementOrEmptyCellId = (placement: { id: string } | null | undefined, col: number, row: number): string => {
   return (placement && placement.id) || `empty-${col}-${row}`;

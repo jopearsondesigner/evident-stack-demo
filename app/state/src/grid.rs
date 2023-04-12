@@ -12,6 +12,10 @@ use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
+pub struct EmptyCell;
+
+#[wasm_bindgen]
+#[derive(Debug, Clone)]
 pub enum InterfaceType {
     Blank,
     Figma,
@@ -114,6 +118,7 @@ pub struct Audience {
     #[wasm_bindgen(getter_with_clone, readonly)]
     pub name: String,
     placements: HashMap<usize, InterfacePlacement>,
+    column_count: usize,
 }
 
 #[wasm_bindgen]
@@ -125,10 +130,14 @@ impl Audience {
 
     #[wasm_bindgen(getter)]
     pub fn placements(&self) -> Array {
-        let placements = Array::new_with_length(*self.placements.keys().max().unwrap_or(&0) as u32);
-        self.placements.iter().for_each(|(index, placement)| {
-            placements.set(*index as u32, JsValue::from(placement.to_owned()))
-        });
+        let placements = Array::new_with_length(self.column_count as u32);
+        for n in 0..self.column_count {
+            if let Some(placement) = self.placements.get(&n) {
+                placements.set(n as u32, JsValue::from(placement.to_owned()))
+            } else {
+                placements.set(n as u32, JsValue::from(EmptyCell))
+            }
+        }
         placements
     }
 }
@@ -237,6 +246,7 @@ pub struct Stream {
     #[wasm_bindgen(getter_with_clone, readonly)]
     pub name: String,
     placements: HashMap<usize, EventPlacement>,
+    column_count: usize,
 }
 
 #[wasm_bindgen]
@@ -248,10 +258,14 @@ impl Stream {
 
     #[wasm_bindgen(getter)]
     pub fn placements(&self) -> Array {
-        let placements = Array::new_with_length(*self.placements.keys().max().unwrap_or(&0) as u32);
-        self.placements.iter().for_each(|(index, placement)| {
-            placements.set(*index as u32, JsValue::from(placement.to_owned()))
-        });
+        let placements = Array::new_with_length(self.column_count as u32);
+        for n in 0..self.column_count {
+            if let Some(placement) = self.placements.get(&n) {
+                placements.set(n as u32, JsValue::from(placement.to_owned()))
+            } else {
+                placements.set(n as u32, JsValue::from(EmptyCell))
+            }
+        }
         placements
     }
 }
@@ -355,13 +369,15 @@ pub struct EventModelGrid {
     pub name: String,
     #[wasm_bindgen(readonly)]
     pub description: String,
+    #[wasm_bindgen(readonly)]
+    pub column_count: usize,
 
     default_audience: HashMap<usize, InterfacePlacement>,
-    flows: Vec<FlowArrow>,
     audiences: Vec<Audience>,
     timeline: HashMap<usize, TimelinePlacement>,
     streams: Vec<Stream>,
     default_stream: HashMap<usize, EventPlacement>,
+    flows: Vec<FlowArrow>,
 }
 
 #[wasm_bindgen]
@@ -372,11 +388,14 @@ impl EventModelGrid {
 
     #[wasm_bindgen(getter)]
     pub fn default_audience(&self) -> Array {
-        let default_audience =
-            Array::new_with_length(*self.default_audience.keys().max().unwrap_or(&0) as u32);
-        self.default_audience.iter().for_each(|(index, placement)| {
-            default_audience.set(*index as u32, JsValue::from(placement.to_owned()))
-        });
+        let default_audience = Array::new_with_length(self.column_count as u32);
+        for n in 0..self.column_count {
+            if let Some(placement) = self.default_audience.get(&n) {
+                default_audience.set(n as u32, JsValue::from(placement.to_owned()))
+            } else {
+                default_audience.set(n as u32, JsValue::from(EmptyCell))
+            }
+        }
         default_audience
     }
 
@@ -387,10 +406,14 @@ impl EventModelGrid {
 
     #[wasm_bindgen(getter)]
     pub fn timeline(&self) -> Array {
-        let timeline = Array::new_with_length(*self.timeline.keys().max().unwrap_or(&0) as u32);
-        self.timeline.iter().for_each(|(index, placement)| {
-            timeline.set(*index as u32, JsValue::from(placement.to_owned()))
-        });
+        let timeline = Array::new_with_length(self.column_count as u32);
+        for n in 0..self.column_count {
+            if let Some(placement) = self.timeline.get(&n) {
+                timeline.set(n as u32, JsValue::from(placement.to_owned()))
+            } else {
+                timeline.set(n as u32, JsValue::from(EmptyCell))
+            }
+        }
         timeline
     }
 
@@ -401,11 +424,14 @@ impl EventModelGrid {
 
     #[wasm_bindgen(getter)]
     pub fn default_stream(&self) -> Array {
-        let default_stream =
-            Array::new_with_length(*self.default_stream.keys().max().unwrap_or(&0) as u32);
-        self.default_stream.iter().for_each(|(index, placement)| {
-            default_stream.set(*index as u32, JsValue::from(placement.to_owned()))
-        });
+        let default_stream = Array::new_with_length(self.column_count as u32);
+        for n in 0..self.column_count {
+            if let Some(placement) = self.default_stream.get(&n) {
+                default_stream.set(n as u32, JsValue::from(placement.to_owned()))
+            } else {
+                default_stream.set(n as u32, JsValue::from(EmptyCell))
+            }
+        }
         default_stream
     }
 
@@ -414,6 +440,8 @@ impl EventModelGrid {
         self.flows.iter().cloned().map(JsValue::from).collect()
     }
 }
+
+const RIGHT_BUFFER: usize = 10;
 
 impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
     fn from(state: EventModelState<InMemoryEventModel>) -> Self {
@@ -427,8 +455,9 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                 audiences: Default::default(),
                 timeline: Default::default(),
                 streams: Default::default(),
-                flows: Default::default(),
                 default_stream: Default::default(),
+                flows: Default::default(),
+                column_count: 0,
             },
             EventModelState::Deleted(id) => EventModelGrid {
                 state: EventModelGridState::Unavailable,
@@ -439,10 +468,18 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                 audiences: Default::default(),
                 timeline: Default::default(),
                 streams: Default::default(),
-                flows: Default::default(),
                 default_stream: Default::default(),
+                flows: Default::default(),
+                column_count: 0,
             },
             EventModelState::EventModel(model) => {
+                let column_count: usize = *model
+                    .placements()
+                    .values()
+                    .map(|p| p.index())
+                    .max()
+                    .unwrap_or(&0)
+                    + RIGHT_BUFFER;
                 let mut grouped_audiences: HashMap<
                     Option<Uuid>,
                     HashMap<usize, InterfacePlacement>,
@@ -524,6 +561,7 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                                     id: audience_id.to_owned(),
                                     name: audience.name().to_string(),
                                     placements,
+                                    column_count,
                                 })
                         })
                         .collect(),
@@ -563,11 +601,13 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                                     id: stream_id.to_owned(),
                                     name: stream.name().to_string(),
                                     placements,
+                                    column_count,
                                 })
                         })
                         .collect(),
                     default_stream: grouped_streams.remove(&None).unwrap_or_default(),
                     flows: model.flows().values().cloned().map(Into::into).collect(),
+                    column_count,
                 }
             }
         }

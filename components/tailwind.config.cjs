@@ -59,17 +59,17 @@ module.exports = {
         gradient: '#93A1A1',
         command: {
           DEFAULT: '#6CCCEA',
-          light: '#C1EAF6',
+          light: '#98DCF0',
           dark: '#2FB6E1'
         },
         event: {
           DEFAULT: '#FAAC74',
-          light: '#FEDCC3',
+          light: '#FCC7A1',
           dark: '#FB8C3A'
         },
         readModel: {
           DEFAULT: '#79D04E',
-          light: '#C5EBB2',
+          light: '#A4DF86',
           dark: '#5FB831'
         },
         interfaceColor: {

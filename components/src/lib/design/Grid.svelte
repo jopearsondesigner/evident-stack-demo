@@ -15,6 +15,7 @@
   import TimelineDisambiguation from "./grid/TimelineDisambiguation.svelte";
 
   export let decider: Decider = default_decider;
+  export let column_count: number;
   export let default_audience_placements: Array<InterfacePlacement> = new Array(0);
   export let audiences: Array<Audience> = new Array(0);
   export let timeline_placements: Array<TimelinePlacement> = new Array(0);
@@ -127,28 +128,7 @@
 
   // Columns
 
-  const right_buffer = 10;
-
-  export function maxSparseArrayIndex(array: Array<any>): number {
-    let max = 0;
-    for (let i in array) {
-      max = Math.max(max, parseInt(i));
-    }
-    return max
-  }
-
-  export function maxSparseArrayIndexInArray(maps: Array<Array<any>>): number {
-    return Math.max(...maps.map(m => maxSparseArrayIndex(m)))
-  }
-
-  $: max_column = Math.max(
-    maxSparseArrayIndex(default_audience_placements),
-    maxSparseArrayIndexInArray(audiences.map((a) => a.placements)),
-    maxSparseArrayIndex(timeline_placements),
-    maxSparseArrayIndexInArray(streams.map((s) => s.placements)),
-    maxSparseArrayIndex(default_stream_placements),
-    cursor_column
-  ) + right_buffer;
+  $: max_column = Math.max(column_count, cursor_column + 10);
 
   // Navigation
 
@@ -191,7 +171,7 @@
 
   const navEnd = (event: KeyboardEvent) => {
     event.preventDefault()
-    cursor_column = max_column - right_buffer
+    cursor_column = max_column
   }
 
   const navTop = (event: KeyboardEvent) => {

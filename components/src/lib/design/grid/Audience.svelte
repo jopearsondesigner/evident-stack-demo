@@ -45,7 +45,7 @@
 
 {#each audience.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
   <Cell {row} {column} on:navigate_cursor={forward}>
-    {#if placement}
+    {#if placement?.id}
       <Interface
         id={placement.id}
         interface_id={placement.interface}

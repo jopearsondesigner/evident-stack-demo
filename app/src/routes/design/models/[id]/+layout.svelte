@@ -41,6 +41,6 @@
   streams={$grid?.streams}
   default_stream_placements={$grid?.default_stream}
   flows={$grid?.flows}
-  />
+  column_count={$grid?.column_count || 0} />
 
 <slot />

@@ -6,6 +6,7 @@ mod utils;
 
 use std::str::FromStr;
 
+use crate::grid::Lane;
 use crate::repository::LocalStorageStateRepository;
 use epoch::{repository::state::VersionedStateRepository, strategies::ReifyDecideSave};
 use event_models::api::commands::EventModelCommand;
@@ -330,6 +331,56 @@ impl EventModelStateManager {
             name,
         ))
         .await
+    }
+
+    pub async fn rename_lane(
+        &mut self,
+        model_id_str: String,
+        kind: String,
+        lane_id_str: String,
+        name: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let lane_id = parse_uuid(lane_id_str)?;
+        let lane_type = Lane::try_from(kind.as_str())?;
+
+        match lane_type {
+            Lane::Audience => self.dispatch(EventModelCommand::RenameAudience(model_id, lane_id, name)).await,
+            Lane::Stream => self.dispatch(EventModelCommand::RenameStream(model_id, lane_id, name)).await,
+        }
+    }
+
+    pub async fn reorder_lane(
+        &mut self,
+        model_id_str: String,
+        kind: String,
+        lane_id_str: String,
+        index: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let lane_id = parse_uuid(lane_id_str)?;
+        let lane_type = Lane::try_from(kind.as_str())?;
+
+        match lane_type {
+            Lane::Audience => self.dispatch(EventModelCommand::ReorderAudience(model_id, lane_id, index)).await,
+            Lane::Stream => self.dispatch(EventModelCommand::ReorderStream(model_id, lane_id, index)).await,
+        }
+    }
+
+    pub async fn remove_lane(
+        &mut self,
+        model_id_str: String,
+        kind: String,
+        lane_id_str: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let lane_id = parse_uuid(lane_id_str)?;
+        let lane_type = Lane::try_from(kind.as_str())?;
+
+        match lane_type {
+            Lane::Audience => self.dispatch(EventModelCommand::RemoveAudience(model_id, lane_id)).await,
+            Lane::Stream => self.dispatch(EventModelCommand::RemoveStream(model_id, lane_id)).await,
+        }
     }
 
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {

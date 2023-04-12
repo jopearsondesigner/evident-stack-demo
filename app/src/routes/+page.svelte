@@ -47,9 +47,9 @@
   <button on:click={clear}>Clear completed</button>
 
   <Container class="container-fluid p-3 m-4">
-    <Row class="grid grid-cols-6 gap-3">
-      <Column>
-        <IndexNavButton height={156} on:click={add}>
+    <Row class="grid grid-cols-6 gap-6">
+      <Column class="flex justify-center items-center">
+        <IndexNavButton height={156} on:click={add} rounded="rounded-lg">
           <div class="inline-flex justify-center w-full">
             Add New Project <Icon
               name="add"
@@ -62,15 +62,15 @@
         </IndexNavButton>
       </Column>
       {#each project as project}
-        <Column>
+        <Column class="flex justify-center items-center">
           <div class:done={project.done} class="w-full flex justify-center items-center">
             <input type="checkbox" bind:checked={project.done} />
-            <IndexNavButton height={156} href="#" backgroundImg={BackgroundImage}>
+            <IndexNavButton height={156} href="#">
               <div class="absolute self-start -mr-2 -mt-2">
-                <IconButton
+                <IconButton size={32}
                   ><Icon
                     name="delete"
-                    size={20}
+                    size={16}
                     iconColor="fill-current"
                     class="justify-self-end"
                     pathName={Delete}

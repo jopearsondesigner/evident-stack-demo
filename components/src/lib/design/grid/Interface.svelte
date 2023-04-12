@@ -31,8 +31,7 @@
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
     if (transfer) {
-      transfer.setData('kind', 'interface');
-      transfer.setData('id', id);
+      transfer.setData('interface', id);
       if (e.ctrlKey) {
         transfer.effectAllowed = 'copy';
       } else {

@@ -17,7 +17,7 @@
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
     if (transfer) {
-      if (transfer.getData('kind') == kind) {
+      if (transfer.types.includes(kind)) {
         e.preventDefault();
         transfer.dropEffect = transfer.effectAllowed == 'copy' ? 'copy' : 'move';
         drop_target = 'target';
@@ -35,24 +35,25 @@
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
     handleDragLeave(e);
     let transfer = e.dataTransfer;
-    if (transfer && transfer.getData('kind') == kind) {
-      let id = transfer.getData('id');
+    let id = transfer?.getData(kind);
+    if (transfer && id) {
+      transfer.dropEffect = transfer.effectAllowed == 'copy' ? 'copy' : 'move';
       if (kind == 'interface') {
-        if (transfer.dropEffect == 'move')
+        if (transfer.dropEffect == 'move') {
           dispatch('move_interface_placement', { id: id, index: column, audience: lane });
-        else if (transfer.dropEffect == 'copy') {
+        } else if (transfer.dropEffect == 'copy') {
           dispatch('duplicate_interface_placement', { id: id, index: column, audience: lane });
         }
       } else if (kind == 'timeline') {
-        if (transfer.dropEffect == 'move')
+        if (transfer.dropEffect == 'move') {
           dispatch('move_timeline_placement', { id: id, index: column });
-        else if (transfer.dropEffect == 'copy') {
+        } else if (transfer.dropEffect == 'copy') {
           dispatch('duplicate_timeline_placement', { id: id, index: column });
         }
       } else if (kind == 'event') {
-        if (transfer.dropEffect == 'move')
+        if (transfer.dropEffect == 'move') {
           dispatch('move_event_placement', { id: id, index: column, stream: lane });
-        else if (transfer.dropEffect == 'copy') {
+        } else if (transfer.dropEffect == 'copy') {
           dispatch('duplicate_event_placement', { id: id, index: column, stream: lane });
         }
       }

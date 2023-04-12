@@ -36,7 +36,7 @@
 <Container class="container-fluid p-3 m-4">
   <Row class="grid grid-cols-6 gap-3">
     <Column>
-      <IndexNavButton height={156} on:click={add}>
+      <IndexNavButton height={156} on:click={add} rounded="rounded-lg">
         <div class="inline-flex justify-center w-full">
           Add New Project <Icon
             name="add"

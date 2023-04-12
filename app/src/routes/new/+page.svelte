@@ -29,7 +29,6 @@
       class="input input-bordered w-full max-w-xs"
     />
   </div>
-  <!-- <button type="submit">Create</button> -->
   <Button
     type="submit"
     gradient

@@ -4,7 +4,8 @@
     'flex items-center justify-end text-sm text-body-light hover:text-[1.125rem] hover:text-white dark:text-white w-full border border-border-light dark:border-border-dark p-3 indexNavShadow bg-left-top bg-no-repeat bg-contain';
   export let hoverClass =
     'w-full h-auto bg-gradient-radial from-transparent to-transparent hover:from-[#525C6F]/[.3] hover:to-[#525C6F]/[.5]';
-  export let BackgroundImage = 'bg-[url("$lib/assets/images/product/design/modelThumb.svg")]';
+  export let rounded: string = '';
+  export let backgroundImg = 'bg-[url("$lib/assets/images/product/design/modelThumb.svg")]';
   export let btnClass: string = 'rounded-lg';
   export let linkClass: string = '';
   export let imgClass: string = '';
@@ -13,11 +14,11 @@
   export let height: number;
 </script>
 
-<div class={hoverClass}>
+<div class={classNames(hoverClass, rounded, $$props.class)}>
   <svelte:element
     this={href ? 'a' : 'button'}
     {href}
-    class={classNames(href ? linkClass + BackgroundImage : btnClass, navClass)}
+    class={classNames(href ? linkClass + backgroundImg : btnClass, navClass)}
     style="height: {height}px;"
     {...$$restProps}
     on:click

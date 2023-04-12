@@ -54,7 +54,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::AddToDescription(_, _index, _addition) => {
                         todo!()
                     }
-                    EventModelCommand::DeleteFromDescription(_, _) => {
+                    EventModelCommand::DeleteFromDescription(_, _, _) => {
                         todo!()
                     }
                     EventModelCommand::SetDescription(_, _) => todo!(),

@@ -393,6 +393,26 @@ impl EventModelStateManager {
         }
     }
 
+    pub async fn add_to_description(
+        &mut self,
+        model_id_str: String,
+        index: usize,
+        addition: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        self.dispatch(EventModelCommand::AddToDescription(model_id, index, addition)).await
+    }
+
+    pub async fn delete_from_description(
+        &mut self,
+        model_id_str: String,
+        index: usize,
+        count: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        self.dispatch(EventModelCommand::DeleteFromDescription(model_id, index, count)).await
+    }
+
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {
         let result =
             EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)

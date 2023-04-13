@@ -99,6 +99,7 @@ export type Stream = {
   placements: Array<EventPlacement>;
 };
 
+export type PlacementType = 'interface' | 'command' | 'event' | 'readModel';
 export type CellType = 'interface' | 'timeline' | 'event';
 
 export type InterfacePlacementCell = { type: 'interface'; placement: InterfacePlacement };

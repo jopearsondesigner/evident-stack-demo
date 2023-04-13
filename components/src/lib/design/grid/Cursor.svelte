@@ -145,31 +145,39 @@
         <Interface
           id={item.placement.id}
           interface_id={item.placement.interface}
+          {column}
           name={item.placement.name}
           description={item.placement.description}
+          on:connect_flow={forward}
         />
       {:else if item.type == 'timeline'}
         {#if item.placement.kind == 'command'}
           <Command
             id={item.placement.id}
             command={item.placement.component}
+            {column}
             name={item.placement.name}
             description={item.placement.description}
+            on:connect_flow={forward}
           />
         {:else if item.placement.kind == 'readModel'}
           <ReadModel
             id={item.placement.id}
             readModel={item.placement.component}
+            {column}
             name={item.placement.name}
             description={item.placement.description}
+            on:connect_flow={forward}
           />
         {/if}
       {:else if item.type == 'event'}
         <Event
           id={item.placement.id}
           event={item.placement.event}
+          {column}
           name={item.placement.name}
           description={item.placement.description}
+          on:connect_flow={forward}
         />
       {/if}
     {:else}

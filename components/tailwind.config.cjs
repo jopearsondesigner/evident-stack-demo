@@ -12,6 +12,9 @@ module.exports = {
       mono: 'input-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
     },
     extend: {
+      borderWidth: {
+        16: '16px'
+      },
       colors: {
         focus: '#1E6AFF',
         red: '#ff0000',
@@ -59,17 +62,17 @@ module.exports = {
         gradient: '#93A1A1',
         command: {
           DEFAULT: '#6CCCEA',
-          light: '#98DCF0',
+          light: '#C1EAF6',
           dark: '#2FB6E1'
         },
         event: {
           DEFAULT: '#FAAC74',
-          light: '#FCC7A1',
+          light: '#FEDCC3',
           dark: '#FB8C3A'
         },
         readModel: {
           DEFAULT: '#79D04E',
-          light: '#A4DF86',
+          light: '#C5EBB2',
           dark: '#5FB831'
         },
         interfaceColor: {
@@ -95,6 +98,7 @@ module.exports = {
         node: '0.8125rem'
       },
       boxShadow: {
+        placement: '0 4px 6px -4px rgba(0,0,0,0.83)',
         interface: '0 2px 2px 0px rgba(0,0,0,0.19)',
         modal: '0 4px 4px 0px rgba(0,0,0,.25)',
         header: '0 2px 2px 0 rgba(0, 0, 0, 0.16)',
@@ -104,9 +108,6 @@ module.exports = {
           '0 4px 5px 0 rgba(0, 0, 0, 0.14)',
           '0 1px 10px 0 rgba(0, 0, 0, 0.12)'
         ]
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))'
       },
       container: {
         padding: {

@@ -51,9 +51,11 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         let valid_name = validate_name(name)?;
                         Ok(vec![EventModelEvent::Renamed(*id, valid_name)])
                     }
+                    // TODO: Impl #38
                     EventModelCommand::AddToDescription(_, _index, _addition) => {
                         todo!()
                     }
+                    // TODO: Impl #38
                     EventModelCommand::DeleteFromDescription(_, _, _) => {
                         todo!()
                     }
@@ -166,24 +168,30 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::AddAudience(_, _, _) => {
                         todo!()
                     }
+                    // TODO: Impl #35
                     EventModelCommand::RenameAudience(_, _, _) => {
                         todo!()
                     }
+                    // TODO: Impl #35
                     EventModelCommand::ReorderAudience(_, _, _) => {
                         todo!()
                     }
+                    // TODO: Impl #35
                     EventModelCommand::RemoveAudience(_, _) => {
                         todo!()
                     }
                     EventModelCommand::AddStream(_, _, _) => {
                         todo!()
                     }
+                    // TODO: Impl #35
                     EventModelCommand::RenameStream(_, _, _) => {
                         todo!()
                     }
+                    // TODO: Impl #35
                     EventModelCommand::ReorderStream(_, _, _) => {
                         todo!()
                     }
+                    // TODO: Impl #35
                     EventModelCommand::RemoveStream(_, _) => {
                         todo!()
                     }

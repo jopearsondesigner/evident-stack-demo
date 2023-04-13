@@ -594,14 +594,17 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                     model.lane_added(lane.to_owned(), *index);
                     EventModelState::EventModel(model)
                 }
-                EventModelEvent::LaneRenamed(_, _, _) => {
-                    todo!()
+                EventModelEvent::LaneRenamed(_, lane_id, name) => {
+                    model.lane_renamed(lane_id.to_owned(), name);
+                    EventModelState::EventModel(model)
                 }
-                EventModelEvent::LaneReordered(_, _, _) => {
-                    todo!()
+                EventModelEvent::LaneReordered(_, lane_id, index) => {
+                    model.lane_reordered(lane_id.to_owned(), *index);
+                    EventModelState::EventModel(model)
                 }
-                EventModelEvent::LaneRemoved(_, _) => {
-                    todo!()
+                EventModelEvent::LaneRemoved(_, lane_id) => {
+                    model.lane_removed(lane_id.to_owned());
+                    EventModelState::EventModel(model)
                 }
                 EventModelEvent::ComponentDefined(_, component) => {
                     model.component_defined(component.to_owned());
@@ -658,10 +661,7 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
     }
 }
 
-fn valid_lane(
-    model: &impl EventModel,
-    lane_id: &LaneId,
-) -> Result<(), EventModelError> {
+fn valid_lane(model: &impl EventModel, lane_id: &LaneId) -> Result<(), EventModelError> {
     match lane_id {
         LaneId::Audience(id) => match model.audiences().iter().find(|a| a.id() == id) {
             Some(_) => Ok(()),

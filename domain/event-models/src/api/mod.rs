@@ -10,6 +10,7 @@ use crate::types::{
 use crate::{EventModel, EventModelDataTransfer, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
 use std::fmt::Debug;
+use std::vec;
 use uuid::Uuid;
 
 pub mod commands;
@@ -51,13 +52,19 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         let valid_name = validate_name(name)?;
                         Ok(vec![EventModelEvent::Renamed(*id, valid_name)])
                     }
-                    // TODO: Impl #38
-                    EventModelCommand::AddToDescription(_, _index, _addition) => {
-                        todo!()
+                    EventModelCommand::AddToDescription(model_id, index, addition) => {
+                        // TODO: validate index
+                        Ok(vec![EventModelEvent::AddedToDescription(
+                            *model_id,
+                            *index,
+                            addition.to_owned(),
+                        )])
                     }
-                    // TODO: Impl #38
-                    EventModelCommand::DeleteFromDescription(_, _, _) => {
-                        todo!()
+                    EventModelCommand::DeleteFromDescription(model_id, index, count) => {
+                        // TODO: validate index + count bounds
+                        Ok(vec![EventModelEvent::DeletedFromDescription(
+                            *model_id, *index, *count,
+                        )])
                     }
                     EventModelCommand::SetDescription(_, _) => todo!(),
                     EventModelCommand::SetSchema(_, _) => todo!(),
@@ -169,31 +176,63 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         todo!()
                     }
                     // TODO: Impl #35
-                    EventModelCommand::RenameAudience(_, _, _) => {
-                        todo!()
+                    EventModelCommand::RenameAudience(model_id, audience_id, name) => {
+                        let valid_name = validate_name(name)?;
+                        let lane_id = LaneId::Audience(*audience_id);
+                        valid_lane(model, &lane_id)?;
+
+                        Ok(vec![EventModelEvent::LaneRenamed(
+                            *model_id, lane_id, valid_name,
+                        )])
                     }
                     // TODO: Impl #35
-                    EventModelCommand::ReorderAudience(_, _, _) => {
-                        todo!()
+                    EventModelCommand::ReorderAudience(model_id, audience_id, index) => {
+                        let lane_id = LaneId::Audience(*audience_id);
+                        valid_lane(model, &lane_id)?;
+                        // TODO: validate index
+
+                        Ok(vec![EventModelEvent::LaneReordered(
+                            *model_id, lane_id, *index,
+                        )])
                     }
                     // TODO: Impl #35
-                    EventModelCommand::RemoveAudience(_, _) => {
-                        todo!()
+                    EventModelCommand::RemoveAudience(model_id, audience_id) => {
+                        let lane_id = LaneId::Audience(*audience_id);
+                        valid_lane(model, &lane_id)?;
+
+                        Ok(vec![EventModelEvent::LaneRemoved(*model_id, lane_id)])
                     }
                     EventModelCommand::AddStream(_, _, _) => {
                         todo!()
                     }
                     // TODO: Impl #35
-                    EventModelCommand::RenameStream(_, _, _) => {
-                        todo!()
+                    EventModelCommand::RenameStream(model_id, stream_id, name) => {
+                        let lane_id = LaneId::Stream(*stream_id);
+                        valid_lane(model, &lane_id)?;
+                        validate_name(name)?;
+
+                        Ok(vec![EventModelEvent::LaneRenamed(
+                            *model_id,
+                            lane_id,
+                            name.to_owned(),
+                        )])
                     }
                     // TODO: Impl #35
-                    EventModelCommand::ReorderStream(_, _, _) => {
-                        todo!()
+                    EventModelCommand::ReorderStream(model_id, stream_id, index) => {
+                        let lane_id = LaneId::Stream(*stream_id);
+                        valid_lane(model, &lane_id)?;
+                        // TODO: validate index
+
+                        Ok(vec![EventModelEvent::LaneReordered(
+                            *model_id, lane_id, *index,
+                        )])
                     }
                     // TODO: Impl #35
-                    EventModelCommand::RemoveStream(_, _) => {
-                        todo!()
+                    EventModelCommand::RemoveStream(model_id, stream_id) => {
+                        let lane_id = LaneId::Stream(*stream_id);
+                        valid_lane(model, &lane_id)?;
+
+                        Ok(vec![EventModelEvent::LaneRemoved(*model_id, lane_id)])
                     }
 
                     // Placements
@@ -616,5 +655,22 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
             },
             EventModelState::Deleted(_) => state,
         }
+    }
+}
+
+fn valid_lane(
+    model: &impl EventModel,
+    lane_id: &LaneId,
+) -> Result<(), EventModelError> {
+    match lane_id {
+        LaneId::Audience(id) => match model.audiences().iter().find(|a| a.id() == id) {
+            Some(_) => Ok(()),
+            None => Err(EventModelError::LaneNotFound(lane_id.to_owned())),
+        },
+        LaneId::Stream(id) => match model.streams().iter().find(|a| a.id() == id) {
+            Some(_) => Ok(()),
+            None => Err(EventModelError::LaneNotFound(lane_id.to_owned())),
+        },
+        _ => Ok(()),
     }
 }

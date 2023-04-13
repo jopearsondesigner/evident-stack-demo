@@ -16,8 +16,13 @@
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
     if (transfer) {
+<<<<<<< HEAD
       transfer.setData('event', id);
       if (e.ctrlKey) {
+=======
+      transfer.setData('event', id)
+      if (e.shiftKey) {
+>>>>>>> main
         transfer.effectAllowed = 'copy';
       } else {
         transfer.effectAllowed = 'move';

@@ -30,6 +30,10 @@
     right: rightOffset
   };
 
+  let handleDrawer = () => {
+    hidden = !hidden;
+  };
+
   export let backdropClasses = 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80';
 </script>
 

@@ -11,7 +11,6 @@
   import IconButton from '$components/IconButton.svelte';
   import MaybeTooltip from '$components/utils/MaybeTooltip.svelte';
   import Icon from '$components/Icon.svelte';
-  import Avatar from '$components/Avatar.svelte';
   import Home from '$components/icons/Home.svelte';
   import Docs from '$components/icons/Docs.svelte';
   import Support from '$components/icons/Support.svelte';
@@ -32,7 +31,6 @@
   import SidebarItem from '$components/drawer/SidebarItem.svelte';
   import Textarea from '$components/form/Textarea.svelte';
   import Label from '$components/form/Label.svelte';
-  import CloseButton from '$components/utils/CloseButton.svelte';
   import Schema from '$components/icons/Schema.svelte';
   import Download from '$components/icons/Download.svelte';
   import DesignLogo from '$components/assets/images/product/design/evidentDesignLogo.svg';
@@ -40,6 +38,10 @@
   import DomainFunctionsLogo from '$components/assets/images/product/DomainFunctions/evidentDomainFunctionsLogo.svg';
   import DeployLogo from '$components/assets/images/product/deploy/evidentDeployLogo.svg';
   import DatabaseLogo from '$components/assets/images/product/database/evidentDatabaseLogo.svg';
+  import DropdownMenu from '$components/dropdown/DropdownMenu.svelte';
+  import DropdownItem from '$components/dropdown/DropdownItem.svelte';
+  import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
+
   import EventIcon from '$components/icons/EventIcon.svelte';
   import CommandIcon from '$components/icons/CommandIcon.svelte';
   import ReadModelIcon from '$components/icons/ReadModelIcon.svelte';
@@ -59,6 +61,10 @@
   const hide = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     isClosed = true;
+  };
+
+  const handleDropdown = () => {
+    hidden = !hidden;
   };
 
   let code = '"domain" {\n' + '\tfoo: string, \n' + '\tbar: string, \n' + '\tbaz: int\n' + '}';
@@ -95,6 +101,26 @@
       navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark"
     >
       {#if data.session.user}
+        <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
+          <IconButton slot="button" iconBtnClass="">
+            <Icon
+              name="profile"
+              size={32}
+              viewBox="0 0 32 32"
+              class="vertical-middle"
+              iconColor=""
+              pathName={Profile}
+            />
+          </IconButton>
+          <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
+            <!-- fake email for testing -->
+            lutobor.kostalova66@centrum.cz</DropdownItem
+          >
+          <DropdownItem href="#">Account</DropdownItem>
+          <DropdownDivider />
+          <DropdownItem>Sign Out</DropdownItem>
+        </DropdownMenu>
+
         <MaybeTooltip tip="Docs" position="tooltip-bottom">
           <IconButton
             ><Icon
@@ -125,18 +151,6 @@
             />
           </IconButton>
         </MaybeTooltip>
-        <span class="flex justify-center px-3">
-          <IconButton
-            ><Icon
-              name="profile"
-              size={32}
-              viewBox="0 0 32 32"
-              class="vertical-middle"
-              iconColor=""
-              pathName={Profile}
-            />
-          </IconButton>
-        </span>
       {:else}
         <Button
           href="/auth/sign-in"

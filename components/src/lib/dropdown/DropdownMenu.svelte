@@ -3,6 +3,9 @@
   import { fade } from 'svelte/transition';
   import type { NavbarType } from '../types';
   import { clickOutside } from '../utils/clickOutside';
+  export let activateClickOutside = true;
+  import { createEventDispatcher } from 'svelte';
+
   import Icon from '../Icon.svelte';
   import NavArrowDark from '../icons/NavArrowDark.svelte';
   import NavArrowLight from '../icons/NavArrowLight.svelte';
@@ -19,7 +22,7 @@
   export const dropdownLinkClassWithChild: string | undefined = undefined;
   export const rel: string | undefined = undefined;
 
-  let hidden = true;
+  export let hidden = true;
   let block = false;
   let visible = false;
   export let website = false;
@@ -27,14 +30,13 @@
 
   const handleDropdown = () => {
     hidden = !hidden;
-    block = !block;
     visible = !visible;
   };
 
-  let liClass = '';
+  let liClass = 'list-none flex justify-center';
 </script>
 
-{#if website}
+{#if website && activateClickOutside}
   <li use:clickOutside={() => !hidden && handleDropdown()} class={liClass}>
     <button on:click={() => handleDropdown()} class={liButtonClass}
       >{name}
@@ -60,18 +62,27 @@
     </button>
 
     <!-- Dropdown menu -->
-    <div class:hidden class={classNames(dropdownClass, divClass, marginTop)}>
-      <slot />
-    </div>
+    {#if !hidden}
+      <div class:hidden class={classNames(dropdownClass, divClass, marginTop)}>
+        <slot />
+      </div>
+    {/if}
   </li>
-{:else if product}
-  <ul
-    class:block
-    class={classNames('flex justify-center', dropdownClass, ulClass, marginTop)}
-    transition:fade={{ duration: 100 }}
-  >
-    <li>
-      <slot />
-    </li>
-  </ul>
+{:else if product && activateClickOutside}
+  <li use:clickOutside={() => !hidden && handleDropdown()} class={liClass}>
+    <button on:click={() => handleDropdown()}>
+      <slot name="button" />
+    </button>
+    {#if !hidden}
+      <!-- Dropdown menu -->
+      <ul
+        class={classNames('flex justify-center', dropdownClass, ulClass, marginTop)}
+        transition:fade={{ duration: 100 }}
+      >
+        <li>
+          <slot />
+        </li>
+      </ul>
+    {/if}
+  </li>
 {/if}

@@ -80,8 +80,7 @@
               iconColor="text-body-light dark:text-body-dark"
               pathName={Docs}
             />
-            ></IconButton
-          >
+          </IconButton>
         </MaybeTooltip>
         <MaybeTooltip tip="Support">
           <IconButton
@@ -117,15 +116,15 @@
                 name="schema"
                 size={16}
                 iconColor="fill-current text-gray-brand-4 dark:text-white transition duration-200 ease-in"
-                ><Schema /></Icon
-              >
+                pathName={Schema}
+              />
               <Icon
                 slot="icon-open"
                 name="schema"
                 size={16}
                 iconColor="fill-current text-white dark:text-white transition duration-200 ease-in"
-                ><Schema /></Icon
-              >
+                pathName={Schema}
+              />
               <SidebarDropdownItem feature>
                 <Label class="mt-2 mb-6" color="default"
                   ><span class="text-body dark:text-white">Event Model Schema</span>

@@ -1,6 +1,5 @@
 <script lang="ts">
   import classNames from 'classnames';
-
   import { onMount, setContext, createEventDispatcher } from 'svelte';
   import { fade } from 'svelte/transition';
   import { key } from '$lib/context/contextMenu.js';

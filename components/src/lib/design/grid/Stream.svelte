@@ -47,8 +47,10 @@
     <Event
       id={placement.id}
       event={placement.event}
+      {column}
       name={placement.name}
-      description={placement.description} />
+      description={placement.description}
+      on:connect_flow={forward} />
   {:else}
     <EmptyCell {column} kind='event' lane={stream.id}
                on:move_event_placement={forward}

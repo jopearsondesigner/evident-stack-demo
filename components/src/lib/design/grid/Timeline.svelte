@@ -38,14 +38,18 @@
     <Command
       id={placement.id}
       command={placement.component}
+      {column}
       name={placement.name}
-      description={placement.description} />
+      description={placement.description}
+      on:connect_flow={forward} />
   {:else if placement && placement.kind === 'readModel'}
     <ReadModel
       id={placement.id}
       readModel={placement.component}
+      {column}
       name={placement.name}
-      description={placement.description} />
+      description={placement.description}
+      on:connect_flow={forward} />
   {:else}
     <EmptyCell {column} kind='timeline'
                on:move_timeline_placement={forward}

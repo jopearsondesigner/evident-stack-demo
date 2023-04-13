@@ -24,16 +24,14 @@
 {#if audience.name}
   <h3
     class="audienceName sticky left-3 z-30 justify-self-start self-start cursor-pointer prose text-body-light dark:text-body-dark mt-3"
-    style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
-    >
+    style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};">
     {audience.name}
   </h3>
 {:else}
   <!-- TODO: reduce the color to disabled text -->
   <h3
     class="audienceName sticky left-3 z-30 justify-self-start self-start prose text-body-light dark:text-body-dark mt-3"
-    style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
-    >
+    style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};">
     Default Audience
   </h3>
 {/if}
@@ -49,8 +47,10 @@
       <Interface
         id={placement.id}
         interface_id={placement.interface}
+        {column}
         name={placement.name}
-        description={placement.description} />
+        description={placement.description}
+        on:connect_flow={forward} />
     {:else}
       <EmptyCell {column} kind='interface' lane={audience.id}
                  on:move_interface_placement={forward}

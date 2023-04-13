@@ -234,6 +234,11 @@
   // const linkingKeyboardHandler = createKeybindingsHandler({
   // })
 
+  // TODO: wire up to decider
+  const handleConnectFlow = async (e: CustomEvent) => {
+    console.log("connect_flow:", e);
+  };
+
   // Keyboard
   const keyboardHandler: EventListener = (e) => {
     if (mode === 'navigation') {
@@ -255,6 +260,7 @@
       on:navigate_cursor={handleNavigateCursor}
       on:move_interface_placement={handleMoveInterfacePlacement}
       on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
+      on:connect_flow={handleConnectFlow}
       row={default_audience_row}
       audience={{placements: default_audience_placements}}
       {max_column} />
@@ -264,12 +270,14 @@
         on:navigate_cursor={handleNavigateCursor}
         on:move_interface_placement={handleMoveInterfacePlacement}
         on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
+        on:connect_flow={handleConnectFlow}
         {row} {audience} {max_column} />
     {/each}
 
 <Timeline on:navigate_cursor={handleNavigateCursor}
           on:move_timeline_placement={handleMoveTimelinePlacement}
           on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
+          on:connect_flow={handleConnectFlow}
           row={timeline_row}
           placements={timeline_placements}
           {max_column} />
@@ -278,11 +286,13 @@
   <StreamLane on:navigate_cursor={handleNavigateCursor}
               on:move_event_placement={handleMoveEventPlacement}
               on:duplicate_event_placement={handleDuplicateEventPlacement}
+              on:connect_flow={handleConnectFlow}
               {row} {stream} {max_column} />
 {/each}
 <StreamLane on:navigate_cursor={handleNavigateCursor}
             on:move_event_placement={handleMoveEventPlacement}
             on:duplicate_event_placement={handleDuplicateEventPlacement}
+            on:connect_flow={handleConnectFlow}
             row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
 <Cursor
   on:begin_editing={handleBeginEditing}
@@ -298,6 +308,7 @@
   on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
   on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
   on:duplicate_event_placement={handleDuplicateEventPlacement}
+  on:connect_flow={handleConnectFlow}
   row={cursor_row}
   column={cursor_column}
   item={cursor_item}

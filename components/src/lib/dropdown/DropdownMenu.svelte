@@ -79,7 +79,7 @@
         class={classNames('flex justify-center', dropdownClass, ulClass, marginTop)}
         transition:fade={{ duration: 100 }}
       >
-        <li>
+        <li class="flex flex-col">
           <slot />
         </li>
       </ul>

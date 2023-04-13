@@ -161,8 +161,9 @@
                   name="download"
                   size={12}
                   iconColor="text-body-light dark:text-white"
-                  class="inline-flex mb-1"><Download /></Icon
-                ></Button
+                  class="inline-flex mb-1"
+                  pathName={Download}
+                /></Button
               >
             </SidebarItem>
           </SidebarGroup>

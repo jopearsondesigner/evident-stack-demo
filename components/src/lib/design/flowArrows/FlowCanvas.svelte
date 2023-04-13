@@ -4,12 +4,12 @@
   import FlowPath from './FlowPath.svelte';
 
   export let flows: Array<Flow> = [];
-  export let color: string = 'black';
+  export let color: string = '#657B83';
   export let strokeWidth: number = 1;
   export let dashness: boolean = false;
   export let refreshTime: number = 16;
   export let curveShapeFactor: number = 0.1;
-  export let markerSize: number = 10;
+  export let markerSize: number = 8;
 
   let containerRef: SVGSVGElement;
 
@@ -27,14 +27,14 @@
 
 <svg
   bind:this={containerRef}
-  class="absolute"
+  class="absolute z-10"
   width="100%"
   height="100%"
   preserveAspectRatio="none"
   xmlns="http://www.w3.org/2000/svg"
 >
   <defs>
-    <FlowMarker {...markerConfig } />
+    <FlowMarker {...markerConfig} />
   </defs>
   {#each flows as { id, to, from }}
     <FlowPath {...{ id, to, from, ...pathConfig }} />

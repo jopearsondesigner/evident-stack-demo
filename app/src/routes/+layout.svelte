@@ -118,7 +118,7 @@
           >
           <DropdownItem href="#">Account</DropdownItem>
           <DropdownDivider />
-          <DropdownItem>Sign Out</DropdownItem>
+          <DropdownItem className="flex-1">Sign Out</DropdownItem>
         </DropdownMenu>
 
         <MaybeTooltip tip="Docs" position="tooltip-bottom">

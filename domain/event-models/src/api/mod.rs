@@ -10,6 +10,7 @@ use crate::types::{
 use crate::{EventModel, EventModelDataTransfer, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
 use std::fmt::Debug;
+use std::vec;
 use uuid::Uuid;
 
 pub mod commands;

@@ -17,7 +17,7 @@
     let transfer = e.dataTransfer;
     if (transfer) {
       transfer.setData('event', id)
-      if (e.ctrlKey) {
+      if (e.shiftKey) {
         transfer.effectAllowed = 'copy';
       } else {
         transfer.effectAllowed = 'move';

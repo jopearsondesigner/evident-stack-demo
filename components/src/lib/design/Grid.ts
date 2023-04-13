@@ -117,6 +117,10 @@ export type ItemAtCursor =
   | EventPlacementCell
   | EmptyCell;
 
+export const placementIsEmptyCell = (placement: object) => {
+  return placement == undefined || placement.constructor.name == 'EmptyCell';
+};
+
 export const itemAtCursor = (
   row: number,
   column: number,
@@ -128,23 +132,41 @@ export const itemAtCursor = (
 ): ItemAtCursor => {
   if (row === 0) {
     let placement = default_audience[column];
-    return { type: 'interface', placement };
+    if (placementIsEmptyCell(placement)) {
+      return { type: 'interface' };
+    } else {
+      return { type: 'interface', placement };
+    }
   } else if (row - 1 < audiences.length) {
     let audience = audiences[row - 1];
     let placement = audience?.placements[column];
-    return placement
-      ? { type: 'interface', placement }
-      : { type: 'interface', audience: audience?.id };
+    if (placementIsEmptyCell(placement)) {
+      return { type: 'interface', audience: audience?.id };
+    } else {
+      return { type: 'interface', placement };
+    }
   } else if (row === audiences.length + 1) {
     let placement = timeline[column];
-    return placement ? { type: 'timeline', placement } : { type: 'timeline' };
+    if (placementIsEmptyCell(placement)) {
+      return { type: 'timeline' };
+    } else {
+      return { type: 'timeline', placement };
+    }
   } else if (row - 1 - audiences.length - 1 < streams.length) {
     let stream = streams[row - 1 - audiences.length - 1];
     let placement = stream?.placements[column];
-    return placement ? { type: 'event', placement } : { type: 'event', stream: stream?.id };
+    if (placementIsEmptyCell(placement)) {
+      return { type: 'event', stream: stream?.id };
+    } else {
+      return { type: 'event', placement };
+    }
   } else if (row === 1 + audiences.length + 1 + streams.length) {
     let placement = default_stream[column];
-    return placement ? { type: 'event', placement } : { type: 'event' };
+    if (placementIsEmptyCell(placement)) {
+      return { type: 'event' };
+    } else {
+      return { type: 'event', placement };
+    }
   }
   throw new Error('No valid item at cursor!');
 };

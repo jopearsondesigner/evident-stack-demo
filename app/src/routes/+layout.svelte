@@ -102,7 +102,7 @@
     >
       {#if data.session.user}
         <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
-          <IconButton slot="button" iconBtnClass="">
+          <IconButton slot="button" margin="mx-2">
             <Icon
               name="profile"
               size={32}

@@ -235,7 +235,7 @@ fn event_placement(id: Uuid, index: usize, e: event_models::types::Event) -> Eve
         index,
         event: *e.id(),
         name: e.name().to_owned(),
-        description: e.name().to_owned(),
+        description: e.description().to_owned(),
     }
 }
 

@@ -12,6 +12,9 @@ module.exports = {
 			mono: 'input-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
 		},
 		extend: {
+      borderWidth: {
+        '16': '16px',
+      },
 			colors: {
 				focus: '#1E6AFF',
 				red: '#ff0000',

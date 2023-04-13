@@ -16,7 +16,7 @@
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
-    if (transfer) {
+    if (transfer && (transfer.effectAllowed == 'copy' || transfer.effectAllowed == 'move')) {
       if (transfer.types.includes(kind)) {
         e.preventDefault();
         transfer.dropEffect = transfer.effectAllowed == 'copy' ? 'copy' : 'move';
@@ -36,7 +36,7 @@
     handleDragLeave(e);
     let transfer = e.dataTransfer;
     let id = transfer?.getData(kind);
-    if (transfer && id) {
+    if (transfer && id && (transfer.effectAllowed == 'copy' || transfer.effectAllowed == 'move')) {
       transfer.dropEffect = transfer.effectAllowed == 'copy' ? 'copy' : 'move';
       if (kind == 'interface') {
         if (transfer.dropEffect == 'move') {

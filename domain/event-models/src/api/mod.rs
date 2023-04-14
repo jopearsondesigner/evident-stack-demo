@@ -174,7 +174,6 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::AddAudience(_, _, _) => {
                         todo!()
                     }
-                    // TODO: Impl #35
                     EventModelCommand::RenameAudience(model_id, audience_id, name) => {
                         let valid_name = validate_name(name)?;
                         let lane_id = LaneId::Audience(*audience_id);
@@ -184,7 +183,6 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             *model_id, lane_id, valid_name,
                         )])
                     }
-                    // TODO: Impl #35
                     EventModelCommand::ReorderAudience(model_id, audience_id, index) => {
                         let lane_id = LaneId::Audience(*audience_id);
                         valid_lane(model, &lane_id)?;
@@ -194,7 +192,6 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             *model_id, lane_id, *index,
                         )])
                     }
-                    // TODO: Impl #35
                     EventModelCommand::RemoveAudience(model_id, audience_id) => {
                         let lane_id = LaneId::Audience(*audience_id);
                         valid_lane(model, &lane_id)?;
@@ -204,7 +201,6 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::AddStream(_, _, _) => {
                         todo!()
                     }
-                    // TODO: Impl #35
                     EventModelCommand::RenameStream(model_id, stream_id, name) => {
                         let lane_id = LaneId::Stream(*stream_id);
                         valid_lane(model, &lane_id)?;
@@ -216,7 +212,6 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             name.to_owned(),
                         )])
                     }
-                    // TODO: Impl #35
                     EventModelCommand::ReorderStream(model_id, stream_id, index) => {
                         let lane_id = LaneId::Stream(*stream_id);
                         valid_lane(model, &lane_id)?;
@@ -226,7 +221,6 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             *model_id, lane_id, *index,
                         )])
                     }
-                    // TODO: Impl #35
                     EventModelCommand::RemoveStream(model_id, stream_id) => {
                         let lane_id = LaneId::Stream(*stream_id);
                         valid_lane(model, &lane_id)?;

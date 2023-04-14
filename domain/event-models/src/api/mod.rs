@@ -53,7 +53,8 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         Ok(vec![EventModelEvent::Renamed(*id, valid_name)])
                     }
                     EventModelCommand::AddToDescription(model_id, index, addition) => {
-                        // TODO: validate index
+                        valid_description_index(model, index)?;
+
                         Ok(vec![EventModelEvent::AddedToDescription(
                             *model_id,
                             *index,
@@ -61,7 +62,8 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         )])
                     }
                     EventModelCommand::DeleteFromDescription(model_id, index, count) => {
-                        // TODO: validate index + count bounds
+                        valid_description_bounds(model, index, count)?;
+
                         Ok(vec![EventModelEvent::DeletedFromDescription(
                             *model_id, *index, *count,
                         )])
@@ -175,7 +177,6 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::AddAudience(_, _, _) => {
                         todo!()
                     }
-                    // TODO: Impl #35
                     EventModelCommand::RenameAudience(model_id, audience_id, name) => {
                         let valid_name = validate_name(name)?;
                         let lane_id = LaneId::Audience(*audience_id);
@@ -185,17 +186,15 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             *model_id, lane_id, valid_name,
                         )])
                     }
-                    // TODO: Impl #35
                     EventModelCommand::ReorderAudience(model_id, audience_id, index) => {
                         let lane_id = LaneId::Audience(*audience_id);
                         valid_lane(model, &lane_id)?;
-                        // TODO: validate index
+                        valid_lane_index(model, &lane_id, &index)?;
 
                         Ok(vec![EventModelEvent::LaneReordered(
                             *model_id, lane_id, *index,
                         )])
                     }
-                    // TODO: Impl #35
                     EventModelCommand::RemoveAudience(model_id, audience_id) => {
                         let lane_id = LaneId::Audience(*audience_id);
                         valid_lane(model, &lane_id)?;
@@ -205,7 +204,6 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::AddStream(_, _, _) => {
                         todo!()
                     }
-                    // TODO: Impl #35
                     EventModelCommand::RenameStream(model_id, stream_id, name) => {
                         let lane_id = LaneId::Stream(*stream_id);
                         valid_lane(model, &lane_id)?;
@@ -217,17 +215,15 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             name.to_owned(),
                         )])
                     }
-                    // TODO: Impl #35
                     EventModelCommand::ReorderStream(model_id, stream_id, index) => {
                         let lane_id = LaneId::Stream(*stream_id);
                         valid_lane(model, &lane_id)?;
-                        // TODO: validate index
+                        valid_lane_index(model, &lane_id, &index)?;
 
                         Ok(vec![EventModelEvent::LaneReordered(
                             *model_id, lane_id, *index,
                         )])
                     }
-                    // TODO: Impl #35
                     EventModelCommand::RemoveStream(model_id, stream_id) => {
                         let lane_id = LaneId::Stream(*stream_id);
                         valid_lane(model, &lane_id)?;
@@ -661,6 +657,20 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
     }
 }
 
+fn valid_description_bounds(model: &impl EventModel, index: &usize, count: &usize) -> Result<(), EventModelError> {
+    let description = model.description().to_string();
+
+    if (description.len() - 1) < (index + count) {
+        Err(EventModelError::DescriptionTextOutOfBounds(description, *index, *count))
+    } else {
+        Ok(())
+    }
+}
+
+fn valid_description_index(model: &impl EventModel, index: &usize) -> Result<(), EventModelError> {
+    valid_description_bounds(model, index, &0)
+}
+
 fn valid_lane(model: &impl EventModel, lane_id: &LaneId) -> Result<(), EventModelError> {
     match lane_id {
         LaneId::Audience(id) => match model.audiences().iter().find(|a| a.id() == id) {
@@ -672,5 +682,21 @@ fn valid_lane(model: &impl EventModel, lane_id: &LaneId) -> Result<(), EventMode
             None => Err(EventModelError::LaneNotFound(lane_id.to_owned())),
         },
         _ => Ok(()),
+    }
+}
+
+fn valid_lane_index(model: &impl EventModel, lane_id: &LaneId, index: &usize) -> Result<(), EventModelError> {
+    match lane_id {
+        LaneId::Audience(_) => if (model.audiences().len() - 1) > *index {
+            Err(EventModelError::LaneIndexOutOfBounds(lane_id.to_owned(), *index))
+        } else {
+            Ok(())
+        },
+        LaneId::Stream(_) => if (model.streams().len() -1) > *index {
+            Err(EventModelError::LaneIndexOutOfBounds(lane_id.to_owned(), *index))
+        } else {
+            Ok(())
+        }
+        _ => Ok(())
     }
 }

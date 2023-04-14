@@ -1,5 +1,11 @@
 import { default as init, setPanicHook, EventModelStateManager } from "app-state";
-import { readable } from 'svelte/store';
+import { readable, type Readable } from 'svelte/store';
+import type { Decider } from '$components/design/Grid';
+
+export type InitializationPayload = {
+  grid: Readable<EventModelGrid>,
+  decider: Decider
+}
 
 const initialize_decider = async (id: string | undefined) => {
   await init();

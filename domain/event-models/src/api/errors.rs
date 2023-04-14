@@ -11,4 +11,6 @@ pub enum EventModelError {
     IllegalFlowArrow(String),
     SerializationError(String),
     LaneNotFound(LaneId),
+    LaneIndexOutOfBounds(LaneId, usize),
+    DescriptionTextOutOfBounds(String, usize, usize),
 }

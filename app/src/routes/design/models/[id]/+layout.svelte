@@ -15,6 +15,7 @@
 
   $: Modal_id = $grid?.id();
 
+  let input;
   let deleteModal = false;
   let importModal = false;
   let done = true;
@@ -46,7 +47,13 @@
     <label class="label" for="json">
       <span class="label-text">Event Modal JSON File</span>
     </label>
-    <input type="file" name="json" accept="application/json" on:change={handleImportModel} />
+    <input
+      type="file"
+      name="json"
+      accept="application/json"
+      on:change={handleImportModel}
+      bind:this={input}
+    />
     <label class="label" for="offset">
       <span class="label-text">Offset</span>
     </label>
@@ -109,7 +116,8 @@
   <div slot="footer" class="mx-3 flex items-end space-x-3">
     <button
       class="text-sm text-focus hover:text-[#054FDE] transition duration-200 ease-in underline"
-      on:click={hide}>Cancel</button
+      on:click={hide}
+      on:click={() => (input.value = '')}>Cancel</button
     >
     <Button input boundTo="submit-form" tabindex={0} color="default" size="sm" label="Done" />
   </div>

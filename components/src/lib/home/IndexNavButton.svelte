@@ -1,7 +1,7 @@
 <script lang="ts">
   import classNames from 'classnames';
   export let navClass =
-    'flex items-center justify-end text-sm text-body-light hover:text-[1.125rem] hover:text-white dark:text-white w-full border border-border-light dark:border-border-dark p-3 indexNavShadow bg-left-top bg-no-repeat bg-contain';
+    'group placeholder-white flex items-center justify-end text-sm text-body-light hover:text-[1.125rem] hover:text-white dark:text-white w-full border border-border-light dark:border-border-dark p-3 indexNavShadow bg-left-top bg-no-repeat bg-contain';
   export let hoverClass =
     'w-full h-auto bg-gradient-radial from-transparent to-transparent hover:from-[#525C6F]/[.3] hover:to-[#525C6F]/[.5]';
   export let rounded: string = '';

@@ -18,7 +18,7 @@
     {href}
     class={classNames(linkClass, padding, className)}
     {...$$restProps}
-    on:click
+    on:click|preventDefault
     on:change
     on:keydown
     on:keyup

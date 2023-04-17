@@ -1,6 +1,7 @@
 <script lang="ts">
   import '../app.css';
   import type { LayoutData } from './$types';
+  import { handleSignOut } from '$lib/user';
 
   import Navbar from '$components/navbar/Navbar.svelte';
   import NavInner from '$components/navbar/NavInner.svelte';
@@ -102,7 +103,7 @@
     >
       {#if data.session.user}
         <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
-          <IconButton slot="button" margin="mx-2">
+          <IconButton slot="button" margin="mx-2 mt-1">
             <Icon
               name="profile"
               size={32}
@@ -116,9 +117,9 @@
             <!-- fake email for testing -->
             lutobor.kostalova66@centrum.cz</DropdownItem
           >
-          <DropdownItem href="#">Account</DropdownItem>
+          <DropdownItem href="/account">Account</DropdownItem>
           <DropdownDivider />
-          <DropdownItem className="flex-1">Sign Out</DropdownItem>
+          <DropdownItem className="flex-1" on:click={handleSignOut}>Sign Out</DropdownItem>
         </DropdownMenu>
 
         <MaybeTooltip tip="Docs" position="tooltip-bottom">
@@ -141,7 +142,7 @@
             />
           </IconButton>
         </MaybeTooltip>
-        <MaybeTooltip tip="Admin" position="tooltip-bottom">
+        <!-- <MaybeTooltip tip="Admin" position="tooltip-bottom">
           <IconButton
             ><Icon
               name="admin-portal"
@@ -150,7 +151,7 @@
               pathName={AdminPortal}
             />
           </IconButton>
-        </MaybeTooltip>
+        </MaybeTooltip> -->
       {:else}
         <Button
           href="/auth/sign-in"

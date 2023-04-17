@@ -4,21 +4,48 @@
   import Container from '$components/Container.svelte';
   import Row from '$components/Row.svelte';
   import Column from '$components/Column.svelte';
+  import Modal from '$components/Modal.svelte';
   import IndexNavButton from '$components/home/IndexNavButton.svelte';
   import Icon from '$components/Icon.svelte';
   import IconButton from '$components/IconButton.svelte';
   import Add from '$components/icons/Add.svelte';
   import Delete from '$components/icons/Delete.svelte';
+  import Warning from '$components/icons/Warning.svelte';
+  import Checkmark from '$components/icons/Checkmark.svelte';
   import Button from '$components/Button.svelte';
-  let BackgroundImage = "bg-[url('$components/assets/images/product/design/modelThumb.svg')]";
+  let ModelThumb = "bg-[url('$components/assets/images/product/design/modelThumb.svg')]";
 
   export let data: PageData;
+  const { grid, decider } = data;
 
+  $: Modal_id = $grid?.id();
+
+  let deleteModal = false;
   let project = [{ done: false }];
+  let done = true;
+  export let open = false;
+  const hide = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    open = false;
+  };
 
   function add() {
     project = project.concat({ done: false });
   }
+
+  const handleDeleteModel = async () => {
+    await decider?.delete_model();
+    goto('/');
+  };
+
+  const handleCreateEventModel = async (e: SubmitEvent) => {
+    const formData = new FormData(e.target as HTMLFormElement);
+    let name = formData.get('name')?.toString();
+    if (name) {
+      let state = await create_model(name);
+      goto(`/design/models/${state.id()}`);
+    }
+  };
 
   function clear() {
     project = project.filter((t) => !t.done);
@@ -29,16 +56,6 @@
 
 {#if data.session.user}
   <section class="mt-20">
-    <h1>Welcome</h1>
-    <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-
-    <button on:click|preventDefault={handleSignOut}>Sign Out</button>
-
-    <h4>session:</h4>
-    <pre>
-    {JSON.stringify(data.session, null, 2)}
-  </pre>
-
     <Button gradient color="brandStackPrimary" size="sm" href="/new" label="Create New Model" />
   </section>
 
@@ -65,9 +82,9 @@
         <Column class="flex justify-center items-center">
           <div class:done={project.done} class="w-full flex justify-center items-center">
             <input type="checkbox" bind:checked={project.done} />
-            <IndexNavButton height={156} href="#">
+            <IndexNavButton height={156} href="#" backgroundImg={ModelThumb}>
               <div class="absolute self-start -mr-2 -mt-2">
-                <IconButton size={32}
+                <IconButton size={32} on:click={() => (deleteModal = true)}
                   ><Icon
                     name="delete"
                     size={16}
@@ -77,7 +94,18 @@
                   /></IconButton
                 >
               </div>
-              <div class="inline-flex justify-center w-full">Untitled</div>
+              <form
+                class="inline-flex justify-center w-full"
+                on:submit|preventDefault={handleCreateEventModel}
+              >
+                <input
+                  type="text"
+                  name="name"
+                  placeholder=""
+                  value="Untitled"
+                  class="group-hover:text-white group-hover:focus-visible:text-body group-hover:dark:focus-visible:text-white p-px group-hover:placeholder-white text-center w-full max-w-xs m-1 focus-visible:text-body dark:focus-visible:text-white focus-visible:border-0 focus-visible:outline-0 focus-visible:ring-focus focus-visible:ring-2 bg-transparent focus-visible:bg-white dark:focus-visible:bg-dark-1"
+                />
+              </form>
             </IndexNavButton>
           </div>
         </Column>
@@ -90,3 +118,30 @@
     continue.
   </p>
 {/if}
+
+<Modal bind:open={deleteModal} size="xs" autoclose title="Delete Event Modal">
+  <div class="text-center w-full inline-flex justify-center items-center p px-6">
+    <Icon name="warning" pathName={Warning} class="mr-1" />
+    <span class="whitespace-nowrap text-sm text-body"
+      >Are you sure you want to delete this Event Modal?</span
+    >
+  </div>
+  <div class="my-3 text-center w-full inline-flex justify-center items-center p px-6">
+    {#if done}
+      <Icon name="checkmark" iconColor="text-green" class="mr-1" size={12} pathName={Checkmark} />
+    {:else}
+      <Icon
+        name="checkmark"
+        iconColor="text-gray-primary"
+        class="mr-1"
+        size={12}
+        pathName={Checkmark}
+      />
+    {/if}
+    <span class="text-default text-body dark:text-white">{Modal_id}</span>
+  </div>
+  <div slot="footer" class="mx-3 flex items-end space-x-3">
+    <Button color="default" size="sm" on:click={hide} class="" label="Cancel" />
+    <Button gradient color="ghost" size="sm" label="confirm" on:click={handleDeleteModel} />
+  </div>
+</Modal>

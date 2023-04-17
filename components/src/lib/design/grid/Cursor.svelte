@@ -123,10 +123,13 @@
     class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300 bg-gray-canvas dark:bg-dark-1"
     style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
   >
-    <form class="w-full, h-full" on:submit|preventDefault={handleSubmit}>
+    <form
+      class="w-full h-full flex justify-center items-center"
+      on:submit|preventDefault={handleSubmit}
+    >
       <input
         name="name"
-        class="w-full"
+        class="text-sm text-body dark:text-body-dark m-1 focus:border focus:ring-focus focus:border-focus focus-visible:border-0 focus-visible:outline-0 focus-visible:ring-focus focus-visible:ring-2 bg-transparent"
         type="text"
         value={item.placement?.name || ''}
         bind:this={input}

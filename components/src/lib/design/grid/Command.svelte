@@ -78,7 +78,7 @@
     {id}
     draggable="true"
     on:dragstart={handleDragStart}
-    class="command m-[1.4375rem] w-[6.125rem] h-[6.125rem] p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-command-dark via-command to-command-light"
+    class="command m-[1.375rem] w-[6.125rem] h-[6.125rem] p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-command-dark via-command to-command-light"
   >
     {name}
   </div>

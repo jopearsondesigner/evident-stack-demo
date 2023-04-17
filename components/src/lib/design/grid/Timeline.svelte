@@ -23,7 +23,7 @@
 </script>
 
 <h3
-  class="timelineName sticky left-3 z-30 justify-self-start self-center prose text-body-light dark:text-body-dark"
+  class="timelineName sticky left-3 justify-self-start self-center prose text-body-light dark:text-body-dark"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 >
   Timeline

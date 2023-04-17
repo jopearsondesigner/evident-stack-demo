@@ -26,7 +26,7 @@
       type="text"
       name="name"
       placeholder="Type here"
-      class="input input-bordered w-full max-w-xs"
+      class="input input-bordered w-full max-w-xs text-sm text-body dark:text-body-dark m-1 focus:border focus:ring-focus focus:border-focus focus-visible:border-0 focus-visible:outline-0 focus-visible:ring-focus focus-visible:ring-2 bg-transparent"
     />
   </div>
   <Button

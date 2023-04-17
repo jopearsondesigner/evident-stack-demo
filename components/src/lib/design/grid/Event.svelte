@@ -75,7 +75,7 @@
     {id}
     draggable="true"
     on:dragstart={handleDragStart}
-    class="event m-[1.4375rem] w-[6.125rem] h-[6.125rem] p-3 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-event-dark via-event to-event-light"
+    class="event col-border ring-white dark:ring-gray-brand-1 m-[1.375rem] w-[6.125rem] h-[6.125rem] p-3 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-event-dark via-event to-event-light"
   >
     {name}
   </div>

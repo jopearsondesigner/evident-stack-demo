@@ -28,6 +28,7 @@
     await decider?.delete_model();
     goto('/');
   };
+
   const handleImportJson = async (e: SubmitEvent) => {
     const formData = new FormData(e.target as HTMLFormElement);
     let json = formData.get('json') as File;

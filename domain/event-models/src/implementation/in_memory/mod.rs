@@ -22,6 +22,7 @@ pub struct InMemoryEventModel {
     id: EventModelId,
     name: String,
     description: String,
+    schema: Schema,
     interfaces: HashMap<InterfaceId, Interface>,
     commands: HashMap<CommandId, Command>,
     events: HashMap<EventId, Event>,
@@ -30,7 +31,6 @@ pub struct InMemoryEventModel {
     streams: Vec<Stream>,
     placements: HashMap<PlacementId, Placement>,
     flows: HashMap<FlowId, FlowArrow>,
-    schema: Schema,
 }
 
 impl InMemoryEventModel {
@@ -39,6 +39,7 @@ impl InMemoryEventModel {
             id,
             name,
             description: Default::default(),
+            schema: Default::default(),
             interfaces: Default::default(),
             commands: Default::default(),
             events: Default::default(),
@@ -47,7 +48,6 @@ impl InMemoryEventModel {
             streams: Default::default(),
             placements: Default::default(),
             flows: Default::default(),
-            schema: Default::default(),
         }
     }
 
@@ -166,16 +166,16 @@ impl EventModelData for InMemoryEventModel {
 impl ModifiableEventModel for InMemoryEventModel {
     fn component_defined(&mut self, component: Component) {
         match component {
-            Component::InterfaceComponent(i) => {
+            Component::Interface(i) => {
                 self.interfaces.insert(*i.id(), i.to_owned());
             }
-            Component::CommandComponent(c) => {
+            Component::Command(c) => {
                 self.commands.insert(*c.id(), c.to_owned());
             }
-            Component::EventComponent(e) => {
+            Component::Event(e) => {
                 self.events.insert(*e.id(), e.to_owned());
             }
-            Component::ReadModelComponent(r) => {
+            Component::ReadModel(r) => {
                 self.read_models.insert(*r.id(), r.to_owned());
             }
         }

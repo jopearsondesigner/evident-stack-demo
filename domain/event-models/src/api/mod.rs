@@ -98,7 +98,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                                 // TODO: what to do when interface w/ id exists?
                                 EventModelEvent::ComponentDefined(
                                     *model_id,
-                                    Component::InterfaceComponent(interface),
+                                    Component::Interface(interface),
                                 )
                             },
                         ));
@@ -106,22 +106,19 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             // TODO: what to do when command w/ id exists?
                             EventModelEvent::ComponentDefined(
                                 *model_id,
-                                Component::CommandComponent(command),
+                                Component::Command(command),
                             )
                         }));
                         events.extend(data_transfer.events.into_iter().map(|(_, event)| {
                             // TODO: what to do when event w/ id exists?
-                            EventModelEvent::ComponentDefined(
-                                *model_id,
-                                Component::EventComponent(event),
-                            )
+                            EventModelEvent::ComponentDefined(*model_id, Component::Event(event))
                         }));
                         events.extend(data_transfer.read_models.into_iter().map(
                             |(_, read_model)| {
                                 // TODO: what to do when read model w/ id exists?
                                 EventModelEvent::ComponentDefined(
                                     *model_id,
-                                    Component::ReadModelComponent(read_model),
+                                    Component::ReadModel(read_model),
                                 )
                             },
                         ));
@@ -197,7 +194,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             Default::default(),
                             Default::default(),
                         )?;
-                        let component = Component::InterfaceComponent(interface);
+                        let component = Component::Interface(interface);
                         let placement = Placement::Interface {
                             id: Uuid::new_v4(),
                             index: *index,
@@ -217,7 +214,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             Default::default(),
                             Default::default(),
                         )?;
-                        let component = Component::CommandComponent(command);
+                        let component = Component::Command(command);
                         let placement = Placement::Command {
                             id: Uuid::new_v4(),
                             index: *index,
@@ -237,7 +234,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             Default::default(),
                             Default::default(),
                         )?;
-                        let component = Component::EventComponent(event);
+                        let component = Component::Event(event);
                         let placement = Placement::Event {
                             id: Uuid::new_v4(),
                             index: *index,
@@ -258,7 +255,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             Default::default(),
                             Default::default(),
                         )?;
-                        let component = Component::ReadModelComponent(read_model);
+                        let component = Component::ReadModel(read_model);
                         let placement = Placement::ReadModel {
                             id: Uuid::new_v4(),
                             index: *index,

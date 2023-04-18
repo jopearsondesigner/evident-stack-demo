@@ -77,10 +77,10 @@ fn defining_components() {
         Schema::default(),
     )
     .expect("failed to create event");
-    model.component_defined(Component::InterfaceComponent(interface.to_owned()));
-    model.component_defined(Component::CommandComponent(command.to_owned()));
-    model.component_defined(Component::EventComponent(event.to_owned()));
-    model.component_defined(Component::ReadModelComponent(read_model.to_owned()));
+    model.component_defined(Component::Interface(interface.to_owned()));
+    model.component_defined(Component::Command(command.to_owned()));
+    model.component_defined(Component::Event(event.to_owned()));
+    model.component_defined(Component::ReadModel(read_model.to_owned()));
     assert_eq!(model.interfaces().get(interface.id()), Some(&interface));
     assert_eq!(model.commands().get(command.id()), Some(&command));
     assert_eq!(model.events().get(event.id()), Some(&event));
@@ -120,10 +120,10 @@ fn renaming_components() {
     .expect("failed to create event");
 
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
-    model.component_defined(Component::InterfaceComponent(interface.to_owned()));
-    model.component_defined(Component::CommandComponent(command.to_owned()));
-    model.component_defined(Component::EventComponent(event.to_owned()));
-    model.component_defined(Component::ReadModelComponent(read_model.to_owned()));
+    model.component_defined(Component::Interface(interface.to_owned()));
+    model.component_defined(Component::Command(command.to_owned()));
+    model.component_defined(Component::Event(event.to_owned()));
+    model.component_defined(Component::ReadModel(read_model.to_owned()));
 
     let new_interface_name = "interface foo";
     let new_command_name = "command foo";
@@ -194,10 +194,10 @@ fn adding_to_component_description() {
     .expect("failed to create event");
 
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
-    model.component_defined(Component::InterfaceComponent(interface.to_owned()));
-    model.component_defined(Component::CommandComponent(command.to_owned()));
-    model.component_defined(Component::EventComponent(event.to_owned()));
-    model.component_defined(Component::ReadModelComponent(read_model.to_owned()));
+    model.component_defined(Component::Interface(interface.to_owned()));
+    model.component_defined(Component::Command(command.to_owned()));
+    model.component_defined(Component::Event(event.to_owned()));
+    model.component_defined(Component::ReadModel(read_model.to_owned()));
 
     model.added_to_component_description(
         &InterfaceComponentId(*interface.id()),
@@ -274,10 +274,10 @@ fn deleting_from_component_description() {
     .expect("failed to create event");
 
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
-    model.component_defined(Component::InterfaceComponent(interface.to_owned()));
-    model.component_defined(Component::CommandComponent(command.to_owned()));
-    model.component_defined(Component::EventComponent(event.to_owned()));
-    model.component_defined(Component::ReadModelComponent(read_model.to_owned()));
+    model.component_defined(Component::Interface(interface.to_owned()));
+    model.component_defined(Component::Command(command.to_owned()));
+    model.component_defined(Component::Event(event.to_owned()));
+    model.component_defined(Component::ReadModel(read_model.to_owned()));
 
     model.added_to_component_description(
         &InterfaceComponentId(*interface.id()),

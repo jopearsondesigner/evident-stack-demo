@@ -2,7 +2,6 @@ extern crate event_models;
 
 pub mod grid;
 mod repository;
-mod utils;
 
 use std::str::FromStr;
 
@@ -17,7 +16,6 @@ use event_models::{
 pub use grid::EventModelGrid;
 use js_sys::{Function, Uint8Array};
 use repository::HasKey;
-pub use utils::set_panic_hook;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
@@ -31,6 +29,18 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
+}
+
+#[wasm_bindgen(js_name = setPanicHook)]
+pub fn set_panic_hook() {
+    // When the `console_error_panic_hook` feature is enabled, we can call the
+    // `set_panic_hook` function at least once during initialization, and then
+    // we will get better error messages if our code ever panics.
+    //
+    // For more details see
+    // https://github.com/rustwasm/console_error_panic_hook#readme
+    #[cfg(feature = "console_error_panic_hook")]
+    console_error_panic_hook::set_once();
 }
 
 impl HasKey for EventModelState<InMemoryEventModel> {

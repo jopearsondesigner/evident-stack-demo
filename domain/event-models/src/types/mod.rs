@@ -103,14 +103,14 @@ pub enum ComponentId {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Component {
-    InterfaceComponent(Interface),
-    CommandComponent(Command),
-    EventComponent(Event),
-    ReadModelComponent(ReadModel),
+    Interface(Interface),
+    Command(Command),
+    Event(Event),
+    ReadModel(ReadModel),
 }
 
 #[derive(Debug)]
-pub(crate) enum ComponentMut<'a> {
+pub enum ComponentMut<'a> {
     Interface(&'a mut Interface),
     Command(&'a mut Command),
     Event(&'a mut Event),

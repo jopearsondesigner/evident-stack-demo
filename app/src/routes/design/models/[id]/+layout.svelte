@@ -31,8 +31,8 @@
   // import Download from '$components/icons/Download.svelte';
   // import ImagePlacholder from '$components/icons/ImagePlacholder.svelte';
 
-
   // ==== Model State
+
   export let data: PageData;
   const { grid, decider, session } = data;
 
@@ -400,6 +400,89 @@
               >
             {/if}
           </aside>
+</Drawer>
+
+<div class="text-center z-[31] absolute inset-x-0 pt-4 mt-8">
+  <!--For testing-->
+  <Button
+    gradient
+    color="primary"
+    size="sm"
+    on:click={() => (hiddenRight = false)}
+    class=""
+    label="Show Sidebar"
+    />
+    <br />
+    <button on:click={() => (hiddenRight = true)} class="mt-4">Close</button>
+</div>
+
+<Drawer placement="right" className="mt-4" bind:hidden={hiddenRight} drawerRight>
+  <aside
+    class="w-[480px] h-full flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
+    >
+    {#if placementDetails}
+      <span class="w-full">
+        <h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
+          Placement Details
+        </h3>
+        <div class="w-full p-6 border rounded border-border-light dark:border-border-dark">
+          <div class="inline-flex">
+            {#if event}
+              <Icon name="event-icon" size={48} class="" pathName={EventIcon} />
+            {:else if command}
+              <Icon name="command-icon" size={48} class="" pathName={CommandIcon} />
+            {:else if readModel}
+              <Icon name="read-model-icon" size={48} class="" pathName={ReadModelIcon} />
+            {/if}
+            <h2 class="ml-3 self-end text-xl font-bold text-body-light dark:text-body-dark">
+              Component Name
+            </h2>
+          </div>
+          <p class="my-3 text-sm leading-normal text-body dark:text-white">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua.
+          </p>
+          <div class="py-3">
+            <Label color="default"
+                   ><span class="text-body dark:text-white">Component Schema</span>
+              <Textarea
+                placeholder=""
+                value={code}
+                name="description"
+                rows="6"
+                class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
+                style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
+                disabled
+                />
+            </Label>
+          </div>
+          <div class="py-3">
+            <Label color="default"
+                   ><span class="text-body dark:text-white">Placement Schema</span>
+              <Textarea
+                placeholder=""
+                value={code}
+                name="description"
+                rows="6"
+                class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
+                style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
+                disabled
+                />
+            </Label>
+          </div>
+          <div class="mt-6 mx-3 space-x-3 flex justify-end">
+            <button
+              class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
+              on:click={() => (hiddenRight = true)}>cancel</button
+                                                            >
+            <Button color="default" size="sm" label="Edit" on:click class="" />
+          </div>
+        </div>
+      </span>
+    {:else if interfaceDetails}
+      <span class="full" />
+    {/if}
+  </aside>
 </Drawer>
 
 <Modal bind:open={deleteModal} size="xs" autoclose title="Delete Event Modal">

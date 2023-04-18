@@ -53,7 +53,7 @@
     isClosed = !isClosed;
   };
   let website = false;
-  const hide = (e) => {
+  const hide = (/** @type {{ preventDefault: () => void; }} */ e) => {
     e.preventDefault();
     isClosed = true;
   };
@@ -290,91 +290,7 @@
   class:ml-[177px]={!isClosed}
   class:ease-in={!isClosed}
 >
-  <!-- <Grid
-    default_audience_placements={[
-      ,
-      ,
-      { id: '1', name: 'An interface!', description: 'blah *blah* **blah**' },
-      ,
-      ,
-      ,
-      ,
-      ,
-      ,
-      ,
-      ,
-      { id: '2', name: 'Another interface!', description: 'blah *blah* **blah**' }
-    ]}
-    audiences={[
-      {
-        name: 'A named audience',
-        placements: [
-          ,
-          ,
-          ,
-          { id: '3', name: 'An interface!', description: 'blah *blah* **blah**' },
-          ,
-          { id: '4', name: 'Another interface!', description: 'blah *blah* **blah**' }
-        ]
-      },
-      {
-        name: 'Another named audience',
-        placements: [
-          ,
-          { id: '5', name: 'An interface!', description: 'blah *blah* **blah**' },
-          ,
-          ,
-          ,
-          { id: '6', name: 'Another interface!', description: 'blah *blah* **blah**' }
-        ]
-      }
-    ]}
-    timeline_placements={[
-      ,
-      { id: '5', name: 'A command!', type: 'command', description: 'blah *blah* **blah**' },
-      ,
-      { id: '6', name: 'A read model!', type: 'readModel', description: 'blah *blah* **blah**' },
-      ,
-      { id: '7', name: 'Another command!', type: 'command', description: 'blah *blah* **blah**' },
-      {
-        id: '8',
-        name: 'Another read model!',
-        type: 'readModel',
-        description: 'blah *blah* **blah**'
-      }
-    ]}
-    streams={[
-      {
-        name: 'A named stream',
-        placements: [
-          ,
-          ,
-          ,
-          { id: '9', name: 'An event!', description: 'blah *blah* **blah**' },
-          ,
-          ,
-          ,
-          ,
-          ,
-          ,
-          ,
-          ,
-          ,
-          { id: '10', name: 'Another event!', description: 'blah *blah* **blah**' }
-        ]
-      }
-    ]}
-    default_stream_placements={[
-      ,
-      ,
-      { id: '11', name: 'An event!', description: 'blah *blah* **blah**' },
-      ,
-      ,
-      { id: '12', name: 'Another event!', description: 'blah *blah* **blah**' }
-    ]}
-    flows={[]}
-  /> -->
-  <Grid />
+  <Grid column_count={12} />
 </main>
 
 <style>

@@ -15,12 +15,12 @@
 
 <div
   on:click|preventDefault|stopPropagation={handleClick}
-  class="cell z-10 relative mb-px flex place-self-center align-items-center hover:bg-focus/[.18] transition duration-200 ease-in border-2 border-transparent"
+  class="cell relative mb-px flex place-self-center align-items-center hover:bg-focus/[.18] transition duration-200 ease-in border-2 border-transparent"
   style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
 >
   <slot />
   <div
-    class="z-[-1] relative -mr-px w-px col-border ring-offset-0 ring-white dark:ring-gray-brand-1"
+    class="relative z-[-2] left-[i42px] -mr-[1.5px] w-px col-border ring-offset-0 ring-white dark:ring-gray-brand-1"
   />
 </div>
 
@@ -29,7 +29,5 @@
   .col-border {
     --tw-ring-offset-width: 0px;
     box-shadow: 1px 0px 0px 0px var(--tw-ring-color);
-    /* box-shadow: var(--tw-ring-inset) 0px 0px 0px calc(1px + var(--tw-ring-offset-width))
-      var(--tw-ring-color); */
   }
 </style>

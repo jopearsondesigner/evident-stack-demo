@@ -30,7 +30,7 @@
 </h3>
 
 <div
-  class="timeline absolute -top-px -left-3 bottom-0 -right-6 border-t border-b border-gray-brand-2 dark:border-white"
+  class="timeline z-[-1] absolute -top-px -left-3 bottom-0 -right-6 border-t border-b border-gray-brand-2 dark:border-white"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 />
 

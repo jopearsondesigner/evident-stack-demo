@@ -271,7 +271,7 @@
 
 <h3>{mode}</h3>
 
-<div class="overflow-auto h-full w-full bg-gray-canvas dark:bg-dark-1">
+<div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <FlowCanvas {flows} />
   <div
     class="p-3 relative grid justify-items-center items-center"

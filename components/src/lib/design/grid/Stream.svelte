@@ -40,7 +40,7 @@
 
 <div
   id={stream.id}
-  class="stream absolute top-0 -left-3 bottom-0 -right-6 border-b border-gray-primary dark:border-gray-brand-3"
+  class="stream z-[-1] absolute top-0 -left-3 bottom-0 -right-6 border-b border-gray-primary dark:border-gray-brand-3"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 />
 

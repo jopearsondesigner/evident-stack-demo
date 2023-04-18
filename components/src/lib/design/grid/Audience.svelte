@@ -40,7 +40,7 @@
 
 <div
   id={audience.id}
-  class="audience absolute -top-px -left-3 bottom-0.5 -right-6 border-t border-gray-primary dark:border-gray-brand-3"
+  class="audience z-[-1] absolute -top-px -left-3 bottom-0.5 -right-6 border-t border-gray-primary dark:border-gray-brand-3"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 />
 

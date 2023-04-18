@@ -22,6 +22,7 @@ pub struct AutomergeEventModel {
     value: ReadOnlyEventModel,
 }
 
+// Top-level and re-used keys
 static ID: &str = "id";
 static NAME: &str = "name";
 static DESCRIPTION: &str = "description";
@@ -34,6 +35,23 @@ static AUDIENCES: &str = "audiences";
 static STREAMS: &str = "streams";
 static PLACEMENTS: &str = "placements";
 static FLOWS: &str = "flows";
+
+// Component and Placement keys
+static CONFIG: &str = "config";
+static TYPE: &str = "type";
+static URL: &str = "url";
+static WIDTH: &str = "width";
+static HEIGHT: &str = "height";
+
+static INDEX: &str = "index";
+static INTERFACE: &str = "interface";
+static COMMAND: &str = "command";
+static EVENT: &str = "event";
+static READ_MODEL: &str = "read_model";
+static AUDIENCE: &str = "audience";
+static STREAM: &str = "stream";
+
+static EMPTY_STR: &str = "";
 
 impl AutomergeEventModel {
     pub fn new(id: EventModelId, name: String) -> Self {
@@ -137,7 +155,7 @@ impl EventModelData for AutomergeEventModel {
 
 impl Renamable for AutomergeEventModel {
     fn rename(&mut self, name: &str) {
-        self.crdt.put(ROOT, "name", name).unwrap();
+        self.crdt.put(ROOT, NAME, name).unwrap();
         self.value.name = name.to_string();
     }
 }
@@ -171,7 +189,9 @@ impl ModifiablyDescribed for AutomergeEventModel {
         let Ok(Some((Object(ObjType::Text), obj_id))) = self.crdt.get(ROOT, DESCRIPTION) else {
             panic!("No description Text found");
         };
-        self.crdt.splice_text(&obj_id, index, count, "").unwrap();
+        self.crdt
+            .splice_text(&obj_id, index, count, EMPTY_STR)
+            .unwrap();
         self.value.description = self.crdt.text(&obj_id).unwrap();
     }
 }
@@ -206,7 +226,9 @@ impl HasModifiableSchema for AutomergeEventModel {
         let Ok(Some((Object(ObjType::Text), obj_id))) = self.crdt.get(ROOT, SCHEMA) else {
             panic!("No schema Text found");
         };
-        self.crdt.splice_text(&obj_id, index, count, "").unwrap();
+        self.crdt
+            .splice_text(&obj_id, index, count, EMPTY_STR)
+            .unwrap();
         self.value.schema = Schema(self.crdt.text(&obj_id).unwrap());
     }
 }
@@ -224,46 +246,46 @@ impl ModifiableEventModel for AutomergeEventModel {
                     .put_object(interfaces, i.id().to_string(), ObjType::Map)
                     .unwrap();
                 self.crdt
-                    .put(&interface_doc, "id", i.id().to_string())
+                    .put(&interface_doc, ID, i.id().to_string())
                     .unwrap();
-                self.crdt.put(&interface_doc, "name", i.name()).unwrap();
+                self.crdt.put(&interface_doc, NAME, i.name()).unwrap();
                 let description = self
                     .crdt
-                    .put_object(&interface_doc, "description", ObjType::Text)
+                    .put_object(&interface_doc, DESCRIPTION, ObjType::Text)
                     .unwrap();
                 self.crdt
                     .splice_text(&description, 0, 0, i.description())
                     .unwrap();
                 let config = self
                     .crdt
-                    .put_object(&interface_doc, "config", ObjType::Map)
+                    .put_object(&interface_doc, CONFIG, ObjType::Map)
                     .unwrap();
                 match i.config() {
                     event_models::types::InterfaceConfig::Blank => {
-                        self.crdt.put(&config, "type", "Blank").unwrap();
+                        self.crdt.put(&config, TYPE, "Blank").unwrap();
                     }
                     event_models::types::InterfaceConfig::Figma { url, width, height } => {
-                        self.crdt.put(&config, "type", "Figma").unwrap();
-                        self.crdt.put(&config, "url", url.to_string()).unwrap();
+                        self.crdt.put(&config, TYPE, "Figma").unwrap();
+                        self.crdt.put(&config, URL, url.to_string()).unwrap();
                         if let Some(w) = width {
-                            self.crdt.put(&config, "width", *w as u32).unwrap();
+                            self.crdt.put(&config, WIDTH, *w as u32).unwrap();
                         }
                         if let Some(h) = height {
-                            self.crdt.put(&config, "height", *h as u32).unwrap();
+                            self.crdt.put(&config, HEIGHT, *h as u32).unwrap();
                         }
                     }
                     event_models::types::InterfaceConfig::Image { url, width, height } => {
-                        self.crdt.put(&config, "type", "Image").unwrap();
-                        self.crdt.put(&config, "url", url.to_string()).unwrap();
+                        self.crdt.put(&config, TYPE, "Image").unwrap();
+                        self.crdt.put(&config, URL, url.to_string()).unwrap();
                         if let Some(w) = width {
-                            self.crdt.put(&config, "width", *w as u32).unwrap();
+                            self.crdt.put(&config, WIDTH, *w as u32).unwrap();
                         }
                         if let Some(h) = height {
-                            self.crdt.put(&config, "height", *h as u32).unwrap();
+                            self.crdt.put(&config, HEIGHT, *h as u32).unwrap();
                         }
                     }
                     event_models::types::InterfaceConfig::Job => {
-                        self.crdt.put(&config, "type", "Job").unwrap();
+                        self.crdt.put(&config, TYPE, "Job").unwrap();
                     }
                 }
                 self.value.interfaces.insert(*i.id(), i.to_owned());
@@ -277,20 +299,18 @@ impl ModifiableEventModel for AutomergeEventModel {
                     .crdt
                     .put_object(commands, c.id().to_string(), ObjType::Map)
                     .unwrap();
-                self.crdt
-                    .put(&command_doc, "id", c.id().to_string())
-                    .unwrap();
-                self.crdt.put(&command_doc, "name", c.name()).unwrap();
+                self.crdt.put(&command_doc, ID, c.id().to_string()).unwrap();
+                self.crdt.put(&command_doc, NAME, c.name()).unwrap();
                 let description = self
                     .crdt
-                    .put_object(&command_doc, "description", ObjType::Text)
+                    .put_object(&command_doc, DESCRIPTION, ObjType::Text)
                     .unwrap();
                 self.crdt
                     .splice_text(&description, 0, 0, c.description())
                     .unwrap();
                 let schema = self
                     .crdt
-                    .put_object(&command_doc, "schema", ObjType::Text)
+                    .put_object(&command_doc, SCHEMA, ObjType::Text)
                     .unwrap();
                 self.crdt.splice_text(&schema, 0, 0, &c.schema().0).unwrap();
                 self.value.commands.insert(*c.id(), c.to_owned());
@@ -304,18 +324,18 @@ impl ModifiableEventModel for AutomergeEventModel {
                     .crdt
                     .put_object(events, e.id().to_string(), ObjType::Map)
                     .unwrap();
-                self.crdt.put(&event_doc, "id", e.id().to_string()).unwrap();
-                self.crdt.put(&event_doc, "name", e.name()).unwrap();
+                self.crdt.put(&event_doc, ID, e.id().to_string()).unwrap();
+                self.crdt.put(&event_doc, NAME, e.name()).unwrap();
                 let description = self
                     .crdt
-                    .put_object(&event_doc, "description", ObjType::Text)
+                    .put_object(&event_doc, DESCRIPTION, ObjType::Text)
                     .unwrap();
                 self.crdt
                     .splice_text(&description, 0, 0, e.description())
                     .unwrap();
                 let schema = self
                     .crdt
-                    .put_object(&event_doc, "schema", ObjType::Text)
+                    .put_object(&event_doc, SCHEMA, ObjType::Text)
                     .unwrap();
                 self.crdt.splice_text(&schema, 0, 0, &e.schema().0).unwrap();
                 self.value.events.insert(*e.id(), e.to_owned());
@@ -330,19 +350,19 @@ impl ModifiableEventModel for AutomergeEventModel {
                     .put_object(read_models, r.id().to_string(), ObjType::Map)
                     .unwrap();
                 self.crdt
-                    .put(&read_model_doc, "id", r.id().to_string())
+                    .put(&read_model_doc, ID, r.id().to_string())
                     .unwrap();
-                self.crdt.put(&read_model_doc, "name", r.name()).unwrap();
+                self.crdt.put(&read_model_doc, NAME, r.name()).unwrap();
                 let description = self
                     .crdt
-                    .put_object(&read_model_doc, "description", ObjType::Text)
+                    .put_object(&read_model_doc, DESCRIPTION, ObjType::Text)
                     .unwrap();
                 self.crdt
                     .splice_text(&description, 0, 0, r.description())
                     .unwrap();
                 let schema = self
                     .crdt
-                    .put_object(&read_model_doc, "schema", ObjType::Text)
+                    .put_object(&read_model_doc, SCHEMA, ObjType::Text)
                     .unwrap();
                 self.crdt.splice_text(&schema, 0, 0, &r.schema().0).unwrap();
                 self.value.read_models.insert(*r.id(), r.to_owned());
@@ -363,7 +383,7 @@ impl ModifiableEventModel for AutomergeEventModel {
                         panic!("No interface with ID={:?} found", i.id());
                     };
 
-                self.crdt.put(interface, "name", name).unwrap();
+                self.crdt.put(interface, NAME, name).unwrap();
                 i.rename(name);
             }
             Some(ComponentMut::Command(c)) => {
@@ -377,7 +397,7 @@ impl ModifiableEventModel for AutomergeEventModel {
                         panic!("No command with ID={:?} found", c.id());
                     };
 
-                self.crdt.put(command, "name", name).unwrap();
+                self.crdt.put(command, NAME, name).unwrap();
                 c.rename(name);
             }
             Some(ComponentMut::Event(e)) => {
@@ -391,7 +411,7 @@ impl ModifiableEventModel for AutomergeEventModel {
                         panic!("No event with ID={:?} found", e.id());
                     };
 
-                self.crdt.put(event, "name", name).unwrap();
+                self.crdt.put(event, NAME, name).unwrap();
                 e.rename(name);
             }
             Some(ComponentMut::ReadModel(r)) => {
@@ -405,7 +425,7 @@ impl ModifiableEventModel for AutomergeEventModel {
                         panic!("No read model with ID={:?} found", r.id());
                     };
 
-                self.crdt.put(read_model, "name", name).unwrap();
+                self.crdt.put(read_model, NAME, name).unwrap();
                 r.rename(name);
             }
             None => panic!("Component with id {:?} not found", component_id),
@@ -413,12 +433,39 @@ impl ModifiableEventModel for AutomergeEventModel {
     }
 
     fn component_removed(&mut self, component_id: &ComponentId) {
-        match self.value.component_mut_by_id(component_id) {
-            Some(ComponentMut::Interface(i)) => todo!(),
-            Some(ComponentMut::Command(c)) => todo!(),
-            Some(ComponentMut::Event(e)) => todo!(),
-            Some(ComponentMut::ReadModel(r)) => todo!(),
-            None => todo!(),
+        match component_id {
+            ComponentId::InterfaceComponentId(id) => {
+                let Ok(Some((Object(ObjType::Map), interfaces))) =
+                    self.crdt.get(ROOT, INTERFACES) else {
+                        panic!("No interfaces Map found");
+                    };
+                self.crdt.delete(interfaces, id.to_string()).unwrap();
+                self.value.interfaces.remove(id);
+            }
+            ComponentId::CommandComponentId(id) => {
+                let Ok(Some((Object(ObjType::Map), commands))) =
+                    self.crdt.get(ROOT, COMMANDS) else {
+                        panic!("No commands Map found");
+                    };
+                self.crdt.delete(commands, id.to_string()).unwrap();
+                self.value.commands.remove(id);
+            }
+            ComponentId::EventComponentId(id) => {
+                let Ok(Some((Object(ObjType::Map), events))) =
+                    self.crdt.get(ROOT, EVENTS) else {
+                        panic!("No events Map found");
+                    };
+                self.crdt.delete(events, id.to_string()).unwrap();
+                self.value.events.remove(id);
+            }
+            ComponentId::ReadModelComponentId(id) => {
+                let Ok(Some((Object(ObjType::Map), read_models))) =
+                    self.crdt.get(ROOT, READ_MODELS) else {
+                        panic!("No read models Map found");
+                    };
+                self.crdt.delete(read_models, id.to_string()).unwrap();
+                self.value.read_models.remove(id);
+            }
         }
     }
 
@@ -495,16 +542,14 @@ impl ModifiableEventModel for AutomergeEventModel {
                 interface,
                 audience,
             } => {
-                self.crdt.put(&placement_doc, "id", id.to_string()).unwrap();
+                self.crdt.put(&placement_doc, ID, id.to_string()).unwrap();
+                self.crdt.put(&placement_doc, INDEX, *index as u32).unwrap();
                 self.crdt
-                    .put(&placement_doc, "index", *index as u32)
-                    .unwrap();
-                self.crdt
-                    .put(&placement_doc, "interface", interface.to_string())
+                    .put(&placement_doc, INTERFACE, interface.to_string())
                     .unwrap();
                 if let Some(a) = audience {
                     self.crdt
-                        .put(&placement_doc, "audience", a.to_string())
+                        .put(&placement_doc, AUDIENCE, a.to_string())
                         .unwrap();
                 }
             }
@@ -514,19 +559,17 @@ impl ModifiableEventModel for AutomergeEventModel {
                 command,
                 schema,
             } => {
-                self.crdt.put(&placement_doc, "id", id.to_string()).unwrap();
+                self.crdt.put(&placement_doc, ID, id.to_string()).unwrap();
+                self.crdt.put(&placement_doc, INDEX, *index as u32).unwrap();
                 self.crdt
-                    .put(&placement_doc, "index", *index as u32)
+                    .put(&placement_doc, COMMAND, command.to_string())
                     .unwrap();
                 self.crdt
-                    .put(&placement_doc, "command", command.to_string())
-                    .unwrap();
-                self.crdt
-                    .put(&placement_doc, "command", command.to_string())
+                    .put(&placement_doc, COMMAND, command.to_string())
                     .unwrap();
                 let schema_doc = self
                     .crdt
-                    .put_object(&placement_doc, "schema", ObjType::Text)
+                    .put_object(&placement_doc, SCHEMA, ObjType::Text)
                     .unwrap();
                 self.crdt.splice_text(&schema_doc, 0, 0, &schema.0).unwrap();
             }
@@ -537,23 +580,21 @@ impl ModifiableEventModel for AutomergeEventModel {
                 stream,
                 schema,
             } => {
-                self.crdt.put(&placement_doc, "id", id.to_string()).unwrap();
+                self.crdt.put(&placement_doc, ID, id.to_string()).unwrap();
+                self.crdt.put(&placement_doc, INDEX, *index as u32).unwrap();
                 self.crdt
-                    .put(&placement_doc, "index", *index as u32)
-                    .unwrap();
-                self.crdt
-                    .put(&placement_doc, "event", event.to_string())
+                    .put(&placement_doc, EVENT, event.to_string())
                     .unwrap();
 
                 let schema_doc = self
                     .crdt
-                    .put_object(&placement_doc, "schema", ObjType::Text)
+                    .put_object(&placement_doc, SCHEMA, ObjType::Text)
                     .unwrap();
                 self.crdt.splice_text(&schema_doc, 0, 0, &schema.0).unwrap();
 
                 if let Some(a) = stream {
                     self.crdt
-                        .put(&placement_doc, "stream", a.to_string())
+                        .put(&placement_doc, STREAM, a.to_string())
                         .unwrap();
                 }
             }
@@ -563,17 +604,15 @@ impl ModifiableEventModel for AutomergeEventModel {
                 read_model,
                 schema,
             } => {
-                self.crdt.put(&placement_doc, "id", id.to_string()).unwrap();
+                self.crdt.put(&placement_doc, ID, id.to_string()).unwrap();
+                self.crdt.put(&placement_doc, INDEX, *index as u32).unwrap();
                 self.crdt
-                    .put(&placement_doc, "index", *index as u32)
-                    .unwrap();
-                self.crdt
-                    .put(&placement_doc, "read_model", read_model.to_string())
+                    .put(&placement_doc, READ_MODEL, read_model.to_string())
                     .unwrap();
 
                 let schema_doc = self
                     .crdt
-                    .put_object(&placement_doc, "schema", ObjType::Text)
+                    .put_object(&placement_doc, SCHEMA, ObjType::Text)
                     .unwrap();
                 self.crdt.splice_text(&schema_doc, 0, 0, &schema.0).unwrap();
             }
@@ -585,11 +624,31 @@ impl ModifiableEventModel for AutomergeEventModel {
     }
 
     fn placement_moved(&mut self, position: &PlacementPosition) {
-        todo!()
+        if let Some(ref mut placement) = self.value.placements.get_mut(position.id()) {
+            let PlacementPosition(_, index, lane) = position;
+            let Ok(Some((Object(ObjType::Map), placements))) =
+                self.crdt.get(ROOT, PLACEMENTS) else { todo!() };
+            let Ok(Some((Object(ObjType::Map), placement_doc))) =
+                self.crdt.get(placements, placement.id().to_string()) else { todo!() };
+            self.crdt.put(&placement_doc, INDEX, *index as u32).unwrap();
+            match lane {
+                LaneId::Audience(id) => self
+                    .crdt
+                    .put(&placement_doc, AUDIENCE, id.to_string())
+                    .unwrap(),
+                LaneId::Stream(id) => self
+                    .crdt
+                    .put(&placement_doc, STREAM, id.to_string())
+                    .unwrap(),
+                _ => (),
+            }
+            placement.relocate(index.to_owned(), lane.to_owned());
+        };
     }
 
     fn placement_removed(&mut self, placement_id: &PlacementId) {
-        todo!()
+        let Ok(Some((Object(ObjType::Map), placements))) =
+            self.crdt.get(ROOT, PLACEMENTS) else { todo!() };
     }
 
     fn placements_shifted(&mut self, offset: &usize, width: &usize) {

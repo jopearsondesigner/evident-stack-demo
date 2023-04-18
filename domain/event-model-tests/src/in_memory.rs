@@ -79,7 +79,7 @@ fn defining_components() {
     .expect("failed to create event");
     model.component_defined(Component::Interface(interface.to_owned()));
     model.component_defined(Component::Command(command.to_owned()));
-    model.component_defined(Component::EventC(event.to_owned()));
+    model.component_defined(Component::Event(event.to_owned()));
     model.component_defined(Component::ReadModel(read_model.to_owned()));
     assert_eq!(model.interfaces().get(interface.id()), Some(&interface));
     assert_eq!(model.commands().get(command.id()), Some(&command));
@@ -122,7 +122,7 @@ fn renaming_components() {
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
     model.component_defined(Component::Interface(interface.to_owned()));
     model.component_defined(Component::Command(command.to_owned()));
-    model.component_defined(Component::EventC(event.to_owned()));
+    model.component_defined(Component::Event(event.to_owned()));
     model.component_defined(Component::ReadModel(read_model.to_owned()));
 
     let new_interface_name = "interface foo";
@@ -196,7 +196,7 @@ fn adding_to_component_description() {
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
     model.component_defined(Component::Interface(interface.to_owned()));
     model.component_defined(Component::Command(command.to_owned()));
-    model.component_defined(Component::EventC(event.to_owned()));
+    model.component_defined(Component::Event(event.to_owned()));
     model.component_defined(Component::ReadModel(read_model.to_owned()));
 
     model.added_to_component_description(
@@ -276,7 +276,7 @@ fn deleting_from_component_description() {
     let mut model = InMemoryEventModel::new(id, "foo".to_string());
     model.component_defined(Component::Interface(interface.to_owned()));
     model.component_defined(Component::Command(command.to_owned()));
-    model.component_defined(Component::EventC(event.to_owned()));
+    model.component_defined(Component::Event(event.to_owned()));
     model.component_defined(Component::ReadModel(read_model.to_owned()));
 
     model.added_to_component_description(

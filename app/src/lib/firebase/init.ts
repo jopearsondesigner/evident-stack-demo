@@ -9,6 +9,7 @@ import {
 } from '$env/static/public'
 import { getAnalytics, type Analytics } from 'firebase/analytics'
 import { initializeApp } from 'firebase/app'
+import { CACHE_SIZE_UNLIMITED, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore'
 import { getAuth, inMemoryPersistence, setPersistence } from 'firebase/auth'
 
 export const firebase = initializeApp({
@@ -22,6 +23,12 @@ export const firebase = initializeApp({
 
 export const auth = getAuth(firebase)
 setPersistence(auth, inMemoryPersistence)
+
+export let firestore = initializeFirestore(
+  firebase,
+  {localCache: persistentLocalCache({tabManager: persistentMultipleTabManager(),
+                                     cacheSizeBytes: CACHE_SIZE_UNLIMITED})}
+)
 
 export let analytics: Analytics;
 

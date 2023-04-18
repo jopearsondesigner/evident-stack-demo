@@ -4,6 +4,7 @@
   import Interface from "./Interface.svelte";
   import { createEventDispatcher } from 'svelte';
   import Cell from "./Cell.svelte";
+  import type { DragEventHandler } from "svelte/elements";
 
   const dispatch = createEventDispatcher();
 
@@ -19,18 +20,30 @@
   export let audience: Audience;
 
   $: audience.placements.length = max_column
+
+  const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
+    let transfer = e.dataTransfer;
+    console.warn("Audience Drag Start", e);
+
+    if (transfer && audience.id) {
+      console.warn(`Setting transfer with Audience ${audience.id}`);
+      transfer.setData('lane', audience.id);
+      transfer.effectAllowed = 'move';
+    }
+  }
 </script>
 
 {#if audience.name}
   <h3
-    class="audienceName sticky left-3 z-30 justify-self-start self-start cursor-pointer prose text-body-light dark:text-body-dark mt-3"
+    on:dragstart={handleDragStart}
+    class="audienceName sticky left-3 z-30 justify-self-start self-start cursor-pointer prose text-body-light dark:text-body-dark mt-3 select-none cursor-move"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};">
     {audience.name}
   </h3>
 {:else}
   <!-- TODO: reduce the color to disabled text -->
   <h3
-    class="audienceName sticky left-3 z-30 justify-self-start self-start prose text-body-light dark:text-body-dark mt-3"
+    class="audienceName sticky left-3 z-30 justify-self-start self-start prose text-body-light dark:text-body-dark mt-3 select-none"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};">
     Default Audience
   </h3>

@@ -341,7 +341,7 @@ impl ModifiableEventModel for InMemoryEventModel {
     fn placements_shifted(&mut self, offset: &usize, width: &usize) {
         self.placements.iter_mut().for_each(|(_, placement)| {
             if placement.index() >= offset {
-                placement.shift_right(*width)
+                placement.shift_right(*width);
             }
         })
     }

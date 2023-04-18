@@ -1,13 +1,12 @@
 use std::collections::HashMap;
 
-use automerge::AutoCommit;
 use event_models::{
     types::{
-        schema::HasSchema, Audience, Command, CommandId, ComponentId, ComponentMut, Described,
-        Entity, Event, EventId, FlowArrow, FlowId, Interface, InterfaceId, Named, Placement,
-        PlacementId, ReadModel, ReadModelId, Schema, Stream,
+        Audience, Command, CommandId, ComponentId, ComponentMut, Entity, Event, EventId, FlowArrow,
+        FlowId, Interface, InterfaceId, Placement, PlacementId, ReadModel, ReadModelId, Schema,
+        Stream,
     },
-    EventModelData, EventModelId,
+    EventModelId,
 };
 use uuid::Uuid;
 
@@ -47,63 +46,5 @@ impl ReadOnlyEventModel {
 impl Entity for ReadOnlyEventModel {
     fn id(&self) -> &Uuid {
         &self.id
-    }
-}
-
-impl Named for ReadOnlyEventModel {
-    fn name(&self) -> &str {
-        &self.name
-    }
-}
-
-impl Described for ReadOnlyEventModel {
-    fn description(&self) -> &str {
-        &self.description
-    }
-}
-
-impl HasSchema for ReadOnlyEventModel {
-    fn schema(&self) -> &Schema {
-        &self.schema
-    }
-}
-
-impl EventModelData for ReadOnlyEventModel {
-    fn interfaces(&self) -> &HashMap<InterfaceId, Interface> {
-        &self.interfaces
-    }
-
-    fn commands(&self) -> &HashMap<CommandId, Command> {
-        &self.commands
-    }
-
-    fn events(&self) -> &HashMap<EventId, Event> {
-        &self.events
-    }
-
-    fn read_models(&self) -> &HashMap<ReadModelId, ReadModel> {
-        &self.read_models
-    }
-
-    fn audiences(&self) -> &Vec<Audience> {
-        &self.audiences
-    }
-
-    fn streams(&self) -> &Vec<Stream> {
-        &self.streams
-    }
-
-    fn placements(&self) -> &HashMap<PlacementId, Placement> {
-        &self.placements
-    }
-
-    fn flows(&self) -> &HashMap<FlowId, FlowArrow> {
-        &self.flows
-    }
-}
-
-impl From<AutoCommit> for ReadOnlyEventModel {
-    fn from(_: AutoCommit) -> Self {
-        todo!()
     }
 }

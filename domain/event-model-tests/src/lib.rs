@@ -3,7 +3,7 @@
 extern crate assert_matches;
 
 #[cfg(test)]
-mod convergent;
+mod automerge;
 #[cfg(test)]
 mod in_memory;
 #[cfg(test)]

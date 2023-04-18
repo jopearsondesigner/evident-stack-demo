@@ -1,8 +1,9 @@
-import { default as init, EventModelStateManager } from "app-state";
+import { default as init, setPanicHook, EventModelStateManager } from "app-state";
 import { readable } from 'svelte/store';
 
 const initialize_decider = async (id: string | undefined) => {
   await init();
+  setPanicHook();
 
   let manager = new EventModelStateManager(id);
 

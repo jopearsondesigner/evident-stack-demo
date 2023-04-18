@@ -44,12 +44,6 @@ impl ReadOnlyEventModel {
     }
 }
 
-impl From<AutoCommit> for ReadOnlyEventModel {
-    fn from(_: AutoCommit) -> Self {
-        todo!()
-    }
-}
-
 impl Entity for ReadOnlyEventModel {
     fn id(&self) -> &Uuid {
         &self.id
@@ -105,5 +99,11 @@ impl EventModelData for ReadOnlyEventModel {
 
     fn flows(&self) -> &HashMap<FlowId, FlowArrow> {
         &self.flows
+    }
+}
+
+impl From<AutoCommit> for ReadOnlyEventModel {
+    fn from(_: AutoCommit) -> Self {
+        todo!()
     }
 }

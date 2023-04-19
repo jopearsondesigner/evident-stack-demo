@@ -17,29 +17,6 @@ pub enum Anchor {
     Right,
 }
 
-impl Anchor {
-    pub fn from_string(s: &str) -> Self {
-        match s {
-            "none" => Anchor::None,
-            "top" => Anchor::Top,
-            "left" => Anchor::Left,
-            "bottom" => Anchor::Bottom,
-            "right" => Anchor::Right,
-            _ => Anchor::None,
-        }
-    }
-
-    pub fn to_string(&self) -> &str {
-        match self {
-            Anchor::None => "none",
-            Anchor::Top => "top",
-            Anchor::Left => "left",
-            Anchor::Bottom => "bottom",
-            Anchor::Right => "right",
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Port {
     placement: PlacementId,

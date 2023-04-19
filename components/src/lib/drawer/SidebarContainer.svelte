@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import classNames from 'classnames';
   import { slide } from 'svelte/transition';
   import { sineIn } from 'svelte/easing';
@@ -17,13 +17,13 @@
   export let height = 28;
   export let src = '';
 
-  export let ref = null;
+  export let ref: HTMLButtonElement | null = null;
 
   import { getContext, onMount } from 'svelte';
 
   const ctx = getContext('Accordion');
 
-  let unsubscribe = undefined;
+  let unsubscribe: (() => void) | undefined = undefined;
 
   onMount(() => {
     return () => {

@@ -1,18 +1,18 @@
-<script>
+<script lang="ts">
   import classNames from 'classnames';
   import CloseButton from '../utils/CloseButton.svelte';
   import { fly } from 'svelte/transition';
   import { sineOut } from 'svelte/easing';
   import { clickOutside } from '../utils/clickOutside';
-  export let activateClickOutside = true;
-  export let hidden = true;
-  export let divClass = 'z-40 top-0 fixed h-screen bg-white dark:bg-dark-2';
-  export let className = '';
-  export let leftOffset = 'left-0';
-  export let rightOffset = 'right-0';
-  export let placement = 'left';
-  export let navbarHeight = 64;
-  export let name = '';
+  export let activateClickOutside: boolean = true;
+  export let hidden: boolean = true;
+  export let divClass: string = 'z-40 top-0 fixed h-screen bg-white dark:bg-dark-2';
+  export let className: string = '';
+  export let leftOffset: string = 'left-0';
+  export let rightOffset: string = 'right-0';
+  export let placement: 'left' | 'right';
+  export let navbarHeight: number = 64;
+  export let name: string = '';
   let transitionParams = {
     x: -240,
     duration: 200,
@@ -59,7 +59,6 @@
         size={12}
         btnClass="float-right mt-2 mr-2"
         on:click={() => (hidden = true)}
-        color={$$restProps.color}
       />
       <slot />
     </div>

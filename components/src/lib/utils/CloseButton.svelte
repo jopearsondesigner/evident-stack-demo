@@ -8,6 +8,7 @@
     dispatch('click', event);
   }
   export let btnClass = '';
+  export let name = '';
 </script>
 
 <button type="button" on:click={handleClick} class={btnClass}>

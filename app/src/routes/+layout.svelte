@@ -43,12 +43,6 @@
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
 
-  import EventIcon from '$components/icons/EventIcon.svelte';
-  import CommandIcon from '$components/icons/CommandIcon.svelte';
-  import ReadModelIcon from '$components/icons/ReadModelIcon.svelte';
-  let event = true;
-  let command = false;
-  let readModel = false;
   let isClosed = true;
   let hidden = true;
   let expanded = true;

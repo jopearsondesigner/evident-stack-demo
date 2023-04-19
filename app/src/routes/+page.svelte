@@ -13,7 +13,7 @@
   import Warning from '$components/icons/Warning.svelte';
   import Checkmark from '$components/icons/Checkmark.svelte';
   import Button from '$components/Button.svelte';
-  let ModelThumb = "bg-[url('$components/assets/images/product/design/modelThumb.svg')]";
+  import modelThumb from '$components/assets/images/product/design/modelThumb.svg';
 
   export let data: PageData;
   const { grid, decider } = data;
@@ -82,7 +82,7 @@
         <Column class="flex justify-center items-center">
           <div class:done={project.done} class="w-full flex justify-center items-center">
             <input type="checkbox" bind:checked={project.done} />
-            <IndexNavButton height={156} href="#" backgroundImg={ModelThumb}>
+            <IndexNavButton {modelThumb} height={156} href="#">
               <div class="absolute self-start -mr-2 -mt-2">
                 <IconButton size={32} on:click={() => (deleteModal = true)}
                   ><Icon

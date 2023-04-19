@@ -7,6 +7,7 @@
   import IconButton from '$lib/IconButton.svelte';
   import Add from '$lib/icons/Add.svelte';
   import Delete from '$lib/icons/Delete.svelte';
+  import modelThumb from '$lib/assets/images/product/design/modelThumb.svg';
 
   import ThemeSwitch from '$lib/utils/ThemeSwitch.svelte';
 
@@ -52,7 +53,7 @@
       <Column class="flex justify-center items-center">
         <div class:done={project.done} class="w-full flex justify-center items-center">
           <input type="checkbox" bind:checked={project.done} />
-          <IndexNavButton height={156} href="#">
+          <IndexNavButton {modelThumb} height={156} href="#">
             <div class="absolute self-start -mr-2 -mt-2">
               <IconButton size={32}
                 ><Icon

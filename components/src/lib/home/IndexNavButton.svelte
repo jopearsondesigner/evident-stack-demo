@@ -5,7 +5,7 @@
   export let hoverClass =
     'w-full h-auto bg-gradient-radial from-transparent to-transparent hover:from-[#525C6F]/[.3] hover:to-[#525C6F]/[.5]';
   export let rounded: string = '';
-  export let backgroundImg = 'bg-[url("$lib/assets/images/product/design/modelThumb.svg")]';
+  export let modelThumb: string = '';
   export let btnClass: string = 'rounded-lg';
   export let linkClass: string = '';
   export let imgClass: string = '';
@@ -18,8 +18,8 @@
   <svelte:element
     this={href ? 'a' : 'button'}
     {href}
-    class={classNames(href ? linkClass + backgroundImg : btnClass, navClass)}
-    style="height: {height}px;"
+    class={classNames(href ? linkClass : btnClass, navClass)}
+    style="height: {height}px; background-image: url({modelThumb});"
     {...$$restProps}
     on:click
     on:mouseover

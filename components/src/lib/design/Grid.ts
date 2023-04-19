@@ -16,8 +16,8 @@ export type Decider = {
   rename_lane: (kind: Lane, lane_id: string, name: string) => any,
   reorder_lane: (kind: Lane, lane_id: string, index: number) => any,
   remove_lane: (kind: Lane, lane_id: string) => any,
-  add_to_description: () => any,
-  delete_from_description: () => any,
+  add_to_description: (index: number, addition: string) => any,
+  delete_from_description: (index: number, count: number) => any,
 }
 
 export const default_decider: Decider = {

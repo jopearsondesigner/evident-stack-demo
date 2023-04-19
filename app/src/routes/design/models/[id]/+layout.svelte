@@ -55,6 +55,7 @@
       'https://cdn.dribbble.com/users/4838879/screenshots/15120947/media/92b243f9e1089780124a08943ed44f92.jpg';
 
   export let value: string | number;
+
   let types = [
     { value: 'blank', name: 'Blank' },
     { value: 'figma', name: 'Figma' },
@@ -159,8 +160,7 @@
 
 <Drawer placement="right" className="" bind:hidden={hiddenRight} drawerRight>
   <aside
-    class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
-    >
+    class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3">
     {#if placementDetails}
       <span class="w-full">
         <h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
@@ -480,7 +480,61 @@
         </div>
       </span>
     {:else if interfaceDetails}
-      <span class="full" />
+      <span class="w-full h-full pb-6">
+        <h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
+          Interface Details
+        </h3>
+        <div
+          class="w-full h-full flex flex-col items-stretch mb-6 p-6 border rounded border-border-light dark:border-border-dark">
+          <div class="inline-flex">
+            <Icon
+              name="event-icon"
+              size={48}
+              class="drop-shadow-[0_2px_1px_rgba(0,0,0,0.44)]"
+              iconColor=""
+              pathName={InterfaceIcon}
+              viewBox="0 0 48 48"
+            />
+            <h2 class="ml-3 self-end text-xl font-bold text-body-light dark:text-body-dark">
+              Interface Name
+            </h2>
+          </div>
+          <p class="my-3 text-sm leading-normal text-body dark:text-white">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua.
+          </p>
+          <Form formClass="p-3 w-full">
+            <Select
+              {ArrowDown}
+              size="sm"
+              margin="my-6"
+              items={types}
+              bind:value={selected}
+              placeholder="Choose Interface Type" />
+            {#if figma}
+              <Input class="my-6" size="sm" placeholder="Figma URL" />
+            {/if}
+          </Form>
+          {#if figma}
+            <div class="h-full">
+              <iframe
+                title="Figma example"
+                style="border: 1px solid rgba(0, 0, 0, 0.1);"
+                width="100%"
+                height="100%"
+                src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FkJQbEXGjeuvLde5DGLjUuP%2FAutonomous-Two-sided-Marketplace%3Fnode-id%3D0%253A1%26t%3DCHFyL6I3kTDpsftc-1"
+                allowfullscreen />
+            </div>
+          {/if}
+          <div class="py-3">
+            <div class="mt-6 mx-3 space-x-3 flex justify-end">
+              <button
+                class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
+                on:click={() => (hiddenRight = true)}>cancel</button>
+              <Button color="default" size="sm" label="Save" on:click class="" />
+            </div>
+          </div>
+        </div></span>
     {/if}
   </aside>
 </Drawer>

@@ -354,7 +354,7 @@ impl From<event_models::types::flow::Anchor> for FlowAnchor {
 
 pub enum Lane {
     Audience,
-    Stream
+    Stream,
 }
 
 impl TryFrom<&str> for Lane {
@@ -364,7 +364,10 @@ impl TryFrom<&str> for Lane {
         match value {
             "audience" => Ok(Self::Audience),
             "stream" => Ok(Self::Stream),
-            &_ => Err(JsValue::from(format!("Value {:?} is not a lane type", value)))
+            &_ => Err(JsValue::from(format!(
+                "Value {:?} is not a lane type",
+                value
+            ))),
         }
     }
 }

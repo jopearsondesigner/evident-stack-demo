@@ -355,8 +355,14 @@ impl EventModelStateManager {
         let lane_type = Lane::try_from(kind.as_str())?;
 
         match lane_type {
-            Lane::Audience => self.dispatch(EventModelCommand::RenameAudience(model_id, lane_id, name)).await,
-            Lane::Stream => self.dispatch(EventModelCommand::RenameStream(model_id, lane_id, name)).await,
+            Lane::Audience => {
+                self.dispatch(EventModelCommand::RenameAudience(model_id, lane_id, name))
+                    .await
+            }
+            Lane::Stream => {
+                self.dispatch(EventModelCommand::RenameStream(model_id, lane_id, name))
+                    .await
+            }
         }
     }
 
@@ -372,8 +378,14 @@ impl EventModelStateManager {
         let lane_type = Lane::try_from(kind.as_str())?;
 
         match lane_type {
-            Lane::Audience => self.dispatch(EventModelCommand::ReorderAudience(model_id, lane_id, index)).await,
-            Lane::Stream => self.dispatch(EventModelCommand::ReorderStream(model_id, lane_id, index)).await,
+            Lane::Audience => {
+                self.dispatch(EventModelCommand::ReorderAudience(model_id, lane_id, index))
+                    .await
+            }
+            Lane::Stream => {
+                self.dispatch(EventModelCommand::ReorderStream(model_id, lane_id, index))
+                    .await
+            }
         }
     }
 
@@ -388,8 +400,14 @@ impl EventModelStateManager {
         let lane_type = Lane::try_from(kind.as_str())?;
 
         match lane_type {
-            Lane::Audience => self.dispatch(EventModelCommand::RemoveAudience(model_id, lane_id)).await,
-            Lane::Stream => self.dispatch(EventModelCommand::RemoveStream(model_id, lane_id)).await,
+            Lane::Audience => {
+                self.dispatch(EventModelCommand::RemoveAudience(model_id, lane_id))
+                    .await
+            }
+            Lane::Stream => {
+                self.dispatch(EventModelCommand::RemoveStream(model_id, lane_id))
+                    .await
+            }
         }
     }
 
@@ -400,7 +418,10 @@ impl EventModelStateManager {
         addition: String,
     ) -> Result<EventModelGrid, JsValue> {
         let model_id = parse_uuid(model_id_str)?;
-        self.dispatch(EventModelCommand::AddToDescription(model_id, index, addition)).await
+        self.dispatch(EventModelCommand::AddToDescription(
+            model_id, index, addition,
+        ))
+        .await
     }
 
     pub async fn delete_from_description(
@@ -410,7 +431,10 @@ impl EventModelStateManager {
         count: usize,
     ) -> Result<EventModelGrid, JsValue> {
         let model_id = parse_uuid(model_id_str)?;
-        self.dispatch(EventModelCommand::DeleteFromDescription(model_id, index, count)).await
+        self.dispatch(EventModelCommand::DeleteFromDescription(
+            model_id, index, count,
+        ))
+        .await
     }
 
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {

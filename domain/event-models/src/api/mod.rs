@@ -654,11 +654,19 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
     }
 }
 
-fn valid_description_bounds(model: &impl EventModel, index: &usize, count: &usize) -> Result<(), EventModelError> {
+fn valid_description_bounds(
+    model: &impl EventModel,
+    index: &usize,
+    count: &usize,
+) -> Result<(), EventModelError> {
     let description = model.description().to_string();
 
     if (description.len() - 1) < (index + count) {
-        Err(EventModelError::DescriptionTextOutOfBounds(description, *index, *count))
+        Err(EventModelError::DescriptionTextOutOfBounds(
+            description,
+            *index,
+            *count,
+        ))
     } else {
         Ok(())
     }
@@ -682,18 +690,32 @@ fn valid_lane(model: &impl EventModel, lane_id: &LaneId) -> Result<(), EventMode
     }
 }
 
-fn valid_lane_index(model: &impl EventModel, lane_id: &LaneId, index: &usize) -> Result<(), EventModelError> {
+fn valid_lane_index(
+    model: &impl EventModel,
+    lane_id: &LaneId,
+    index: &usize,
+) -> Result<(), EventModelError> {
     match lane_id {
-        LaneId::Audience(_) => if (model.audiences().len() - 1) > *index {
-            Err(EventModelError::LaneIndexOutOfBounds(lane_id.to_owned(), *index))
-        } else {
-            Ok(())
-        },
-        LaneId::Stream(_) => if (model.streams().len() -1) > *index {
-            Err(EventModelError::LaneIndexOutOfBounds(lane_id.to_owned(), *index))
-        } else {
-            Ok(())
+        LaneId::Audience(_) => {
+            if model.audiences().len() < *index {
+                Err(EventModelError::LaneIndexOutOfBounds(
+                    lane_id.to_owned(),
+                    *index,
+                ))
+            } else {
+                Ok(())
+            }
         }
-        _ => Ok(())
+        LaneId::Stream(_) => {
+            if model.streams().len() < *index {
+                Err(EventModelError::LaneIndexOutOfBounds(
+                    lane_id.to_owned(),
+                    *index,
+                ))
+            } else {
+                Ok(())
+            }
+        }
+        _ => Ok(()),
     }
 }

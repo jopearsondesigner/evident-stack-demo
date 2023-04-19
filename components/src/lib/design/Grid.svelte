@@ -102,8 +102,7 @@
   const handleReorderLane = async (e: CustomEvent) => {
     console.warn("TODO: handleReorderLane");
     console.warn(e.detail);
-    let res = await decider.reorder_lane(e.detail.kind, e.detail.lane_id, e.detail.index);
-    console.warn(res);
+    decider.reorder_lane(e.detail.kind, e.detail.lane_id, e.detail.index);
   }
 
   const handleRemoveLane = async (e: CustomEvent) => {
@@ -299,18 +298,19 @@
           placements={timeline_placements}
           {max_column} />
 
-{#each streams as stream, i (stream.id)} {@const row = i + timeline_row + 1}
+{#each streams as stream, i (stream.id)} {@const row = i + timeline_row + 1} {@const lane_index = i}
   <StreamLane on:navigate_cursor={handleNavigateCursor}
               on:move_event_placement={handleMoveEventPlacement}
               on:duplicate_event_placement={handleDuplicateEventPlacement}
               on:connect_flow={handleConnectFlow}
               on:reorder_lane={handleReorderLane}
-              {row} {stream} {max_column} />
+              {row} {stream} {max_column} {lane_index} />
 {/each}
 <StreamLane on:navigate_cursor={handleNavigateCursor}
             on:move_event_placement={handleMoveEventPlacement}
             on:duplicate_event_placement={handleDuplicateEventPlacement}
             on:connect_flow={handleConnectFlow}
+            lane_index={streams.length}
             row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
 <Cursor
   on:begin_editing={handleBeginEditing}

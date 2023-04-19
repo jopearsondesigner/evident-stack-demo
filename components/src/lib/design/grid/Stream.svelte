@@ -18,6 +18,8 @@
   export let max_column: number;
 
   export let stream: Stream;
+
+  export let lane_index: number;
   
   let drop_target: 'target' | 'bad-target' | 'none' = 'none';
 
@@ -57,8 +59,8 @@
     let id = transfer?.getData("lane");
 
     if (transfer && id && transfer.effectAllowed == 'move') {
-      console.warn(`GOT A LANE DROP!!! ${id}`);
-      dispatch("reorder_lane", { kind: "stream", lane_id: id, index: gridRow});
+      console.warn(`GOT A LANE DROP!!! ${id} => index: ${lane_index}`);
+      dispatch("reorder_lane", { kind: "stream", lane_id: id, index: lane_index});
     }
   }
 
@@ -70,14 +72,14 @@
     draggable=true
     class="streamName laneName sticky left-3 z-30 justify-self-start self-end cursor-pointer prose text-body-light nndark:text-body-dark mb-3 cursor-move"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};">
-    {stream.name}
+    {stream.name + lane_index}
   </h3>
 {:else}
   <!-- TODO: reduce the color to disabled text -->
   <h3
     class="streamName sticky left-3 z-30 justify-self-start self-end prose text-body-light dark:text-body-dark mb-3 select-none"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};" >
-    Default Stream
+    Default Stream {lane_index}
   </h3>
 {/if}
 

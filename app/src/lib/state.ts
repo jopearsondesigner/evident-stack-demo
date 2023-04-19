@@ -70,7 +70,6 @@ const initialize_decider = async (id: string | undefined) => {
         return await manager.rename_lane(id!, kind, lane_id, name)
       },
       reorder_lane: async (kind: Lane, lane_id: string, index: number) => {
-        console.warn("Called??");
         return await manager.reorder_lane(id!, kind, lane_id, index)
       },
       remove_lane: async (kind: Lane, lane_id: string) => {

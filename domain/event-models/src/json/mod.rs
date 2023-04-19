@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{api::errors::EventModelError, EventModelDataTransfer};
+use crate::{EventModelDataTransfer, EventModelError};
 
 use self::{v0_1_0_beta::JsonV0_1_0BetaTransfer, v1_0_0::JsonV1_0_0Transfer};
 

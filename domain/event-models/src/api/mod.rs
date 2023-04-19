@@ -1,20 +1,17 @@
 use crate::api::commands::EventModelCommand;
-use crate::api::errors::EventModelError;
-use crate::api::errors::EventModelError::IllegalState;
 use crate::api::events::EventModelEvent;
 use crate::json::import;
-use crate::types::{
-    validate_name, Command, Component, Entity, Event, Interface, Lane, LaneId, Placement,
-    PlacementPosition, ReadModel, Schema,
+use crate::{
+    Command, Component, Entity, Event, EventModelDataTransfer, EventModelError, Interface, Lane,
+    LaneId, Name, Placement, PlacementPosition, ReadModel,
 };
-use crate::{EventModel, EventModelDataTransfer, EventModelState, ModifiableEventModel};
+use crate::{EventModel, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
 use std::fmt::Debug;
 use std::vec;
 use uuid::Uuid;
 
 pub mod commands;
-pub mod errors;
 pub mod events;
 
 impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for EventModelState<T> {
@@ -32,10 +29,10 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
         match state {
             EventModelState::BeforeCreation(_) => match cmd {
                 EventModelCommand::Create(name) => {
-                    let valid_name = validate_name(name)?;
+                    let valid_name = Name::create(name)?;
                     Ok(vec![EventModelEvent::Created(Uuid::new_v4(), valid_name)])
                 }
-                _ => Err(IllegalState(format!(
+                _ => Err(EventModelError::IllegalState(format!(
                     "Event Model not found matching command: {:?}",
                     cmd
                 ))),
@@ -43,15 +40,20 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
             EventModelState::EventModel(model) => {
                 match cmd {
                     // Event Model lifecyle and attributes
-                    EventModelCommand::Create(_) => {
-                        Err(IllegalState(format!("Model already exists: {:?}", model)))
-                    }
+                    EventModelCommand::Create(_) => Err(EventModelError::IllegalState(format!(
+                        "Model already exists: {:?}",
+                        model
+                    ))),
                     EventModelCommand::Delete(id) => Ok(vec![EventModelEvent::Deleted(*id)]),
 
                     EventModelCommand::Rename(id, name) => {
-                        let valid_name = validate_name(name)?;
+                        let valid_name = Name::create(name)?;
                         Ok(vec![EventModelEvent::Renamed(*id, valid_name)])
                     }
+                    EventModelCommand::EditDescription(_, _, _, _) => todo!(),
+                    EventModelCommand::EditSchema(_, _, _, _) => todo!(),
+
+                    // TODO: delete these:
                     EventModelCommand::AddToDescription(model_id, index, addition) => {
                         valid_description_index(model, index)?;
 
@@ -72,6 +74,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::SetSchema(_, _) => todo!(),
                     EventModelCommand::AddToSchema(_, _, _) => todo!(),
                     EventModelCommand::DeleteFromSchema(_, _) => todo!(),
+                    // </TODO: delete these:>
 
                     // Import
                     EventModelCommand::Import(model_id, offset, json) => {
@@ -84,10 +87,10 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         let data_transfer: EventModelDataTransfer = import.try_into()?;
                         let mut events: Vec<EventModelEvent> = vec![];
 
-                        let Schema(schema_str) = data_transfer.schema;
+                        let schema_str = data_transfer.schema;
                         events.push(EventModelEvent::AddedToSchema(
                             *model_id,
-                            model.schema().0.len(),
+                            model.schema().len(),
                             schema_str,
                         ));
 
@@ -175,7 +178,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         todo!()
                     }
                     EventModelCommand::RenameAudience(model_id, audience_id, name) => {
-                        let valid_name = validate_name(name)?;
+                        let valid_name = Name::create(name)?;
                         let lane_id = LaneId::Audience(*audience_id);
                         valid_lane(model, &lane_id)?;
 
@@ -186,7 +189,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::ReorderAudience(model_id, audience_id, index) => {
                         let lane_id = LaneId::Audience(*audience_id);
                         valid_lane(model, &lane_id)?;
-                        valid_lane_index(model, &lane_id, &index)?;
+                        valid_lane_index(model, &lane_id, index)?;
 
                         Ok(vec![EventModelEvent::LaneReordered(
                             *model_id, lane_id, *index,
@@ -204,18 +207,16 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::RenameStream(model_id, stream_id, name) => {
                         let lane_id = LaneId::Stream(*stream_id);
                         valid_lane(model, &lane_id)?;
-                        validate_name(name)?;
+                        let valid_name = Name::create(name)?;
 
                         Ok(vec![EventModelEvent::LaneRenamed(
-                            *model_id,
-                            lane_id,
-                            name.to_owned(),
+                            *model_id, lane_id, valid_name,
                         )])
                     }
                     EventModelCommand::ReorderStream(model_id, stream_id, index) => {
                         let lane_id = LaneId::Stream(*stream_id);
                         valid_lane(model, &lane_id)?;
-                        valid_lane_index(model, &lane_id, &index)?;
+                        valid_lane_index(model, &lane_id, index)?;
 
                         Ok(vec![EventModelEvent::LaneReordered(
                             *model_id, lane_id, *index,
@@ -311,16 +312,17 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         ])
                     }
                     EventModelCommand::RenamePlacement(model_id, placement_id, name) => {
-                        let placement = model.placements().get(placement_id).ok_or_else(|| {
+                        let placement = model.get_placement(placement_id).ok_or_else(|| {
                             EventModelError::ModificationError(format!(
                                 "No placement found with id {:?}",
                                 placement_id
                             ))
                         })?;
+                        let name = Name::create(name)?;
                         Ok(vec![EventModelEvent::ComponentRenamed(
                             *model_id,
                             placement.component_id(),
-                            name.to_string(),
+                            name,
                         )])
                     }
                     EventModelCommand::MoveInterfacePlacement(
@@ -337,8 +339,8 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             ))),
                         }?;
                         let audience = if let Some(id) = maybe_audience_id {
-                            match model.audiences().iter().find(|a| a.id() == id) {
-                                Some(a) => Ok(LaneId::Audience(*a.id())),
+                            match model.audiences().iter().find(|a| a.id() == *id) {
+                                Some(a) => Ok(LaneId::Audience(a.id())),
                                 None => Err(EventModelError::ModificationError(format!(
                                     "No audience found with id {:?}",
                                     maybe_audience_id
@@ -382,8 +384,8 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             ))),
                         }?;
                         let stream = if let Some(id) = maybe_stream_id {
-                            match model.streams().iter().find(|a| a.id() == id) {
-                                Some(a) => Ok(LaneId::Stream(*a.id())),
+                            match model.streams().iter().find(|a| a.id() == *id) {
+                                Some(a) => Ok(LaneId::Stream(a.id())),
                                 None => Err(EventModelError::ModificationError(format!(
                                     "No stream found with id {:?}",
                                     maybe_stream_id
@@ -411,7 +413,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         index,
                         maybe_audience_id,
                     ) => {
-                        let interface = match model.placements().get(placement_id) {
+                        let interface = match model.get_placement(placement_id) {
                             Some(Placement::Interface { interface, .. }) => Ok(interface),
                             _ => Err(EventModelError::ModificationError(format!(
                                 "No interface placement found with id {:?}",
@@ -419,7 +421,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             ))),
                         }?;
                         let audience = if let Some(id) = maybe_audience_id {
-                            match model.audiences().iter().find(|a| a.id() == id) {
+                            match model.audiences().iter().find(|a| a.id() == *id) {
                                 Some(a) => Ok(Some(a.id().to_owned())),
                                 None => Err(EventModelError::ModificationError(format!(
                                     "No audience found with id {:?}",
@@ -435,7 +437,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             Placement::Interface {
                                 id: Uuid::new_v4(),
                                 index: *index,
-                                interface: *interface,
+                                interface,
                                 audience,
                             },
                         )])
@@ -478,7 +480,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         index,
                         maybe_stream_id,
                     ) => {
-                        let event = match model.placements().get(placement_id) {
+                        let event = match model.get_placement(placement_id) {
                             Some(Placement::Event { event, .. }) => Ok(event),
                             _ => Err(EventModelError::ModificationError(format!(
                                 "No event placement found with id {:?}",
@@ -486,7 +488,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             ))),
                         }?;
                         let stream = if let Some(id) = maybe_stream_id {
-                            match model.streams().iter().find(|a| a.id() == id) {
+                            match model.streams().iter().find(|a| a.id() == *id) {
                                 Some(a) => Ok(Some(a.id().to_owned())),
                                 None => Err(EventModelError::ModificationError(format!(
                                     "No stream found with id {:?}",
@@ -502,7 +504,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             Placement::Event {
                                 id: Uuid::new_v4(),
                                 index: *index,
-                                event: *event,
+                                event,
                                 schema: Default::default(),
                                 stream,
                             },
@@ -513,6 +515,13 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::RenameComponent(_, _, _) => {
                         todo!()
                     }
+                    EventModelCommand::EditComponentDescription(_, _, _, _, _) => todo!(),
+                    EventModelCommand::EditComponentSchema(_, _, _, _, _) => todo!(),
+                    EventModelCommand::ConfigureInterface(_, _, _) => {
+                        todo!()
+                    }
+
+                    // TODO: delete these:
                     EventModelCommand::SetComponentDescription(_, _, _) => todo!(),
                     EventModelCommand::SetComponentSchema(_, _, _) => todo!(),
                     EventModelCommand::AddToComponentSchema(_, _, _, _) => todo!(),
@@ -523,9 +532,10 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::DeleteFromComponentDescription(_, _, _) => {
                         todo!()
                     }
-                    EventModelCommand::ConfigureInterface(_, _) => {
-                        todo!()
-                    }
+                    // </TODO: delete these:>
+
+                    // Placements
+                    EventModelCommand::EditPlacementSchema(_, _, _, _, _) => todo!(),
 
                     // Flows
                     EventModelCommand::ConnectFlow(_, _, _, _, _) => {
@@ -550,9 +560,9 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
         match state {
             EventModelState::BeforeCreation(details) => match event {
                 EventModelEvent::Created(id, name) => EventModelState::EventModel(T::create(
-                    EventModelState::BeforeCreation(details),
-                    id.to_owned(),
-                    name.to_owned(),
+                    &EventModelState::BeforeCreation(details),
+                    id,
+                    name,
                 )),
                 _ => EventModelState::BeforeCreation(details),
             },
@@ -564,49 +574,63 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                     model.rename(name);
                     EventModelState::EventModel(model)
                 }
+                EventModelEvent::DescriptionEdited(_, _) => todo!(),
+                EventModelEvent::SchemaEdited(_, _) => todo!(),
+
+                // TODO: delete these:
                 EventModelEvent::AddedToDescription(_, index, addition) => {
-                    model.add_to_description(*index, addition);
+                    model.splice_description(*index, 0, addition);
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::DeletedFromDescription(_, index, count) => {
-                    model.delete_from_description(*index, *count);
+                    model.splice_description(*index, *count, "");
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::DescriptionSet(_, _) => todo!(),
                 EventModelEvent::AddedToSchema(_, index, addition) => {
-                    model.add_to_schema(*index, addition);
+                    model.splice_schema(*index, 0, addition);
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::DeletedFromSchema(_, index, count) => {
-                    model.delete_from_schema(*index, *count);
+                    model.splice_schema(*index, *count, "");
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::SchemaSet(_, _) => todo!(),
-
+                // TODO: delete these:
                 EventModelEvent::LaneAdded(_, lane, index) => {
-                    model.lane_added(lane.to_owned(), *index);
+                    model.lane_added(lane, *index);
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::LaneRenamed(_, lane_id, name) => {
-                    model.lane_renamed(lane_id.to_owned(), name);
+                    model.lane_renamed(lane_id, name);
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::LaneReordered(_, lane_id, index) => {
-                    model.lane_reordered(lane_id.to_owned(), *index);
+                    model.lane_reordered(lane_id, *index);
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::LaneRemoved(_, lane_id) => {
-                    model.lane_removed(lane_id.to_owned());
+                    model.lane_removed(lane_id);
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::ComponentDefined(_, component) => {
-                    model.component_defined(component.to_owned());
+                    model.component_defined(component);
                     EventModelState::EventModel(model)
+                }
+                EventModelEvent::ComponentRemoved(_, _) => {
+                    todo!()
                 }
                 EventModelEvent::ComponentRenamed(_, component_id, name) => {
                     model.component_renamed(component_id, name);
                     EventModelState::EventModel(model)
                 }
+                EventModelEvent::ComponentDescriptionEdited(_, _, _) => todo!(),
+                EventModelEvent::ComponentSchemaEdited(_, _, _) => todo!(),
+                EventModelEvent::InterfaceConfigured(_, _, _) => {
+                    todo!()
+                }
+
+                // TODO: delete these:
                 EventModelEvent::AddedToComponentDescription(_, _, _, _) => {
                     todo!()
                 }
@@ -617,13 +641,7 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                 EventModelEvent::AddedToComponentSchema(_, _, _, _) => todo!(),
                 EventModelEvent::DeletedFromComponentSchema(_, _, _) => todo!(),
                 EventModelEvent::ComponentSchemaSet(_, _, _) => todo!(),
-                EventModelEvent::InterfaceConfigured(_, _) => {
-                    todo!()
-                }
-                EventModelEvent::ComponentRemoved(_, _) => {
-                    todo!()
-                }
-
+                // </TODO: delete these:>
                 EventModelEvent::ComponentPlaced(_, placement) => {
                     model.component_placed(placement);
                     EventModelState::EventModel(model)
@@ -637,12 +655,14 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::PlacementsShifted(_, offset, width) => {
-                    model.placements_shifted(offset, width);
+                    model.placements_shifted(*offset, *width);
                     EventModelState::EventModel(model)
                 }
 
+                EventModelEvent::PlacementSchemaEdited(_, _) => todo!(),
+
                 EventModelEvent::FlowConnected(_, flow_arrow) => {
-                    model.plus_flow(flow_arrow.to_owned());
+                    model.plus_flow(flow_arrow);
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::FlowDisconnected(_, _) => {
@@ -678,11 +698,11 @@ fn valid_description_index(model: &impl EventModel, index: &usize) -> Result<(),
 
 fn valid_lane(model: &impl EventModel, lane_id: &LaneId) -> Result<(), EventModelError> {
     match lane_id {
-        LaneId::Audience(id) => match model.audiences().iter().find(|a| a.id() == id) {
+        LaneId::Audience(id) => match model.audiences().iter().find(|a| a.id() == *id) {
             Some(_) => Ok(()),
             None => Err(EventModelError::LaneNotFound(lane_id.to_owned())),
         },
-        LaneId::Stream(id) => match model.streams().iter().find(|a| a.id() == id) {
+        LaneId::Stream(id) => match model.streams().iter().find(|a| a.id() == *id) {
             Some(_) => Ok(()),
             None => Err(EventModelError::LaneNotFound(lane_id.to_owned())),
         },

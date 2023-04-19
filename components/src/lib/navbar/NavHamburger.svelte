@@ -28,30 +28,34 @@
         size={32}
         viewBox="0 0 28 28"
         iconColor="text-gray-brand-1"
-        class="block dark:hidden"><OpenSidebar /></Icon
-      >
+        class="block dark:hidden"
+        pathName={OpenSidebar}
+      />
       <Icon
         name="open-sidebar-dark"
         size={32}
         viewBox="0 0 28 28"
         iconColor="text-gray-primary"
-        class="hidden dark:block"><OpenSidebarDark /></Icon
-      >
+        class="hidden dark:block"
+        pathName={OpenSidebarDark}
+      />
     {:else}
       <Icon
         name="close-sidebar"
         size={32}
         viewBox="0 0 28 28"
         iconColor="text-gray-brand-1"
-        class="block dark:hidden"><CloseSidebar /></Icon
-      >
+        class="block dark:hidden"
+        pathName={CloseSidebar}
+      />
       <Icon
         name="close-sidebar"
         size={32}
         viewBox="0 0 28 28"
         iconColor="text-gray-primary"
-        class="hidden dark:block"><CloseSidebarDark /></Icon
-      >
+        class="hidden dark:block"
+        pathName={CloseSidebarDark}
+      />
     {/if}
   </button>
 {:else}

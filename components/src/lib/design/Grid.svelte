@@ -94,6 +94,23 @@
     mode = 'navigation'
   }
 
+  const handleRenameLane = async (e: CustomEvent) => {
+    console.warn("TODO: handleRenameLane");
+    console.warn(e.detail);
+  }
+
+  const handleReorderLane = async (e: CustomEvent) => {
+    console.warn("TODO: handleReorderLane");
+    console.warn(e.detail);
+    let res = await decider.reorder_lane(e.detail.kind, e.detail.lane_id, e.detail.index);
+    console.warn(res);
+  }
+
+  const handleRemoveLane = async (e: CustomEvent) => {
+    console.warn("TODO: handleRemoveLane");
+    console.warn(e.detail);
+  }
+
   // Rows
 
   const default_audience_row = 0;
@@ -287,6 +304,7 @@
               on:move_event_placement={handleMoveEventPlacement}
               on:duplicate_event_placement={handleDuplicateEventPlacement}
               on:connect_flow={handleConnectFlow}
+              on:reorder_lane={handleReorderLane}
               {row} {stream} {max_column} />
 {/each}
 <StreamLane on:navigate_cursor={handleNavigateCursor}

@@ -22,6 +22,7 @@
 
     if (transfer && transfer.types.includes("lane")) {
       console.warn("HAS LANE");
+      e.preventDefault();
       drop_target = 'none';
     } else if (transfer && (transfer.effectAllowed == 'copy' || transfer.effectAllowed == 'move')) {
       if (transfer.types.includes(kind)) {
@@ -65,6 +66,8 @@
           dispatch('duplicate_event_placement', {id: id, index: column, stream: lane})
         }
       }
+    } else {
+      // e.preventDefault();
     }
   }
 </script>

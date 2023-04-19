@@ -1,6 +1,6 @@
 import { default as init, EventModelGrid, EventModelStateManager, setPanicHook } from "app-state";
 import { readable, type Readable } from 'svelte/store';
-import type { Decider } from '$components/design/Grid';
+import type { Decider, Lane } from '$components/design/Grid';
 
 export type InitializationPayload = {
   grid: Readable<EventModelGrid>,
@@ -65,6 +65,16 @@ const initialize_decider = async (id: string | undefined) => {
       },
       rename_placement: async (placement: string, name: string) => {
         return await manager.rename_placement(id!, placement, name)
+      },
+      rename_lane: async (kind: Lane, lane_id: string, name: string) => {
+        return await manager.rename_lane(id!, kind, lane_id, name)
+      },
+      reorder_lane: async (kind: Lane, lane_id: string, index: number) => {
+        console.warn("Called??");
+        return await manager.reorder_lane(id!, kind, lane_id, index)
+      },
+      remove_lane: async (kind: Lane, lane_id: string) => {
+        return await manager.remove_lane(id!, kind, lane_id)
       },
     }
   };

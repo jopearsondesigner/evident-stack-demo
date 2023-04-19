@@ -4,9 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
+default = ["in_memory", "automerge"]
 cbor = ["serde_cbor"]
 shared_tests = []
 in_memory = []
+automerge = ["dep:automerge", "autosurgeon"]
 
 [dependencies]
 epoch = { git = "https://github.com/Shearerbeard/Epoch", rev = "c731f85", default-features = false, features = ["in_memory"] }
@@ -14,6 +16,8 @@ itertools = "0.10.5"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_cbor = { version = "0.11", optional = true }
+automerge = { version = "0.4.0", optional = true }
+autosurgeon = { version = "0.5.0", features = ["uuid"], optional = true }
 
 [dependencies.url]
 version = "2.3"

@@ -5,7 +5,9 @@ edition = "2021"
 
 [dependencies]
 automerge = "0.4.0"
+autosurgeon = { version = "0.5.0", features = ["uuid"] }
 event-models = { path = "../event-models" }
+url = "2.3"
 
 [dependencies.uuid]
 version = "1.3"

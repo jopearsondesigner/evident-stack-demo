@@ -15,8 +15,15 @@
   $: bad_target = drop_target == 'bad-target'
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
+    console.warn("EmptyCell drag enter");
     let transfer = e.dataTransfer;
-    if (transfer && (transfer.effectAllowed == 'copy' || transfer.effectAllowed == 'move')) {
+    console.warn("TRANSFER DATA", transfer, transfer?.types);
+    console.warn(transfer?.getData("lane"));
+
+    if (transfer && transfer.types.includes("lane")) {
+      console.warn("HAS LANE");
+      drop_target = 'none';
+    } else if (transfer && (transfer.effectAllowed == 'copy' || transfer.effectAllowed == 'move')) {
       if (transfer.types.includes(kind)) {
         e.preventDefault();
         transfer.dropEffect = transfer.effectAllowed == 'copy' ? 'copy' : 'move';
@@ -35,6 +42,7 @@
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
     handleDragLeave(e);
     let transfer = e.dataTransfer;
+    console.warn("Empty Drop", transfer?.getData("lane"))
     let id = transfer?.getData(kind);
     if (transfer && id && (transfer.effectAllowed == 'copy' || transfer.effectAllowed == 'move')) {
       transfer.dropEffect = transfer.effectAllowed == 'copy' ? 'copy' : 'move';

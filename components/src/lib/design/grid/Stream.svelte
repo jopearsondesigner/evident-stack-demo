@@ -21,7 +21,7 @@
 
   $: stream.placements.length = max_column
 
-    const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
+  const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
     console.warn("Stream Drag Start", e);
 
@@ -29,7 +29,12 @@
       console.warn(`Setting transfer with stream ${stream.id}`);
       transfer.setData('lane', stream.id);
       transfer.effectAllowed = 'move';
-    }
+    } 
+  }
+
+  const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
+    let transfer = e.dataTransfer;
+    console.warn("Stream Drag Enter", e)
   }
 </script>
 
@@ -51,8 +56,7 @@
 {/if}
 
 <div
-  on:dragstart={handleDragStart}
-  draggable=true
+  on:dragenter={handleDragEnter}
   id={stream.id}
   class="stream absolute top-0 -left-3 bottom-0 -right-6 border-b border-gray-primary dark:border-gray-brand-3 cursor-move"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};" />

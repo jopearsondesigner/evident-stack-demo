@@ -11,8 +11,7 @@ use epoch::{repository::state::VersionedStateRepository, strategies::ReifyDecide
 use event_models::api::commands::EventModelCommand;
 use event_models::{
     implementation::in_memory::{InMemoryCreationDetails, InMemoryEventModel},
-    types::Entity,
-    EventModelId, EventModelState,
+    Entity, EventModelId, EventModelState,
 };
 pub use grid::EventModelGrid;
 use js_sys::{Function, Uint8Array};

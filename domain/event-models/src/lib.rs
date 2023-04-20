@@ -235,15 +235,6 @@ pub enum Component {
     ReadModel(ReadModel),
 }
 
-// TODO: move to
-#[derive(Debug)]
-pub enum ComponentMut<'a> {
-    Interface(&'a mut Interface),
-    Command(&'a mut Command),
-    Event(&'a mut Event),
-    ReadModel(&'a mut ReadModel),
-}
-
 #[derive(Debug, Clone)]
 pub(crate) struct EventModelDataTransfer {
     pub(crate) schema: String,
@@ -593,42 +584,6 @@ impl Placement {
                 None => LaneId::DefaultStream,
             },
             Placement::ReadModel { .. } => LaneId::Timeline,
-        }
-    }
-
-    // TODO: move to in-memory impl
-    pub fn shift_right(&mut self, offset: usize) {
-        match self {
-            Placement::Interface { index, .. } => *index += offset,
-            Placement::Command { index, .. } => *index += offset,
-            Placement::Event { index, .. } => *index += offset,
-            Placement::ReadModel { index, .. } => *index += offset,
-        }
-    }
-
-    // TODO: move to in-memory impl
-    pub fn relocate(&mut self, idx: PlacementIndex, lane: LaneId) {
-        match self {
-            Placement::Interface {
-                index, audience, ..
-            } => {
-                *index = idx;
-                match lane {
-                    LaneId::DefaultAudience => *audience = None,
-                    LaneId::Audience(id) => *audience = Some(id),
-                    _ => (),
-                };
-            }
-            Placement::Command { index, .. } => *index = idx,
-            Placement::Event { index, stream, .. } => {
-                *index = idx;
-                match lane {
-                    LaneId::Stream(id) => *stream = Some(id),
-                    LaneId::DefaultStream => *stream = None,
-                    _ => (),
-                }
-            }
-            Placement::ReadModel { index, .. } => *index = idx,
         }
     }
 

@@ -461,7 +461,7 @@ const RIGHT_BUFFER: usize = 10;
 impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
     fn from(state: EventModelState<InMemoryEventModel>) -> Self {
         match state {
-            EventModelState::BeforeCreation(_) => EventModelGrid {
+            EventModelState::BeforeCreation => EventModelGrid {
                 state: EventModelGridState::Unavailable,
                 id: Uuid::new_v4(),
                 name: Default::default(),

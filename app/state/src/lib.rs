@@ -45,7 +45,7 @@ pub fn set_panic_hook() {
 impl HasKey for EventModelState<InMemoryEventModel> {
     fn get_key(&self) -> Option<String> {
         match self {
-            EventModelState::BeforeCreation(_) => None,
+            EventModelState::BeforeCreation => None,
             EventModelState::EventModel(model) => Some(model.id().to_string()),
             EventModelState::Deleted(id) => Some(id.to_string()),
         }
@@ -87,16 +87,13 @@ impl EventModelStateManager {
             Ok(EventModelStateManager {
                 repository: LocalStorageStateRepository::new(
                     Some(event_model_id.to_string()),
-                    EventModelState::BeforeCreation(InMemoryCreationDetails),
+                    EventModelState::BeforeCreation,
                 ),
                 store_setter: None,
             })
         } else {
             Ok(EventModelStateManager {
-                repository: LocalStorageStateRepository::new(
-                    None,
-                    EventModelState::BeforeCreation(InMemoryCreationDetails),
-                ),
+                repository: LocalStorageStateRepository::new(None, EventModelState::BeforeCreation),
                 store_setter: None,
             })
         }

@@ -27,7 +27,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
         cmd: &Self::Cmd,
     ) -> Result<Vec<Self::Evt>, Self::Err> {
         match state {
-            EventModelState::BeforeCreation(_) => match cmd {
+            EventModelState::BeforeCreation => match cmd {
                 EventModelCommand::Create(name) => {
                     let valid_name = Name::create(name)?;
                     Ok(vec![EventModelEvent::Created(Uuid::new_v4(), valid_name)])
@@ -558,13 +558,11 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
 
     fn evolve(state: Self::State, event: &Self::Evt) -> Self::State {
         match state {
-            EventModelState::BeforeCreation(details) => match event {
-                EventModelEvent::Created(id, name) => EventModelState::EventModel(T::create(
-                    &EventModelState::BeforeCreation(details),
-                    id,
-                    name,
-                )),
-                _ => EventModelState::BeforeCreation(details),
+            EventModelState::BeforeCreation => match event {
+                EventModelEvent::Created(id, name) => {
+                    EventModelState::EventModel(T::create(&state, id, name))
+                }
+                _ => EventModelState::BeforeCreation,
             },
             EventModelState::EventModel(mut model) => match event {
                 EventModelEvent::Created(_, _) => EventModelState::EventModel(model),

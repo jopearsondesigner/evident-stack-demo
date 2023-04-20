@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
   import classNames from 'classnames';
   import { slide } from 'svelte/transition';
   import { sineIn } from 'svelte/easing';
@@ -17,31 +17,39 @@
   export let height = 28;
   export let src = '';
 
-  export let ref: HTMLButtonElement | null = null;
+  /**
+   * Obtain a reference to the `button` element
+   * @type {HTMLButtonElement | null}
+   */
+  export let ref = null;
 
   import { getContext, onMount } from 'svelte';
 
   const ctx = getContext('Accordion');
 
-  let unsubscribe: (() => void) | undefined = undefined;
+  /**
+   * @type {(() => void) | undefined}
+   */
+  let unsubscribe = undefined;
 
   onMount(() => {
     return () => {
       if (ctx) ctx.remove({ id });
       if (unsubscribe) unsubscribe();
+      console.log(ctx);
     };
   });
 
   $: button_id = `button-${id}`;
   $: if (ctx) {
     ctx.add({ id, expanded });
-    unsubscribe = ctx.items.subscribe((value) => {
+    unsubscribe = ctx.items.subscribe((/** @type {{ [x: string]: boolean; }} */ value) => {
       expanded = value[id];
     });
   }
 
   export let disabled = false;
-  export let isClosed = true;
+  export const isClosed = true;
 </script>
 
 <li data-accordion-item {...$$restProps} class:grow={expanded}>

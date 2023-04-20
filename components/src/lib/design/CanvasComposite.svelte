@@ -1,10 +1,11 @@
 <script>
   import 'components/src/app.css';
-  import { Accordion, AccordionItem } from 'svelte-accessible-accordion';
+  // import { Accordion, AccordionItem } from 'svelte-accessible-accordion';
   import Grid from '$lib/design/Grid.svelte';
   import Drawer from '$lib/drawer/Drawer.svelte';
   import Sidebar from '$lib/drawer/Sidebar.svelte';
   import SidebarWrapper from '$lib/drawer/SidebarWrapper.svelte';
+  import Accordion from '$lib/drawer/Accordion.svelte';
   import SidebarContainer from '$lib/drawer/SidebarContainer.svelte';
   import SidebarGroup from '$lib/drawer/SidebarGroup.svelte';
   import SidebarDropdownWrapper from '$lib/drawer/SidebarDropdownWrapper.svelte';
@@ -104,7 +105,7 @@
 </Navbar>
 
 <span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 mt-16"><ThemeSwitch /></span>
-<Drawer {hidden} className="mt-4">
+<Drawer placement="left" {hidden} className="mt-4">
   <Sidebar class={!isClosed ? 'w-[417px]' : 'w-[240px]'} {isClosed}>
     <SidebarWrapper>
       <Accordion>

@@ -12,7 +12,7 @@ use autosurgeon::{Hydrate, Reconcile, Text};
 use uuid::Uuid;
 
 #[derive(Reconcile, Hydrate, Debug)]
-pub struct AutoName(String);
+struct AutoName(String);
 
 impl AutoName {
     fn create(value: &str) -> Result<Self, EventModelError> {
@@ -34,7 +34,7 @@ impl From<&AutoName> for Name {
 }
 
 #[derive(Reconcile, Hydrate, Debug)]
-pub enum AutoInterfaceConfig {
+enum AutoInterfaceConfig {
     Blank,
     Figma {
         url: String,
@@ -62,7 +62,7 @@ impl From<&InterfaceConfig> for AutoInterfaceConfig {
 }
 
 #[derive(Reconcile, Hydrate, Debug)]
-pub struct AutoInterface {
+struct AutoInterface {
     #[key]
     id: Uuid,
     name: AutoName,
@@ -83,7 +83,7 @@ impl From<&Interface> for AutoInterface {
 }
 
 #[derive(Reconcile, Hydrate, Debug)]
-pub struct AutoCommand {
+struct AutoCommand {
     #[key]
     id: Uuid,
     name: AutoName,
@@ -104,7 +104,7 @@ impl From<&Command> for AutoCommand {
 }
 
 #[derive(Reconcile, Hydrate, Debug)]
-pub struct AutoEvent {
+struct AutoEvent {
     #[key]
     id: Uuid,
     name: AutoName,
@@ -125,7 +125,7 @@ impl From<&Event> for AutoEvent {
 }
 
 #[derive(Reconcile, Hydrate, Debug)]
-pub struct AutoReadModel {
+struct AutoReadModel {
     #[key]
     id: Uuid,
     name: AutoName,
@@ -146,7 +146,7 @@ impl From<&ReadModel> for AutoReadModel {
 }
 
 #[derive(Reconcile, Hydrate, Debug)]
-pub struct AutoAudience {
+struct AutoAudience {
     #[key]
     id: Uuid,
     name: AutoName,
@@ -165,7 +165,7 @@ impl From<&Audience> for AutoAudience {
 }
 
 #[derive(Reconcile, Hydrate, Debug)]
-pub struct AutoStream {
+struct AutoStream {
     #[key]
     id: Uuid,
     name: AutoName,
@@ -184,7 +184,7 @@ impl From<&Stream> for AutoStream {
 }
 
 #[derive(Reconcile, Hydrate, Debug)]
-pub enum AutoPlacement {
+enum AutoPlacement {
     Interface {
         #[key]
         id: Uuid,
@@ -217,7 +217,7 @@ pub enum AutoPlacement {
 }
 
 impl AutoPlacement {
-    pub fn index(&self) -> PlacementIndex {
+    fn index(&self) -> PlacementIndex {
         match self {
             AutoPlacement::Interface { index, .. } => *index as usize,
             AutoPlacement::Command { index, .. } => *index as usize,
@@ -226,7 +226,7 @@ impl AutoPlacement {
         }
     }
 
-    pub fn shift_right(&mut self, offset: usize) {
+    fn shift_right(&mut self, offset: usize) {
         match self {
             AutoPlacement::Interface { index, .. } => *index += offset as u32,
             AutoPlacement::Command { index, .. } => *index += offset as u32,
@@ -235,7 +235,7 @@ impl AutoPlacement {
         }
     }
 
-    pub fn relocate(&mut self, idx: PlacementIndex, lane: LaneId) {
+    fn relocate(&mut self, idx: PlacementIndex, lane: LaneId) {
         match self {
             AutoPlacement::Interface {
                 index, audience, ..
@@ -285,7 +285,7 @@ impl Entity for AutoPlacement {
 }
 
 #[derive(Reconcile, Hydrate, Debug)]
-pub enum AutoAnchor {
+enum AutoAnchor {
     None,
     Top,
     Left,
@@ -306,7 +306,7 @@ impl From<&Anchor> for AutoAnchor {
 }
 
 #[derive(Reconcile, Hydrate, Debug)]
-pub struct AutoFlowArrow {
+struct AutoFlowArrow {
     #[key]
     id: Uuid,
     from_placement: Uuid,
@@ -327,7 +327,12 @@ impl From<&FlowArrow> for AutoFlowArrow {
     }
 }
 
-//  Event Model Implementation
+enum AutoComponentMut<'a> {
+    Interface(&'a mut AutoInterface),
+    Command(&'a mut AutoCommand),
+    Event(&'a mut AutoEvent),
+    ReadModel(&'a mut AutoReadModel),
+}
 
 #[derive(Reconcile, Hydrate, Debug)]
 pub struct AutomergeEventModel {
@@ -344,13 +349,6 @@ pub struct AutomergeEventModel {
     streams: Vec<AutoStream>,
     placements: HashMap<String, AutoPlacement>,
     flows: HashMap<String, AutoFlowArrow>,
-}
-
-pub enum AutoComponentMut<'a> {
-    Interface(&'a mut AutoInterface),
-    Command(&'a mut AutoCommand),
-    Event(&'a mut AutoEvent),
-    ReadModel(&'a mut AutoReadModel),
 }
 
 impl AutomergeEventModel {

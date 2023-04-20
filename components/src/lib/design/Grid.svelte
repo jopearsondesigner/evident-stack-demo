@@ -27,6 +27,10 @@
 
   let mode: GridMode = 'loading'
 
+  let dragginLane: string | undefined; 
+  let draggingLaneType: 'stream' | 'audience' | 'none' = 'none';
+  let draggingTargetIndex: number | undefined;
+
   onMount(() => {
     mode = 'navigation'
   })
@@ -60,6 +64,7 @@
     disambiguation = e.detail;
   }
 
+  // Placement Events
   const handleMoveInterfacePlacement = async (e: CustomEvent) => {
     await decider.move_interface_placement(e.detail.id, e.detail.index, e.detail.audience);
   }
@@ -92,6 +97,27 @@
   const handleRenamePlacement = async (e: CustomEvent) => {
     await decider.rename_placement(e.detail.placement, e.detail.name);
     mode = 'navigation'
+  }
+
+  // Lane Events
+  const handleLaneDragStart = async (e: CustomEvent) => {
+    let laneId: string = e.detail.laneId;
+    let laneType: 'stream' | 'audience' = e.detail.laneType;
+    dragginLane = laneId;
+    draggingLaneType = laneType;
+  }
+
+  const handleLaneDragEnter = async (e: CustomEvent) => {
+    let laneIndex: number = e.detail.laneIndex;
+    let laneType: 'stream' | 'audience' = e.detail.laneType;
+
+    if (laneType == draggingLaneType) {
+      draggingTargetIndex = laneIndex;
+    }
+  }
+
+  const handleLaneDragLeave = async (e: CustomEvent) => {
+    draggingTargetIndex = undefined;
   }
 
   const handleRenameLane = async (e: CustomEvent) => {

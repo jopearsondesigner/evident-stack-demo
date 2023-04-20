@@ -3,10 +3,10 @@ use std::collections::HashMap;
 use uuid::Uuid;
 
 use crate::{
-    Audience, Command, CommandId, Component, ComponentId, ComponentMut, Described, Entity, Event,
-    EventId, EventModel, EventModelData, EventModelId, EventModelState, FlowArrow, FlowId,
-    HasSchema, Interface, InterfaceId, Lane, LaneId, LaneIndex, ModifiableEventModel, Name, Named,
-    Placement, PlacementId, PlacementPosition, ReadModel, ReadModelId, Stream,
+    Audience, Command, CommandId, Component, ComponentId, Described, Entity, Event, EventId,
+    EventModel, EventModelData, EventModelId, EventModelState, FlowArrow, FlowId, HasSchema,
+    Interface, InterfaceId, Lane, LaneId, LaneIndex, ModifiableEventModel, Name, Named, Placement,
+    PlacementId, PlacementIndex, PlacementPosition, ReadModel, ReadModelId, Stream,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -23,6 +23,50 @@ pub struct InMemoryEventModel {
     streams: Vec<Stream>,
     placements: HashMap<PlacementId, Placement>,
     flows: HashMap<FlowId, FlowArrow>,
+}
+
+#[derive(Debug)]
+pub enum ComponentMut<'a> {
+    Interface(&'a mut Interface),
+    Command(&'a mut Command),
+    Event(&'a mut Event),
+    ReadModel(&'a mut ReadModel),
+}
+
+impl Placement {
+    pub fn shift_right(&mut self, offset: usize) {
+        match self {
+            Placement::Interface { index, .. } => *index += offset,
+            Placement::Command { index, .. } => *index += offset,
+            Placement::Event { index, .. } => *index += offset,
+            Placement::ReadModel { index, .. } => *index += offset,
+        }
+    }
+
+    pub fn relocate(&mut self, idx: PlacementIndex, lane: LaneId) {
+        match self {
+            Placement::Interface {
+                index, audience, ..
+            } => {
+                *index = idx;
+                match lane {
+                    LaneId::DefaultAudience => *audience = None,
+                    LaneId::Audience(id) => *audience = Some(id),
+                    _ => (),
+                };
+            }
+            Placement::Command { index, .. } => *index = idx,
+            Placement::Event { index, stream, .. } => {
+                *index = idx;
+                match lane {
+                    LaneId::Stream(id) => *stream = Some(id),
+                    LaneId::DefaultStream => *stream = None,
+                    _ => (),
+                }
+            }
+            Placement::ReadModel { index, .. } => *index = idx,
+        }
+    }
 }
 
 impl InMemoryEventModel {
@@ -141,17 +185,26 @@ impl EventModelData for InMemoryEventModel {
     }
 }
 
+fn splice_string(s: &mut String, pos: usize, del: usize, add: &str) {
+    (0..del).for_each(|_i| {
+        s.remove(pos);
+    });
+    s.insert_str(pos, add);
+}
+
 impl ModifiableEventModel for InMemoryEventModel {
     fn rename(&mut self, name: &Name) {
-        todo!()
+        self.name = name.to_owned();
     }
 
     fn splice_description(&mut self, index: usize, del: usize, add: &str) {
-        todo!()
+        let s = &mut self.description;
+        splice_string(s, index, del, add);
     }
 
     fn splice_schema(&mut self, index: usize, del: usize, add: &str) {
-        todo!()
+        let s = &mut self.schema;
+        splice_string(s, index, del, add);
     }
 
     fn component_defined(&mut self, component: &Component) {
@@ -176,12 +229,10 @@ impl ModifiableEventModel for InMemoryEventModel {
             None => {
                 panic!("Component with id {:?} not found", component_id)
             }
-            Some(component) => match component {
-                ComponentMut::Interface(i) => i.name = name.to_owned(),
-                ComponentMut::Command(c) => c.name = name.to_owned(),
-                ComponentMut::Event(e) => e.name = name.to_owned(),
-                ComponentMut::ReadModel(r) => r.name = name.to_owned(),
-            },
+            Some(ComponentMut::Interface(i)) => i.name = name.to_owned(),
+            Some(ComponentMut::Command(c)) => c.name = name.to_owned(),
+            Some(ComponentMut::Event(e)) => e.name = name.to_owned(),
+            Some(ComponentMut::ReadModel(r)) => r.name = name.to_owned(),
         }
     }
 
@@ -209,62 +260,28 @@ impl ModifiableEventModel for InMemoryEventModel {
         del: usize,
         addition: &str,
     ) {
-        todo!()
+        match self.component_mut_by_id(component_id) {
+            Some(ComponentMut::Interface(i)) => {
+                let s = &mut i.description;
+                splice_string(s, index, del, addition);
+            }
+            Some(ComponentMut::Command(c)) => {
+                let s = &mut c.description;
+                splice_string(s, index, del, addition);
+            }
+            Some(ComponentMut::Event(e)) => {
+                let s = &mut e.description;
+                splice_string(s, index, del, addition);
+            }
+            Some(ComponentMut::ReadModel(r)) => {
+                let s = &mut r.description;
+                splice_string(s, index, del, addition);
+            }
+            None => {
+                panic!("Component with id {:?} not found", component_id)
+            }
+        }
     }
-
-    // fn added_to_component_description(
-    //     &mut self,
-    //     component_id: &ComponentId,
-    //     index: usize,
-    //     addition: &str,
-    // ) {
-    //     match self.component_mut_by_id(component_id) {
-    //         None => {
-    //             panic!("Component with id {:?} not found", component_id)
-    //         }
-    //         Some(component) => match component {
-    //             ComponentMut::Interface(i) => {
-    //                 i.add_to_description(index, addition);
-    //             }
-    //             ComponentMut::Command(c) => {
-    //                 c.add_to_description(index, addition);
-    //             }
-    //             ComponentMut::Event(e) => {
-    //                 e.add_to_description(index, addition);
-    //             }
-    //             ComponentMut::ReadModel(r) => {
-    //                 r.add_to_description(index, addition);
-    //             }
-    //         },
-    //     }
-    // }
-
-    // fn deleted_from_component_description(
-    //     &mut self,
-    //     component_id: &ComponentId,
-    //     index: usize,
-    //     count: usize,
-    // ) {
-    //     match self.component_mut_by_id(component_id) {
-    //         None => {
-    //             panic!("Component with id {:?} not found", component_id)
-    //         }
-    //         Some(component) => match component {
-    //             ComponentMut::Interface(i) => {
-    //                 i.delete_from_description(index, count);
-    //             }
-    //             ComponentMut::Command(c) => {
-    //                 c.delete_from_description(index, count);
-    //             }
-    //             ComponentMut::Event(e) => {
-    //                 e.delete_from_description(index, count);
-    //             }
-    //             ComponentMut::ReadModel(r) => {
-    //                 r.delete_from_description(index, count);
-    //             }
-    //         },
-    //     }
-    // }
 
     fn splice_component_schema(
         &mut self,
@@ -273,58 +290,25 @@ impl ModifiableEventModel for InMemoryEventModel {
         del: usize,
         addition: &str,
     ) {
-        todo!()
+        match self.component_mut_by_id(component_id) {
+            Some(ComponentMut::Interface(_)) => (),
+            Some(ComponentMut::Command(c)) => {
+                let s = &mut c.schema;
+                splice_string(s, index, del, addition);
+            }
+            Some(ComponentMut::Event(e)) => {
+                let s = &mut e.schema;
+                splice_string(s, index, del, addition);
+            }
+            Some(ComponentMut::ReadModel(r)) => {
+                let s = &mut r.schema;
+                splice_string(s, index, del, addition);
+            }
+            None => {
+                panic!("Component with id {:?} not found", component_id)
+            }
+        }
     }
-
-    // fn added_to_component_schema(
-    //     &mut self,
-    //     component_id: &ComponentId,
-    //     index: usize,
-    //     addition: &str,
-    // ) {
-    //     match self.component_mut_by_id(component_id) {
-    //         None => {
-    //             panic!("Component with id {:?} not found", component_id)
-    //         }
-    //         Some(component) => match component {
-    //             ComponentMut::Interface(_) => (),
-    //             ComponentMut::Command(c) => {
-    //                 c.add_to_schema(index, addition);
-    //             }
-    //             ComponentMut::Event(e) => {
-    //                 e.add_to_schema(index, addition);
-    //             }
-    //             ComponentMut::ReadModel(r) => {
-    //                 r.add_to_schema(index, addition);
-    //             }
-    //         },
-    //     }
-    // }
-
-    // fn deleted_from_component_schema(
-    //     &mut self,
-    //     component_id: &ComponentId,
-    //     index: usize,
-    //     count: usize,
-    // ) {
-    //     match self.component_mut_by_id(component_id) {
-    //         None => {
-    //             panic!("Component with id {:?} not found", component_id)
-    //         }
-    //         Some(component) => match component {
-    //             ComponentMut::Interface(_) => (),
-    //             ComponentMut::Command(c) => {
-    //                 c.delete_from_schema(index, count);
-    //             }
-    //             ComponentMut::Event(e) => {
-    //                 e.delete_from_schema(index, count);
-    //             }
-    //             ComponentMut::ReadModel(r) => {
-    //                 r.delete_from_schema(index, count);
-    //             }
-    //         },
-    //     }
-    // }
 
     fn component_placed(&mut self, placement: &Placement) {
         self.placements
@@ -357,44 +341,22 @@ impl ModifiableEventModel for InMemoryEventModel {
         del: usize,
         addition: &str,
     ) {
-        todo!()
+        match self.placements.get_mut(placement_id) {
+            Some(Placement::Interface { .. }) => (),
+            Some(Placement::Command { schema, .. }) => {
+                splice_string(schema, index, del, addition);
+            }
+            Some(Placement::Event { schema, .. }) => {
+                splice_string(schema, index, del, addition);
+            }
+            Some(Placement::ReadModel { schema, .. }) => {
+                splice_string(schema, index, del, addition);
+            }
+            None => {
+                panic!("Placement with id {:?} not found", placement_id)
+            }
+        }
     }
-
-    // fn added_to_placement_schema(
-    //     &mut self,
-    //     placement_id: &PlacementId,
-    //     index: usize,
-    //     addition: &str,
-    // ) {
-    //     if let Some(placement) = self.placements.get(placement_id) {
-    //         if let Some(component_mut) = self.component_mut_by_id(&placement.component_id()) {
-    //             match component_mut {
-    //                 ComponentMut::Interface(_) => (),
-    //                 ComponentMut::Command(c) => c.add_to_schema(index, addition),
-    //                 ComponentMut::Event(e) => e.add_to_schema(index, addition),
-    //                 ComponentMut::ReadModel(r) => r.add_to_schema(index, addition),
-    //             };
-    //         }
-    //     }
-    // }
-
-    // fn deleted_from_placement_schema(
-    //     &mut self,
-    //     placement_id: &PlacementId,
-    //     index: usize,
-    //     count: usize,
-    // ) {
-    //     if let Some(placement) = self.placements.get(placement_id) {
-    //         if let Some(component_mut) = self.component_mut_by_id(&placement.component_id()) {
-    //             match component_mut {
-    //                 ComponentMut::Interface(_) => (),
-    //                 ComponentMut::Command(c) => c.delete_from_schema(index, count),
-    //                 ComponentMut::Event(e) => e.delete_from_schema(index, count),
-    //                 ComponentMut::ReadModel(r) => r.delete_from_schema(index, count),
-    //             };
-    //         }
-    //     }
-    // }
 
     fn lane_added(&mut self, lane: &Lane, index: LaneIndex) {
         match lane {

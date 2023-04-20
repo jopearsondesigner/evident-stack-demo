@@ -419,11 +419,9 @@ impl HasSchema for AutomergeEventModel {
 }
 
 impl EventModel for AutomergeEventModel {
-    type CreationDetails = ();
-
     fn create(initial: &EventModelState<Self>, id: &EventModelId, name: &Name) -> Self {
         match initial {
-            EventModelState::BeforeCreation(_) => AutomergeEventModel::new(id, name.into()),
+            EventModelState::BeforeCreation => AutomergeEventModel::new(id, name.into()),
             _ => panic!("Illegal state when creating Automerge Event Model!"),
         }
     }

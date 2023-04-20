@@ -133,15 +133,10 @@ impl HasSchema for InMemoryEventModel {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct InMemoryCreationDetails;
-
 impl EventModel for InMemoryEventModel {
-    type CreationDetails = InMemoryCreationDetails;
-
     fn create(initial: &EventModelState<Self>, id: &EventModelId, name: &Name) -> Self {
         match initial {
-            EventModelState::BeforeCreation(_) => InMemoryEventModel::new(id, name),
+            EventModelState::BeforeCreation => InMemoryEventModel::new(id, name),
             _ => panic!("Illegal state when creating Event Model!"),
         }
     }

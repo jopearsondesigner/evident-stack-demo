@@ -18,14 +18,12 @@ pub type EventModelId = Uuid;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventModelState<T: EventModel> {
-    BeforeCreation(T::CreationDetails),
+    BeforeCreation,
     EventModel(T),
     Deleted(EventModelId),
 }
 
 pub trait EventModel: Described + EventModelData + Sized {
-    type CreationDetails: Clone + Debug;
-
     fn create(initial: &EventModelState<Self>, id: &EventModelId, name: &Name) -> Self;
 }
 
@@ -565,10 +563,10 @@ pub enum Placement {
 impl Placement {
     pub fn index(&self) -> &PlacementIndex {
         match self {
-            Placement::Interface { index, .. } => &index,
-            Placement::Command { index, .. } => &index,
-            Placement::Event { index, .. } => &index,
-            Placement::ReadModel { index, .. } => &index,
+            Placement::Interface { index, .. } => index,
+            Placement::Command { index, .. } => index,
+            Placement::Event { index, .. } => index,
+            Placement::ReadModel { index, .. } => index,
         }
     }
 

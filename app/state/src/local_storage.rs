@@ -11,14 +11,12 @@ use epoch::repository::{
     RepositoryVersion,
 };
 
+use crate::HasKey;
+
 #[derive(Debug, Clone)]
 pub struct LocalStorageStateRepository<State: HasKey + Debug> {
     key: Option<String>,
     initial: State,
-}
-
-pub trait HasKey {
-    fn get_key(&self) -> Option<String>;
 }
 
 impl<State> LocalStorageStateRepository<State>

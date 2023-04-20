@@ -19,6 +19,8 @@
 
   export let audience: Audience;
 
+  export let lane_index: number;
+
   $: audience.placements.length = max_column
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {

@@ -94,6 +94,22 @@
     mode = 'navigation'
   }
 
+  const handleRenameLane = async (e: CustomEvent) => {
+    console.warn("TODO: handleRenameLane");
+    console.warn(e.detail);
+  }
+
+  const handleReorderLane = async (e: CustomEvent) => {
+    console.warn("TODO: handleReorderLane");
+    console.warn(e.detail);
+    decider.reorder_lane(e.detail.kind, e.detail.lane_id, e.detail.index);
+  }
+
+  const handleRemoveLane = async (e: CustomEvent) => {
+    console.warn("TODO: handleRemoveLane");
+    console.warn(e.detail);
+  }
+
   // Rows
 
   const default_audience_row = 0;
@@ -262,16 +278,17 @@
       on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
       on:connect_flow={handleConnectFlow}
       row={default_audience_row}
+      lane_index={audiences.length}
       audience={{placements: default_audience_placements}}
       {max_column} />
 
-    {#each audiences as audience, i (audience.id)} {@const row = i + 1}
+    {#each audiences as audience, lane_index (audience.id)} {@const row = lane_index + 1}
       <AudienceLane
         on:navigate_cursor={handleNavigateCursor}
         on:move_interface_placement={handleMoveInterfacePlacement}
         on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
         on:connect_flow={handleConnectFlow}
-        {row} {audience} {max_column} />
+        {row} {audience} {max_column} {lane_index} />
     {/each}
 
 <Timeline on:navigate_cursor={handleNavigateCursor}
@@ -282,17 +299,19 @@
           placements={timeline_placements}
           {max_column} />
 
-{#each streams as stream, i (stream.id)} {@const row = i + timeline_row + 1}
+{#each streams as stream, lane_index (stream.id)} {@const row = lane_index + timeline_row + 1} 
   <StreamLane on:navigate_cursor={handleNavigateCursor}
               on:move_event_placement={handleMoveEventPlacement}
               on:duplicate_event_placement={handleDuplicateEventPlacement}
               on:connect_flow={handleConnectFlow}
-              {row} {stream} {max_column} />
+              on:reorder_lane={handleReorderLane}
+              {row} {stream} {max_column} {lane_index} />
 {/each}
 <StreamLane on:navigate_cursor={handleNavigateCursor}
             on:move_event_placement={handleMoveEventPlacement}
             on:duplicate_event_placement={handleDuplicateEventPlacement}
             on:connect_flow={handleConnectFlow}
+            lane_index={streams.length}
             row={default_stream_row} stream={{placements: default_stream_placements}} {max_column} />
 <Cursor
   on:begin_editing={handleBeginEditing}

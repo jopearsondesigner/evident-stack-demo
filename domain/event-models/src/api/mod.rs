@@ -10,6 +10,7 @@ use crate::types::{
 use crate::{EventModel, EventModelDataTransfer, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
 use std::fmt::Debug;
+use std::vec;
 use uuid::Uuid;
 
 pub mod commands;
@@ -51,11 +52,21 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         let valid_name = validate_name(name)?;
                         Ok(vec![EventModelEvent::Renamed(*id, valid_name)])
                     }
-                    EventModelCommand::AddToDescription(_, _index, _addition) => {
-                        todo!()
+                    EventModelCommand::AddToDescription(model_id, index, addition) => {
+                        valid_description_index(model, index)?;
+
+                        Ok(vec![EventModelEvent::AddedToDescription(
+                            *model_id,
+                            *index,
+                            addition.to_owned(),
+                        )])
                     }
-                    EventModelCommand::DeleteFromDescription(_, _) => {
-                        todo!()
+                    EventModelCommand::DeleteFromDescription(model_id, index, count) => {
+                        valid_description_bounds(model, index, count)?;
+
+                        Ok(vec![EventModelEvent::DeletedFromDescription(
+                            *model_id, *index, *count,
+                        )])
                     }
                     EventModelCommand::SetDescription(_, _) => todo!(),
                     EventModelCommand::SetSchema(_, _) => todo!(),
@@ -163,26 +174,58 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::AddAudience(_, _, _) => {
                         todo!()
                     }
-                    EventModelCommand::RenameAudience(_, _, _) => {
-                        todo!()
+                    EventModelCommand::RenameAudience(model_id, audience_id, name) => {
+                        let valid_name = validate_name(name)?;
+                        let lane_id = LaneId::Audience(*audience_id);
+                        valid_lane(model, &lane_id)?;
+
+                        Ok(vec![EventModelEvent::LaneRenamed(
+                            *model_id, lane_id, valid_name,
+                        )])
                     }
-                    EventModelCommand::ReorderAudience(_, _, _) => {
-                        todo!()
+                    EventModelCommand::ReorderAudience(model_id, audience_id, index) => {
+                        let lane_id = LaneId::Audience(*audience_id);
+                        valid_lane(model, &lane_id)?;
+                        valid_lane_index(model, &lane_id, &index)?;
+
+                        Ok(vec![EventModelEvent::LaneReordered(
+                            *model_id, lane_id, *index,
+                        )])
                     }
-                    EventModelCommand::RemoveAudience(_, _) => {
-                        todo!()
+                    EventModelCommand::RemoveAudience(model_id, audience_id) => {
+                        let lane_id = LaneId::Audience(*audience_id);
+                        valid_lane(model, &lane_id)?;
+
+                        Ok(vec![EventModelEvent::LaneRemoved(*model_id, lane_id)])
                     }
                     EventModelCommand::AddStream(_, _, _) => {
                         todo!()
                     }
-                    EventModelCommand::RenameStream(_, _, _) => {
-                        todo!()
+                    EventModelCommand::RenameStream(model_id, stream_id, name) => {
+                        let lane_id = LaneId::Stream(*stream_id);
+                        valid_lane(model, &lane_id)?;
+                        validate_name(name)?;
+
+                        Ok(vec![EventModelEvent::LaneRenamed(
+                            *model_id,
+                            lane_id,
+                            name.to_owned(),
+                        )])
                     }
-                    EventModelCommand::ReorderStream(_, _, _) => {
-                        todo!()
+                    EventModelCommand::ReorderStream(model_id, stream_id, index) => {
+                        let lane_id = LaneId::Stream(*stream_id);
+                        valid_lane(model, &lane_id)?;
+                        valid_lane_index(model, &lane_id, &index)?;
+
+                        Ok(vec![EventModelEvent::LaneReordered(
+                            *model_id, lane_id, *index,
+                        )])
                     }
-                    EventModelCommand::RemoveStream(_, _) => {
-                        todo!()
+                    EventModelCommand::RemoveStream(model_id, stream_id) => {
+                        let lane_id = LaneId::Stream(*stream_id);
+                        valid_lane(model, &lane_id)?;
+
+                        Ok(vec![EventModelEvent::LaneRemoved(*model_id, lane_id)])
                     }
 
                     // Placements
@@ -544,14 +587,17 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                     model.lane_added(lane.to_owned(), *index);
                     EventModelState::EventModel(model)
                 }
-                EventModelEvent::LaneRenamed(_, _, _) => {
-                    todo!()
+                EventModelEvent::LaneRenamed(_, lane_id, name) => {
+                    model.lane_renamed(lane_id.to_owned(), name);
+                    EventModelState::EventModel(model)
                 }
-                EventModelEvent::LaneReordered(_, _, _) => {
-                    todo!()
+                EventModelEvent::LaneReordered(_, lane_id, index) => {
+                    model.lane_reordered(lane_id.to_owned(), *index);
+                    EventModelState::EventModel(model)
                 }
-                EventModelEvent::LaneRemoved(_, _) => {
-                    todo!()
+                EventModelEvent::LaneRemoved(_, lane_id) => {
+                    model.lane_removed(lane_id.to_owned());
+                    EventModelState::EventModel(model)
                 }
                 EventModelEvent::ComponentDefined(_, component) => {
                     model.component_defined(component.to_owned());
@@ -605,5 +651,71 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
             },
             EventModelState::Deleted(_) => state,
         }
+    }
+}
+
+fn valid_description_bounds(
+    model: &impl EventModel,
+    index: &usize,
+    count: &usize,
+) -> Result<(), EventModelError> {
+    let description = model.description().to_string();
+
+    if (description.len() - 1) < (index + count) {
+        Err(EventModelError::DescriptionTextOutOfBounds(
+            description,
+            *index,
+            *count,
+        ))
+    } else {
+        Ok(())
+    }
+}
+
+fn valid_description_index(model: &impl EventModel, index: &usize) -> Result<(), EventModelError> {
+    valid_description_bounds(model, index, &0)
+}
+
+fn valid_lane(model: &impl EventModel, lane_id: &LaneId) -> Result<(), EventModelError> {
+    match lane_id {
+        LaneId::Audience(id) => match model.audiences().iter().find(|a| a.id() == id) {
+            Some(_) => Ok(()),
+            None => Err(EventModelError::LaneNotFound(lane_id.to_owned())),
+        },
+        LaneId::Stream(id) => match model.streams().iter().find(|a| a.id() == id) {
+            Some(_) => Ok(()),
+            None => Err(EventModelError::LaneNotFound(lane_id.to_owned())),
+        },
+        _ => Ok(()),
+    }
+}
+
+fn valid_lane_index(
+    model: &impl EventModel,
+    lane_id: &LaneId,
+    index: &usize,
+) -> Result<(), EventModelError> {
+    match lane_id {
+        LaneId::Audience(_) => {
+            if model.audiences().len() < *index {
+                Err(EventModelError::LaneIndexOutOfBounds(
+                    lane_id.to_owned(),
+                    *index,
+                ))
+            } else {
+                Ok(())
+            }
+        }
+        LaneId::Stream(_) => {
+            if model.streams().len() < *index {
+                Err(EventModelError::LaneIndexOutOfBounds(
+                    lane_id.to_owned(),
+                    *index,
+                ))
+            } else {
+                Ok(())
+            }
+        }
+        _ => Ok(()),
     }
 }

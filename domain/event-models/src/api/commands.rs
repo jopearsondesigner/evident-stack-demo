@@ -14,7 +14,7 @@ pub enum EventModelCommand {
     Rename(EventModelId, String),
     SetDescription(EventModelId, String),
     AddToDescription(EventModelId, usize, String),
-    DeleteFromDescription(EventModelId, usize),
+    DeleteFromDescription(EventModelId, usize, usize),
     SetSchema(EventModelId, String),
     AddToSchema(EventModelId, usize, String),
     DeleteFromSchema(EventModelId, usize),

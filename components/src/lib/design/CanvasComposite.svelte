@@ -1,11 +1,11 @@
 <script>
   import 'components/src/app.css';
-  // import { Accordion, AccordionItem } from 'svelte-accessible-accordion';
+  import { Accordion, AccordionItem } from 'svelte-accessible-accordion';
   import Grid from '$lib/design/Grid.svelte';
   import Drawer from '$lib/drawer/Drawer.svelte';
   import Sidebar from '$lib/drawer/Sidebar.svelte';
   import SidebarWrapper from '$lib/drawer/SidebarWrapper.svelte';
-  import Accordion from '$lib/drawer/Accordion.svelte';
+  // import Accordion from '$lib/drawer/Accordion.svelte';
   import SidebarContainer from '$lib/drawer/SidebarContainer.svelte';
   import SidebarGroup from '$lib/drawer/SidebarGroup.svelte';
   import SidebarDropdownWrapper from '$lib/drawer/SidebarDropdownWrapper.svelte';

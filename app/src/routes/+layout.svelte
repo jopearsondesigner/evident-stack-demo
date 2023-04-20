@@ -24,11 +24,11 @@
   import Drawer from '$components/drawer/Drawer.svelte';
   import Sidebar from '$components/drawer/Sidebar.svelte';
   import SidebarWrapper from '$components/drawer/SidebarWrapper.svelte';
-  import Accordion from '$components/drawer/Accordion.svelte';
+  // import Accordion from '$components/drawer/Accordion.svelte';
   import SidebarContainer from '$components/drawer/SidebarContainer.svelte';
   import SidebarGroup from '$components/drawer/SidebarGroup.svelte';
   import SidebarDropdownWrapper from '$components/drawer/SidebarDropdownWrapper.svelte';
-  // import { Accordion, AccordionItem } from 'svelte-accessible-accordion';
+  import { Accordion, AccordionItem } from 'svelte-accessible-accordion';
   import SidebarDropdownItem from '$components/drawer/SidebarDropdownItem.svelte';
   import SidebarItem from '$components/drawer/SidebarItem.svelte';
   import Textarea from '$components/form/Textarea.svelte';

@@ -13,7 +13,8 @@ default = ["console_error_panic_hook"]
 [dependencies]
 async-trait = "0.1.53"
 # TODO: remove in_memory feature in favor of convergent-event-models crate
-event-models = { path = "../../domain/event-models", features = ["in_memory"] }
+event-models = { path = "../../domain/event-models", features = ["in_memory", "automerge"] }
+automerge = { version = "0.4.0" }
 # domain_functions = { git = "https://github.com/evidentstack/domain_functions.rs" }
 epoch = { git = "https://github.com/Shearerbeard/Epoch", rev = "c731f85", default-features = false, features = ["in_memory"] }
 getrandom = { version = "0.2", features = ["js"] }

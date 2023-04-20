@@ -1,21 +1,20 @@
 extern crate event_models;
 
+mod firestore;
 pub mod grid;
-mod repository;
+mod local_storage;
 
 use std::str::FromStr;
 
 use crate::grid::Lane;
-use crate::repository::LocalStorageStateRepository;
+use crate::local_storage::LocalStorageStateRepository;
 use epoch::{repository::state::VersionedStateRepository, strategies::ReifyDecideSave};
 use event_models::api::commands::EventModelCommand;
 use event_models::{
-    implementation::in_memory::{InMemoryCreationDetails, InMemoryEventModel},
-    Entity, EventModelId, EventModelState,
+    implementation::in_memory::InMemoryEventModel, Entity, EventModelId, EventModelState,
 };
 pub use grid::EventModelGrid;
 use js_sys::{Function, Uint8Array};
-use repository::HasKey;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
@@ -59,6 +58,10 @@ pub struct EventModelStateManager {
     repository: LocalStorageStateRepository<EventModelState<InMemoryEventModel>>,
     // node: Node // TODO: convergent creation context details
     store_setter: Option<js_sys::Function>,
+}
+
+pub trait HasKey {
+    fn get_key(&self) -> Option<String>;
 }
 
 pub struct EventModelDecider;

@@ -11,7 +11,7 @@ where
     T: EventModel + Debug + ModifiableEventModel + Send + Sync,
 {
     // Assert test is starting in the correct state
-    assert_matches!(&initial, EventModelState::BeforeCreation(_));
+    assert_matches!(&initial, EventModelState::BeforeCreation);
 
     let events =
         EventModelState::decide(&(), &initial, &Create("New Event Model".to_string())).unwrap();

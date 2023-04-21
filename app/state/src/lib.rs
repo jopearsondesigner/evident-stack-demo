@@ -1,5 +1,6 @@
 extern crate event_models;
 
+mod automerge;
 mod firestore_automerge;
 pub mod grid;
 mod local_storage;
@@ -7,17 +8,17 @@ mod strategies;
 
 use std::str::FromStr;
 
-use crate::firestore_automerge::FirestoreError;
+use crate::automerge::Reconcilable;
+use crate::firestore_automerge::{FirestoreAutomergeStateRepository, FirestoreError};
+pub use crate::grid::EventModelGrid;
 use crate::grid::Lane;
 use crate::strategies::StateRepository;
+use crate::strategies::{ReifyDecideSave, ReifyDecideSaveError};
 use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError};
 use event_models::api::commands::EventModelCommand;
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
 use event_models::{EventModel, EventModelError};
-use firestore_automerge::{FirestoreAutomergeStateRepository, Reconcilable};
-pub use grid::EventModelGrid;
 use js_sys::{Function, Uint8Array};
-use strategies::{ReifyDecideSave, ReifyDecideSaveError};
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
@@ -456,8 +457,7 @@ impl EventModelStateManager {
         let result: Result<
             EventModelState<AutomergeEventModel>,
             ReifyDecideSaveError<EventModelError, FirestoreError>,
-        > = EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)
-            .await;
+        > = EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command).await;
         match &result {
             Ok(state) => {
                 let grid: EventModelGrid = state.into();

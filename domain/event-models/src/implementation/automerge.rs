@@ -12,7 +12,7 @@ use autosurgeon::{Hydrate, Reconcile, Text};
 use url::Url;
 use uuid::Uuid;
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 struct AutoName(String);
 
 impl AutoName {
@@ -34,7 +34,7 @@ impl From<&AutoName> for Name {
     }
 }
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 enum AutoInterfaceConfig {
     Blank,
     Figma {
@@ -88,7 +88,7 @@ impl From<&InterfaceConfig> for AutoInterfaceConfig {
     }
 }
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 struct AutoInterface {
     #[key]
     id: Uuid,
@@ -123,7 +123,7 @@ impl From<&Interface> for AutoInterface {
     }
 }
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 struct AutoCommand {
     #[key]
     id: Uuid,
@@ -156,7 +156,7 @@ impl From<&Command> for AutoCommand {
     }
 }
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 struct AutoEvent {
     #[key]
     id: Uuid,
@@ -189,7 +189,7 @@ impl From<&Event> for AutoEvent {
     }
 }
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 struct AutoReadModel {
     #[key]
     id: Uuid,
@@ -222,7 +222,7 @@ impl From<&ReadModel> for AutoReadModel {
     }
 }
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 struct AutoAudience {
     #[key]
     id: Uuid,
@@ -249,7 +249,7 @@ impl From<&Audience> for AutoAudience {
     }
 }
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 struct AutoStream {
     #[key]
     id: Uuid,
@@ -276,7 +276,7 @@ impl From<&Stream> for AutoStream {
     }
 }
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 enum AutoPlacement {
     Interface {
         #[key]
@@ -471,7 +471,7 @@ impl Entity for AutoPlacement {
     }
 }
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 enum AutoAnchor {
     None,
     Top,
@@ -504,7 +504,7 @@ impl From<&Anchor> for AutoAnchor {
     }
 }
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 struct AutoFlowArrow {
     #[key]
     id: Uuid,
@@ -553,7 +553,7 @@ enum AutoComponentMut<'a> {
     ReadModel(&'a mut AutoReadModel),
 }
 
-#[derive(Reconcile, Hydrate, Debug)]
+#[derive(Reconcile, Hydrate, Debug, Clone)]
 pub struct AutomergeEventModel {
     #[key]
     id: Uuid,

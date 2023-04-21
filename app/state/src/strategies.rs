@@ -26,7 +26,6 @@ where
                   + Sync),
         ctx: &<<Self as ReifyDecideSave>::Decide as DeciderWithContext>::Ctx,
         cmd: &<<Self as ReifyDecideSave>::Decide as DeciderWithContext>::Cmd,
-        retrys: Option<u32>,
     ) -> Result<
         <Self::Decide as Evolver>::State,
         ReifyDecideSaveError<<Self::Decide as DeciderWithContext>::Err, RepoErr>,
@@ -34,32 +33,27 @@ where
     where
         RepoErr: Send + Sync,
     {
-        let mut local_state = state_repository
+        let local_state = state_repository
             .reify()
             .await
             .map_err(ReifyDecideSaveError::RepositoryErr)?;
 
-        for r in 1..retrys.unwrap_or(20) {
-            let evts = <Self::Decide as DeciderWithContext>::decide(ctx, &local_state, cmd)
-                .map_err(ReifyDecideSaveError::DecideErr)?;
+        let evts = <Self::Decide as DeciderWithContext>::decide(ctx, &local_state, cmd)
+            .map_err(ReifyDecideSaveError::DecideErr)?;
 
-            let new_state = evts
-                .iter()
-                .fold(local_state, <Self::Decide as Evolver>::evolve);
+        let new_state = evts
+            .iter()
+            .fold(local_state, <Self::Decide as Evolver>::evolve);
 
-            match state_repository.save(&new_state).await {
-                Ok(s) => return Ok(s),
-                Err(e) => return Err(ReifyDecideSaveError::RepositoryErr(e)),
-            }
+        match state_repository.save(&new_state).await {
+            Ok(s) => return Ok(s),
+            Err(e) => return Err(ReifyDecideSaveError::RepositoryErr(e)),
         }
-
-        Err(ReifyDecideSaveError::OccMaxRetries)
     }
 }
 
 #[derive(Debug)]
 pub enum ReifyDecideSaveError<DecideErr: Send + Sync, RepoErr> {
-    OccMaxRetries,
     DecideErr(DecideErr),
     RepositoryErr(RepoErr),
 }

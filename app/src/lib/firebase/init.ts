@@ -1,4 +1,4 @@
-import { browser } from '$app/environment'
+import { browser, dev } from '$app/environment'
 import {
   PUBLIC_FIREBASE_PROJECT_ID,
   PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -9,8 +9,8 @@ import {
 } from '$env/static/public'
 import { getAnalytics, type Analytics } from 'firebase/analytics'
 import { initializeApp } from 'firebase/app'
-import { CACHE_SIZE_UNLIMITED, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore'
 import { getAuth, inMemoryPersistence, setPersistence } from 'firebase/auth'
+import { CACHE_SIZE_UNLIMITED, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore'
 
 export const firebase = initializeApp({
   apiKey: PUBLIC_FIREBASE_API_KEY,

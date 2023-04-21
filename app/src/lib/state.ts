@@ -1,8 +1,15 @@
-import { default as init, EventModelStateManager } from "app-state";
-import { readable } from 'svelte/store';
+import { default as init, EventModelGrid, EventModelStateManager, setPanicHook } from "app-state";
+import { readable, type Readable } from 'svelte/store';
+import type { Decider, Lane } from '$components/design/Grid';
+
+export type InitializationPayload = {
+  grid: Readable<EventModelGrid>,
+  decider: Decider
+}
 
 const initialize_decider = async (id: string | undefined) => {
   await init();
+  setPanicHook();
 
   let manager = new EventModelStateManager(id);
 
@@ -59,6 +66,21 @@ const initialize_decider = async (id: string | undefined) => {
       rename_placement: async (placement: string, name: string) => {
         return await manager.rename_placement(id!, placement, name)
       },
+      rename_lane: async (kind: Lane, lane_id: string, name: string) => {
+        return await manager.rename_lane(id!, kind, lane_id, name)
+      },
+      reorder_lane: async (kind: Lane, lane_id: string, index: number) => {
+        return await manager.reorder_lane(id!, kind, lane_id, index)
+      },
+      remove_lane: async (kind: Lane, lane_id: string) => {
+        return await manager.remove_lane(id!, kind, lane_id)
+      },
+      add_to_description: async (index: number, addition: string) => {
+        return await manager.add_to_description(id!, index, addition)
+      },
+      delete_from_description: async (index: number, count: number) => {
+        return await manager.delete_from_description(id!, index, count)
+      }
     }
   };
 }

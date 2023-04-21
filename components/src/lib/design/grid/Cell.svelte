@@ -4,6 +4,7 @@
 
   export let row: number;
   export let column: number;
+
   $: gridRow = row + 1;
   $: gridColumn = column + 1;
 
@@ -15,13 +16,10 @@
 
 <div
   on:click|preventDefault|stopPropagation={handleClick}
-  class="cell relative mb-px flex place-self-center align-items-center hover:bg-focus/[.18] transition duration-200 ease-in border-2 border-transparent"
+  class="cell z-20 flex place-self-center align-items-center hover:bg-focus/[.18] transition duration-200 ease-in border-2 border-transparent"
   style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
 >
   <slot />
-  <div
-    class="relative z-[-2] left-[i42px] -mr-[1.5px] w-px col-border ring-offset-0 ring-white dark:ring-gray-brand-1"
-  />
 </div>
 
 <style>

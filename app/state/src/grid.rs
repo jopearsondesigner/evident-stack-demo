@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::format};
 
 use event_models::{
     implementation::in_memory::InMemoryEventModel,
@@ -348,6 +348,26 @@ impl From<event_models::types::flow::Anchor> for FlowAnchor {
             event_models::types::flow::Anchor::Left => Self::Left,
             event_models::types::flow::Anchor::Bottom => Self::Bottom,
             event_models::types::flow::Anchor::Right => Self::Right,
+        }
+    }
+}
+
+pub enum Lane {
+    Audience,
+    Stream,
+}
+
+impl TryFrom<&str> for Lane {
+    type Error = JsValue;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value {
+            "audience" => Ok(Self::Audience),
+            "stream" => Ok(Self::Stream),
+            &_ => Err(JsValue::from(format!(
+                "Value {:?} is not a lane type",
+                value
+            ))),
         }
     }
 }

@@ -2,10 +2,10 @@ extern crate event_models;
 
 pub mod grid;
 mod repository;
-mod utils;
 
 use std::str::FromStr;
 
+use crate::grid::Lane;
 use crate::repository::LocalStorageStateRepository;
 use epoch::{repository::state::VersionedStateRepository, strategies::ReifyDecideSave};
 use event_models::api::commands::EventModelCommand;
@@ -17,7 +17,6 @@ use event_models::{
 pub use grid::EventModelGrid;
 use js_sys::{Function, Uint8Array};
 use repository::HasKey;
-pub use utils::set_panic_hook;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
@@ -31,6 +30,18 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
+}
+
+#[wasm_bindgen(js_name = setPanicHook)]
+pub fn set_panic_hook() {
+    // When the `console_error_panic_hook` feature is enabled, we can call the
+    // `set_panic_hook` function at least once during initialization, and then
+    // we will get better error messages if our code ever panics.
+    //
+    // For more details see
+    // https://github.com/rustwasm/console_error_panic_hook#readme
+    #[cfg(feature = "console_error_panic_hook")]
+    console_error_panic_hook::set_once();
 }
 
 impl HasKey for EventModelState<InMemoryEventModel> {
@@ -328,6 +339,100 @@ impl EventModelStateManager {
             model_id,
             placement_id,
             name,
+        ))
+        .await
+    }
+
+    pub async fn rename_lane(
+        &mut self,
+        model_id_str: String,
+        kind: String,
+        lane_id_str: String,
+        name: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let lane_id = parse_uuid(lane_id_str)?;
+        let lane_type = Lane::try_from(kind.as_str())?;
+
+        match lane_type {
+            Lane::Audience => {
+                self.dispatch(EventModelCommand::RenameAudience(model_id, lane_id, name))
+                    .await
+            }
+            Lane::Stream => {
+                self.dispatch(EventModelCommand::RenameStream(model_id, lane_id, name))
+                    .await
+            }
+        }
+    }
+
+    pub async fn reorder_lane(
+        &mut self,
+        model_id_str: String,
+        kind: String,
+        lane_id_str: String,
+        index: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let lane_id = parse_uuid(lane_id_str)?;
+        let lane_type = Lane::try_from(kind.as_str())?;
+
+        match lane_type {
+            Lane::Audience => {
+                self.dispatch(EventModelCommand::ReorderAudience(model_id, lane_id, index))
+                    .await
+            }
+            Lane::Stream => {
+                self.dispatch(EventModelCommand::ReorderStream(model_id, lane_id, index))
+                    .await
+            }
+        }
+    }
+
+    pub async fn remove_lane(
+        &mut self,
+        model_id_str: String,
+        kind: String,
+        lane_id_str: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let lane_id = parse_uuid(lane_id_str)?;
+        let lane_type = Lane::try_from(kind.as_str())?;
+
+        match lane_type {
+            Lane::Audience => {
+                self.dispatch(EventModelCommand::RemoveAudience(model_id, lane_id))
+                    .await
+            }
+            Lane::Stream => {
+                self.dispatch(EventModelCommand::RemoveStream(model_id, lane_id))
+                    .await
+            }
+        }
+    }
+
+    pub async fn add_to_description(
+        &mut self,
+        model_id_str: String,
+        index: usize,
+        addition: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        self.dispatch(EventModelCommand::AddToDescription(
+            model_id, index, addition,
+        ))
+        .await
+    }
+
+    pub async fn delete_from_description(
+        &mut self,
+        model_id_str: String,
+        index: usize,
+        count: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        self.dispatch(EventModelCommand::DeleteFromDescription(
+            model_id, index, count,
         ))
         .await
     }

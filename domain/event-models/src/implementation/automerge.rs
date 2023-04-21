@@ -469,40 +469,6 @@ impl EventModelData for AutomergeEventModel {
     }
 }
 
-// impl Renamable for AutomergeEventModel {
-//     fn rename(&mut self, name: &str) {
-//         self.name = name.to_string();
-//     }
-// }
-
-// impl ModifiablyDescribed for AutomergeEventModel {
-//     fn set_description(&mut self, description: &str) {
-//         self.description = Text::with_value(description);
-//     }
-
-//     fn add_to_description(&mut self, index: usize, addition: &str) {
-//         self.description.splice(index, 0, addition);
-//     }
-
-//     fn delete_from_description(&mut self, index: usize, count: usize) {
-//         self.description.splice(index, count, EMPTY_STR);
-//     }
-// }
-
-// impl HasModifiableSchema for AutomergeEventModel {
-//     fn set_schema(&mut self, schema: &str) {
-//         self.schema = Text::with_value(schema);
-//     }
-
-//     fn add_to_schema(&mut self, index: usize, addition: &str) {
-//         self.schema.splice(index, 0, addition);
-//     }
-
-//     fn delete_from_schema(&mut self, index: usize, count: usize) {
-//         self.schema.splice(index, count, EMPTY_STR);
-//     }
-// }
-
 impl ModifiableEventModel for AutomergeEventModel {
     fn rename(&mut self, name: &Name) {
         self.name = name.into();

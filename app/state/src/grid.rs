@@ -1,8 +1,7 @@
-use std::{collections::HashMap, fmt::format};
+use std::collections::HashMap;
 
 use event_models::{
-    implementation::in_memory::InMemoryEventModel, Described, Entity, EventModelData,
-    EventModelState, Named, Placement,
+    Described, Entity, EventModel, EventModelData, EventModelState, Named, Placement,
 };
 use itertools::Itertools;
 use js_sys::Array;
@@ -458,8 +457,8 @@ impl EventModelGrid {
 
 const RIGHT_BUFFER: usize = 10;
 
-impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
-    fn from(state: EventModelState<InMemoryEventModel>) -> Self {
+impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGrid {
+    fn from(state: &EventModelState<T>) -> Self {
         match state {
             EventModelState::BeforeCreation => EventModelGrid {
                 state: EventModelGridState::Unavailable,
@@ -476,7 +475,7 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
             },
             EventModelState::Deleted(id) => EventModelGrid {
                 state: EventModelGridState::Unavailable,
-                id,
+                id: *id,
                 name: Default::default(),
                 description: Default::default(),
                 default_audience: Default::default(),

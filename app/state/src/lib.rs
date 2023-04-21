@@ -1,20 +1,23 @@
 extern crate event_models;
 
-mod firestore;
+mod firestore_automerge;
 pub mod grid;
 mod local_storage;
+mod strategies;
 
 use std::str::FromStr;
 
+use crate::firestore_automerge::FirestoreError;
 use crate::grid::Lane;
-use crate::local_storage::LocalStorageStateRepository;
-use epoch::{repository::state::VersionedStateRepository, strategies::ReifyDecideSave};
+use crate::strategies::StateRepository;
+use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError};
 use event_models::api::commands::EventModelCommand;
-use event_models::{
-    implementation::in_memory::InMemoryEventModel, Entity, EventModelId, EventModelState,
-};
+use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
+use event_models::{EventModel, EventModelError};
+use firestore_automerge::{FirestoreAutomergeStateRepository, Reconcilable};
 pub use grid::EventModelGrid;
 use js_sys::{Function, Uint8Array};
+use strategies::{ReifyDecideSave, ReifyDecideSaveError};
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
@@ -42,32 +45,46 @@ pub fn set_panic_hook() {
     console_error_panic_hook::set_once();
 }
 
-impl HasKey for EventModelState<InMemoryEventModel> {
-    fn get_key(&self) -> Option<String> {
+pub trait HasKey {
+    fn get_key(&self) -> Option<Uuid>;
+}
+
+impl<E: EventModel> HasKey for EventModelState<E> {
+    fn get_key(&self) -> Option<Uuid> {
         match self {
             EventModelState::BeforeCreation => None,
-            EventModelState::EventModel(model) => Some(model.id().to_string()),
-            EventModelState::Deleted(id) => Some(id.to_string()),
+            EventModelState::EventModel(model) => Some(model.id()),
+            EventModelState::Deleted(id) => Some(*id),
         }
+    }
+}
+
+impl Reconcilable for EventModelState<AutomergeEventModel> {
+    fn reconcile(&self, doc: &mut impl Doc) -> Result<(), ReconcileError> {
+        if let EventModelState::EventModel(m) = self {
+            reconcile(doc, m)
+        } else {
+            Ok(())
+        }
+    }
+
+    fn hydrate(doc: &impl ReadDoc) -> Result<Self, HydrateError> {
+        let model = hydrate(doc)?;
+        Ok(EventModelState::EventModel(model))
     }
 }
 
 #[wasm_bindgen]
 #[derive(Debug)]
 pub struct EventModelStateManager {
-    repository: LocalStorageStateRepository<EventModelState<InMemoryEventModel>>,
-    // node: Node // TODO: convergent creation context details
+    repository: FirestoreAutomergeStateRepository,
     store_setter: Option<js_sys::Function>,
-}
-
-pub trait HasKey {
-    fn get_key(&self) -> Option<String>;
 }
 
 pub struct EventModelDecider;
 
 impl ReifyDecideSave for EventModelDecider {
-    type Decide = EventModelState<InMemoryEventModel>;
+    type Decide = EventModelState<AutomergeEventModel>;
 }
 
 fn parse_uuid(uuid_str: String) -> Result<Uuid, JsValue> {
@@ -85,15 +102,12 @@ impl EventModelStateManager {
             let event_model_id: EventModelId =
                 Uuid::from_str(&id_str).map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
             Ok(EventModelStateManager {
-                repository: LocalStorageStateRepository::new(
-                    Some(event_model_id.to_string()),
-                    EventModelState::BeforeCreation,
-                ),
+                repository: FirestoreAutomergeStateRepository::new(Some(event_model_id)),
                 store_setter: None,
             })
         } else {
             Ok(EventModelStateManager {
-                repository: LocalStorageStateRepository::new(None, EventModelState::BeforeCreation),
+                repository: FirestoreAutomergeStateRepository::new(None),
                 store_setter: None,
             })
         }
@@ -104,10 +118,12 @@ impl EventModelStateManager {
         self.store_setter = setter
     }
 
-    pub async fn state(&self) -> Result<EventModelGrid, JsValue> {
-        match self.repository.reify().await {
-            Ok((state, _version)) => Ok(state.into()),
-            Err(err) => Err(JsValue::from_str(&format!("{:?}", err))),
+    pub async fn state(&mut self) -> Result<EventModelGrid, JsValue> {
+        let result: Result<EventModelState<AutomergeEventModel>, FirestoreError> =
+            self.repository.reify().await;
+        match result {
+            Ok(ref state) => Ok(state.into()),
+            Err(err) => Err(JsValue::from_str(&format!("RepositoryError: {:?}", err))),
         }
     }
 
@@ -437,17 +453,19 @@ impl EventModelStateManager {
     }
 
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {
-        let result =
-            EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)
-                .await;
-        match result {
+        let result: Result<
+            EventModelState<AutomergeEventModel>,
+            ReifyDecideSaveError<EventModelError, FirestoreError>,
+        > = EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)
+            .await;
+        match &result {
             Ok(state) => {
+                let grid: EventModelGrid = state.into();
                 if let Some(setter) = &self.store_setter {
                     let this = JsValue::null();
-                    let grid: EventModelGrid = state.clone().into();
-                    let _ = setter.call1(&this, &JsValue::from(grid));
+                    let _ = setter.call1(&this, &JsValue::from(grid.clone()));
                 }
-                Ok(state.into())
+                Ok(grid)
             }
             Err(err) => Err(JsValue::from(format!(
                 "Error dispatching command {:?}: {:?}",

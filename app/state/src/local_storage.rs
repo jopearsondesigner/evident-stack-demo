@@ -3,6 +3,7 @@ use std::fmt::Debug;
 use async_trait::async_trait;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::{from_str, to_string};
+use uuid::Uuid;
 use web_sys::{window, Storage};
 
 use epoch::repository::{
@@ -14,8 +15,8 @@ use epoch::repository::{
 use crate::HasKey;
 
 #[derive(Debug, Clone)]
-pub struct LocalStorageStateRepository<State: HasKey + Debug> {
-    key: Option<String>,
+pub struct LocalStorageStateRepository<State> {
+    key: Option<Uuid>,
     initial: State,
 }
 
@@ -23,7 +24,7 @@ impl<State> LocalStorageStateRepository<State>
 where
     State: HasKey + Serialize + DeserializeOwned + Debug + Clone + Send + Sync,
 {
-    pub fn new(key: Option<String>, initial: State) -> Self {
+    pub fn new(key: Option<Uuid>, initial: State) -> Self {
         Self { key, initial }
     }
 
@@ -74,7 +75,7 @@ where
 
     fn get_state(&self, storage: &Storage) -> Result<VersionedState<State>, Error> {
         match &self.key {
-            Some(key) => match storage.get_item(key) {
+            Some(key) => match storage.get_item(&key.to_string()) {
                 Ok(Some(state_str)) => match from_str(&state_str) {
                     Ok(deserialized) => {
                         let state: VersionedState<State> = deserialized;
@@ -122,7 +123,7 @@ where
                         VersionedRepositoryError::RepoErr(Error::SerializationFailure)
                     })?;
                     let _ = storage
-                        .set_item(key, &serialized)
+                        .set_item(&key.to_string(), &serialized)
                         .map_err(|_| VersionedRepositoryError::RepoErr(Error::StorageFailure))?;
                 }
                 Ok(state.to_owned())

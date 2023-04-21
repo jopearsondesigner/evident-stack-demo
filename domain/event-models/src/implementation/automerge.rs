@@ -1,14 +1,15 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, str::FromStr};
 
 use crate::{
     validate_name, Anchor, Audience, Command, CommandId, Component, ComponentId, Described, Entity,
     Event, EventId, EventModel, EventModelData, EventModelError, EventModelId, EventModelState,
     FlowArrow, FlowId, HasSchema, Interface, InterfaceConfig, InterfaceId, Lane, LaneId, LaneIndex,
     ModifiableEventModel, Name, Named, Placement, PlacementId, PlacementIndex, PlacementPosition,
-    ReadModel, ReadModelId, Stream,
+    Port, ReadModel, ReadModelId, Stream,
 };
 use autosurgeon::{Hydrate, Reconcile, Text};
 
+use url::Url;
 use uuid::Uuid;
 
 #[derive(Reconcile, Hydrate, Debug)]
@@ -51,13 +52,39 @@ enum AutoInterfaceConfig {
 
 impl From<&AutoInterfaceConfig> for InterfaceConfig {
     fn from(interface_config: &AutoInterfaceConfig) -> Self {
-        todo!()
+        match interface_config {
+            AutoInterfaceConfig::Blank => InterfaceConfig::Blank,
+            AutoInterfaceConfig::Figma { url, width, height } => InterfaceConfig::Figma {
+                url: Url::from_str(url).unwrap(),
+                width: width.map(|w| w as usize),
+                height: height.map(|h| h as usize),
+            },
+            AutoInterfaceConfig::Image { url, width, height } => InterfaceConfig::Image {
+                url: Url::from_str(url).unwrap(),
+                width: width.map(|w| w as usize),
+                height: height.map(|h| h as usize),
+            },
+            AutoInterfaceConfig::Job => InterfaceConfig::Job,
+        }
     }
 }
 
 impl From<&InterfaceConfig> for AutoInterfaceConfig {
     fn from(interface_config: &InterfaceConfig) -> Self {
-        todo!()
+        match interface_config {
+            InterfaceConfig::Blank => AutoInterfaceConfig::Blank,
+            InterfaceConfig::Figma { url, width, height } => AutoInterfaceConfig::Figma {
+                url: url.to_string(),
+                width: width.map(|w| w as u32),
+                height: height.map(|h| h as u32),
+            },
+            InterfaceConfig::Image { url, width, height } => AutoInterfaceConfig::Image {
+                url: url.to_string(),
+                width: width.map(|w| w as u32),
+                height: height.map(|h| h as u32),
+            },
+            InterfaceConfig::Job => AutoInterfaceConfig::Job,
+        }
     }
 }
 
@@ -72,13 +99,27 @@ struct AutoInterface {
 
 impl From<&AutoInterface> for Interface {
     fn from(interface: &AutoInterface) -> Self {
-        todo!()
+        let name: &AutoName = &interface.name;
+        let config: &AutoInterfaceConfig = &interface.config;
+        Interface {
+            id: interface.id,
+            name: name.into(),
+            description: interface.description.as_str().to_string(),
+            config: config.into(),
+        }
     }
 }
 
 impl From<&Interface> for AutoInterface {
     fn from(interface: &Interface) -> Self {
-        todo!()
+        let name: &Name = &interface.name;
+        let config: &InterfaceConfig = &interface.config;
+        AutoInterface {
+            id: interface.id,
+            name: name.into(),
+            description: Text::with_value(&interface.description),
+            config: config.into(),
+        }
     }
 }
 
@@ -93,13 +134,25 @@ struct AutoCommand {
 
 impl From<&AutoCommand> for Command {
     fn from(command: &AutoCommand) -> Self {
-        todo!()
+        let name: &AutoName = &command.name;
+        Command {
+            id: command.id,
+            name: name.into(),
+            description: command.description.as_str().to_string(),
+            schema: command.schema.as_str().to_string(),
+        }
     }
 }
 
 impl From<&Command> for AutoCommand {
     fn from(command: &Command) -> Self {
-        todo!()
+        let name: &Name = &command.name;
+        AutoCommand {
+            id: command.id,
+            name: name.into(),
+            description: Text::with_value(&command.description),
+            schema: Text::with_value(&command.schema),
+        }
     }
 }
 
@@ -114,13 +167,25 @@ struct AutoEvent {
 
 impl From<&AutoEvent> for Event {
     fn from(event: &AutoEvent) -> Self {
-        todo!()
+        let name: &AutoName = &event.name;
+        Event {
+            id: event.id,
+            name: name.into(),
+            description: event.description.as_str().to_string(),
+            schema: event.schema.as_str().to_string(),
+        }
     }
 }
 
 impl From<&Event> for AutoEvent {
     fn from(event: &Event) -> Self {
-        todo!()
+        let name: &Name = &event.name;
+        AutoEvent {
+            id: event.id,
+            name: name.into(),
+            description: Text::with_value(&event.description),
+            schema: Text::with_value(&event.schema),
+        }
     }
 }
 
@@ -134,14 +199,26 @@ struct AutoReadModel {
 }
 
 impl From<&AutoReadModel> for ReadModel {
-    fn from(readModel: &AutoReadModel) -> Self {
-        todo!()
+    fn from(read_model: &AutoReadModel) -> Self {
+        let name: &AutoName = &read_model.name;
+        ReadModel {
+            id: read_model.id,
+            name: name.into(),
+            description: read_model.description.as_str().to_string(),
+            schema: read_model.schema.as_str().to_string(),
+        }
     }
 }
 
 impl From<&ReadModel> for AutoReadModel {
-    fn from(readModel: &ReadModel) -> Self {
-        todo!()
+    fn from(read_model: &ReadModel) -> Self {
+        let name: &Name = &read_model.name;
+        AutoReadModel {
+            id: read_model.id,
+            name: name.into(),
+            description: Text::with_value(&read_model.description),
+            schema: Text::with_value(&read_model.schema),
+        }
     }
 }
 
@@ -154,13 +231,21 @@ struct AutoAudience {
 
 impl From<&AutoAudience> for Audience {
     fn from(audience: &AutoAudience) -> Self {
-        todo!()
+        let name: &AutoName = &audience.name;
+        Audience {
+            id: audience.id,
+            name: name.into(),
+        }
     }
 }
 
 impl From<&Audience> for AutoAudience {
     fn from(audience: &Audience) -> Self {
-        todo!()
+        let name: &Name = &audience.name;
+        AutoAudience {
+            id: audience.id,
+            name: name.into(),
+        }
     }
 }
 
@@ -173,13 +258,21 @@ struct AutoStream {
 
 impl From<&AutoStream> for Stream {
     fn from(stream: &AutoStream) -> Self {
-        todo!()
+        let name: &AutoName = &stream.name;
+        Stream {
+            id: stream.id,
+            name: name.into(),
+        }
     }
 }
 
 impl From<&Stream> for AutoStream {
     fn from(stream: &Stream) -> Self {
-        todo!()
+        let name: &Name = &stream.name;
+        AutoStream {
+            id: stream.id,
+            name: name.into(),
+        }
     }
 }
 
@@ -263,13 +356,107 @@ impl AutoPlacement {
 
 impl From<&AutoPlacement> for Placement {
     fn from(placement: &AutoPlacement) -> Self {
-        todo!()
+        match placement {
+            AutoPlacement::Interface {
+                id,
+                index,
+                interface,
+                audience,
+            } => Placement::Interface {
+                id: *id,
+                index: *index as usize,
+                interface: *interface,
+                audience: *audience,
+            },
+            AutoPlacement::Command {
+                id,
+                index,
+                command,
+                schema,
+            } => Placement::Command {
+                id: *id,
+                index: *index as usize,
+                command: *command,
+                schema: schema.as_str().to_string(),
+            },
+            AutoPlacement::Event {
+                id,
+                index,
+                event,
+                stream,
+                schema,
+            } => Placement::Event {
+                id: *id,
+                index: *index as usize,
+                event: *event,
+                stream: *stream,
+                schema: schema.as_str().to_string(),
+            },
+            AutoPlacement::ReadModel {
+                id,
+                index,
+                read_model,
+                schema,
+            } => Placement::ReadModel {
+                id: *id,
+                index: *index as usize,
+                read_model: *read_model,
+                schema: schema.as_str().to_string(),
+            },
+        }
     }
 }
 
 impl From<&Placement> for AutoPlacement {
     fn from(placement: &Placement) -> Self {
-        todo!()
+        match placement {
+            Placement::Interface {
+                id,
+                index,
+                interface,
+                audience,
+            } => AutoPlacement::Interface {
+                id: *id,
+                index: *index as u32,
+                interface: *interface,
+                audience: *audience,
+            },
+            Placement::Command {
+                id,
+                index,
+                command,
+                schema,
+            } => AutoPlacement::Command {
+                id: *id,
+                index: *index as u32,
+                command: *command,
+                schema: Text::with_value(schema),
+            },
+            Placement::Event {
+                id,
+                index,
+                event,
+                stream,
+                schema,
+            } => AutoPlacement::Event {
+                id: *id,
+                index: *index as u32,
+                event: *event,
+                stream: *stream,
+                schema: Text::with_value(schema),
+            },
+            Placement::ReadModel {
+                id,
+                index,
+                read_model,
+                schema,
+            } => AutoPlacement::ReadModel {
+                id: *id,
+                index: *index as u32,
+                read_model: *read_model,
+                schema: Text::with_value(schema),
+            },
+        }
     }
 }
 
@@ -295,13 +482,25 @@ enum AutoAnchor {
 
 impl From<&AutoAnchor> for Anchor {
     fn from(flow: &AutoAnchor) -> Self {
-        todo!()
+        match flow {
+            AutoAnchor::None => Anchor::None,
+            AutoAnchor::Top => Anchor::Top,
+            AutoAnchor::Left => Anchor::Left,
+            AutoAnchor::Bottom => Anchor::Bottom,
+            AutoAnchor::Right => Anchor::Right,
+        }
     }
 }
 
 impl From<&Anchor> for AutoAnchor {
     fn from(flow: &Anchor) -> Self {
-        todo!()
+        match flow {
+            Anchor::None => AutoAnchor::None,
+            Anchor::Top => AutoAnchor::Top,
+            Anchor::Left => AutoAnchor::Left,
+            Anchor::Bottom => AutoAnchor::Bottom,
+            Anchor::Right => AutoAnchor::Right,
+        }
     }
 }
 
@@ -317,13 +516,33 @@ struct AutoFlowArrow {
 
 impl From<&AutoFlowArrow> for FlowArrow {
     fn from(flow: &AutoFlowArrow) -> Self {
-        todo!()
+        let from_anchor: &AutoAnchor = &flow.from_anchor;
+        let to_anchor: &AutoAnchor = &flow.to_anchor;
+        FlowArrow {
+            id: flow.id,
+            from: Port {
+                placement: flow.from_placement,
+                anchor: from_anchor.into(),
+            },
+            to: Port {
+                placement: flow.to_placement,
+                anchor: to_anchor.into(),
+            },
+        }
     }
 }
 
 impl From<&FlowArrow> for AutoFlowArrow {
     fn from(flow: &FlowArrow) -> Self {
-        todo!()
+        let from_anchor: &Anchor = &flow.from.anchor;
+        let to_anchor: &Anchor = &flow.to.anchor;
+        AutoFlowArrow {
+            id: flow.id,
+            from_placement: flow.from.placement,
+            from_anchor: from_anchor.into(),
+            to_placement: flow.to.placement,
+            to_anchor: to_anchor.into(),
+        }
     }
 }
 

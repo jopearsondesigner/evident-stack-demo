@@ -2,13 +2,12 @@ use std::fmt::Debug;
 
 use async_trait::async_trait;
 use automerge::AutoCommit;
-use autosurgeon::{Doc, HydrateError, ReadDoc, ReconcileError};
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelState};
 use js_sys::Uint8Array;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
-use crate::{strategies::StateRepository, HasKey};
+use crate::{automerge::Reconcilable, strategies::StateRepository, HasKey};
 
 #[wasm_bindgen]
 extern "C" {
@@ -23,14 +22,6 @@ extern "C" {
 
     #[wasm_bindgen(catch)]
     async fn appendPatch(id: &str, patch: Vec<u8>) -> Result<(), JsValue>;
-}
-
-pub(crate) trait Reconcilable
-where
-    Self: Sized,
-{
-    fn reconcile(&self, doc: &mut impl Doc) -> Result<(), ReconcileError>;
-    fn hydrate(doc: &impl ReadDoc) -> Result<Self, HydrateError>;
 }
 
 #[derive(Debug, Clone)]
@@ -114,8 +105,7 @@ impl StateRepository<EventModelState<AutomergeEventModel>, FirestoreError>
                 appendPatch(&id.to_string(), self.save_incremental())
                     .await
                     .map_err(|e| FirestoreError::PatchSaveError(format!("{:?}", e)))?;
-                EventModelState::<AutomergeEventModel>::hydrate(&self.automerge)
-                    .map_err(|e| FirestoreError::HydrateError(format!("{:?}", e)))
+                Ok(state.to_owned())
             }
             None => Ok(EventModelState::BeforeCreation),
         }

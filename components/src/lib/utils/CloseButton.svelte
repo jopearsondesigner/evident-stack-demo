@@ -2,7 +2,7 @@
   import Icon from '../Icon.svelte';
   import Close from '../icons/Close.svelte';
   import { createEventDispatcher } from 'svelte';
-  export let size = 16;
+  export let size: number | undefined = 16;
   const dispatch = createEventDispatcher();
   function handleClick(event: any) {
     dispatch('click', event);

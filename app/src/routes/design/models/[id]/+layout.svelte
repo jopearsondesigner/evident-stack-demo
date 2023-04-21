@@ -15,7 +15,7 @@
 
   $: Modal_id = $grid?.id();
 
-  let input;
+  let input: HTMLInputElement;
   let deleteModal = false;
   let importModal = false;
   let done = true;

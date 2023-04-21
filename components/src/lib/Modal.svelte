@@ -79,6 +79,7 @@
       ['scroll', 'auto'].indexOf(getComputedStyle(e).overflowY) >= 0
   ];
   function preventWheelDefault(e: { preventDefault: () => any }) {
+    // @ts-ignore
     const [x, y] = isScrollable(this);
     return x || y || e.preventDefault();
   }

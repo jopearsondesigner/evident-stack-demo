@@ -14,6 +14,7 @@
   import Checkmark from '$components/icons/Checkmark.svelte';
   import Button from '$components/Button.svelte';
   import modelThumb from '$components/assets/images/product/design/modelThumb.svg';
+  import { goto } from '$app/navigation';
 
   export let data: PageData;
   const { grid, decider } = data;

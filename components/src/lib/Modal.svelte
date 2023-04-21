@@ -1,6 +1,6 @@
 <script lang="ts">
   import classNames from 'classnames';
-  import type { SizeType } from '$lib/types';
+  import type { SizeType } from './types';
   import Frame from './utils/Frame.svelte';
   import { createEventDispatcher } from 'svelte';
   import CloseButton from './utils/CloseButton.svelte';
@@ -14,18 +14,20 @@
   export let backdropClasses = 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80';
   const dispatch = createEventDispatcher();
   $: dispatch(open ? 'open' : 'hide');
-  function prepareFocus(node: Node) {
+
+  function prepareFocus(node: HTMLElement) {
     const walker = document.createTreeWalker(node, NodeFilter.SHOW_ELEMENT);
-    let n;
+    let n: Node | null;
     while ((n = walker.nextNode())) {
       if (n instanceof HTMLElement) {
-        const el = n;
+        const el = n as HTMLElement;
         const [x, y] = isScrollable(el);
         if (x || y) el.tabIndex = 0;
       }
     }
     node.focus();
   }
+
   const getPlacementClasses = () => {
     switch (placement) {
       // top

@@ -1,22 +1,48 @@
-<script>
+<script lang="ts">
   import classNames from 'classnames';
   import { setContext } from 'svelte';
+
   import { noop } from 'svelte/internal';
+  import type { Action } from 'svelte/action';
+  import type { TransitionConfig } from 'svelte/transition';
+
   setContext('background', true);
   $: setContext('color', color);
-  export let tag = 'div';
-  export let color = 'default';
-  export let rounded = false;
-  export let border = false;
-  export let shadow = false;
+
+  export let tag: string = 'div';
+  export let color:
+    | 'gray'
+    | 'red'
+    | 'yellow'
+    | 'green'
+    | 'indigo'
+    | 'default'
+    | 'purple'
+    | 'pink'
+    | 'blue'
+    | 'light'
+    | 'dark'
+    | 'dropdown'
+    | 'navbar'
+    | 'navbarUl'
+    | 'form'
+    | 'none' = 'default';
+  export let rounded: boolean = false;
+  export let border: boolean = false;
+  export let shadow: boolean = false;
+
+  type TransitionFunc = (node: HTMLElement, params: any) => TransitionConfig;
+
   // Export a prop through which you can set a desired svelte transition
-  export let transition = undefined;
+  export let transition: TransitionFunc | undefined = undefined;
   // Pass in extra transition params
-  export let params = {};
+  export let params: object = {};
+
   // For components development
-  export let node = undefined;
-  export let use = noop;
+  export let node: HTMLElement | undefined = undefined;
+  export let use: Action = noop;
   export let options = {};
+
   // your script goes here
   const bgColors = {
     gray: 'bg-gray-50 dark:bg-gray-800',
@@ -29,7 +55,7 @@
     blue: 'bg-blue-50 dark:bg-gray-800 ',
     light: 'bg-gray-50 dark:bg-gray-700',
     dark: 'bg-gray-50 dark:bg-gray-800',
-    default: 'bg-white dark:bg-dark-2',
+    default: 'bg-white dark:bg-gray-800',
     dropdown: 'bg-white dark:bg-gray-700',
     navbar: 'bg-white dark:bg-gray-900',
     navbarUl: 'bg-gray-50 dark:bg-gray-800',
@@ -37,6 +63,7 @@
     primary: 'bg-primary-50 dark:bg-gray-800 ',
     none: ''
   };
+
   const textColors = {
     gray: 'text-gray-800 dark:text-gray-300',
     red: 'text-red-800 dark:text-red-400',
@@ -48,7 +75,7 @@
     blue: 'text-blue-800 dark:text-blue-400',
     light: 'text-gray-700 dark:text-gray-300',
     dark: 'text-gray-700 dark:text-gray-300',
-    default: 'text-body dark:text-body-dark',
+    default: 'text-gray-500 dark:text-gray-400',
     dropdown: 'text-gray-700 dark:text-gray-200',
     navbar: 'text-gray-700 dark:text-gray-200',
     navbarUl: 'text-gray-700 dark:text-gray-400',
@@ -56,6 +83,7 @@
     primary: 'text-primary-800 dark:text-primary-400',
     none: ''
   };
+
   const borderColors = {
     gray: 'border-gray-300 dark:border-gray-800',
     red: 'border-red-300 dark:border-red-800',
@@ -67,7 +95,7 @@
     blue: 'border-blue-300 dark:border-blue-800',
     light: 'border-gray-500',
     dark: 'border-gray-500',
-    default: 'border-border-light dark:border-border-dark',
+    default: 'border-gray-200 dark:border-gray-700',
     dropdown: 'border-gray-100 dark:border-gray-700',
     navbar: 'border-gray-100 dark:border-gray-700',
     navbarUl: 'border-gray-100 dark:border-gray-700',
@@ -75,14 +103,16 @@
     primary: 'border-primary-500 dark:bg-primary-200 ',
     none: ''
   };
-  let divClass;
+
+  let divClass: string;
+
   $: divClass = classNames(
     bgColors[color],
     textColors[color],
     rounded && (color === 'dropdown' ? 'rounded' : 'rounded-lg'),
     border && 'border',
     borderColors[color],
-    shadow && 'shadow-modal',
+    shadow && 'shadow-md',
     $$props.class
   );
 </script>

@@ -4,9 +4,18 @@
 // for information about these interfaces
 // and what to do when importing types
 declare namespace App {
-	// interface Error {}
-	// interface Locals {}
-	// interface PageData {}
-	// interface Platform {}
+  // interface Error {}
+  // interface Locals {}
+  // interface PageData {}
+  // interface Platform {}
 }
 declare module 'svelte-layout-aware-transitions';
+
+interface HTMLOrSVGElement {
+  autofocus: boolean;
+  readonly dataset: DOMStringMap;
+  nonce?: string;
+  tabIndex: number;
+  blur(): void;
+  focus(options?: FocusOptions): void;
+}

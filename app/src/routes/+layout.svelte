@@ -137,16 +137,6 @@
             />
           </IconButton>
         </MaybeTooltip>
-        <!-- <MaybeTooltip tip="Admin" position="tooltip-bottom">
-          <IconButton
-            ><Icon
-              name="admin-portal"
-              size={18}
-              iconColor="text-body-light dark:text-body-dark"
-              pathName={AdminPortal}
-            />
-          </IconButton>
-        </MaybeTooltip> -->
       {:else}
         <Button
           href="/auth/sign-in"
@@ -163,7 +153,7 @@
 
 <span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 mt-16"><ThemeSwitch /></span>
 
-<Drawer {hidden}>
+<Drawer placement="left" {hidden}>
   <Sidebar class={!isClosed ? 'w-[417px]' : 'w-[240px]'} {isClosed}>
     <SidebarWrapper>
       <Accordion class="flex flex-col" style="height: calc(100vh - 183px);">

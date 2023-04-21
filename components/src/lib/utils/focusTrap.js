@@ -10,9 +10,15 @@ const selectorTabbable = `
   iframe, object, embed, *[tabindex]:not([tabindex='-1']):not([disabled]), *[contenteditable=true]
 `;
 
+/**
+ * @param {HTMLDivElement} node
+ */
 export default function focusTrap(node) {
   const tabbable = Array.from(node.querySelectorAll(selectorTabbable));
 
+  /**
+   * @param {{ key: string; keyCode: number; shiftKey: any; preventDefault: () => void; }} e
+   */
   function handleFocusTrap(e) {
     let isTabPressed = e.key === 'Tab' || e.keyCode === 9;
 

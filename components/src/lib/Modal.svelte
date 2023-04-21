@@ -1,19 +1,20 @@
-<script>
+<script lang="ts">
   import classNames from 'classnames';
+  import type { SizeType } from '$lib/types';
   import Frame from './utils/Frame.svelte';
   import { createEventDispatcher } from 'svelte';
   import CloseButton from './utils/CloseButton.svelte';
   import focusTrap from './utils/focusTrap';
   export let open = false;
   export let title = '';
-  export let size = 'md';
+  export let size: SizeType = 'md';
   export let placement = 'center';
   export let autoclose = false;
   export let permanent = false;
   export let backdropClasses = 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80';
   const dispatch = createEventDispatcher();
   $: dispatch(open ? 'open' : 'hide');
-  function prepareFocus(node) {
+  function prepareFocus(node: Node) {
     const walker = document.createTreeWalker(node, NodeFilter.SHOW_ELEMENT);
     let n;
     while ((n = walker.nextNode())) {
@@ -59,30 +60,29 @@
     lg: 'max-w-4xl',
     xl: 'max-w-7xl'
   };
-  const onAutoClose = (e) => {
+  const onAutoClose = (e: { target: any }) => {
     const target = e.target;
     if (autoclose && target?.tagName === 'BUTTON') hide(e);
   };
-  const hide = (e) => {
+  const hide = (e: { target?: any; preventDefault?: any }) => {
     e.preventDefault();
     open = false;
   };
-  let frameClass;
+  let frameClass: string;
   $: frameClass = classNames(
     'relative flex flex-col mx-auto border border-border-light dark:border-border-dark',
     $$props.class
   );
-  const isScrollable = (e) => [
+  const isScrollable = (e: Element) => [
     e.scrollWidth > e.clientWidth && ['scroll', 'auto'].indexOf(getComputedStyle(e).overflowX) >= 0,
     e.scrollHeight > e.clientHeight &&
       ['scroll', 'auto'].indexOf(getComputedStyle(e).overflowY) >= 0
   ];
-  function preventWheelDefault(e) {
-    // @ts-ignore
+  function preventWheelDefault(e: { preventDefault: () => any }) {
     const [x, y] = isScrollable(this);
     return x || y || e.preventDefault();
   }
-  function handleKeys(e) {
+  function handleKeys(e: { key?: any; target?: any; preventDefault?: any }) {
     if (e.key === 'Escape' && !permanent) return hide(e);
   }
 </script>
@@ -123,20 +123,14 @@
                 {title}
               </h3>
             </slot>
-            {#if !permanent}<CloseButton
-                name="Close modal"
-                size={12}
-                on:click={hide}
-                color={$$restProps.color}
-              />{/if}
+            {#if !permanent}<CloseButton name="Close modal" size={12} on:click={hide} />{/if}
           </Frame>
         {:else if !permanent}
           <CloseButton
             name="Close modal"
             size={12}
-            class="absolute top-3 right-2.5"
+            btnClass="absolute top-3 right-2.5"
             on:click={hide}
-            color={$$restProps.color}
           />
         {/if}
         <!-- Modal body -->

@@ -22,7 +22,11 @@ export const firebase = initializeApp({
 })
 
 export const auth = getAuth(firebase)
-setPersistence(auth, inMemoryPersistence)
+await setPersistence(auth, inMemoryPersistence)
+
+if (dev) {
+  console.log("Current user:", auth.currentUser)
+}
 
 export let firestore = initializeFirestore(
   firebase,

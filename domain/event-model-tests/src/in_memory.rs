@@ -1,5 +1,5 @@
 use crate::shared::{creating_event_model_succeeds, renaming_event_model_succeeds};
-use event_models::implementation::in_memory::{InMemoryCreationDetails, InMemoryEventModel};
+use event_models::implementation::in_memory::InMemoryEventModel;
 use event_models::{EventModelData, ModifiableEventModel};
 use event_models::{EventModelState, Name};
 use uuid::Uuid;
@@ -13,9 +13,7 @@ use event_models::{
 
 #[test]
 fn creation() {
-    creating_event_model_succeeds(EventModelState::<InMemoryEventModel>::BeforeCreation(
-        InMemoryCreationDetails,
-    ));
+    creating_event_model_succeeds(EventModelState::<InMemoryEventModel>::BeforeCreation);
 }
 
 #[test]

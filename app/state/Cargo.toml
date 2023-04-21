@@ -15,7 +15,7 @@ async-trait = "0.1.53"
 # TODO: remove in_memory feature in favor of convergent-event-models crate
 event-models = { path = "../../domain/event-models", features = ["automerge"] }
 automerge = { version = "0.4.0" }
-autosurgeon = { version = "0.5.0", features = ["uuid"] }
+autosurgeon = { git = "https://github.com/bobby/autosurgeon", rev = "2d70ece", features = ["uuid"] }
 # domain_functions = { git = "https://github.com/evidentstack/domain_functions.rs" }
 epoch = { git = "https://github.com/Shearerbeard/Epoch", rev = "25e8a17", default-features = false }
 getrandom = { version = "0.2", features = ["js"] }
@@ -38,6 +38,7 @@ console_error_panic_hook = { version = "0.1.6", optional = true }
 # allocator, however.
 wee_alloc = { version = "0.4.5", optional = true }
 wasm-bindgen-futures = "0.4.34"
+base64 = "0.21.0"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"

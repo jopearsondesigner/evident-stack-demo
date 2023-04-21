@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 #[test]
 fn creation() {
-    creating_event_model_succeeds(EventModelState::<AutomergeEventModel>::BeforeCreation(()));
+    creating_event_model_succeeds(EventModelState::<AutomergeEventModel>::BeforeCreation);
 }
 
 #[test]

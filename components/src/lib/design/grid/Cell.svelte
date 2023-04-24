@@ -21,3 +21,11 @@
 >
   <slot />
 </div>
+
+<style>
+  /* Grid column */
+  .col-border {
+    --tw-ring-offset-width: 0px;
+    box-shadow: 1px 0px 0px 0px var(--tw-ring-color);
+  }
+</style>

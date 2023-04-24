@@ -1,12 +1,7 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
   import type { FlowPort } from '../Grid';
-  import {
-    anchorPoint,
-    bezierControlPoint,
-    findMidPoint,
-    makePathId,
-  } from './util';
+  import { anchorPoint, bezierControlPoint, findMidPoint, makePathId } from './util';
 
   export let id: string;
   export let to: FlowPort;
@@ -101,6 +96,6 @@
     stroke-width={strokeWidth}
     stroke-dasharray={dashArray}
     fill="none"
-    marker-end={"url(#flow-marker-arrow)"}
+    marker-end={'url(#flow-marker-arrow)'}
   />
 {/if}

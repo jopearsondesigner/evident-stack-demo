@@ -1,8 +1,8 @@
 export interface NavbarType {
-	name: string;
-	href: string;
-	rel?: string;
-	child?: NavbarType[];
+  name: string;
+  href: string;
+  rel?: string;
+  child?: NavbarType[];
 }
 
 export declare const xs = 'xs';

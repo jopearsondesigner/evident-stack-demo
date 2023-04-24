@@ -1,5 +1,17 @@
-import type { Model, Patch } from "app-state";
 import { Dexie } from "dexie";
+
+type Model = {
+  id: string,
+  user: string,
+  name: string,
+  description: string
+}
+
+type Patch = {
+  user: string,
+  model: string,
+  data: Uint8Array
+}
 
 class EventModelDatabase extends Dexie {
   patches!: Dexie.Table<Patch, number>;
@@ -17,15 +29,14 @@ class EventModelDatabase extends Dexie {
 var db = new EventModelDatabase();
 
 export const patches = async (id: string, user: string): Promise<Array<Patch>> => {
-  console.log("patches", id, user)
   return await db.patches.where({model: id, user: user}).toArray()
 }
 
 export const save = async (model: Model, patch: Patch) => {
-  console.log("saving", model, patch)
+  let model_dto = {id: model.id, user: model.user, name: model.name, description: model.description}
+  let patch_dto = {user: patch.user, model: patch.model, data: patch.data}
   await db.transaction('rw', [db.models, db.patches], async () => {
-    db.models.put(model, model.id);
-    db.patches.add(patch)
+    db.models.put(model_dto, model_dto.id);
+    db.patches.add(patch_dto)
   });
-  console.log("...saved")
 }

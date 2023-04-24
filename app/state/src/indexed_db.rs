@@ -6,10 +6,10 @@ use automerge::AutoCommit;
 use event_models::{
     implementation::automerge::AutomergeEventModel, Described, EventModelState, Named,
 };
-use js_sys::{Array, Uint8Array};
+use js_sys::Array;
+use serde::Deserialize;
 use uuid::Uuid;
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
-use web_sys::console;
 
 #[wasm_bindgen(module = "$lib/indexed_db")]
 extern "C" {
@@ -28,28 +28,27 @@ pub struct IndexedDbStateRepository {
 
 #[derive(Debug, Clone)]
 pub enum IndexedDbError {
-    StorageError(JsValue),
-    PatchLoadError(String),
-    HydrateError(String),
-    ReconcileError(String),
-    PatchSaveError(String),
+    PatchLoad(String),
+    Hydrate(String),
+    Reconcile(String),
+    PatchSave(String),
 }
 
-#[derive(Clone)]
-#[wasm_bindgen(getter_with_clone)]
-pub struct Patch {
-    pub user: String,
-    pub model: String,
-    pub data: Vec<u8>,
-}
-
-#[derive(Clone)]
+#[derive(Clone, Deserialize)]
 #[wasm_bindgen(getter_with_clone)]
 pub struct Model {
     pub id: String,
     pub user: String,
     pub name: String,
     pub description: String,
+}
+
+#[derive(Clone, Deserialize)]
+#[wasm_bindgen(getter_with_clone)]
+pub struct Patch {
+    pub user: String,
+    pub model: String,
+    pub data: Vec<u8>,
 }
 
 impl IndexedDbStateRepository {
@@ -66,7 +65,7 @@ impl IndexedDbStateRepository {
         self.automerge
             .load_incremental(&data)
             .map(|_| ())
-            .map_err(|e| IndexedDbError::PatchLoadError(format!("{:?}", e)))
+            .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))
     }
 
     pub fn save_incremental(&mut self) -> Vec<u8> {
@@ -88,23 +87,24 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
 
                 let patches = patches(&key.to_string(), &self.user)
                     .await
-                    .map_err(|e| IndexedDbError::PatchLoadError(format!("{:?}", e)))?;
+                    .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
 
                 match js_sys::try_iter(&patches) {
                     Ok(Some(it)) => {
                         for patch in it {
-                            let patch = patch
-                                .map_err(|e| IndexedDbError::PatchLoadError(format!("{:?}", e)))?;
+                            let patch =
+                                patch.map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
 
-                            let data: Vec<u8> = Uint8Array::new(&patch).to_vec();
+                            let patch: Patch = serde_wasm_bindgen::from_value(patch)
+                                .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
 
-                            self.load_incremental(data)?;
+                            self.load_incremental(patch.data)?;
                         }
                         EventModelState::<AutomergeEventModel>::hydrate(&self.automerge)
-                            .map_err(|e| IndexedDbError::HydrateError(format!("{:?}", e)))
+                            .map_err(|e| IndexedDbError::Hydrate(format!("{:?}", e)))
                     }
                     Ok(None) => Ok(EventModelState::BeforeCreation),
-                    Err(e) => Err(IndexedDbError::PatchLoadError(format!("{:?}", e))),
+                    Err(e) => Err(IndexedDbError::PatchLoad(format!("{:?}", e))),
                 }
             }
             None => Ok(EventModelState::BeforeCreation),
@@ -118,11 +118,9 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
         match state.get_key() {
             Some(id) => {
                 self.key = Some(id);
-                console::log_2(&"Saving model".into(), &id.to_string().into());
                 state
                     .reconcile(&mut self.automerge)
-                    .map_err(|e| IndexedDbError::ReconcileError(format!("{:?}", e)))?;
-                console::log_1(&"  - [x] reconciled".into());
+                    .map_err(|e| IndexedDbError::Reconcile(format!("{:?}", e)))?;
                 match state {
                     EventModelState::BeforeCreation => (),
                     EventModelState::Deleted(_) => (),
@@ -138,15 +136,9 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
                             user: self.user.to_owned(),
                             data: self.save_incremental(),
                         };
-                        console::log_3(
-                            &"  - [x] model and patch created".into(),
-                            &model.clone().into(),
-                            &patch.clone().into(),
-                        );
                         save(model, patch)
                             .await
-                            .map_err(|e| IndexedDbError::ReconcileError(format!("{:?}", e)))?;
-                        console::log_1(&"  - [x] model and patch saved".into());
+                            .map_err(|e| IndexedDbError::PatchSave(format!("{:?}", e)))?;
                     }
                 }
 

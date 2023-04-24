@@ -33,7 +33,7 @@
   import Logo from '$lib/assets/images/global/evidentStackLogo.svg';
   import DesignLogo from '$lib/assets/images/product/design/evidentDesignLogo.svg';
   import DataLogo from '$lib/assets/images/product/data/evidentDataLogo.svg';
-  import DomainFunctionsLogo from '$lib/assets/images/product/DomainFunctions/evidentDomainFunctionsLogo.svg';
+  import DomainFunctionsLogo from '$lib/assets/images/product/domainFunctions/evidentDomainFunctionsLogo.svg';
   import DeployLogo from '$lib/assets/images/product/deploy/evidentDeployLogo.svg';
   import DatabaseLogo from '$lib/assets/images/product/database/evidentDatabaseLogo.svg';
   import EventIcon from '$lib/icons/EventIcon.svelte';

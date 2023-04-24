@@ -31,6 +31,7 @@
     "format": "prettier --plugin-search-dir . --write ."
   },
   "devDependencies": {
+    "@google-cloud/firestore": "^6.5.0",
     "@marplex/flarebase-auth": "^1.2.0",
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-cloudflare": "2.1.0",
@@ -43,6 +44,7 @@
     "classnames": "^2.3.2",
     "concurrently": "^6.3.0",
     "daisyui": "^2.41.0",
+    "dexie": "^3.2.3",
     "dompurify": "^2.4.3",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",

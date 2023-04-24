@@ -8,13 +8,13 @@ export type InitializationPayload = {
   decider: Decider
 }
 
-const initialize_decider = async (id: string | undefined) => {
+const initialize_decider = async (id: string | undefined, user: string) => {
   await init();
   if (dev) {
     setPanicHook();
   }
 
-  let manager = new EventModelStateManager(id);
+  let manager = await new EventModelStateManager(id, user);
 
   let store = readable(await manager.state(), (setter) => {
     manager.store_setter = setter;

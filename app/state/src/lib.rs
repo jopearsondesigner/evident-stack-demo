@@ -3,15 +3,17 @@ extern crate event_models;
 mod automerge;
 mod firestore_automerge;
 pub mod grid;
+mod indexed_db;
 mod local_storage;
 mod strategies;
 
 use std::str::FromStr;
 
 use crate::automerge::Reconcilable;
-use crate::firestore_automerge::{FirestoreAutomergeStateRepository, FirestoreError};
 pub use crate::grid::EventModelGrid;
 use crate::grid::Lane;
+use crate::indexed_db::{IndexedDbError, IndexedDbStateRepository};
+pub use crate::indexed_db::{Model, Patch};
 use crate::strategies::StateRepository;
 use crate::strategies::{ReifyDecideSave, ReifyDecideSaveError};
 use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError};
@@ -27,12 +29,6 @@ use wasm_bindgen::prelude::*;
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
 
 #[wasm_bindgen(js_name = setPanicHook)]
 pub fn set_panic_hook() {
@@ -76,9 +72,8 @@ impl Reconcilable for EventModelState<AutomergeEventModel> {
 }
 
 #[wasm_bindgen]
-#[derive(Debug)]
 pub struct EventModelStateManager {
-    repository: FirestoreAutomergeStateRepository,
+    repository: IndexedDbStateRepository,
     store_setter: Option<js_sys::Function>,
 }
 
@@ -98,17 +93,24 @@ impl EventModelStateManager {
     // TODO: we'll need to store a reference to the Svelte store's
     // setter here, for non-Command-driven state changes (e.g. background sync)
     #[wasm_bindgen(constructor)]
-    pub fn new(maybe_id_str: Option<String>) -> Result<EventModelStateManager, JsValue> {
+    pub async fn new(
+        maybe_id_str: Option<String>,
+        user: String,
+    ) -> Result<EventModelStateManager, JsValue> {
         if let Some(id_str) = maybe_id_str {
             let event_model_id: EventModelId =
                 Uuid::from_str(&id_str).map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
             Ok(EventModelStateManager {
-                repository: FirestoreAutomergeStateRepository::new(Some(event_model_id)),
+                repository: IndexedDbStateRepository::new(Some(event_model_id), user)
+                    .await
+                    .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?,
                 store_setter: None,
             })
         } else {
             Ok(EventModelStateManager {
-                repository: FirestoreAutomergeStateRepository::new(None),
+                repository: IndexedDbStateRepository::new(None, user)
+                    .await
+                    .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?,
                 store_setter: None,
             })
         }
@@ -120,12 +122,11 @@ impl EventModelStateManager {
     }
 
     pub async fn state(&mut self) -> Result<EventModelGrid, JsValue> {
-        let result: Result<EventModelState<AutomergeEventModel>, FirestoreError> =
-            self.repository.reify().await;
-        match result {
-            Ok(ref state) => Ok(state.into()),
-            Err(err) => Err(JsValue::from_str(&format!("RepositoryError: {:?}", err))),
-        }
+        self.repository
+            .reify()
+            .await
+            .map(|ref state| state.into())
+            .map_err(|err| JsValue::from_str(&format!("RepositoryError: {:?}", err)))
     }
 
     pub async fn create(&mut self, name: String) -> Result<EventModelGrid, JsValue> {
@@ -456,7 +457,7 @@ impl EventModelStateManager {
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {
         let result: Result<
             EventModelState<AutomergeEventModel>,
-            ReifyDecideSaveError<EventModelError, FirestoreError>,
+            ReifyDecideSaveError<EventModelError, IndexedDbError>,
         > = EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command).await;
         match &result {
             Ok(state) => {

@@ -9,12 +9,6 @@ use wasm_bindgen::prelude::*;
 
 use crate::{automerge::Reconcilable, strategies::StateRepository, HasKey};
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
-
 #[wasm_bindgen(module = "$lib/firebase/firestore")]
 extern "C" {
     #[wasm_bindgen(catch)]

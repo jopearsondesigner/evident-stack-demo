@@ -17,7 +17,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_cbor = { version = "0.11", optional = true }
 automerge = { version = "0.4.0", optional = true }
-autosurgeon = { git = "https://github.com/bobby/autosurgeon", rev = "2d70ece", features = ["uuid"], optional = true }
+autosurgeon = { version = "0.5.1", features = ["uuid"], optional = true }
 
 [dependencies.url]
 version = "2.3"

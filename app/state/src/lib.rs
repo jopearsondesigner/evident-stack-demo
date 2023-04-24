@@ -4,7 +4,6 @@ mod automerge;
 mod firestore_automerge;
 pub mod grid;
 mod indexed_db;
-mod local_storage;
 mod strategies;
 
 use std::str::FromStr;

@@ -16,6 +16,7 @@ async-trait = "0.1.53"
 event-models = { path = "../../domain/event-models", features = ["automerge"] }
 automerge = { version = "0.4.0" }
 autosurgeon = { version = "0.5.1", features = ["uuid"] }
+
 # domain_functions = { git = "https://github.com/evidentstack/domain_functions.rs" }
 epoch = { git = "https://github.com/Shearerbeard/Epoch", rev = "25e8a17", default-features = false }
 getrandom = { version = "0.2", features = ["js"] }
@@ -40,7 +41,6 @@ console_error_panic_hook = { version = "0.1.6", optional = true }
 wee_alloc = { version = "0.4.5", optional = true }
 wasm-bindgen-futures = "0.4.34"
 base64 = "0.21.0"
-rexie = "0.4.2"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"

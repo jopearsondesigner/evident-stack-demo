@@ -6,7 +6,7 @@
   import ProgressBar from '$components/utils/ProgressBar.svelte';
   import Icon from '$components/Icon.svelte';
   import Warning from '$components/icons/Warning.svelte';
-  import File from '$components/icons/File.svelte';
+  import FileIcon from '$components/icons/FileIcon.svelte';
   import Checkmark from '$components/icons/Checkmark.svelte';
   import Grid from '$components/design/Grid.svelte';
 
@@ -96,7 +96,7 @@
 
 <Modal bind:open={importModal} size="xs" autoclose title="Import JSON File">
   <div class="text-center w-full inline-flex justify-center items-center p px-6">
-    <Icon name="file" pathName={File} class="mr-1" />
+    <Icon name="file" pathName={FileIcon} class="mr-1" />
     <ProgressBar done />
   </div>
   <div class="my-3 text-center w-full inline-flex justify-center items-center p px-6">

@@ -37,7 +37,7 @@
   import Download from '$components/icons/Download.svelte';
   import DesignLogo from '$components/assets/images/product/design/evidentDesignLogo.svg';
   import DataLogo from '$components/assets/images/product/data/evidentDataLogo.svg';
-  import DomainFunctionsLogo from '$components/assets/images/product/DomainFunctions/evidentDomainFunctionsLogo.svg';
+  import DomainFunctionsLogo from '$components/assets/images/product/domainFunctions/evidentDomainFunctionsLogo.svg';
   import DeployLogo from '$components/assets/images/product/deploy/evidentDeployLogo.svg';
   import DatabaseLogo from '$components/assets/images/product/database/evidentDatabaseLogo.svg';
   import DropdownMenu from '$components/dropdown/DropdownMenu.svelte';

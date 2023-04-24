@@ -8,7 +8,6 @@ module.exports = {
       copy: 'lato, san-serif',
       sans: 'lato, san-serif',
       header: 'strokeWeight, sans-serif',
-      // mono: 'input-mono, Courier New, monospace;'
       mono: 'input-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
     },
     extend: {
@@ -66,8 +65,8 @@ module.exports = {
           dark: '#2FB6E1'
         },
         event: {
-          DEFAULT: '#FAAC74',
-          light: '#FCC7A1',
+          DEFAULT: '#FCAC73',
+          light: '#FDC7A0',
           dark: '#FB8C3A'
         },
         readModel: {

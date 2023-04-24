@@ -39,6 +39,7 @@
     "autoprefixer": "^10.4.13",
     "chromatic": "^6.13.1",
     "classnames": "^2.3.2",
+    "codemirror-svelte": "^1.2.1",
     "daisyui": "^2.41.0",
     "dompurify": "^2.4.3",
     "eslint": "^8.28.0",
@@ -76,5 +77,9 @@
   "bugs": {
     "url": "https://github.com/evidentsystems/platform/issues"
   },
-  "homepage": "https://github.com/evidentsystems/platform#readme"
+  "homepage": "https://github.com/evidentsystems/platform#readme",
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.1.7",
+    "svelte-codemirror-editor": "^1.1.0"
+  }
 }

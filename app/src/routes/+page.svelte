@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { handleSignOut } from '$lib/user';
   import type { PageData } from './$types';
   import Container from '$components/Container.svelte';
   import Row from '$components/Row.svelte';
@@ -17,9 +16,8 @@
   import { goto } from '$app/navigation';
 
   export let data: PageData;
-  const { grid, decider } = data;
 
-  $: Modal_id = $grid?.id();
+  $: Modal_id = "modal-editing-window" // TODO: derive this from model ID?
 
   let deleteModal = false;
   let project = [{ done: false }];
@@ -35,7 +33,7 @@
   }
 
   const handleDeleteModel = async () => {
-    await decider?.delete_model();
+    console.log("TODO: delete model")
     goto('/');
   };
 
@@ -43,8 +41,7 @@
     const formData = new FormData(e.target as HTMLFormElement);
     let name = formData.get('name')?.toString();
     if (name) {
-      let state = await create_model(name);
-      goto(`/design/models/${state.id()}`);
+      console.log("TODO: create model")
     }
   };
 

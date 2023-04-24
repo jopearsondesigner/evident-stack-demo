@@ -16,5 +16,16 @@
 
 <Label
 	>Interface Type
-	<Select class="mt-2" items={types} bind:value={selected} placeholder="Choose Interface Type" />
+	<Select class="mt-1" items={types} bind:value={selected} placeholder="Choose Interface Type" />
 </Label>
+
+<style>
+	select {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+		/* Remove default arrow */
+		background-image: url(...);
+		/* Add custom arrow */
+	}
+</style>

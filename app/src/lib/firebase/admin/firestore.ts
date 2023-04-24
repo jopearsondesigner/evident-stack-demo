@@ -1,2 +1,1 @@
-import { firestore } from './init'
-
+import { auth } from './init'

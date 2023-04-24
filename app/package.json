@@ -31,7 +31,6 @@
     "format": "prettier --plugin-search-dir . --write ."
   },
   "devDependencies": {
-    "@google-cloud/firestore": "^6.5.0",
     "@marplex/flarebase-auth": "^1.2.0",
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-cloudflare": "2.1.0",

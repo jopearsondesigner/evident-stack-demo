@@ -4,3 +4,18 @@ members = [
   "domain/event-model-tests",
   "app/state"
 ]
+
+[workspace.dependencies]
+async-trait = "=0.1.66"
+automerge = "0.4.1"
+autosurgeon = "0.5.1"
+epoch = { git = "https://github.com/Shearerbeard/Epoch", rev = "25e8a17", default-features = false }
+itertools = "0.10.5"
+serde = "=1.0.156"
+serde_derive = "=1.0.156"
+serde_json = "1.0"
+thiserror-impl = "=1.0.39"
+tracing-attributes = "=0.1.23"
+url = "2.3"
+uuid = { version = "=1.3.0", features = ["fast-rng", "serde"] }
+uuid-macro-internal = "=1.3.0"

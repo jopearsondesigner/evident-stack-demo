@@ -1,7 +1,5 @@
 extern crate core;
 extern crate serde;
-#[cfg(feature = "cbor")]
-extern crate serde_cbor;
 extern crate url;
 extern crate uuid;
 use serde::{Deserialize, Serialize};

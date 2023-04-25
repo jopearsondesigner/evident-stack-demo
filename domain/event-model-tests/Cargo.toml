@@ -5,15 +5,12 @@ edition = "2021"
 
 [dev-dependencies]
 assert_matches = "1.5"
-epoch = { git = "https://github.com/Shearerbeard/Epoch", rev = "25e8a17", default-features = false, features = ["in_memory"] }
+epoch = { workspace = true, features = ["in_memory"] }
 event-models = { path = "../event-models", features = ["in_memory", "automerge"] }
 
 [dev-dependencies.uuid]
-version = "1.3"
+workspace = true
 features = [
     "v4",
     "v5",
-    "fast-rng",
-    "macro-diagnostics",
-    "serde"
 ]

@@ -13,7 +13,6 @@
   };
 
   export let row: number;
-  $: gridRow = row + 1;
 
   export let max_column: number;
 
@@ -21,9 +20,12 @@
 
   export let lane_index: number;
 
+  export let target_index: number | undefined = undefined;
+
+  $: gridRow = row + 1;
   $: audience.placements.length = max_column;
 
-  const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
+  const handleDragStart: DragEventHandler<HTMLDivElement> = (e: DragEvent) => {
     let transfer = e.dataTransfer;
     console.warn('Audience Drag Start', e);
 
@@ -31,6 +33,11 @@
       console.warn(`Setting transfer with Audience ${audience.id}`);
       transfer.setData('lane', audience.id);
       transfer.effectAllowed = 'move';
+
+      dispatch('lane_drag_start', {
+        laneId: audience.id,
+        laneType: 'audience'
+      });
     }
   };
 </script>

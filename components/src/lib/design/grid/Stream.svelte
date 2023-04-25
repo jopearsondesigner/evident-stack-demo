@@ -19,9 +19,13 @@
 
   export let stream: Stream;
 
+  export let drop_target: 'target' | 'bad-target' | 'none' = 'none';
+
   export let lane_index: number;
 
-  let drop_target: 'target' | 'bad-target' | 'none' = 'none';
+  // export let target_index: number | undefined = undefined;
+
+  // let drop_target: 'target' | 'bad-target' | 'none' = 'none';
 
   $: stream.placements.length = max_column;
   $: good_target = drop_target == 'target';
@@ -29,39 +33,47 @@
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
-    console.warn('Stream Drag Start', e);
+    console.warn('Lane(Stream) Drag Start', e);
 
     if (transfer && stream.id) {
-      console.warn(`Setting transfer with stream ${stream.id}`);
+      // console.warn(`Setting transfer with stream ${stream.id}`);
       transfer.setData('lane', stream.id);
       transfer.effectAllowed = 'move';
+
+      dispatch('lane_drag_start', {
+        laneId: stream.id,
+        laneType: 'stream'
+      });
     }
   };
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
-    console.warn('Stream Drag Enter', e);
+    console.warn('Lane(Stream) Enter', e);
     console.warn('TRANSFER DATA', transfer, transfer?.types);
-    if (transfer?.types.includes('lane')) {
-      console.warn('STREAM GOT LANE');
-      drop_target = 'target';
-    }
+
+    dispatch('lane_drag_enter', {
+      laneIndex: lane_index,
+      laneType: 'stream'
+    });
   };
 
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (_e) => {
-    drop_target = 'none';
+    console.warn('Lane(Stream) Leave');
+    dispatch('lane_drag_leave', {});
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
     console.warn('Lane(Stream) Drop');
-    handleDragLeave(e);
-    let transfer = e.dataTransfer;
-    let id = transfer?.getData('lane');
+    dispatch('lane_drag_drop');
+    // handleDragLeave(e);
+    // let transfer = e.dataTransfer;
+    // let id = transfer?.getData('lane');
 
-    if (transfer && id && transfer.effectAllowed == 'move') {
-      console.warn(`GOT A LANE DROP!!! ${id} => index: ${lane_index}`);
-      dispatch('reorder_lane', { kind: 'stream', lane_id: id, index: lane_index });
-    }
+    // if (transfer && id && transfer.effectAllowed == 'move') {
+    //   console.warn(`GOT A LANE DROP!!! ${id} => index: ${lane_index}`);
+    //   dispatch('reorder_lane', { kind: 'stream', lane_id: id, index: lane_index });
+    // }
   };
 </script>
 
@@ -99,7 +111,14 @@
 />
 
 {#each stream.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
-  <Cell {row} {column} on:navigate_cursor={forward}>
+  <Cell
+    {row}
+    {column}
+    on:navigate_cursor={forward}
+    on:placement_drag_enter={forward}
+    on:placement_drag_leave={forward}
+    on:placement_drag_drop={forward}
+  >
     {#if placement?.id}
       <Event
         id={placement.id}

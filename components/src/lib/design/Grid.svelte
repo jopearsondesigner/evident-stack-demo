@@ -117,6 +117,9 @@
     let laneType: 'stream' | 'audience' = e.detail.laneType;
     dragginLane = laneId;
     draggingLaneType = laneType;
+    console.warn(
+      `OUTER DRAG START: draggingLane => ${dragginLane}, draggingLaneType: ${draggingLaneType}`
+    );
   };
 
   const handleLaneDragEnter = async (e: CustomEvent) => {
@@ -126,26 +129,35 @@
     if (laneType == draggingLaneType) {
       draggingTargetIndex = laneIndex;
     }
+    console.info(
+      `handleLaneDragenter: draggingLane => ${dragginLane}, draggingLaneType: ${draggingLaneType}, draggingLaneIndex: ${draggingTargetIndex}`
+    );
   };
 
   const handleLaneDragLeave = async (e: CustomEvent) => {
+    console.info('TODO: handleLaneDragLeave');
     draggingTargetIndex = undefined;
   };
 
-  const handleRenameLane = async (e: CustomEvent) => {
-    console.warn('TODO: handleRenameLane');
-    console.warn(e.detail);
+  const handleLaneDragDrop = async (e: CustomEvent) => {
+    console.info('TODO: handleLaneDragDrop');
+    if (draggingTargetIndex && dragginLane) {
+      console.info(e.detail);
+    }
+
+    dragginLane = undefined;
+    draggingTargetIndex = undefined;
   };
 
   const handleReorderLane = async (e: CustomEvent) => {
-    console.warn('TODO: handleReorderLane');
-    console.warn(e.detail);
+    console.info('TODO: handleReorderLane');
+    console.info(e.detail);
     decider.reorder_lane(e.detail.kind, e.detail.lane_id, e.detail.index);
   };
 
   const handleRemoveLane = async (e: CustomEvent) => {
-    console.warn('TODO: handleRemoveLane');
-    console.warn(e.detail);
+    console.info('TODO: handleRemoveLane');
+    console.info(e.detail);
   };
 
   // Rows
@@ -158,6 +170,8 @@
   // Lanes
   $: default_stream_lane_index = streams.length;
   $: default_audience_lane_index = audiences.length;
+  $: audience_drag_target_index = draggingLaneType == 'audience' ? draggingTargetIndex : undefined;
+  $: stream_drag_target_index = draggingLaneType == 'stream' ? draggingTargetIndex : undefined;
 
   // Cursor
 
@@ -316,6 +330,9 @@
 <svelte:window on:keydown={keyboardHandler} />
 
 <h3>{mode}</h3>
+<h2>draggingLane: {dragginLane}</h2>
+<h2>draggingLaneType: {draggingLaneType}</h2>
+<h2>draggingTargetIndex: {draggingTargetIndex}</h2>
 
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <FlowCanvas {flows} />
@@ -343,6 +360,7 @@
         on:connect_flow={handleConnectFlow}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
+        target_index={audience_drag_target_index}
         {row}
         {audience}
         {max_column}
@@ -370,6 +388,8 @@
         on:reorder_lane={handleReorderLane}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
+        on:lane_drag_leave={handleLaneDragLeave}
+        on:lane_drag_drop={handleLaneDragDrop}
         {row}
         {stream}
         {max_column}

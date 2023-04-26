@@ -2,10 +2,7 @@ import { Lane, PlacementType } from "../Grid";
 
 enum DraggingStateKind {
     LANE,
-    INTERFACE,
-    READ_MODEL,
-    COMMAND,
-    EVENT,
+    PLACEMENT,
     NONE
 }
 
@@ -18,24 +15,18 @@ type DraggingState =
             },
             target?: {
                 laneIndex: number,
-                laneType: Lane, 
+                laneKind: Lane, 
             }} }
-    | { kind: DraggingStateKind.INTERFACE,
+    | { kind: DraggingStateKind.PLACEMENT,
         value: {
-            source: { interfaceId: string },
-            target?: { column: number, audienceId: string } } }
-    | { kind: DraggingStateKind.READ_MODEL
-        value: {
-            source: { readModelId: string },
-            target?: { column: number } } }
-    | { kind: DraggingStateKind.COMMAND,
-        value: {
-            source: { commandId: string },
-            target?: { column: number }} }
-    | { kind: DraggingStateKind.EVENT,
-        value: {
-            source: { eventId: string },
-            target?: { column: number, streamId: string } }} 
+            source: {
+                placementId: string,
+                placementKind: PlacementType
+            },
+            target?: {
+                column: number,
+                laneId: string
+            } } }
     | { kind: DraggingStateKind.NONE };
 
 enum DraggingCommandKind {
@@ -62,13 +53,13 @@ type DragCommand =
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_START,
         value: {
             placementId: string,
-            placementKind?: PlacementType
+            placementKind: PlacementType
         }}
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_ENTER,
         value: {
             column: number
             laneIndex: number,
-            laneType: Lane,
+            laneKind: Lane,
             laneId: string,
         }}
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE }
@@ -98,7 +89,7 @@ function decide(state: DraggingState, command: DragCommand): DraggingState {
                             ...state.value,
                             target: {
                                 laneIndex,
-                                laneType
+                                laneKind: laneType
                             }
                             
                         }
@@ -121,19 +112,47 @@ function decide(state: DraggingState, command: DragCommand): DraggingState {
                     return state;
             }
         case DraggingCommandKind.LANE_DRAG_DROP:
-            return state;
+            return { kind: DraggingStateKind.NONE };
         case DraggingCommandKind.PLACEMENT_DRAG_START:
-            return state;
+            const { placementId, placementKind } = command.value;
+            return {
+                kind: DraggingStateKind.PLACEMENT,
+                value: {
+                    source: {
+                        placementId,
+                        placementKind
+                    }
+                }
+            };
         case DraggingCommandKind.PLACEMENT_DRAG_ENTER: {
+            const { column, laneIndex, laneKind, laneId } = command.value;
+
             switch (state.kind) {
-                default:
+                case DraggingStateKind.LANE:
+                    return {
+                        ...state,
+                        value: {
+                            ...state.value,
+                            target: {
+                                laneIndex,
+                                laneKind,
+                            }
+                        }
+                    }
+                case DraggingStateKind.PLACEMENT:
+                    return {
+                        ...state,
+                        value: {
+                            ...state.value,
+                            target: {
+                                column,
+                                laneId,
+                            }
+                        }
+                    }
+                case DraggingStateKind.NONE:
                     return state;
             }
-            // case DraggingStateKind.LANE:
-            // case DraggingStateKind.INTERFACE:
-            // case DraggingStateKind.READ_MODEL:
-            // case DraggingStateKind.COMMAND:
-            // case DraggingStateKind.EVENT:
         }
         case DraggingCommandKind.PLACEMENT_DRAG_LEAVE:
             switch (state.kind) {
@@ -146,34 +165,7 @@ function decide(state: DraggingState, command: DragCommand): DraggingState {
                         }
                     }
                 }
-                case DraggingStateKind.INTERFACE: {
-                    return {
-                        ...state,
-                        value: {
-                            ...state.value,
-                            target: undefined
-                        }
-                    }
-                }
-                case DraggingStateKind.READ_MODEL: {
-                    return {
-                        ...state,
-                        value: {
-                            ...state.value,
-                            target: undefined
-                        }
-                    }
-                }
-                case DraggingStateKind.COMMAND: {
-                    return {
-                        ...state,
-                        value: {
-                            ...state.value,
-                            target: undefined
-                        }
-                    }
-                }
-                case DraggingStateKind.EVENT: {
+                case DraggingStateKind.PLACEMENT: {
                     return {
                         ...state,
                         value: {
@@ -183,23 +175,9 @@ function decide(state: DraggingState, command: DragCommand): DraggingState {
                     }
                 }
                 case DraggingStateKind.NONE:
+                    return state;
             }
         case DraggingCommandKind.PLACEMENT_DRAG_DROP:
-            return state;
+            return { kind: DraggingStateKind.NONE };
     }
-
-    // switch(state.kind) {
-    //     case DraggingStateKind.AUDIENCE:
-    //         return state;
-    //     case DraggingStateKind.STREAM:
-    //         return state;
-    //     case DraggingStateKind.INTERFACE:
-    //         return state;
-    //     case DraggingStateKind.COMMAND:
-    //         return state;
-    //     case DraggingStateKind.EVENT:
-    //         return state;
-    //     default:
-    //         return state;
-    // }
 }

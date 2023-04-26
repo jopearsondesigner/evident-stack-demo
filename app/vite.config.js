@@ -19,7 +19,8 @@ const config = {
       '@codemirror/language-javascript',
       '@codemirror/language-javascript',
       'svelte-codemirror-editor',
-      '@codemirror/lang-javascript'
+      '@codemirror/lang-javascript',
+      '@codemirror/theme-one-dark'
     ]
   }
 };

@@ -5,7 +5,8 @@
   import { invalidate } from '$app/navigation';
 
   import CodeMirror from 'svelte-codemirror-editor';
-
+  import { javascript } from '@codemirror/lang-javascript';
+  import { oneDark } from '@codemirror/theme-one-dark';
   let value = '';
 
   import Navbar from '$components/navbar/Navbar.svelte';
@@ -79,7 +80,7 @@
     e.preventDefault();
     isClosed = true;
   };
-
+  let isVerticalOpen = false;
   const handleDropdown = () => {
     hidden = !hidden;
   };
@@ -95,26 +96,21 @@
         hamburgerClass="mx-2"
         on:click={() => handleDrawer()}
         on:click={() => (isClosed = true)}
-        />
-        <NavBrand src={Logo} height={28} logoClass="flex no-underline mx-3 cursor-default" />
-        <div
-          class="h-9 pr-3 border-r border-gray-secondary dark:border-border-dark flex items-center"
-          >
-          <MaybeTooltip tip="Home" position="tooltip-bottom">
-            <IconButton href="/"
-                        ><Icon
-                           name="home"
-                           size={16}
-                           iconColor="text-body-light dark:text-body-dark"
-                           pathName={Home}
-                           />
-            </IconButton>
-          </MaybeTooltip>
-        </div>
+        on:click={() => (isVerticalOpen = false)} />
+      <NavBrand src={Logo} height={28} logoClass="flex no-underline mx-3 cursor-default" />
+      <div class="h-9 pr-3 border-r border-gray-secondary dark:border-border-dark flex items-center">
+        <MaybeTooltip tip="Home" position="tooltip-bottom">
+          <IconButton href="/">
+            <Icon
+              name="home"
+              size={16}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Home} />
+          </IconButton>
+        </MaybeTooltip>
+      </div>
     </NavToolbar>
-    <NavToolbar
-      navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark"
-      >
+    <NavToolbar navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark">
       {#if data.session?.user}
         <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
           <IconButton slot="button" margin="mx-2 mt-1">
@@ -124,8 +120,7 @@
               viewBox="0 0 32 32"
               class="vertical-middle"
               iconColor=""
-              pathName={Profile}
-              />
+              pathName={Profile} />
           </IconButton>
           <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
             {data.session?.user.email}
@@ -178,7 +173,15 @@
       <Accordion class="flex flex-col" style="height: calc(100vh - 183px);">
         <SidebarContainer src={DesignLogo} title="Design" id="design" bind:expanded>
           <SidebarGroup>
+<<<<<<< HEAD
             <SidebarDropdownWrapper label=" Schema" on:click={() => handleClick()}>
+=======
+            <SidebarDropdownWrapper
+              label="	Schema"
+              on:click={() => handleClick()}
+              bind:isVerticalOpen
+            >
+>>>>>>> 0e78f11 (Codemirror ready to review.)
               <Icon
                 slot="icon"
                 name="schema"
@@ -194,6 +197,7 @@
                 pathName={Schema}
                 />
               <SidebarDropdownItem feature>
+<<<<<<< HEAD
                 <Label class="mt-2 mb-6" color="default"
                        ><span class="text-body dark:text-white">Event Model Schema</span>
                   <Textarea
@@ -213,6 +217,33 @@
                     on:click>cancel</button
                                      >
                   <Button color="default" size="sm" label="Edit" on:click class="" />
+=======
+                <Label class="mt-8"
+                  ><span class="mb-1 text-body dark:text-white">Event Model Schema</span></Label
+                >
+                <CodeMirror
+                  bind:value
+                  theme={oneDark}
+                  lang={javascript()}
+                  styles={{
+                    '&': {
+                      width: '100%',
+                      height: '8.875rem',
+                      backgroundColor: '#303841',
+                      fontFamily: 'input-mono',
+                      color: '#D8DEE9'
+                    }
+                  }}
+                  class="mt-1"
+                />
+                <div class="mt-6 mx-3 space-x-3 flex justify-end">
+                  <button
+                    class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
+                    on:click={() => handleClick()}
+                    on:click={() => (isVerticalOpen = false)}>cancel</button
+                  >
+                  <Button color="default" size="sm" label="Save" on:click class="" />
+>>>>>>> 0e78f11 (Codemirror ready to review.)
                 </div>
               </SidebarDropdownItem>
             </SidebarDropdownWrapper>
@@ -237,9 +268,15 @@
             </SidebarItem>
           </SidebarGroup>
         </SidebarContainer>
-        <SidebarContainer src={DataLogo} id="data" title="Data" on:click={() => (isClosed = true)}>
+        <SidebarContainer
+          src={DataLogo}
+          id="data"
+          title="Data"
+          on:click={() => (isClosed = true)}
+          on:click={() => (isVerticalOpen = false)}
+        >
           <SidebarGroup>
-            <SidebarItem label="Hello, please develop me!" blank />
+            <SidebarItem label="" blank />
           </SidebarGroup>
         </SidebarContainer>
         <SidebarContainer
@@ -247,9 +284,14 @@
           id="domain-functions"
           title="Domain Functions"
           on:click={() => (isClosed = true)}
+<<<<<<< HEAD
           >
+=======
+          on:click={() => (isVerticalOpen = false)}
+        >
+>>>>>>> 0e78f11 (Codemirror ready to review.)
           <SidebarGroup>
-            <SidebarItem label="Hello, please develop me!" blank />
+            <SidebarItem label="" blank />
           </SidebarGroup>
         </SidebarContainer>
         <SidebarContainer
@@ -257,9 +299,14 @@
           id="deploy"
           title="Deploy"
           on:click={() => (isClosed = true)}
+<<<<<<< HEAD
           >
+=======
+          on:click={() => (isVerticalOpen = false)}
+        >
+>>>>>>> 0e78f11 (Codemirror ready to review.)
           <SidebarGroup>
-            <SidebarItem label="Hello, please develop me!" blank />
+            <SidebarItem label="" blank />
           </SidebarGroup>
         </SidebarContainer>
         <SidebarContainer
@@ -267,9 +314,14 @@
           id="database"
           title="Database"
           on:click={() => (isClosed = true)}
+<<<<<<< HEAD
           >
+=======
+          on:click={() => (isVerticalOpen = false)}
+        >
+>>>>>>> 0e78f11 (Codemirror ready to review.)
           <SidebarGroup>
-            <SidebarItem label="Hello, please develop me!" blank />
+            <SidebarItem label="" blank />
           </SidebarGroup>
         </SidebarContainer>
       </Accordion>

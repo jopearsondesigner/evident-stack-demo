@@ -1,0 +1,10 @@
+[package]
+name = "collaboration"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+automerge = { workspace = true }
+epoch = { workspace = true }
+uuid = { workspace = true }
+base64 = { workspace = true }

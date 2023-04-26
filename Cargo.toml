@@ -1,14 +1,16 @@
 [workspace]
 members = [
+  "app/state",
+  "domain/collaboration",
   "domain/event-models",
   "domain/event-model-tests",
-  "app/state"
 ]
 
 [workspace.dependencies]
 async-trait = "=0.1.66"
 automerge = "0.4.1"
 autosurgeon = "0.5.1"
+base64 = "0.21"
 epoch = { git = "https://github.com/Shearerbeard/Epoch", rev = "25e8a17", default-features = false }
 itertools = "0.10.5"
 serde = "=1.0.156"

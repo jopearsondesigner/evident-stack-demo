@@ -4,6 +4,10 @@
   import { onMount } from 'svelte';
   import { invalidate } from '$app/navigation';
 
+  import CodeMirror from 'svelte-codemirror-editor';
+
+  let value = '';
+
   import Navbar from '$components/navbar/Navbar.svelte';
   import NavInner from '$components/navbar/NavInner.svelte';
   import NavToolbar from '$components/navbar/NavToolbar.svelte';
@@ -202,6 +206,7 @@
                     disabled
                     />
                 </Label>
+                <CodeMirror bind:value />
                 <div class="mt-6 mx-3 space-x-3 flex justify-end">
                   <button
                     class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"

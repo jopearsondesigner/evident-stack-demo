@@ -75,7 +75,11 @@
     "vite": "^4.3.0",
     "vite-plugin-top-level-await": "^1.2.2",
     "vite-plugin-wasm": "^3.1.1",
-    "vitest": "^0.25.3",
-    "@esbuild/linux-x64": "^0.17.18"
+    "@esbuild/linux-x64": "^0.17.18",
+    "vitest": "^0.25.3"
+  },
+  "dependencies": {
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "svelte-codemirror-editor": "^1.1.0"
   }
 }

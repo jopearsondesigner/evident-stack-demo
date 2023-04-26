@@ -1,8 +1,7 @@
 <script lang="ts">
   import CodeMirror from 'svelte-codemirror-editor';
   import { javascript } from '@codemirror/lang-javascript';
-  import { syntaxHighlighting } from '@codemirror/language';
-
+  import { oneDark } from '@codemirror/theme-one-dark';
   let value = '';
 
   import Textarea from '$lib/form/Textarea.svelte';
@@ -45,6 +44,7 @@
 <Label class="mt-8"><span class="mb-1 text-body dark:text-white">Event Model Schema</span></Label>
 <CodeMirror
   bind:value
+  theme={oneDark}
   lang={javascript()}
   styles={{
     '&': {

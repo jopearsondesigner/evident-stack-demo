@@ -33,6 +33,7 @@
   "devDependencies": {
     "@marplex/flarebase-auth": "^1.2.0",
     "@playwright/test": "^1.28.1",
+    "@sagi.io/workers-jwt": "^0.0.23",
     "@sveltejs/adapter-cloudflare": "2.1.0",
     "@sveltejs/kit": "^1.14.0",
     "@tailwindcss/typography": "^0.5.8",

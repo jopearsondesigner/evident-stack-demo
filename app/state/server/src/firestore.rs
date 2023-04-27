@@ -7,7 +7,7 @@ use js_sys::Uint8Array;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
-use crate::{automerge::Reconcilable, strategies::StateRepository, HasKey};
+use state_shared::{automerge::Reconcilable, strategies::StateRepository, HasKey};
 
 #[wasm_bindgen(module = "$lib/firebase/firestore")]
 extern "C" {

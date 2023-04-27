@@ -1,4 +1,4 @@
-import { default as init, EventModelGrid, EventModelStateManager, setPanicHook } from "app-state";
+import { default as init, EventModelGrid, EventModelStateManager, setPanicHook } from "state-client";
 import { readable, type Readable } from 'svelte/store';
 import type { Decider, Lane } from '$components/design/Grid';
 import { dev } from "$app/environment";

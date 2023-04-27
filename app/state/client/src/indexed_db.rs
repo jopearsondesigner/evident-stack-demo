@@ -1,6 +1,5 @@
 use std::fmt::Debug;
 
-use crate::{automerge::Reconcilable, strategies::StateRepository, HasKey};
 use async_trait::async_trait;
 use automerge::AutoCommit;
 use event_models::{
@@ -8,6 +7,7 @@ use event_models::{
 };
 use js_sys::Array;
 use serde::Deserialize;
+use state_shared::{automerge::Reconcilable, strategies::StateRepository, HasKey};
 use uuid::Uuid;
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 

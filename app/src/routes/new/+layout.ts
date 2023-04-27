@@ -1,4 +1,4 @@
-import { initialize_decider } from '$lib/state';
+import { initialize_decider } from '$lib/state/client';
 import { browser } from '$app/environment';
 import type { LayoutLoad } from './$types';
 

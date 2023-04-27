@@ -1,25 +1,19 @@
 extern crate event_models;
 
-mod automerge;
-mod firestore_automerge;
 pub mod grid;
 mod indexed_db;
-mod strategies;
 
 use std::str::FromStr;
 
-use crate::automerge::Reconcilable;
 pub use crate::grid::EventModelGrid;
 use crate::grid::Lane;
 use crate::indexed_db::{IndexedDbError, IndexedDbStateRepository};
 pub use crate::indexed_db::{Model, Patch};
-use crate::strategies::StateRepository;
-use crate::strategies::{ReifyDecideSave, ReifyDecideSaveError};
-use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError};
 use event_models::api::commands::EventModelCommand;
+use event_models::EventModelError;
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
-use event_models::{EventModel, EventModelError};
 use js_sys::{Function, Uint8Array};
+use state_shared::strategies::{ReifyDecideSave, ReifyDecideSaveError, StateRepository};
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
@@ -39,35 +33,6 @@ pub fn set_panic_hook() {
     // https://github.com/rustwasm/console_error_panic_hook#readme
     #[cfg(feature = "console_error_panic_hook")]
     console_error_panic_hook::set_once();
-}
-
-pub trait HasKey {
-    fn get_key(&self) -> Option<Uuid>;
-}
-
-impl<E: EventModel> HasKey for EventModelState<E> {
-    fn get_key(&self) -> Option<Uuid> {
-        match self {
-            EventModelState::BeforeCreation => None,
-            EventModelState::EventModel(model) => Some(model.id()),
-            EventModelState::Deleted(id) => Some(*id),
-        }
-    }
-}
-
-impl Reconcilable for EventModelState<AutomergeEventModel> {
-    fn reconcile(&self, doc: &mut impl Doc) -> Result<(), ReconcileError> {
-        if let EventModelState::EventModel(m) = self {
-            reconcile(doc, m)
-        } else {
-            Ok(())
-        }
-    }
-
-    fn hydrate(doc: &impl ReadDoc) -> Result<Self, HydrateError> {
-        let model = hydrate(doc)?;
-        Ok(EventModelState::EventModel(model))
-    }
 }
 
 #[wasm_bindgen]

@@ -1,6 +1,6 @@
 use autosurgeon::{Doc, HydrateError, ReadDoc, ReconcileError};
 
-pub(crate) trait Reconcilable
+pub trait Reconcilable
 where
     Self: Sized,
 {

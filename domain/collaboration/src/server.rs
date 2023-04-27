@@ -17,6 +17,13 @@ use crate::{
 pub struct Peer(PeerId, State);
 
 #[derive(Debug, Clone)]
+pub struct Grant {
+    grantor_id: UserId,
+    user_id: UserId,
+    role: Role,
+}
+
+#[derive(Debug, Clone)]
 pub struct Invitation {
     document_id: DocumentId,
     invitor_id: UserId,
@@ -30,7 +37,7 @@ pub struct PeerDocument {
     document: AutoCommit,
     peer: Option<Peer>,
     current_roles: HashMap<UserId, Role>,
-    roles_granted: HashMap<UserId, Role>,
+    roles_granted: HashMap<UserId, Grant>,
     roles_revoked: HashMap<UserId, UserId>,
     current_invitations: HashMap<Email, Invitation>,
     invitations_added: HashMap<Email, Invitation>,
@@ -366,14 +373,20 @@ impl Evolver for CollaborationDecider {
                             .sync()
                             .receive_sync_message(&mut state, initial_sync_message.to_owned())
                             .unwrap(); // TODO: what to do about errors?
-                        let user_role = Role::Owner;
                         let user_id = creator_id.to_owned();
                         CollaborativeDocument::PeerDocument(PeerDocument {
                             document_id: *document_id,
                             document,
                             peer: Some(Peer(peer_id.to_owned(), state)),
                             current_roles: Default::default(),
-                            roles_granted: HashMap::from([(user_id, user_role)]),
+                            roles_granted: HashMap::from([(
+                                user_id.to_owned(),
+                                Grant {
+                                    grantor_id: user_id.to_owned(),
+                                    user_id,
+                                    role: Role::Owner,
+                                },
+                            )]),
                             roles_revoked: Default::default(),
                             current_invitations: Default::default(),
                             invitations_added: Default::default(),
@@ -442,14 +455,22 @@ impl Evolver for CollaborationDecider {
                 }
             },
             CollaborationEvent::AccessGranted {
-                user_id, user_role, ..
+                user_id,
+                user_role,
+                grantor_id,
+                ..
             } => match state {
                 CollaborativeDocument::BeforeCreation => state,
                 CollaborativeDocument::Deleted(_) => state,
                 CollaborativeDocument::PeerDocument(mut peer_doc) => {
-                    peer_doc
-                        .roles_granted
-                        .insert(user_id.to_owned(), user_role.to_owned());
+                    peer_doc.roles_granted.insert(
+                        user_id.to_owned(),
+                        Grant {
+                            grantor_id: grantor_id.to_owned(),
+                            user_id: user_id.to_owned(),
+                            role: user_role.to_owned(),
+                        },
+                    );
                     CollaborativeDocument::PeerDocument(peer_doc)
                 }
             },

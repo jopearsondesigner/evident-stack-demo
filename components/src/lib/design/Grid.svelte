@@ -1,6 +1,13 @@
 <svelte:options immutable />
 
 <script lang="ts">
+  import {
+    type DraggingState,
+    DraggingStateKind,
+    type DragCommand,
+    DraggingCommandKind,
+    evolveDraggingState
+  } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
 
@@ -20,10 +27,12 @@
     type Disambiguation,
     type CursorMode,
     type GridMode,
-    type Flow
+    type Flow,
+    type PlacementType
+
   } from './Grid';
   import { onMount } from 'svelte';
-  import { itemAtCursor } from './Grid';
+  import { itemAtCursor, type Lane } from './Grid';
   import TimelineDisambiguation from './grid/TimelineDisambiguation.svelte';
 
   export let decider: Decider = default_decider;
@@ -39,10 +48,6 @@
 
   let mode: GridMode = 'loading';
 
-  let dragginLane: string | undefined;
-  let draggingLaneType: 'stream' | 'audience' | 'none' = 'none';
-  let draggingTargetIndex: number | undefined;
-
   onMount(() => {
     mode = 'navigation';
   });
@@ -50,6 +55,112 @@
   // Disambiguation
 
   let disambiguation: Disambiguation = null;
+
+  // Drag Drop
+  let drag_state: DraggingState = { kind: DraggingStateKind.NONE };
+
+  const handleLaneDragStart = async (e: CustomEvent) => {
+    console.info('handleLaneDragStart', e.detail);
+    const laneId: string = e.detail.laneId;
+    const laneType: Lane = e.detail.laneType;
+
+    const command: DragCommand = {
+      kind: DraggingCommandKind.LANE_DRAG_START,
+      value: {
+        laneId,
+        laneType
+      }
+    };
+
+    drag_state = evolveDraggingState(drag_state, command);
+  };
+
+  const handleLaneDragEnter = async (e: CustomEvent) => {
+    console.info('handleLaneDragEnter', e.detail);
+    const laneIndex: number = e.detail.laneIndex;
+    const laneType: Lane = e.detail.laneType;
+
+    const command: DragCommand = {
+      kind: DraggingCommandKind.LANE_DRAG_ENTER,
+      value: {
+        laneIndex,
+        laneType
+      }
+    };
+
+    drag_state = evolveDraggingState(drag_state, command);
+  };
+
+  const handleLaneDragLeave = async (e: CustomEvent) => {
+    console.info('handleLaneDragLeave', e.detail);
+
+    const command: DragCommand = {
+      kind: DraggingCommandKind.LANE_DRAG_LEAVE
+    };
+
+    drag_state = evolveDraggingState(drag_state, command);
+  };
+
+  const handleLaneDragDrop = async (e: CustomEvent) => {
+    console.info('TODO: handleLaneDragDrop');
+    const command: DragCommand = {
+      kind: DraggingCommandKind.LANE_DRAG_DROP
+    };
+
+    drag_state = evolveDraggingState(drag_state, command);
+  };
+
+  const handlePlacementDragStart = async(e: CustomEvent) => {
+    console.info('handlePlacementDragStart', e.detail);
+    const placementId: string = e.detail.placementId;
+    const placementKind: PlacementType = e.detail.placementType;
+
+    const command: DragCommand = {
+      kind: DraggingCommandKind.PLACEMENT_DRAG_START,
+      value: {
+        placementId,
+        placementKind
+      }
+    };
+
+    drag_state = evolveDraggingState(drag_state, command);
+  }
+
+  const handlePlacementDragEnter = async(e: CustomEvent) => {
+    console.info('handlePlacementDragEnter', e.detail);
+    const column: number = e.detail.column;
+    const laneIndex: number = e.detail.laneIndex;
+    const laneKind: Lane = e.detail.laneKind;
+    const laneId: string = e.detail.laneId;
+
+    const command: DragCommand = {
+      kind: DraggingCommandKind.PLACEMENT_DRAG_ENTER,
+      value: {
+        column,
+        laneIndex,
+        laneKind,
+        laneId
+      }
+    };
+
+    drag_state = evolveDraggingState(drag_state, command);
+  }
+
+  const handlePlacementDragLeave = async(e: CustomEvent) => {
+    console.info('handlePlacementDragLeave', e.detail);
+
+    const command: DragCommand = { kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE }
+
+    drag_state = evolveDraggingState(drag_state, command);
+  }
+
+  const handlePlacementDragDrop = async(e: CustomEvent) => {
+    console.info('handlePlacementDragDrop', e.detail);
+
+    const command: DragCommand = { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP }
+
+    drag_state = evolveDraggingState(drag_state, command);
+  }
 
   // Command Dispatch
 
@@ -112,43 +223,6 @@
   };
 
   // Lane Events
-  const handleLaneDragStart = async (e: CustomEvent) => {
-    let laneId: string = e.detail.laneId;
-    let laneType: 'stream' | 'audience' = e.detail.laneType;
-    dragginLane = laneId;
-    draggingLaneType = laneType;
-    console.warn(
-      `OUTER DRAG START: draggingLane => ${dragginLane}, draggingLaneType: ${draggingLaneType}`
-    );
-  };
-
-  const handleLaneDragEnter = async (e: CustomEvent) => {
-    let laneIndex: number = e.detail.laneIndex;
-    let laneType: 'stream' | 'audience' = e.detail.laneType;
-
-    if (laneType == draggingLaneType) {
-      draggingTargetIndex = laneIndex;
-    }
-    console.info(
-      `handleLaneDragenter: draggingLane => ${dragginLane}, draggingLaneType: ${draggingLaneType}, draggingLaneIndex: ${draggingTargetIndex}`
-    );
-  };
-
-  const handleLaneDragLeave = async (e: CustomEvent) => {
-    console.info('TODO: handleLaneDragLeave');
-    draggingTargetIndex = undefined;
-  };
-
-  const handleLaneDragDrop = async (e: CustomEvent) => {
-    console.info('TODO: handleLaneDragDrop');
-    if (draggingTargetIndex && dragginLane) {
-      console.info(e.detail);
-    }
-
-    dragginLane = undefined;
-    draggingTargetIndex = undefined;
-  };
-
   const handleReorderLane = async (e: CustomEvent) => {
     console.info('TODO: handleReorderLane');
     console.info(e.detail);
@@ -156,6 +230,8 @@
   };
 
   const handleRemoveLane = async (e: CustomEvent) => {
+    // Drag Drop
+    let drag_state: DraggingState;
     console.info('TODO: handleRemoveLane');
     console.info(e.detail);
   };
@@ -170,8 +246,19 @@
   // Lanes
   $: default_stream_lane_index = streams.length;
   $: default_audience_lane_index = audiences.length;
-  $: audience_drag_target_index = draggingLaneType == 'audience' ? draggingTargetIndex : undefined;
-  $: stream_drag_target_index = draggingLaneType == 'stream' ? draggingTargetIndex : undefined;
+  $: audience_drag_target_index = undefined;
+  // switch(drag_state.kind) {
+  //   case DraggingStateKind.LANE: {
+  //     let {  } = drag_state.value;
+  //   }
+  //   default:
+  //     return undefined;
+  // }
+  // (drag_state.kind == DraggingStateKind.LANE && drag_state.value.target?.laneKind == Lane Lane.Audience) ?
+  //   drag_state.value.target?.laneIndex : undefined;
+  $: stream_drag_target_index = undefined;
+  // (drag_state.kind == DraggingStateKind.LANE && drag_state.value.target?.laneKind == Lane.Stream) ?
+  //   drag_state.value.target?.laneIndex : undefined;
 
   // Cursor
 
@@ -330,9 +417,7 @@
 <svelte:window on:keydown={keyboardHandler} />
 
 <h3>{mode}</h3>
-<h2>draggingLane: {dragginLane}</h2>
-<h2>draggingLaneType: {draggingLaneType}</h2>
-<h2>draggingTargetIndex: {draggingTargetIndex}</h2>
+<h2>draggingLane: {drag_state}</h2>
 
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <FlowCanvas {flows} />

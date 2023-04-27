@@ -1,12 +1,12 @@
-import { Lane, PlacementType } from "../Grid";
+import type { Lane, PlacementType } from "../Grid";
 
-enum DraggingStateKind {
+export enum DraggingStateKind {
     LANE,
     PLACEMENT,
     NONE
 }
 
-type DraggingState =
+export type DraggingState =
     | { kind: DraggingStateKind.LANE,
         value: {
             source: {
@@ -29,7 +29,7 @@ type DraggingState =
             } } }
     | { kind: DraggingStateKind.NONE };
 
-enum DraggingCommandKind {
+export enum DraggingCommandKind {
     LANE_DRAG_START,
     LANE_DRAG_ENTER,
     LANE_DRAG_LEAVE,
@@ -40,7 +40,7 @@ enum DraggingCommandKind {
     PLACEMENT_DRAG_DROP
 }
 
-type DragCommand =
+export type DragCommand =
     | { kind: DraggingCommandKind.LANE_DRAG_START,
         value: {
             laneId: string,
@@ -65,7 +65,7 @@ type DragCommand =
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE }
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP }
 
-function decide(state: DraggingState, command: DragCommand): DraggingState {
+export function evolveDraggingState(state: DraggingState, command: DragCommand): DraggingState {
     switch (command.kind) {
         case DraggingCommandKind.LANE_DRAG_START: {
             let { laneId, laneType } = command.value

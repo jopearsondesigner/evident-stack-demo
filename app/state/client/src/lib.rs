@@ -2,6 +2,7 @@ extern crate event_models;
 
 pub mod grid;
 mod indexed_db;
+mod sync;
 
 use std::str::FromStr;
 
@@ -41,7 +42,7 @@ pub struct EventModelStateManager {
     store_setter: Option<js_sys::Function>,
 }
 
-pub struct EventModelDecider;
+struct EventModelDecider;
 
 impl ReifyDecideSave for EventModelDecider {
     type Decide = EventModelState<AutomergeEventModel>;

@@ -31,20 +31,20 @@ pub struct Invitation {
     invited_role: Role,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PeerDocument {
-    document_id: DocumentId,
-    document: AutoCommit,
-    peer: Option<Peer>,
-    current_roles: HashMap<UserId, Role>,
-    roles_granted: HashMap<UserId, Grant>,
-    roles_revoked: HashMap<UserId, UserId>,
-    current_invitations: HashMap<Email, Invitation>,
-    invitations_added: HashMap<Email, Invitation>,
-    invitations_removed: HashMap<Email, UserId>,
+    pub document_id: DocumentId,
+    pub document: AutoCommit,
+    pub peer: Option<Peer>,
+    pub current_roles: HashMap<UserId, Role>,
+    pub roles_granted: HashMap<UserId, Grant>,
+    pub roles_revoked: HashMap<UserId, UserId>,
+    pub current_invitations: HashMap<Email, Invitation>,
+    pub invitations_added: HashMap<Email, Invitation>,
+    pub invitations_removed: HashMap<Email, UserId>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum CollaborativeDocument {
     BeforeCreation,
     PeerDocument(PeerDocument),
@@ -53,11 +53,16 @@ pub enum CollaborativeDocument {
 
 #[derive(Debug)]
 pub enum CollaborationCommand {
-    ReceiveSyncMessage {
+    Sync {
         document_id: DocumentId,
         user_id: UserId,
         peer_id: PeerId,
         message_string: Base64String,
+    },
+    AppendPatch {
+        document_id: DocumentId,
+        user_id: UserId,
+        patch: Base64String,
     },
     InviteUser {
         document_id: DocumentId,
@@ -104,6 +109,12 @@ pub enum CollaborationEvent {
         peer_id: PeerId,
         sync_message: Message,
     },
+    PatchAppended {
+        event_id: EventId,
+        document_id: DocumentId,
+        user_id: UserId,
+        patch: Vec<u8>,
+    },
     UserInvited {
         event_id: EventId,
         document_id: DocumentId,
@@ -144,6 +155,7 @@ impl Event for CollaborationEvent {
         match self {
             CollaborationEvent::DocumentCreated { .. } => "DocumentCreated".to_string(),
             CollaborationEvent::SyncMessageReceived { .. } => "SyncMessageReceived".to_string(),
+            CollaborationEvent::PatchAppended { .. } => "PatchAppended".to_string(),
             CollaborationEvent::UserInvited { .. } => "UserInvited".to_string(),
             CollaborationEvent::InvitationRemoved { .. } => "InvitationRemoved".to_string(),
             CollaborationEvent::AccessGranted { .. } => "AccessGranted".to_string(),
@@ -156,6 +168,7 @@ impl Event for CollaborationEvent {
         match self {
             CollaborationEvent::DocumentCreated { event_id, .. } => *event_id,
             CollaborationEvent::SyncMessageReceived { event_id, .. } => *event_id,
+            CollaborationEvent::PatchAppended { event_id, .. } => *event_id,
             CollaborationEvent::UserInvited { event_id, .. } => *event_id,
             CollaborationEvent::InvitationRemoved { event_id, .. } => *event_id,
             CollaborationEvent::AccessGranted { event_id, .. } => *event_id,
@@ -166,10 +179,10 @@ impl Event for CollaborationEvent {
 }
 
 #[derive(Debug)]
-struct CollaborationDecider;
+pub struct CollaborationDecider;
 
 impl DeciderWithContext for CollaborationDecider {
-    type Ctx = (); // TODO: lookup user role by id
+    type Ctx = (); // TODO: lookup user role by id?
 
     type Cmd = CollaborationCommand;
 
@@ -181,7 +194,7 @@ impl DeciderWithContext for CollaborationDecider {
         cmd: &Self::Cmd,
     ) -> Result<Vec<Self::Evt>, Self::Err> {
         match cmd {
-            CollaborationCommand::ReceiveSyncMessage {
+            CollaborationCommand::Sync {
                 document_id,
                 user_id,
                 peer_id,
@@ -219,10 +232,41 @@ impl DeciderWithContext for CollaborationDecider {
                                     sync_message: message,
                                 }])
                             }
-                            Role::Viewer => Err(CollaborationError::AuthorizationError),
+                            Role::Viewer => Err(CollaborationError::NotAuthorized),
                         }
                     } else {
-                        Err(CollaborationError::AuthorizationError)
+                        Err(CollaborationError::NotAuthorized)
+                    }
+                }
+            },
+            CollaborationCommand::AppendPatch {
+                document_id,
+                user_id,
+                patch,
+            } => match state {
+                CollaborativeDocument::BeforeCreation => Err(CollaborationError::IllegalState),
+                CollaborativeDocument::Deleted(_) => Err(CollaborationError::IllegalState),
+                CollaborativeDocument::PeerDocument(PeerDocument { current_roles, .. }) => {
+                    if let Some(user_role) = current_roles.get(user_id) {
+                        let patch_data = BASE64_STANDARD
+                            .decode(patch)
+                            .map_err(|_| CollaborationError::MessageParseError)?;
+                        let success = Ok(vec![CollaborationEvent::PatchAppended {
+                            event_id: Uuid::new_v4(),
+                            document_id: *document_id,
+                            user_id: user_id.to_owned(),
+                            patch: patch_data,
+                        }]);
+                        match user_role {
+                            Role::Owner => success,
+                            Role::Admin => match user_role {
+                                Role::Admin | Role::Editor | Role::Viewer => success,
+                                _ => Err(CollaborationError::NotAuthorized),
+                            },
+                            _ => Err(CollaborationError::NotAuthorized),
+                        }
+                    } else {
+                        Err(CollaborationError::NotAuthorized)
                     }
                 }
             },
@@ -249,12 +293,12 @@ impl DeciderWithContext for CollaborationDecider {
                             Role::Owner => success,
                             Role::Admin => match invited_role {
                                 Role::Admin | Role::Editor | Role::Viewer => success,
-                                _ => Err(CollaborationError::AuthorizationError),
+                                _ => Err(CollaborationError::NotAuthorized),
                             },
-                            _ => Err(CollaborationError::AuthorizationError),
+                            _ => Err(CollaborationError::NotAuthorized),
                         }
                     } else {
-                        Err(CollaborationError::AuthorizationError)
+                        Err(CollaborationError::NotAuthorized)
                     }
                 }
             },
@@ -317,13 +361,11 @@ impl DeciderWithContext for CollaborationDecider {
                             {
                                 success
                             } else {
-                                Err(CollaborationError::AuthorizationError)
+                                Err(CollaborationError::NotAuthorized)
                             }
                         }
                         (Some(_), None) => Err(CollaborationError::IllegalState),
-                        (None, None) | (None, Some(_)) => {
-                            Err(CollaborationError::AuthorizationError)
-                        }
+                        (None, None) | (None, Some(_)) => Err(CollaborationError::NotAuthorized),
                     }
                 }
             },
@@ -341,7 +383,7 @@ impl DeciderWithContext for CollaborationDecider {
                             deleter_id: deleter_id.to_owned(),
                         }])
                     } else {
-                        Err(CollaborationError::AuthorizationError)
+                        Err(CollaborationError::NotAuthorized)
                     }
                 }
             },
@@ -418,6 +460,14 @@ impl Evolver for CollaborationDecider {
                     }
                 }
             }
+            CollaborationEvent::PatchAppended { patch, .. } => match state {
+                CollaborativeDocument::BeforeCreation => state,
+                CollaborativeDocument::Deleted(_) => state,
+                CollaborativeDocument::PeerDocument(mut collab_doc) => {
+                    collab_doc.document.load_incremental(patch).unwrap(); // TODO: what to do about an error here?
+                    CollaborativeDocument::PeerDocument(collab_doc)
+                }
+            },
             CollaborationEvent::UserInvited {
                 document_id,
                 invitor_id,

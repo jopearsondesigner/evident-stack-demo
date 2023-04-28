@@ -1,3 +1,4 @@
+use email_address::EmailAddress;
 use uuid::Uuid;
 
 pub mod client;
@@ -17,7 +18,7 @@ pub enum CollaborationError {
     MessageParseError,
     InvalidEmailAddress(String),
     InvalidRole(String),
-    AuthorizationError,
+    NotAuthorized,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -25,7 +26,11 @@ pub struct Email(String);
 
 impl Email {
     pub(crate) fn new(s: &str) -> Result<Self, CollaborationError> {
-        todo!("validate email address")
+        if EmailAddress::is_valid(s) {
+            Ok(Email(s.to_string()))
+        } else {
+            Err(CollaborationError::InvalidEmailAddress(s.to_string()))
+        }
     }
 }
 
@@ -55,7 +60,7 @@ impl TryFrom<&String> for Role {
     type Error = CollaborationError;
 
     fn try_from(value: &String) -> Result<Self, Self::Error> {
-        let s: &str = &value;
+        let s: &str = value;
         s.try_into()
     }
 }

@@ -20,9 +20,7 @@ const serviceAccountJSON = {
 const projectId = PUBLIC_FIREBASE_PROJECT_ID
 
 export const firestore = async () => {
-  let token = await getTokenFromGCPServiceAccount({ serviceAccountJSON, aud} )
-  return {
-    headers: { Accept: 'application/json', Authorization: `Bearer ${token}` },
-    patches_url: (id: string) => `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/models/${id}/patches`,
-  }
+  const token = await getTokenFromGCPServiceAccount({ serviceAccountJSON, aud })
+  const db_url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)`
+  return { token, db_url }
 };

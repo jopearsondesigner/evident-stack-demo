@@ -20,12 +20,6 @@ extern "C" {
     async fn save(model: Model, patch: Patch) -> Result<(), JsValue>;
 }
 
-pub struct IndexedDbStateRepository {
-    key: Option<Uuid>,
-    user: String,
-    automerge: AutoCommit,
-}
-
 #[derive(Debug, Clone)]
 pub enum IndexedDbError {
     PatchLoad(String),
@@ -49,6 +43,12 @@ pub struct Patch {
     pub user: String,
     pub model: String,
     pub data: Vec<u8>,
+}
+
+pub struct IndexedDbStateRepository {
+    key: Option<Uuid>,
+    user: String,
+    automerge: AutoCommit,
 }
 
 impl IndexedDbStateRepository {

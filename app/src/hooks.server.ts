@@ -1,23 +1,40 @@
-import { SESSION_COOKIE_NAME } from "$lib/constants";
-import { getIdTokenFromSessionCookie } from "$lib/firebase/admin/auth";
+import {
+  PUBLIC_SUPABASE_URL,
+  PUBLIC_SUPABASE_ANON_KEY
+} from '$env/static/public';
+import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
 import { redirect, type Handle } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 
 const authentication = (async ({ event, resolve }) => {
-  const { cookies, locals } = event
+  event.locals.supabase = createSupabaseServerClient({
+    supabaseUrl: PUBLIC_SUPABASE_URL,
+    supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
+    event
+  });
 
-  const sessionCookie = cookies.get(SESSION_COOKIE_NAME) || null
+  event.locals.getSession = async () => {
+    const {
+      data: { session }
+    } = await event.locals.supabase.auth.getSession();
+    return session;
+  };
 
-  const token = sessionCookie ? await getIdTokenFromSessionCookie(sessionCookie) : null
-
-  locals.user = token ? { id: token.sub!, email: token.email! } : null
-
-  return resolve(event)
+  return resolve(event, {
+    /**
+     * There´s an issue with `filterSerializedResponseHeaders` not working when using `sequence`
+     *
+     * https://github.com/sveltejs/kit/issues/8061
+     */
+    filterSerializedResponseHeaders(name) {
+      return name === 'content-range';
+    }
+  });
 }) satisfies Handle;
 
 const authorization = (async ({ event, resolve }) => {
   if (!event.url.pathname.startsWith('/auth')) {
-    if (!event.locals.user) {
+    if (!event.locals.getSession()) {
       throw redirect(303, '/auth/sign-in')
     }
   }

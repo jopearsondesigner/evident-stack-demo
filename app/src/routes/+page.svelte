@@ -52,7 +52,7 @@
   $: remaining = project.filter((t) => !t.done).length;
 </script>
 
-{#if data.session.user}
+{#if data.session?.user}
   <section class="mt-20">
     <Button gradient color="brandStackPrimary" size="sm" href="/new" label="Create New Model" />
   </section>

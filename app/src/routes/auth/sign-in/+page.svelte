@@ -1,13 +1,9 @@
 <script lang="ts">
-  import LoginForm from '$components/auth/LoginForm.svelte'
-  import { sendSignInLink } from '$lib/firebase/auth';
-  import { setSignInEmail } from '$lib/localStorage/signInEmail';
+  import { Auth } from '@supabase/auth-ui-svelte';
+  import { ThemeSupa } from '@supabase/auth-ui-shared';
+  import type { PageData } from './$types';
 
-  const onSubmit = async (email: string) => {
-    const redirectUrl = `${window.location.origin}/auth/session`
-    await sendSignInLink(email, redirectUrl)
-    setSignInEmail(email)
-  }
+  export let data: PageData;
 </script>
 
 <svelte:head>
@@ -15,4 +11,11 @@
 </svelte:head>
 
 <h1>Login</h1>
-<LoginForm onSubmit={onSubmit}></LoginForm>
+<div class="mt-16">
+  <Auth
+    supabaseClient={data.supabase}
+    view="magic_link"
+    redirectTo={`${data.url}/auth/sign-in/loading?redirect=/`}
+    showLinks={false}
+    appearance={{ theme: ThemeSupa }} />
+</div>

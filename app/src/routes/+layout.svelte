@@ -271,10 +271,9 @@
 </Drawer>
 
 <main
-  class="left-0 relative transition-all duration-[200ms] ml-0"
+  class="mt-16 left-0 relative transition-all duration-[200ms] ml-0"
   class:left-60={!hidden}
   class:ml-[177px]={!isClosed}
-  class:ease-in={!isClosed}
-  >
+  class:ease-in={!isClosed} >
   <slot />
 </main>

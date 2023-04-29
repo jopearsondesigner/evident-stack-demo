@@ -11,7 +11,7 @@
 </svelte:head>
 
 <h1>Login</h1>
-<div class="mt-16">
+<div>
   <Auth
     supabaseClient={data.supabase}
     view="magic_link"

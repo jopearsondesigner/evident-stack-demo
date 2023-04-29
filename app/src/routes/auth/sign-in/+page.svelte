@@ -10,8 +10,8 @@
   <title>Login | Evident Stack</title>
 </svelte:head>
 
-<h1>Login</h1>
-<div>
+<div class="container mx-auto">
+  <h1>Login</h1>
   <Auth
     supabaseClient={data.supabase}
     view="magic_link"

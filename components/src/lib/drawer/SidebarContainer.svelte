@@ -52,7 +52,7 @@
   export const isClosed = true;
 </script>
 
-<li data-accordion-item {...$$restProps} class:grow={expanded}>
+<li data-accordion-item {...$$restProps} class:grow={expanded} class="flex flex-col">
   <button
     bind:this={ref}
     type="button"
@@ -86,7 +86,7 @@
       {id}
       aria-labelledby={button_id}
       hidden={!expanded}
-      class={classNames('h-full')}
+      class={classNames('grow')}
       transition:slide={{ delay: 0, duration: 200, easing: sineIn }}
     >
       <slot />

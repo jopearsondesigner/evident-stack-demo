@@ -14,11 +14,23 @@
   export let name = 'This is a Project Name!';
   export let description =
     'This is a top-level description of a project that is created with a new event model.';
+  let editable = false;
+
+  function handleDblClick(event) {
+    editable = true; // or use  editable=!editable  to toggle
+  }
 </script>
 
 <aside class={classNames(className, asideClass)} {style}>
   <div class={divClass}>
-    <h2 class={nameClass} contenteditable="true" bind:textContent={name}>{name}</h2>
+    <h2
+      class={nameClass}
+      on:dblclick={handleDblClick}
+      contenteditable="true"
+      bind:textContent={name}
+    >
+      {name}
+    </h2>
     <p class={descClass} contenteditable="true" bind:textContent={description}>
       {description}
     </p>

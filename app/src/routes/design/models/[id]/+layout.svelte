@@ -11,6 +11,20 @@
   import Checkmark from '$components/icons/Checkmark.svelte';
   import Grid from '$components/design/Grid.svelte';
 
+  import CodeMirror from 'svelte-codemirror-editor';
+  import { javascript } from '@codemirror/lang-javascript';
+  import { oneDark } from '@codemirror/theme-one-dark';
+  let valueComponent = '';
+  let valuePlacement = '';
+
+  const handleEditDescription = async (e: SubmitEvent) => {
+    const formData = new FormData(e.target as HTMLFormElement);
+    let name = formData.get('name')?.toString();
+    if (name) {
+      console.log('TODO: create model');
+    }
+  };
+
   import Drawer from '$components/drawer/Drawer.svelte';
   import Form from '$components/form/Form.svelte';
   import Textarea from '$components/form/Textarea.svelte';
@@ -70,8 +84,8 @@
   let command: boolean = false;
   let readModel: boolean = false;
   let hiddenRight: boolean = true;
-  let placementDetails: boolean = false;
-  let interfaceDetails: boolean = true;
+  let placementDetails: boolean = true;
+  let interfaceDetails: boolean = false;
 
   let input: HTMLInputElement;
   let deleteModal = false;
@@ -115,6 +129,10 @@
       imgUpload = e.target.result;
     };
   };
+
+  let name = 'Component Name';
+  let description =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
 </script>
 
 <h2>Sync state: {$syncing}</h2>
@@ -167,16 +185,16 @@
           Placement Details
         </h3>
         <div class="w-full p-6 border rounded border-border-light dark:border-border-dark">
-          <div class="inline-flex">
-            {#if event}
-              <Icon
-                name="event-icon"
-                size={48}
-                class={iconShadow}
-                iconColor=""
-                pathName={EventIcon}
-                viewBox="0 0 48 48"
-                />
+          <div class="grid grid-cols-6">
+            <div class="col-span-1">
+              {#if event}
+                <Icon
+                  name="event-icon"
+                  size={48}
+                  class={iconShadow}
+                  iconColor=""
+                  pathName={EventIcon}
+                  viewBox="0 0 48 48" />
               {:else if command}
                 <Icon
                   name="command-icon"
@@ -185,71 +203,80 @@
                   iconColor=""
                   pathName={CommandIcon}
                   viewBox="0 0 48 48"
-                  />
-                {:else if readModel}
-                  <Icon
-                    name="read-model-icon"
-                    size={48}
-                    class={iconShadow}
-                    iconColor=""
-                    pathName={ReadModelIcon}
-                    viewBox="0 0 48 48"
-                    />
-                  {/if}
-                  <h2
-                    class="ml-3 self-end text-xl font-bold text-body-light dark:text-body-dark"
-                    on:dblclick={handleDblClick}
-                    on:blur={handleDblClick}
-                    on:keydown={handleKeydown}
-                    contenteditable={editable}
-                    >
-                    Component Name
-                  </h2>
+                />
+              {:else if readModel}
+                <Icon
+                  name="read-model-icon"
+                  size={48}
+                  class={iconShadow}
+                  iconColor=""
+                  pathName={ReadModelIcon}
+                  viewBox="0 0 48 48"
+                />
+              {/if}
+            </div>
+            <h2
+              class="col-span-5 self-end text-xl font-bold text-body-light dark:text-body-dark"
+              contenteditable="true"
+              bind:textContent={name}
+            >
+              {name}
+            </h2>
           </div>
           <p
             class="my-3 text-sm leading-normal text-body dark:text-white"
-            on:dblclick={handleDblClick}
-            on:blur={handleDblClick}
-            on:keydown={handleKeydown}
-            contenteditable={editable}
-            >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua.
+            contenteditable="true"
+            bind:textContent={description}
+          >
+            {description}
           </p>
-          <div class="py-3">
-            <Label color="default"
-                   ><span class="text-body dark:text-white">Component Schema</span>
-              <Textarea
-                placeholder=""
-                value={code}
-                name="description"
-                rows="6"
-                class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
-                style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
-                disabled
-                />
-            </Label>
+
+          <div class="my-3">
+            <Label class="mt-4"
+              ><span class="mb-1 text-body dark:text-white">Component Schema</span></Label
+            >
+            <CodeMirror
+              value={valueComponent}
+              theme={oneDark}
+              lang={javascript()}
+              styles={{
+                '&': {
+                  width: '100%',
+                  height: '8.875rem',
+                  backgroundColor: '#303841',
+                  fontFamily: 'input-mono',
+                  color: '#D8DEE9'
+                }
+              }}
+              class="mt-1"
+            />
           </div>
-          <div class="py-3">
-            <Label color="default"
-                   ><span class="text-body dark:text-white">Placement Schema</span>
-              <Textarea
-                placeholder=""
-                value={code}
-                name="description"
-                rows="6"
-                class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
-                style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
-                disabled
-                />
-            </Label>
+          <div class="my-3">
+            <Label class="mt-4"
+              ><span class="mb-1 text-body dark:text-white">Placement Schema</span></Label
+            >
+            <CodeMirror
+              value={valuePlacement}
+              theme={oneDark}
+              lang={javascript()}
+              styles={{
+                '&': {
+                  width: '100%',
+                  height: '8.875rem',
+                  backgroundColor: '#303841',
+                  fontFamily: 'input-mono',
+                  color: '#D8DEE9'
+                }
+              }}
+              class="mt-1"
+            />
           </div>
           <div class="mt-6 mx-3 space-x-3 flex justify-end">
             <button
               class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
               on:click={() => (hiddenRight = true)}>cancel</button
-                                                            >
-            <Button color="default" size="sm" label="Edit" on:click class="" />
+            >
+            <Button color="default" size="sm" label="Save" on:click class="" />
           </div>
         </div>
       </span>
@@ -616,9 +643,12 @@
 <slot />
 
 <style>
-  .imgUpload {
-    display: flex;
-    height: 100%;
-    width: 100%;
+  [contenteditable] {
+    padding: 0.125em;
+    border-radius: 4px;
+    border: none;
+  }
+  [contenteditable]:focus {
+    outline: 1px solid #1e6aff;
   }
 </style>

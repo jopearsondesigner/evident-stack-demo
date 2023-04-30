@@ -3,11 +3,13 @@
   import type { LayoutData } from './$types';
   import { onMount } from 'svelte';
   import { invalidate } from '$app/navigation';
+  import { handleSignOut } from '$lib/user';
+  import { goto } from '$app/navigation';
 
   import CodeMirror from 'svelte-codemirror-editor';
   import { javascript } from '@codemirror/lang-javascript';
   import { oneDark } from '@codemirror/theme-one-dark';
-  let value = '';
+  let valueEventModel = '';
 
   import Navbar from '$components/navbar/Navbar.svelte';
   import NavInner from '$components/navbar/NavInner.svelte';
@@ -30,7 +32,6 @@
   import Drawer from '$components/drawer/Drawer.svelte';
   import Sidebar from '$components/drawer/Sidebar.svelte';
   import SidebarWrapper from '$components/drawer/SidebarWrapper.svelte';
-  // import Accordion from '$components/drawer/Accordion.svelte';
   import SidebarContainer from '$components/drawer/SidebarContainer.svelte';
   import SidebarGroup from '$components/drawer/SidebarGroup.svelte';
   import SidebarDropdownWrapper from '$components/drawer/SidebarDropdownWrapper.svelte';
@@ -49,6 +50,10 @@
   import DropdownMenu from '$components/dropdown/DropdownMenu.svelte';
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
+  import DataGraphic from '$components/assets/images/product/global/DataGraphic.svg';
+  import DomainFunctionsGraphic from '$components/assets/images/product/global/DomainFunctionsGraphic.svg';
+  import DeployGraphic from '$components/assets/images/product/global/DeployGraphic.svg';
+  import DatabaseGraphic from '$components/assets/images/product/global/DatabaseGraphic.svg';
 
   export let data: LayoutData;
 
@@ -173,15 +178,10 @@
       <Accordion class="flex flex-col" style="height: calc(100vh - 183px);">
         <SidebarContainer src={DesignLogo} title="Design" id="design" bind:expanded>
           <SidebarGroup>
-<<<<<<< HEAD
-            <SidebarDropdownWrapper label=" Schema" on:click={() => handleClick()}>
-=======
             <SidebarDropdownWrapper
               label="	Schema"
-              on:click={() => handleClick()}
-              bind:isVerticalOpen
-            >
->>>>>>> 0e78f11 (Codemirror ready to review.)
+              on:click={handleClick}
+              bind:isVerticalOpen >
               <Icon
                 slot="icon"
                 name="schema"
@@ -197,32 +197,11 @@
                 pathName={Schema}
                 />
               <SidebarDropdownItem feature>
-<<<<<<< HEAD
-                <Label class="mt-2 mb-6" color="default"
-                       ><span class="text-body dark:text-white">Event Model Schema</span>
-                  <Textarea
-                    placeholder=""
-                    value={code}
-                    name="description"
-                    rows="6"
-                    class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
-                    style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
-                    disabled
-                    />
-                </Label>
-                <CodeMirror bind:value />
-                <div class="mt-6 mx-3 space-x-3 flex justify-end">
-                  <button
-                    class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-                    on:click>cancel</button
-                                     >
-                  <Button color="default" size="sm" label="Edit" on:click class="" />
-=======
                 <Label class="mt-8"
                   ><span class="mb-1 text-body dark:text-white">Event Model Schema</span></Label
                 >
                 <CodeMirror
-                  bind:value
+                  value={valueEventModel}
                   theme={oneDark}
                   lang={javascript()}
                   styles={{
@@ -239,11 +218,9 @@
                 <div class="mt-6 mx-3 space-x-3 flex justify-end">
                   <button
                     class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-                    on:click={() => handleClick()}
-                    on:click={() => (isVerticalOpen = false)}>cancel</button
-                  >
+                    on:click={handleClick}
+                    on:click={() => isVerticalOpen = false}>cancel</button>
                   <Button color="default" size="sm" label="Save" on:click class="" />
->>>>>>> 0e78f11 (Codemirror ready to review.)
                 </div>
               </SidebarDropdownItem>
             </SidebarDropdownWrapper>
@@ -270,13 +247,25 @@
         </SidebarContainer>
         <SidebarContainer
           src={DataLogo}
+          href="/data"
           id="data"
           title="Data"
           on:click={() => (isClosed = true)}
-          on:click={() => (isVerticalOpen = false)}
-        >
+          on:click={() => (isVerticalOpen = false)} >
           <SidebarGroup>
-            <SidebarItem label="" blank />
+            <div class="h-full flex justify-center items-center">
+              <div>
+                <img src={DataGraphic} alt="Data Graphic" width="110" class="block mx-auto" />
+                <Button
+                  label="Keep me updated"
+                  gradient
+                  color="brandStackPrimary"
+                  size="sm"
+                  className="my-4"
+                  on:click
+                  class="block mr-auto ml-auto" />
+              </div>
+            </div>
           </SidebarGroup>
         </SidebarContainer>
         <SidebarContainer
@@ -284,14 +273,27 @@
           id="domain-functions"
           title="Domain Functions"
           on:click={() => (isClosed = true)}
-<<<<<<< HEAD
-          >
-=======
-          on:click={() => (isVerticalOpen = false)}
-        >
->>>>>>> 0e78f11 (Codemirror ready to review.)
+          on:click={() => (isVerticalOpen = false)} >
           <SidebarGroup>
-            <SidebarItem label="" blank />
+            <div class="h-full flex justify-center items-center">
+              <div>
+                <img
+                  src={DomainFunctionsGraphic}
+                  alt="Domain Functions Graphic"
+                  width="150"
+                  class="block mr-auto ml-auto"
+                />
+                <Button
+                  label="Keep me updated"
+                  gradient
+                  color="brandStackPrimary"
+                  size="sm"
+                  className="my-4"
+                  on:click
+                  class="block mr-auto ml-auto"
+                />
+              </div>
+            </div>
           </SidebarGroup>
         </SidebarContainer>
         <SidebarContainer
@@ -299,14 +301,27 @@
           id="deploy"
           title="Deploy"
           on:click={() => (isClosed = true)}
-<<<<<<< HEAD
-          >
-=======
-          on:click={() => (isVerticalOpen = false)}
-        >
->>>>>>> 0e78f11 (Codemirror ready to review.)
+          on:click={() => (isVerticalOpen = false)} >
           <SidebarGroup>
-            <SidebarItem label="" blank />
+            <div class="h-full flex justify-center items-center">
+              <div>
+                <img
+                  src={DeployGraphic}
+                  alt="Deploy Graphic"
+                  width="100"
+                  class="block mr-auto ml-auto"
+                />
+                <Button
+                  label="Keep me updated"
+                  gradient
+                  color="brandStackPrimary"
+                  size="sm"
+                  className="my-4"
+                  on:click
+                  class="block mr-auto ml-auto"
+                />
+              </div>
+            </div>
           </SidebarGroup>
         </SidebarContainer>
         <SidebarContainer
@@ -314,14 +329,27 @@
           id="database"
           title="Database"
           on:click={() => (isClosed = true)}
-<<<<<<< HEAD
-          >
-=======
-          on:click={() => (isVerticalOpen = false)}
-        >
->>>>>>> 0e78f11 (Codemirror ready to review.)
+          on:click={() => (isVerticalOpen = false)} >
           <SidebarGroup>
-            <SidebarItem label="" blank />
+            <div class="h-full flex justify-center items-center">
+              <div>
+                <img
+                  src={DatabaseGraphic}
+                  alt="Database Graphic"
+                  width="130"
+                  class="block mr-auto ml-auto"
+                />
+                <Button
+                  label="Keep me updated"
+                  gradient
+                  color="brandStackPrimary"
+                  size="sm"
+                  className="my-4"
+                  on:click
+                  class="block mr-auto ml-auto"
+                />
+              </div>
+            </div>
           </SidebarGroup>
         </SidebarContainer>
       </Accordion>

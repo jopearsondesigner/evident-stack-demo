@@ -6,7 +6,10 @@
     DraggingStateKind,
     type DragCommand,
     DraggingCommandKind,
-    evolveDraggingState
+    evolveDraggingState,
+
+    laneTargetFromState
+
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -246,19 +249,9 @@
   // Lanes
   $: default_stream_lane_index = streams.length;
   $: default_audience_lane_index = audiences.length;
-  $: audience_drag_target_index = undefined;
-  // switch(drag_state.kind) {
-  //   case DraggingStateKind.LANE: {
-  //     let {  } = drag_state.value;
-  //   }
-  //   default:
-  //     return undefined;
-  // }
-  // (drag_state.kind == DraggingStateKind.LANE && drag_state.value.target?.laneKind == Lane Lane.Audience) ?
-  //   drag_state.value.target?.laneIndex : undefined;
-  $: stream_drag_target_index = undefined;
-  // (drag_state.kind == DraggingStateKind.LANE && drag_state.value.target?.laneKind == Lane.Stream) ?
-  //   drag_state.value.target?.laneIndex : undefined;
+  $: lane_drag_target = laneTargetFromState(drag_state);
+  $: audience_drag_target_index = (lane_drag_target?.kind == "audience") ? lane_drag_target.index : undefined;
+  $: stream_drag_target_index = (lane_drag_target?.kind == "stream") ? lane_drag_target.index : undefined;
 
   // Cursor
 
@@ -412,12 +405,31 @@
       navigationKeyboardHandler(e);
     }
   };
+
+  const genDragDebugJson = (state: DraggingState): string => {
+    let kind = "None"
+
+    switch (state.kind) {
+      case DraggingStateKind.LANE:
+        kind = "LANE";
+        break;
+      case DraggingStateKind.PLACEMENT:
+        kind = "PLACEMENT";
+        break;
+      default:
+        kind = "None"
+    };
+
+    return JSON.stringify({ ...state, kind });
+  };
+
+  $: drag_json = genDragDebugJson(drag_state);
 </script>
 
 <svelte:window on:keydown={keyboardHandler} />
 
 <h3>{mode}</h3>
-<h2>draggingLane: {drag_state}</h2>
+<h2>draggingLane: {drag_json}</h2>
 
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <FlowCanvas {flows} />
@@ -439,13 +451,21 @@
     {#each audiences as audience, lane_index (audience.id)}
       {@const row = lane_index + 1}
       <AudienceLane
+        on:lane_drag_start={handleLaneDragStart}
+        on:lane_drag_enter={handleLaneDragEnter}
+        on:lane_drag_leave={handleLaneDragLeave}
+        on:lane_drag_drop={handleLaneDragDrop}
+        on:placement_drag_enter={handlePlacementDragEnter}
+        on:placement_drag_leave={handlePlacementDragLeave}
+        on:placement_drag_drop={handlePlacementDragDrop}
         on:navigate_cursor={handleNavigateCursor}
         on:move_interface_placement={handleMoveInterfacePlacement}
         on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
         on:connect_flow={handleConnectFlow}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
-        target_index={audience_drag_target_index}
+        drop_target={audience_drag_target_index}
+        drop_target_status={lane_drag_target?.target_type}
         {row}
         {audience}
         {max_column}
@@ -475,6 +495,11 @@
         on:lane_drag_enter={handleLaneDragEnter}
         on:lane_drag_leave={handleLaneDragLeave}
         on:lane_drag_drop={handleLaneDragDrop}
+        on:placement_drag_enter={handlePlacementDragEnter}
+        on:placement_drag_leave={handlePlacementDragLeave}
+        on:placement_drag_drop={handlePlacementDragDrop}
+        drop_target={stream_drag_target_index}
+        drop_target_status={lane_drag_target?.target_type}
         {row}
         {stream}
         {max_column}

@@ -19,24 +19,22 @@
 
   export let stream: Stream;
 
-  export let drop_target: 'target' | 'bad-target' | 'none' = 'none';
-
   export let lane_index: number;
 
-  // export let target_index: number | undefined = undefined;
+  export let drop_target: number | undefined = undefined;
 
-  // let drop_target: 'target' | 'bad-target' | 'none' = 'none';
+  export let drop_target_status: "good" | "bad" | undefined = undefined;
+
 
   $: stream.placements.length = max_column;
-  $: good_target = drop_target == 'target';
-  $: bad_target = drop_target == 'bad-target';
+  $: good_target = ((drop_target == lane_index) && (drop_target_status == "good"));
+  $: bad_target = ((drop_target == lane_index) && (drop_target_status == "bad"));
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
     console.warn('Lane(Stream) Drag Start', e);
 
     if (transfer && stream.id) {
-      // console.warn(`Setting transfer with stream ${stream.id}`);
       transfer.setData('lane', stream.id);
       transfer.effectAllowed = 'move';
 
@@ -66,14 +64,6 @@
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
     console.warn('Lane(Stream) Drop');
     dispatch('lane_drag_drop');
-    // handleDragLeave(e);
-    // let transfer = e.dataTransfer;
-    // let id = transfer?.getData('lane');
-
-    // if (transfer && id && transfer.effectAllowed == 'move') {
-    //   console.warn(`GOT A LANE DROP!!! ${id} => index: ${lane_index}`);
-    //   dispatch('reorder_lane', { kind: 'stream', lane_id: id, index: lane_index });
-    // }
   };
 </script>
 
@@ -114,6 +104,9 @@
   <Cell
     {row}
     {column}
+    {lane_index}
+    lane_id={stream.id || ""}
+    lane_kind="stream"
     on:navigate_cursor={forward}
     on:placement_drag_enter={forward}
     on:placement_drag_leave={forward}

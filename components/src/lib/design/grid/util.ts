@@ -61,6 +61,7 @@ export type DragCommand =
             laneIndex: number,
             laneKind: Lane,
             laneId: string,
+            placementId?: string,
         }}
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE }
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP }
@@ -179,5 +180,26 @@ export function evolveDraggingState(state: DraggingState, command: DragCommand):
             }
         case DraggingCommandKind.PLACEMENT_DRAG_DROP:
             return { kind: DraggingStateKind.NONE };
+    }
+}
+
+export function laneTargetFromState(state: DraggingState): { index: number, kind: Lane, target_type: "good" | "bad" } | void {
+    switch (state.kind) {
+        case DraggingStateKind.LANE: {
+            if (!state.value.target) {
+                return undefined;
+            }
+
+            let sourceKind = state.value.source.laneType;
+            let targetKind = state.value.target?.laneKind;
+
+            return {
+                index: state.value.target.laneIndex,
+                kind: targetKind,
+                target_type: (sourceKind == targetKind) ? "good" : "bad"
+            };
+        }
+        default:
+            return undefined;
     }
 }

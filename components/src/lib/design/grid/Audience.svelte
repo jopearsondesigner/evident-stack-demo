@@ -20,10 +20,14 @@
 
   export let lane_index: number;
 
-  export let target_index: number | undefined = undefined;
+  export let drop_target: number | undefined = undefined;
+
+  export let drop_target_status: "good" | "bad" | undefined = undefined;
 
   $: gridRow = row + 1;
   $: audience.placements.length = max_column;
+  $: good_target = ((drop_target == lane_index) && (drop_target_status == "good"));
+  $: bad_target = ((drop_target == lane_index) && (drop_target_status == "bad"));
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e: DragEvent) => {
     let transfer = e.dataTransfer;
@@ -39,6 +43,27 @@
         laneType: 'audience'
       });
     }
+  };
+
+  const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
+    let transfer = e.dataTransfer;
+    console.warn('Lane(Audience) Enter', e);
+    console.warn('TRANSFER DATA', transfer, transfer?.types);
+
+    dispatch('lane_drag_enter', {
+      laneIndex: lane_index,
+      laneType: 'audience'
+    });
+  };
+
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (_e) => {
+    console.warn('Lane(Audience) Leave');
+    dispatch('lane_drag_leave', {});
+  };
+
+  const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
+    console.warn('Lane(Audience) Drop');
+    dispatch('lane_drag_drop');
   };
 </script>
 
@@ -61,13 +86,31 @@
 {/if}
 
 <div
+  on:dragenter={handleDragEnter}
+  on:dragover={(e) => {
+    e.preventDefault();
+  }}
+  on:dragleave={handleDragLeave}
+  on:drop={handleDragDrop}
   id={audience.id}
+  class:bg-emerald-200={good_target}
+  class:bg-rose-400={bad_target}
   class="audience z-[-1] absolute -top-px -left-3 bottom-0.5 -right-6 border-t border-gray-primary dark:border-gray-brand-3"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 />
 
 {#each audience.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
-  <Cell {row} {column} on:navigate_cursor={forward}>
+  <Cell
+    {row}
+    {column}
+    {lane_index}
+    lane_id={audience.id || ""}
+    lane_kind="audience"
+    on:navigate_cursor={forward}
+    on:placement_drag_enter={forward}
+    on:placement_drag_leave={forward}
+    on:placement_drag_drop={forward}
+  >
     {#if placement?.id}
       <Interface
         id={placement.id}

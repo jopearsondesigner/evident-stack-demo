@@ -1,9 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import type { MouseEventHandler } from 'svelte/elements';
+  import type { DragEventHandler, MouseEventHandler } from 'svelte/elements';
+  import { Lane } from '../Grid';
 
   export let row: number;
   export let column: number;
+  export let lane_index: number;
+  export let lane_kind: Lane;
+  export let lane_id: string;
 
   $: gridRow = row + 1;
   $: gridColumn = column + 1;
@@ -12,10 +16,37 @@
   const handleClick: MouseEventHandler<HTMLDivElement> = (_event) => {
     dispatch('navigate_cursor', { row, column });
   };
+
+  
+  const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
+    console.warn("Cell Drag Enter");
+    dispatch('placement_drag_enter', {
+      column,
+      laneIndex: lane_index,
+      laneKind: lane_kind,
+      laneId: lane_id
+    });
+  }
+
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
+    console.warn("Cell Drag Leave");
+    // dispatch('placement_drag_leave');
+  }
+
+  const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
+    console.warn("Cell Drag Drop");
+    dispatch('placement_drag_drop');
+  }
 </script>
 
 <div
   on:click|preventDefault|stopPropagation={handleClick}
+  on:dragenter={handleDragEnter}
+  on:dragover={(e) => {
+    e.preventDefault();
+  }}
+  on:dragleave={handleDragLeave}
+  on:drop={handleDragDrop}
   class="cell z-20 flex place-self-center align-items-center hover:bg-focus/[.18] transition duration-200 ease-in border-2 border-transparent"
   style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
 >

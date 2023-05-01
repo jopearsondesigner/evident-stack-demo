@@ -1,6 +1,17 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	import { Lottie } from 'lottie-svelte';
+	// import { Lottie } from 'lottie-svelte';
+	import { LottiePlayer } from '@lottiefiles/svelte-lottie-player';
+
+	import Carousel from 'svelte-carousel';
+	import { browser } from '$app/environment';
+
+	let carousel: { goToNext: () => void }; // for calling methods of the carousel instance
+
+	const handleNextClick = () => {
+		carousel.goToNext();
+	};
+
 	import Hero from '$components/hero/Hero.svelte';
 	import HeroContainer from '$components/hero/HeroContainer.svelte';
 	import HeroCopy from '$components/hero/HeroCopy.svelte';
@@ -37,6 +48,7 @@
 	import SearchDocs from '$components/assets/images/homepage/ico-search-docs.svg';
 	import Icon from '$components/Icon.svelte';
 	import ArrowRight from '$components/icons/ArrowRight.svelte';
+	import ArrowLeft from '$components/icons/ArrowLeft.svelte';
 	import Logo from '$components/assets/images/global/evidentDesignLogo.svg';
 	import Navbar from '$components/navbar/Navbar.svelte';
 	import NavWrapper from '$components/navbar/NavWrapper.svelte';
@@ -44,82 +56,153 @@
 	let website: boolean = true;
 </script>
 
-<Hero>
-	<Navbar
-		navbarWebClass="absolute bg-transparent shadow-none w-full max-h-12 px-3 py-1.5 text-body z-10"
-		{website}
-	>
-		<NavWrapper>
-			<NabBrand href="/" src={Logo} height={32} class="flex lg:my-4" logoClass="ml-8" />
-		</NavWrapper>
-	</Navbar>
-	<HeroContainer>
-		<HeroGrid>
-			<HeroFlexbox class={classNames('lg:mt-[56px] relative z-10 lg:px-0 px-4', heroFlexboxClass)}>
-				<HeroCopy heroCopyClass="lg:mt-[11px] mt-8 sm:mt-[-130px] mt-[-53px] mb-16 lg:ml-16">
-					<span slot="hero-header"
-						>Design, implement, and operate event-driven information systems with <TextBrand
-							>Evident Design</TextBrand
-						></span
-					>
-					<span slot="hero-copy"
-						>Give your customers a better cohesive customer experience. Your technical and
-						non-technical teams can create a shared user journey together.</span
-					>
-					<Button
-						slot="hero-cta"
-						gradient
-						color="brandDesignPrimary"
-						size="sm"
-						label="Sign In"
-						class="flex items-center"
-					>
-						<Icon
-							name="arrow-right"
-							slot="icon"
-							class="inline-flex ml-1 stroke-2"
-							iconColor="fill-current text-white"
-							size={12}><ArrowRight /></Icon
+{#if browser}
+	<Carousel bind:this={carousel} autoplay autoplayDuration={9000} let:showPrevPage let:showNextPage>
+		<div
+			slot="prev"
+			on:click={showPrevPage}
+			class="flex items-center justify-center custom-arrow custom-arrow-prev"
+		>
+			<Icon
+				name="arrow-left"
+				class="inline-flex ml-1 stroke-1"
+				iconColor="fill-current text-gray-brand-4"
+				size={40}
+				pathName={ArrowLeft}
+			/>
+		</div>
+		<div class="bg-white dark:bg-dark-1 z-10">
+			<Hero>
+				<HeroContainer>
+					<HeroGrid>
+						<HeroFlexbox
+							class={classNames('lg:mt-[56px] relative z-10 lg:px-0 px-4', heroFlexboxClass)}
 						>
-					</Button>
-				</HeroCopy>
-			</HeroFlexbox>
-			<HeroFlexbox
-				class={classNames('flex-row lg:order-last order-first mx-auto', heroFlexboxClass)}
-			>
-				<HeroImage>
-					<img
-						src={ForegroundImage}
-						alt="Laptop with oNote screenshot"
-						width="100%"
-						height="100%"
-						class="absolute top-0 left-0"
-					/>
-					<img
-						src={BackgroundImage}
-						alt="Background"
-						width="100%"
-						height="100%"
-						class="xl:mt-[-154px] lg:mt-[-111px] sm:mt-[-115px] mt-[-60px]"
-					/>
-				</HeroImage>
-			</HeroFlexbox>
-		</HeroGrid>
-	</HeroContainer>
+							<HeroCopy heroCopyClass="lg:mt-[11px] mt-8 sm:mt-[-130px] mt-[-53px] mb-16 lg:ml-16">
+								<span slot="hero-header"
+									><TextBrand
+										textBrand="text-transparent bg-clip-text bg-gradient-to-b from-stack-brand-700 via-stack-brand-500 to-stack-brand-300"
+										>Evident Stack</TextBrand
+									> helps software teams to design, implement, and operate event-driven apps and services</span
+								>
+								<span slot="hero-copy"
+									>Each layer in the Stack can be used individually, but work best together since
+									each layer builds upon the one before it</span
+								>
+							</HeroCopy>
+						</HeroFlexbox>
+						<HeroFlexbox
+							class={classNames('flex-row lg:order-last order-first mx-auto', heroFlexboxClass)}
+						>
+							<div class="flex justify-center items-center">
+								<LottiePlayer
+									src="lottie/teamCollaborationHero.json"
+									autoplay={true}
+									loop={true}
+									width={500}
+								/>
+							</div>
+						</HeroFlexbox>
+					</HeroGrid>
+				</HeroContainer>
+			</Hero>
+		</div>
+		<div>
+			<Hero>
+				<Navbar
+					navbarWebClass="absolute bg-transparent shadow-none w-full max-h-12 px-3 py-1.5 text-body z-10"
+					{website}
+				>
+					<NavWrapper>
+						<NabBrand href="/" src={Logo} height={32} class="flex lg:my-4" logoClass="ml-8" />
+					</NavWrapper>
+				</Navbar>
+				<HeroContainer>
+					<HeroGrid>
+						<HeroFlexbox
+							class={classNames('lg:mt-[56px] relative z-10 lg:px-0 px-4', heroFlexboxClass)}
+						>
+							<HeroCopy
+								heroCopyClass="lg:mt-[11px] xl:pr-4 mt-8 sm:mt-[-130px] mt-[-53px] mb-16 lg:ml-16"
+							>
+								<span slot="hero-header"
+									><TextBrand>Evident Design</TextBrand> helps teams to collaboratively design event-based
+									information systems using Event Modeling</span
+								>
+								<Button
+									slot="hero-cta"
+									gradient
+									color="brandDesignPrimary"
+									size="sm"
+									label="Sign In"
+									class="flex items-center"
+								>
+									<Icon
+										name="arrow-right"
+										slot="icon"
+										class="inline-flex ml-1 stroke-2"
+										iconColor="fill-current text-white"
+										size={12}
+										pathName={ArrowRight}
+									/>
+								</Button>
+							</HeroCopy>
+						</HeroFlexbox>
+						<HeroFlexbox
+							class={classNames('flex-row lg:order-last order-first mx-auto', heroFlexboxClass)}
+						>
+							<HeroImage>
+								<img
+									src={ForegroundImage}
+									alt="Laptop with oNote screenshot"
+									width="100%"
+									height="100%"
+									class="absolute top-0 left-0"
+								/>
+								<div class="h-full oject-cover overflow-hidden">
+									<img
+										src={BackgroundImage}
+										alt="Background"
+										width="100%"
+										height="100%"
+										class="xl:mt-[-154px] lg:mt-[-111px] sm:mt-[-115px] mt-[-60px]"
+									/>
+								</div>
+							</HeroImage>
+						</HeroFlexbox>
+					</HeroGrid>
+				</HeroContainer>
+			</Hero>
+		</div>
+		<div
+			slot="next"
+			on:click={showNextPage}
+			class="flex items-center justify-center custom-arrow custom-arrow-next"
+		>
+			<Icon
+				name="arrow-right"
+				class="inline-flex ml-1 stroke-1"
+				iconColor="fill-current text-gray-brand-4"
+				size={40}
+				pathName={ArrowRight}
+			/>
+		</div>
+	</Carousel>
 	<GradientDivider
 		class={classNames(
 			'xl:mt-[-224px] lg:mt-[-150px] sm:mt-[-60px] mt-[-70px]',
 			gradientDividerClass
 		)}
 	/>
-</Hero>
+{/if}
 
 <main class={mainClass}>
+	<button class="" on:click={handleNextClick}>Next</button>
 	<Container class={containerClass}>
 		<SectionLabel>The value of Evident Stack</SectionLabel>
 		<Row class="grid grid-col-1 mt-[44px]">
 			<Column class="flex mx-auto">
-				<Lottie path="lottie/evidentStackVisualization.json" autoplay={true} loop={true} />
+				<LottiePlayer src="lottie/evidentStackVisualization.json" autoplay={true} loop={true} />
 			</Column>
 		</Row>
 	</Container>
@@ -261,8 +344,9 @@
 									name="arrow-right"
 									size={12}
 									iconColor="fill-current"
-									class="stroke-2 ml-1"><ArrowRight /></Icon
-								>
+									class="stroke-2 ml-1"
+									pathName={ArrowRight}
+								/>
 							</A>
 						</SectionCopy>
 					</Section>
@@ -295,8 +379,9 @@
 									name="arrow-right"
 									size={12}
 									iconColor="fill-current"
-									class="stroke-2 ml-1"><ArrowRight /></Icon
-								>
+									class="stroke-2 ml-1"
+									pathName={ArrowRight}
+								/>
 							</A>
 						</SectionCopy>
 					</Section>

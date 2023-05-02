@@ -7,9 +7,7 @@
     type DragCommand,
     DraggingCommandKind,
     evolveDraggingState,
-
     laneTargetFromState
-
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -32,7 +30,6 @@
     type GridMode,
     type Flow,
     type PlacementType
-
   } from './Grid';
   import { onMount } from 'svelte';
   import { itemAtCursor, type Lane } from './Grid';
@@ -97,8 +94,15 @@
   const handleLaneDragLeave = async (e: CustomEvent) => {
     console.info('handleLaneDragLeave', e.detail);
 
+    const laneIndex: number = e.detail.laneIndex;
+    const laneType: Lane = e.detail.laneType;
+
     const command: DragCommand = {
-      kind: DraggingCommandKind.LANE_DRAG_LEAVE
+      kind: DraggingCommandKind.LANE_DRAG_LEAVE,
+      value: {
+        laneIndex,
+        laneType
+      }
     };
 
     drag_state = evolveDraggingState(drag_state, command);
@@ -113,7 +117,7 @@
     drag_state = evolveDraggingState(drag_state, command);
   };
 
-  const handlePlacementDragStart = async(e: CustomEvent) => {
+  const handlePlacementDragStart = async (e: CustomEvent) => {
     console.info('handlePlacementDragStart', e.detail);
     const placementId: string = e.detail.placementId;
     const placementKind: PlacementType = e.detail.placementType;
@@ -127,9 +131,9 @@
     };
 
     drag_state = evolveDraggingState(drag_state, command);
-  }
+  };
 
-  const handlePlacementDragEnter = async(e: CustomEvent) => {
+  const handlePlacementDragEnter = async (e: CustomEvent) => {
     console.info('handlePlacementDragEnter', e.detail);
     const column: number = e.detail.column;
     const laneIndex: number = e.detail.laneIndex;
@@ -147,23 +151,35 @@
     };
 
     drag_state = evolveDraggingState(drag_state, command);
-  }
+  };
 
-  const handlePlacementDragLeave = async(e: CustomEvent) => {
+  const handlePlacementDragLeave = async (e: CustomEvent) => {
     console.info('handlePlacementDragLeave', e.detail);
+    const column: number = e.detail.column;
+    const laneIndex: number = e.detail.laneIndex;
+    const laneKind: Lane = e.detail.laneKind;
+    const laneId: string = e.detail.laneId;
 
-    const command: DragCommand = { kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE }
+    const command: DragCommand = {
+      kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE,
+      value: {
+        column,
+        laneIndex,
+        laneKind,
+        laneId
+      }
+    };
 
     drag_state = evolveDraggingState(drag_state, command);
-  }
+  };
 
-  const handlePlacementDragDrop = async(e: CustomEvent) => {
+  const handlePlacementDragDrop = async (e: CustomEvent) => {
     console.info('handlePlacementDragDrop', e.detail);
 
-    const command: DragCommand = { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP }
+    const command: DragCommand = { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP };
 
     drag_state = evolveDraggingState(drag_state, command);
-  }
+  };
 
   // Command Dispatch
 
@@ -250,8 +266,10 @@
   $: default_stream_lane_index = streams.length;
   $: default_audience_lane_index = audiences.length;
   $: lane_drag_target = laneTargetFromState(drag_state);
-  $: audience_drag_target_index = (lane_drag_target?.kind == "audience") ? lane_drag_target.index : undefined;
-  $: stream_drag_target_index = (lane_drag_target?.kind == "stream") ? lane_drag_target.index : undefined;
+  $: audience_drag_target_index =
+    lane_drag_target?.kind == 'audience' ? lane_drag_target.index : undefined;
+  $: stream_drag_target_index =
+    lane_drag_target?.kind == 'stream' ? lane_drag_target.index : undefined;
 
   // Cursor
 
@@ -407,18 +425,18 @@
   };
 
   const genDragDebugJson = (state: DraggingState): string => {
-    let kind = "None"
+    let kind = 'None';
 
     switch (state.kind) {
       case DraggingStateKind.LANE:
-        kind = "LANE";
+        kind = 'LANE';
         break;
       case DraggingStateKind.PLACEMENT:
-        kind = "PLACEMENT";
+        kind = 'PLACEMENT';
         break;
       default:
-        kind = "None"
-    };
+        kind = 'None';
+    }
 
     return JSON.stringify({ ...state, kind });
   };

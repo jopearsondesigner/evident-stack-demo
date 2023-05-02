@@ -17,26 +17,30 @@
     dispatch('navigate_cursor', { row, column });
   };
 
-  
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn("Cell Drag Enter");
+    console.warn('Cell Drag Enter');
     dispatch('placement_drag_enter', {
       column,
       laneIndex: lane_index,
       laneKind: lane_kind,
       laneId: lane_id
     });
-  }
+  };
 
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn("Cell Drag Leave");
-    // dispatch('placement_drag_leave');
-  }
+    console.warn('Cell Drag Leave');
+    dispatch('placement_drag_leave', {
+      column,
+      laneIndex: lane_index,
+      laneKind: lane_kind,
+      laneId: lane_id
+    });
+  };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn("Cell Drag Drop");
+    console.warn('Cell Drag Drop');
     dispatch('placement_drag_drop');
-  }
+  };
 </script>
 
 <div

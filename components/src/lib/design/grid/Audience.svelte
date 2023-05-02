@@ -58,7 +58,10 @@
 
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (_e) => {
     console.warn('Lane(Audience) Leave');
-    dispatch('lane_drag_leave', {});
+    dispatch('lane_drag_leave', {
+      laneIndex: lane_index,
+      laneType: 'audience'
+    });
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {

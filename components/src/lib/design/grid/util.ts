@@ -48,7 +48,8 @@ export type DragCommand =
         } }
     | { kind: DraggingCommandKind.LANE_DRAG_ENTER,
         value: { laneIndex: number, laneType: Lane } }
-    | { kind: DraggingCommandKind.LANE_DRAG_LEAVE, }
+    | { kind: DraggingCommandKind.LANE_DRAG_LEAVE,
+        value: { laneIndex: number, laneType: Lane }}
     | { kind: DraggingCommandKind.LANE_DRAG_DROP }
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_START,
         value: {
@@ -63,7 +64,14 @@ export type DragCommand =
             laneId: string,
             placementId?: string,
         }}
-    | { kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE }
+    | { kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE,
+        value: {
+            column: number
+            laneIndex: number,
+            laneKind: Lane,
+            laneId: string,
+            placementId?: string,
+        }}
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP }
 
 export function evolveDraggingState(state: DraggingState, command: DragCommand): DraggingState {
@@ -102,13 +110,22 @@ export function evolveDraggingState(state: DraggingState, command: DragCommand):
         case DraggingCommandKind.LANE_DRAG_LEAVE:
             switch (state.kind) {
                 case DraggingStateKind.LANE:
-                    return {
-                        ...state,
-                        value: {
-                            ...state.value,
-                            target: undefined
+                    let { laneIndex, laneType } = command.value;
+
+                    if (state.value.target && state.value.target.laneIndex == laneIndex && state.value.target.laneKind == laneType) {
+                        console.warn("LANE DRAG CLEARING TARGET");
+                        return {
+                            ...state,
+                            value: {
+                                ...state.value,
+                                target: undefined
+                            }
                         }
+                    } else {
+                        console.info("Lane drag exiting - target already updated");
+                        return state;
                     }
+                    
                 default:
                     return state;
             }
@@ -158,22 +175,37 @@ export function evolveDraggingState(state: DraggingState, command: DragCommand):
         case DraggingCommandKind.PLACEMENT_DRAG_LEAVE:
             switch (state.kind) {
                 case DraggingStateKind.LANE: {
-                    return {
+                    const { laneIndex, laneKind } = command.value;
+
+                    if (state.value.target && state.value.target.laneIndex === laneIndex && state.value.target.laneKind == laneKind) {
+                        return {
                         ...state,
                         value: {
                             ...state.value,
                             target: undefined
                         }
                     }
+                    } else {
+                        return state;
+                    }
+                    
                 }
                 case DraggingStateKind.PLACEMENT: {
-                    return {
-                        ...state,
-                        value: {
-                            ...state.value,
-                            target: undefined
+                    const { column, laneId } = command.value;
+                    if (state.value.target && state.value.target.column === column && state.value.target.laneId == laneId) {
+                        console.warn("PLACEMENT DRAG CLEARING TARGET");
+                        return {
+                            ...state,
+                            value: {
+                                ...state.value,
+                                target: undefined
+                            }
                         }
+                    } else {
+                        console.info("Placement drag exiting - target already updated");
+                        return state;
                     }
+                    
                 }
                 case DraggingStateKind.NONE:
                     return state;

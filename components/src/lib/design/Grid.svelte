@@ -7,7 +7,10 @@
     type DragCommand,
     DraggingCommandKind,
     evolveDraggingState,
-    laneTargetFromState
+    laneTargetFromState,
+
+    buildEvolveAndReact
+
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -60,6 +63,8 @@
   // Drag Drop
   let drag_state: DraggingState = { kind: DraggingStateKind.NONE };
 
+  const evolveAndReactDraggingState = buildEvolveAndReact(decider);
+
   const handleLaneDragStart = async (e: CustomEvent) => {
     console.info('handleLaneDragStart', e.detail);
     const laneId: string = e.detail.laneId;
@@ -73,7 +78,7 @@
       }
     };
 
-    drag_state = evolveDraggingState(drag_state, command);
+    drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 
   const handleLaneDragEnter = async (e: CustomEvent) => {
@@ -89,25 +94,25 @@
       }
     };
 
-    drag_state = evolveDraggingState(drag_state, command);
+    drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 
-  const handleLaneDragLeave = async (e: CustomEvent) => {
-    console.info('handleLaneDragLeave', e.detail);
+  // const handleLaneDragLeave = async (e: CustomEvent) => {
+  //   console.info('handleLaneDragLeave', e.detail);
 
-    const laneIndex: number = e.detail.laneIndex;
-    const laneType: Lane = e.detail.laneType;
+  //   const laneIndex: number = e.detail.laneIndex;
+  //   const laneType: Lane = e.detail.laneType;
 
-    const command: DragCommand = {
-      kind: DraggingCommandKind.LANE_DRAG_LEAVE,
-      value: {
-        laneIndex,
-        laneType
-      }
-    };
+  //   const command: DragCommand = {
+  //     kind: DraggingCommandKind.LANE_DRAG_LEAVE,
+  //     value: {
+  //       laneIndex,
+  //       laneType
+  //     }
+  //   };
 
-    drag_state = evolveDraggingState(drag_state, command);
-  };
+  //   drag_state = evolveDraggingState(drag_state, command);
+  // };
 
   const handleLaneDragDrop = async (e: CustomEvent) => {
     console.info('TODO: handleLaneDragDrop');
@@ -115,7 +120,7 @@
       kind: DraggingCommandKind.LANE_DRAG_DROP
     };
 
-    drag_state = evolveDraggingState(drag_state, command);
+    drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 
   const handlePlacementDragStart = async (e: CustomEvent) => {
@@ -131,7 +136,7 @@
       }
     };
 
-    drag_state = evolveDraggingState(drag_state, command);
+    drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 
   const handlePlacementDragEnter = async (e: CustomEvent) => {
@@ -151,47 +156,47 @@
       }
     };
 
-    drag_state = evolveDraggingState(drag_state, command);
+    drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 
-  const handlePlacementDragLeave = async (e: CustomEvent) => {
-    console.info('handlePlacementDragLeave', e.detail);
-    const column: number = e.detail.column;
-    const laneIndex: number = e.detail.laneIndex;
-    const laneKind: Lane = e.detail.laneKind;
-    const laneId: string = e.detail.laneId;
+  // const handlePlacementDragLeave = async (e: CustomEvent) => {
+  //   console.info('handlePlacementDragLeave', e.detail);
+  //   const column: number = e.detail.column;
+  //   const laneIndex: number = e.detail.laneIndex;
+  //   const laneKind: Lane = e.detail.laneKind;
+  //   const laneId: string = e.detail.laneId;
 
-    const command: DragCommand = {
-      kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE,
-      value: {
-        column,
-        laneIndex,
-        laneKind,
-        laneId
-      }
-    };
+  //   const command: DragCommand = {
+  //     kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE,
+  //     value: {
+  //       column,
+  //       laneIndex,
+  //       laneKind,
+  //       laneId
+  //     }
+  //   };
 
-    drag_state = evolveDraggingState(drag_state, command);
-  };
+  //   drag_state = evolveDraggingState(drag_state, command);
+  // };
 
   const handlePlacementDragDrop = async (e: CustomEvent) => {
     console.info('handlePlacementDragDrop', e.detail);
 
     const command: DragCommand = { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP };
 
-    drag_state = evolveDraggingState(drag_state, command);
+    drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 
   const handleOutOfBoundsEnter: DragEventHandler<EventTarget> = (_e) => {
     console.warn("OUT OF BOUNDS");
     const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS }
-    drag_state = evolveDraggingState(drag_state, command);
+    drag_state = evolveAndReactDraggingState(drag_state, command);
   }
 
   const handleOutOfBoundsDrop: DragEventHandler<EventTarget> = (_e) => {
     console.warn("OUT OF BOUNDS DROP");
     const command: DragCommand = { kind: DraggingCommandKind.RESET }
-    drag_state = evolveDraggingState(drag_state, command);
+    drag_state = evolveAndReactDraggingState(drag_state, command);
   }
 
   // Command Dispatch
@@ -488,10 +493,8 @@
       <AudienceLane
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
-        on:lane_drag_leave={handleLaneDragLeave}
         on:lane_drag_drop={handleLaneDragDrop}
         on:placement_drag_enter={handlePlacementDragEnter}
-        on:placement_drag_leave={handlePlacementDragLeave}
         on:placement_drag_drop={handlePlacementDragDrop}
         on:navigate_cursor={handleNavigateCursor}
         on:move_interface_placement={handleMoveInterfacePlacement}
@@ -528,10 +531,8 @@
         on:reorder_lane={handleReorderLane}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
-        on:lane_drag_leave={handleLaneDragLeave}
         on:lane_drag_drop={handleLaneDragDrop}
         on:placement_drag_enter={handlePlacementDragEnter}
-        on:placement_drag_leave={handlePlacementDragLeave}
         on:placement_drag_drop={handlePlacementDragDrop}
         drop_target={stream_drag_target_index}
         drop_target_status={lane_drag_target?.target_type}

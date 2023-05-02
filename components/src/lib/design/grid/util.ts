@@ -39,6 +39,7 @@ export enum DraggingCommandKind {
     PLACEMENT_DRAG_LEAVE,
     PLACEMENT_DRAG_DROP,
     OUT_OF_BOUNDS,
+    RESET,
 }
 
 export type DragCommand =
@@ -75,6 +76,7 @@ export type DragCommand =
         }}
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS }
+    | { kind:  DraggingCommandKind.RESET }
 
 export function evolveDraggingState(state: DraggingState, command: DragCommand): DraggingState {
     switch (command.kind) {
@@ -236,6 +238,11 @@ export function evolveDraggingState(state: DraggingState, command: DragCommand):
                 default:
                     return state;
             }
+        }
+        case DraggingCommandKind.RESET: {
+            return {
+                kind: DraggingStateKind.NONE
+            };
         }
     }
 }

@@ -188,6 +188,12 @@
     drag_state = evolveDraggingState(drag_state, command);
   }
 
+  const handleOutOfBoundsDrop: DragEventHandler<EventTarget> = (_e) => {
+    console.warn("OUT OF BOUNDS DROP");
+    const command: DragCommand = { kind: DraggingCommandKind.RESET }
+    drag_state = evolveDraggingState(drag_state, command);
+  }
+
   // Command Dispatch
 
   const handleDefineAndPlaceInterface = async (e: CustomEvent) => {
@@ -454,7 +460,7 @@
 <svelte:window
   on:keydown={keyboardHandler}
   on:dragenter={handleOutOfBoundsEnter}
-  on:dragleave={handleOutOfBoundsEnter}
+  on:dragend={handleOutOfBoundsDrop}
 />
 
 <h3>{mode}</h3>

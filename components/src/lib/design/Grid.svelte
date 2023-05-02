@@ -34,6 +34,7 @@
   import { onMount } from 'svelte';
   import { itemAtCursor, type Lane } from './Grid';
   import TimelineDisambiguation from './grid/TimelineDisambiguation.svelte';
+  import type { DragEventHandler } from 'svelte/elements';
 
   export let decider: Decider = default_decider;
   export let column_count: number;
@@ -180,6 +181,12 @@
 
     drag_state = evolveDraggingState(drag_state, command);
   };
+
+  const handleOutOfBoundsEnter: DragEventHandler<EventTarget> = (_e) => {
+    console.warn("OUT OF BOUNDS");
+    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS }
+    drag_state = evolveDraggingState(drag_state, command);
+  }
 
   // Command Dispatch
 
@@ -444,7 +451,11 @@
   $: drag_json = genDragDebugJson(drag_state);
 </script>
 
-<svelte:window on:keydown={keyboardHandler} />
+<svelte:window
+  on:keydown={keyboardHandler}
+  on:dragenter={handleOutOfBoundsEnter}
+  on:dragleave={handleOutOfBoundsEnter}
+/>
 
 <h3>{mode}</h3>
 <h2>draggingLane: {drag_json}</h2>

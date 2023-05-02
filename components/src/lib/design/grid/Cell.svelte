@@ -19,6 +19,7 @@
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
     console.warn('Cell Drag Enter');
+    e.stopPropagation();
     dispatch('placement_drag_enter', {
       column,
       laneIndex: lane_index,
@@ -29,12 +30,15 @@
 
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
     console.warn('Cell Drag Leave');
-    dispatch('placement_drag_leave', {
-      column,
-      laneIndex: lane_index,
-      laneKind: lane_kind,
-      laneId: lane_id
-    });
+    e.stopPropagation();
+    // setTimeout(() => {
+    //   dispatch('placement_drag_leave', {
+    //     column,
+    //     laneIndex: lane_index,
+    //     laneKind: lane_kind,
+    //     laneId: lane_id
+    //   });
+    // });
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {

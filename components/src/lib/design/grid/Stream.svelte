@@ -23,12 +23,11 @@
 
   export let drop_target: number | undefined = undefined;
 
-  export let drop_target_status: "good" | "bad" | undefined = undefined;
-
+  export let drop_target_status: 'good' | 'bad' | undefined = undefined;
 
   $: stream.placements.length = max_column;
-  $: good_target = ((drop_target == lane_index) && (drop_target_status == "good"));
-  $: bad_target = ((drop_target == lane_index) && (drop_target_status == "bad"));
+  $: good_target = drop_target == lane_index && drop_target_status == 'good';
+  $: bad_target = drop_target == lane_index && drop_target_status == 'bad';
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
@@ -46,9 +45,8 @@
   };
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    let transfer = e.dataTransfer;
     console.warn('Lane(Stream) Enter', e);
-    console.warn('TRANSFER DATA', transfer, transfer?.types);
+    e.stopPropagation();
 
     dispatch('lane_drag_enter', {
       laneIndex: lane_index,
@@ -56,12 +54,14 @@
     });
   };
 
-  const handleDragLeave: DragEventHandler<HTMLDivElement> = (_e) => {
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
     console.warn('Lane(Stream) Leave');
-    dispatch('lane_drag_leave', {
-      laneIndex: lane_index,
-      laneType: 'stream'
-    });
+    // setTimeout(() => {
+    //   dispatch('lane_drag_leave', {
+    //     laneIndex: lane_index,
+    //     laneType: 'stream'
+    //   });
+    // })
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
@@ -108,7 +108,7 @@
     {row}
     {column}
     {lane_index}
-    lane_id={stream.id || ""}
+    lane_id={stream.id || ''}
     lane_kind="stream"
     on:navigate_cursor={forward}
     on:placement_drag_enter={forward}

@@ -1,0 +1,73 @@
+---
+name: Publish App to Production
+run-name: Staging App publish by ${{ github.actor }}
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'package-lock.json'
+      - 'Cargo.toml'
+      - 'domain/**'
+      - 'components/**'
+      - 'app/**'
+jobs:
+  Publish:
+    runs-on: ubuntu-latest
+    environment: evidentstack-app (Preview)
+    permissions:
+      contents: read
+      deployments: write
+    name: Publish App to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - uses: jetli/wasm-pack-action@v0.4.0
+
+      - name: Build editor-state
+        run: npm -w app run state:build
+
+      - name: Install dependencies
+        run: npm -w app i && npm -w components i
+
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Test
+        run: npm -w app run check && npm -w app run test
+        env:
+          PUBLIC_FIREBASE_API_KEY: AIzaSyBYZKqBSRqPopB-ODLvAAUbtb95CVUw3R8
+          PUBLIC_FIREBASE_AUTH_DOMAIN: evidentstack.firebaseapp.com
+          PUBLIC_FIREBASE_PROJECT_ID: evidentstack
+          PUBLIC_FIREBASE_STORAGE_BUCKET: evidentstack.appspot.com
+          PUBLIC_FIREBASE_MESSAGE_SENDER_ID: 477374372516
+          PUBLIC_FIREBASE_APP_ID: "1:477374372516:web:7d3e296ec79b12d2696431"
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{secrets.FIREBASE_ADMIN_CLIENT_EMAIL}}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{secrets.FIREBASE_ADMIN_PRIVATE_KEY}}
+
+      - name: Build
+        run: npm -w app run build
+        env:
+          PUBLIC_FIREBASE_API_KEY: AIzaSyBG1t7Ht62g_wkgy1SfreSBZDCYIczbra4
+          PUBLIC_FIREBASE_AUTH_DOMAIN: evidentstack-test.firebaseapp.com
+          PUBLIC_FIREBASE_PROJECT_ID: evidentstack-test
+          PUBLIC_FIREBASE_STORAGE_BUCKET: evidentstack-test.appspot.com
+          PUBLIC_FIREBASE_MESSAGE_SENDER_ID: 425713990819
+          PUBLIC_FIREBASE_APP_ID: "1:425713990819:web:3f9532b22aa6217bdd5316"
+          FIREBASE_ADMIN_CLIENT_EMAIL: ${{secrets.FIREBASE_ADMIN_CLIENT_EMAIL}}
+          FIREBASE_ADMIN_PRIVATE_KEY: ${{secrets.FIREBASE_ADMIN_PRIVATE_KEY}}
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_PAGES_API_KEY }}
+          accountId: 24a2b0f48cf4f2d0cd375521394e63bd
+          projectName: evidentstack-app
+          directory: app/.svelte-kit/cloudflare
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: staging # this is necessary so as not to deploy to production

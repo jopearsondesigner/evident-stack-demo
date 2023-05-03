@@ -4,24 +4,24 @@ use crate::types::placement::{Placement, PlacementId, PlacementPosition};
 use crate::types::{Component, ComponentId, Lane, LaneId};
 use crate::EventModelId;
 use epoch::decider::Event;
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventModelEvent {
     Created(EventModelId, String),
     Renamed(EventModelId, String),
     DescriptionSet(EventModelId, String),
-    AddedToDescription(EventModelId, u32, String),
-    DeletedFromDescription(EventModelId, u32),
+    AddedToDescription(EventModelId, usize, String),
+    DeletedFromDescription(EventModelId, usize, usize),
     SchemaSet(EventModelId, String),
-    AddedToSchema(EventModelId, u32, String),
-    DeletedFromSchema(EventModelId, u32),
+    AddedToSchema(EventModelId, usize, String),
+    DeletedFromSchema(EventModelId, usize, usize),
     Deleted(EventModelId),
 
     // Lanes
-    LaneAdded(EventModelId, Lane),
+    LaneAdded(EventModelId, Lane, usize),
     LaneRenamed(EventModelId, LaneId, String),
-    LaneReordered(EventModelId, LaneId, u32),
+    LaneReordered(EventModelId, LaneId, usize),
     LaneRemoved(EventModelId, LaneId),
 
     // Grid
@@ -31,14 +31,15 @@ pub enum EventModelEvent {
     PlacementMoved(EventModelId, PlacementPosition),
     PlacementRemoved(EventModelId, PlacementId),
     ComponentRemoved(EventModelId, ComponentId),
+    PlacementsShifted(EventModelId, usize, usize),
 
     // Component Details
     ComponentDescriptionSet(EventModelId, ComponentId, String),
-    AddedToComponentDescription(EventModelId, ComponentId, u32, String),
-    DeletedFromComponentDescription(EventModelId, ComponentId, u32),
+    AddedToComponentDescription(EventModelId, ComponentId, usize, String),
+    DeletedFromComponentDescription(EventModelId, ComponentId, usize),
     ComponentSchemaSet(EventModelId, ComponentId, String),
-    AddedToComponentSchema(EventModelId, ComponentId, u32, String),
-    DeletedFromComponentSchema(EventModelId, ComponentId, u32),
+    AddedToComponentSchema(EventModelId, ComponentId, usize, String),
+    DeletedFromComponentSchema(EventModelId, ComponentId, usize),
     InterfaceConfigured(EventModelId, InterfaceConfig),
 
     // Flows

@@ -30,7 +30,7 @@
 	import Logo from '$components/assets/images/global/evidentStackLogo.svg';
 	export const alt = 'Brand Logo';
 	let ulClass: string = 'flex space-x-8 items-center';
-	let website: boolean = false;
+	let website: boolean = true;
 	export let hidden: boolean = false;
 	let handleMenu = () => {
 		hidden = !hidden;
@@ -39,13 +39,13 @@
 	export let bgColor: string = 'bg-gray-900';
 	export let bgOpacity: string = 'bg-opacity-75';
 	let backdropDivClass = classNames(
-		'fixed top-0 left-0 z-20 w-full h-full',
+		'fixed top-0 left-0 z-30 w-full h-full',
 		!hidden && bgColor,
 		!hidden && bgOpacity
 	);
 </script>
 
-<Navbar>
+<Navbar website={true}>
 	{#if !hidden}
 		<NavWrapper {hidden}>
 			<NabBrand href="/" src={Logo} height={32} class="flex my-4" />
@@ -53,19 +53,19 @@
 			<Nav>
 				<NavUl>
 					<NavLi href="http://docs.onote.com/">Docs</NavLi>
-					<DropdownMenu name="Learn" {website}>
+					<DropdownMenu name="Learn" marginTop="mt-12" {website}>
 						<NavUl>
 							<NavLi href="/blog">Blog</NavLi>
 							<NavLi href="/webinars">Webinars</NavLi>
 							<NavLi href="/conferences">Conferences</NavLi>
 						</NavUl>
 					</DropdownMenu>
-					<DropdownMenu name="Service & Support" {website}>
+					<DropdownMenu name="Service & Support" marginTop="mt-12" {website}>
 						<NavUl>
 							<NavLi href="https://support.onote.com/">Support</NavLi>
 						</NavUl>
 					</DropdownMenu>
-					<DropdownMenu name="Company" {website}>
+					<DropdownMenu name="Company" marginTop="mt-12" {website}>
 						<NavUl>
 							<NavLi href="/team">Team</NavLi>
 							<NavLi href="/contact">Contact</NavLi>
@@ -152,12 +152,12 @@
 		</NavWrapper>
 	{/if}
 </Navbar>
-<span class="lg:block hidden right-0 z-20 absolute pt-3 pr-10"><ThemeSwitch /></span>
+<span class="lg:block hidden right-0 z-20 absolute pt-3 pr-10 mt-16"><ThemeSwitch /></span>
 
 {#if !hidden}
 	<slot />
 {:else}
-	<div class={backdropDivClass} />
+	<div class={classNames(backdropDivClass)} />
 	<slot />
 {/if}
 

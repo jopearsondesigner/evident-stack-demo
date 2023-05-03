@@ -3,22 +3,22 @@ pub use crate::types::audience::{Audience, AudienceId};
 pub use crate::types::command::{Command, CommandId};
 pub use crate::types::event::{Event, EventId};
 pub use crate::types::flow::{FlowArrow, FlowId};
-pub use crate::types::interface::{Interface, InterfaceId};
+pub use crate::types::interface::{Interface, InterfaceConfig, InterfaceId};
 pub use crate::types::placement::{Placement, PlacementId, PlacementPosition};
 pub use crate::types::read_model::{ReadModel, ReadModelId};
-pub use crate::types::schema::{CommandSchemaRole, EventSchemaRole, ReadModelSchemaRole, Schema};
+pub use crate::types::schema::Schema;
 pub use crate::types::stream::{Stream, StreamId};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 pub(crate) mod audience;
 pub(crate) mod command;
 pub(crate) mod event;
-pub(crate) mod flow;
+pub mod flow;
 pub(crate) mod interface;
 pub(crate) mod placement;
 pub(crate) mod read_model;
-pub(crate) mod schema;
+pub mod schema;
 pub(crate) mod stream;
 
 pub trait Entity {
@@ -50,14 +50,35 @@ pub trait Described: Named {
 }
 
 pub trait ModifiablyDescribed: Described {
-    fn set_description(&mut self, description: &str);
-    fn add_to_description(&mut self, index: u32, addition: &str);
-    fn delete_from_description(&mut self, index: u32);
+    fn description_mut(&mut self) -> &mut String;
+
+    fn set_description(&mut self, description: &str) {
+        let desc = self.description_mut();
+        *desc = description.to_string();
+    }
+
+    fn add_to_description(&mut self, index: usize, addition: &str) {
+        let desc = self.description_mut();
+        if desc.is_empty() {
+            self.set_description(addition);
+        } else {
+            desc.insert_str(index, addition);
+        }
+    }
+
+    fn delete_from_description(&mut self, index: usize, count: usize) {
+        let desc = self.description_mut();
+        if !desc.is_empty() {
+            for i in 0..count {
+                desc.remove(index + i);
+            }
+        }
+    }
 }
 
-pub type LaneIndex = u32;
+pub type LaneIndex = usize;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LaneId {
     DefaultAudience,
     Audience(AudienceId),
@@ -82,16 +103,16 @@ pub enum ComponentId {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Component {
-    InterfaceComponent(Interface),
-    CommandComponent(Command),
-    EventComponent(Event),
-    ReadModelComponent(ReadModel),
+    Interface(Interface),
+    Command(Command),
+    Event(Event),
+    ReadModel(ReadModel),
 }
 
 #[derive(Debug)]
-pub(crate) enum ComponentMut<'a> {
-    InterfaceComponentMut(&'a mut Interface),
-    CommandComponentMut(&'a mut Command),
-    EventComponentMut(&'a mut Event),
-    ReadModelComponentMut(&'a mut ReadModel),
+pub enum ComponentMut<'a> {
+    Interface(&'a mut Interface),
+    Command(&'a mut Command),
+    Event(&'a mut Event),
+    ReadModel(&'a mut ReadModel),
 }

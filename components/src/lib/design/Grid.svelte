@@ -1,192 +1,386 @@
 <svelte:options immutable />
 
-<script>
-  import Audience from './grid/Audience.svelte';
+<script lang="ts">
+  import FlowCanvas from './flowArrows/FlowCanvas.svelte';
+  import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
+
+  import Cursor from './grid/Cursor.svelte';
+  import AudienceLane from './grid/Audience.svelte';
   import Timeline from './grid/Timeline.svelte';
-  import Stream   from './grid/Stream.svelte';
+  import StreamLane from './grid/Stream.svelte';
 
-  import Interface from './grid/Interface.svelte';
-  import Command   from './grid/Command.svelte';
-  import Event     from './grid/Event.svelte';
-  import ReadModel from './grid/ReadModel.svelte';
-  import EmptyCell from './grid/EmptyCell.svelte';
-  import { maxSparseArrayIndex, maxSparseArrayIndexInArray, setAllPlacementArrayLengths, setArrayLength }
-  from './grid';
+  import {
+    type Decider,
+    type Audience,
+    type EventPlacement,
+    type InterfacePlacement,
+    type Stream,
+    type TimelinePlacement,
+    default_decider,
+    type Disambiguation,
+    type CursorMode,
+    type GridMode,
+    type Flow
+  } from './Grid';
+  import { onMount } from 'svelte';
+  import { itemAtCursor } from './Grid';
+  import TimelineDisambiguation from './grid/TimelineDisambiguation.svelte';
 
-  /** @type Array.<{id: string,
-      title: string,
-      description: string}> */
-  export let default_audience_placements = new Array(0);
+  export let decider: Decider = default_decider;
+  export let column_count: number;
+  export let default_audience_placements: Array<InterfacePlacement> = new Array(0);
+  export let audiences: Array<Audience> = new Array(0);
+  export let timeline_placements: Array<TimelinePlacement> = new Array(0);
+  export let streams: Array<Stream> = new Array(0);
+  export let default_stream_placements: Array<EventPlacement> = new Array(0);
+  export let flows: Array<Flow> = [];
 
-  /** @type Array.<{title: string,
-      placements: Array.<{id: string,
-      type: string, // TODO: supported placement types/config here
-      title: string,
-      description: string}>}> */
-  export let audiences = new Array(0);
+  // Grid Mode
 
-  /** @type Array<{id: string,
-      type: ('command' | 'readModel'),
-      title: string,
-      description: string}> */
-  export let timeline_placements = new Array(0);
+  let mode: GridMode = 'loading';
 
-  /** @type Array.<{title: string,
-      placements: Array.<{id: string,
-      title: string,
-      description: string}>}> */
-  export let streams = new Array(0);
+  onMount(() => {
+    mode = 'navigation';
+  });
 
-  /** @type Array.<{id: string,
-      title: string,
-      description: string}> */
-  export let default_stream_placements = new Array(0);
+  // Disambiguation
 
-  // Columns
+  let disambiguation: Disambiguation = null;
 
-  const right_buffer = 10;
+  // Command Dispatch
 
-  $: max_column = Math.max(
-    maxSparseArrayIndex(default_audience_placements),
-    maxSparseArrayIndexInArray(audiences.map(a => a.placements)),
-    maxSparseArrayIndex(timeline_placements),
-    maxSparseArrayIndexInArray(streams.map(s => s.placements)),
-    maxSparseArrayIndex(default_stream_placements),
-  ) + right_buffer;
+  const handleDefineAndPlaceInterface = async (e: CustomEvent) => {
+    await decider.define_and_place_interface(e.detail.name, e.detail.index, e.detail.audience);
+    mode = 'navigation';
+  };
+  const handleDefineAndPlaceCommand = async (e: CustomEvent) => {
+    await decider.define_and_place_command(e.detail.name, e.detail.index);
+    disambiguation = null;
+    mode = 'navigation';
+  };
+  const handleDefineAndPlaceEvent = async (e: CustomEvent) => {
+    await decider.define_and_place_event(e.detail.name, e.detail.index, e.detail.stream);
+    mode = 'navigation';
+  };
+  const handleDefineAndPlaceReadModel = async (e: CustomEvent) => {
+    await decider.define_and_place_read_model(e.detail.name, e.detail.index);
+    disambiguation = null;
+    mode = 'navigation';
+  };
+  const handleDisambiguateTimelineDefinitionAndPlacement = (e: CustomEvent) => {
+    mode = 'disambiguating';
+    disambiguation = e.detail;
+  };
 
-  $: setArrayLength(default_audience_placements, max_column);
-  $: setAllPlacementArrayLengths(audiences, max_column);
-  $: setArrayLength(timeline_placements, max_column);
-  $: setAllPlacementArrayLengths(streams, max_column);
-  $: setArrayLength(default_stream_placements, max_column);
+  const handleMoveInterfacePlacement = async (e: CustomEvent) => {
+    await decider.move_interface_placement(e.detail.id, e.detail.index, e.detail.audience);
+  };
+
+  const handleDuplicateInterfacePlacement = async (e: CustomEvent) => {
+    await decider.duplicate_interface_placement(e.detail.id, e.detail.index, e.detail.audience);
+  };
+
+  const handleMoveTimelinePlacement = async (e: CustomEvent) => {
+    await decider.move_timeline_placement(e.detail.id, e.detail.index);
+  };
+
+  const handleDuplicateTimelinePlacement = async (e: CustomEvent) => {
+    await decider.duplicate_timeline_placement(e.detail.id, e.detail.index);
+  };
+
+  const handleMoveEventPlacement = async (e: CustomEvent) => {
+    await decider.move_event_placement(e.detail.id, e.detail.index, e.detail.stream);
+  };
+
+  const handleDuplicateEventPlacement = async (e: CustomEvent) => {
+    await decider.duplicate_event_placement(e.detail.id, e.detail.index, e.detail.stream);
+  };
+
+  const handleRemovePlacement = async (e: CustomEvent) => {
+    await decider.remove_placement(e.detail.placement);
+    mode = 'navigation';
+  };
+
+  const handleRenamePlacement = async (e: CustomEvent) => {
+    await decider.rename_placement(e.detail.placement, e.detail.name);
+    mode = 'navigation';
+  };
+
+  const handleRenameLane = async (e: CustomEvent) => {
+    console.warn('TODO: handleRenameLane');
+    console.warn(e.detail);
+  };
+
+  const handleReorderLane = async (e: CustomEvent) => {
+    console.warn('TODO: handleReorderLane');
+    console.warn(e.detail);
+    decider.reorder_lane(e.detail.kind, e.detail.lane_id, e.detail.index);
+  };
+
+  const handleRemoveLane = async (e: CustomEvent) => {
+    console.warn('TODO: handleRemoveLane');
+    console.warn(e.detail);
+  };
 
   // Rows
 
   const default_audience_row = 0;
-
   $: timeline_row = audiences.length + 1;
-
   $: default_stream_row = timeline_row + streams.length + 1;
+  $: row_count = default_stream_row + 1;
 
-  // List IDs
+  // Cursor
 
-  /**
-     @param {{id: string} | undefined | null} placement - the placement
-     @param {number} col - the column index
-     @param {number} row - the row index
-     @returns {string} - returns a string ID, either the placement.id or an empty cell id from row-col
-  */
-  function placementOrEmptyCellId(placement, col, row) {
-    return placement && placement.id || `empty-${col}-${row}`
-  }
+  let cursor_row = 0;
+  onMount(() => {
+    cursor_row = timeline_row;
+  });
+  let cursor_column = 0;
+  $: cursor_item = itemAtCursor(
+    cursor_row,
+    cursor_column,
+    default_audience_placements,
+    audiences,
+    timeline_placements,
+    streams,
+    default_stream_placements
+  );
 
-  // Canvas State
+  const gridModeToCursorMode = (mode: GridMode): CursorMode => {
+    return mode === 'editing'
+      ? 'editing'
+      : mode === 'navigation'
+      ? 'navigation'
+      : mode === 'linking'
+      ? 'linking'
+      : 'other';
+  };
+  $: cursor_mode = gridModeToCursorMode(mode);
 
-  /** @type {{row: number, col: number}} */
-  let cursor_position = {row: timeline_row, col: 0};
+  const handleBeginEditing: EventListener = (e) => {
+    e.preventDefault();
+    mode = 'editing';
+  };
 
-  /**
-     @param {number} col - the column index
-     @param {number} row - the row index
-     @returns {boolean} - whether the given col, row is equal to the current cursor position
-  */
-  function isCursor(col, row){ return row == cursor_position.row && col == cursor_position.col }
+  // Columns
 
-  /** @type {{row: number, col: number} | null} */
-  let editing_position = null;
+  $: max_column = Math.max(column_count, cursor_column + 10);
 
-  /**
-     @param {number} col - the column index
-     @param {number} row - the row index
-     @returns {boolean} - whether the given col, row is equal to the current cursor position
-  */
-  function isEditing(col, row){
-    return !!editing_position &&
-      row == editing_position.row &&
-      col == editing_position.col
-  }
+  // Navigation
+
+  const handleNavigateCursor = (event: CustomEvent) => {
+    mode = 'navigation';
+    cursor_row = event.detail.row;
+    cursor_column = event.detail.column;
+  };
+
+  const navUp = (event: KeyboardEvent) => {
+    event.preventDefault();
+    cursor_row = Math.max(cursor_row - 1, 0);
+  };
+
+  const navRight = (event: KeyboardEvent) => {
+    event.preventDefault();
+    cursor_column += 1;
+  };
+
+  const navDown = (event: KeyboardEvent) => {
+    event.preventDefault();
+    cursor_row = Math.min(cursor_row + 1, default_stream_row);
+  };
+
+  const navLeft = (event: KeyboardEvent) => {
+    event.preventDefault();
+    cursor_column = Math.max(cursor_column - 1, 0);
+  };
+
+  const navHome = (event: KeyboardEvent) => {
+    event.preventDefault();
+    cursor_row = timeline_row;
+    cursor_column = 0;
+  };
+
+  const navStart = (event: KeyboardEvent) => {
+    event.preventDefault();
+    cursor_column = 0;
+  };
+
+  const navEnd = (event: KeyboardEvent) => {
+    event.preventDefault();
+    cursor_column = max_column;
+  };
+
+  const navTop = (event: KeyboardEvent) => {
+    event.preventDefault();
+    cursor_row = default_audience_row;
+  };
+
+  const navBottom = (event: KeyboardEvent) => {
+    event.preventDefault();
+    cursor_row = default_stream_row;
+  };
+
+  const navigationKeys: KeyBindingMap = {
+    ArrowUp: navUp,
+    k: navUp,
+
+    ArrowRight: navRight,
+    l: navRight,
+    Tab: navRight,
+
+    ArrowDown: navDown,
+    j: navDown,
+
+    ArrowLeft: navLeft,
+    h: navLeft,
+    'Shift+Tab': navLeft,
+
+    Home: navHome,
+
+    'Control+a': navStart,
+    '0': navStart,
+
+    End: navEnd,
+    'Shift+4': navEnd,
+    'Control+e': navEnd,
+
+    PageUp: navTop,
+    'g g': navTop,
+
+    PageDown: navBottom,
+    'Shift+G': navBottom,
+
+    Enter: (event) => {
+      event.preventDefault();
+      mode = 'editing';
+    }
+  };
+
+  const navigationKeyboardHandler = createKeybindingsHandler(navigationKeys);
+
+  // Editing
+
+  const handleCancelEditing = (event: any) => {
+    event.preventDefault();
+    mode = 'navigation';
+  };
+
+  // Linking
+
+  // const linkingKeyboardHandler = createKeybindingsHandler({
+  // })
+
+  // TODO: wire up to decider
+  const handleConnectFlow = async (e: CustomEvent) => {
+    console.log('connect_flow:', e);
+  };
+
+  // Keyboard
+  const keyboardHandler: EventListener = (e) => {
+    if (mode === 'navigation') {
+      navigationKeyboardHandler(e);
+    }
+  };
 </script>
 
-<h1>Foo</h1>
+<svelte:window on:keydown={keyboardHandler} />
 
-<div class="p-3 relative grid justify-items-center items-center w-max">
-  <Audience row={default_audience_row}>
-    {#each default_audience_placements as placement, index (placementOrEmptyCellId(placement, index, default_audience_row)) }
-      {@const is_cursor = isCursor(default_audience_row, index)}
-      <!-- {@const is_editing = isEditing(default_audience_row, index)} -->
-      {#if placement}
-        <Interface id={placement.id} title={placement.title} description={placement.description}
-                   row={default_audience_row} column={index}
-                   cursor={is_cursor} />
-      {:else}
-        <EmptyCell row={default_audience_row} column={index} cursor={is_cursor} />
-      {/if}
+<h3>{mode}</h3>
+
+<div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
+  <FlowCanvas {flows} />
+  <div
+    class="p-3 relative grid justify-items-center items-center"
+    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
+  >
+    <AudienceLane
+      on:navigate_cursor={handleNavigateCursor}
+      on:move_interface_placement={handleMoveInterfacePlacement}
+      on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
+      on:connect_flow={handleConnectFlow}
+      row={default_audience_row}
+      lane_index={audiences.length}
+      audience={{ placements: default_audience_placements }}
+      {max_column}
+    />
+
+    {#each audiences as audience, lane_index (audience.id)}
+      {@const row = lane_index + 1}
+      <AudienceLane
+        on:navigate_cursor={handleNavigateCursor}
+        on:move_interface_placement={handleMoveInterfacePlacement}
+        on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
+        on:connect_flow={handleConnectFlow}
+        {row}
+        {audience}
+        {max_column}
+        {lane_index}
+      />
     {/each}
-  </Audience>
 
-  {#each audiences as audience, i}
-    {@const row = i + 1}
-    <Audience row={row} title="{audience.title}">
-      {#each audience.placements as placement, index (placementOrEmptyCellId(placement, index, row)) }
-        {@const is_cursor = isCursor(row, index)}
-        <!-- {@const is_editing = isEditing(row, index)} -->
-        {#if placement}
-          <Interface id={placement.id} title={placement.title} description={placement.description}
-                     row={row} column={index}
-                     cursor={is_cursor} />
-        {:else}
-          <EmptyCell row={row} column={index} cursor={is_cursor} />
-        {/if}
-      {/each}
-    </Audience>
-  {/each}
+    <Timeline
+      on:navigate_cursor={handleNavigateCursor}
+      on:move_timeline_placement={handleMoveTimelinePlacement}
+      on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
+      on:connect_flow={handleConnectFlow}
+      row={timeline_row}
+      placements={timeline_placements}
+      {max_column}
+    />
 
-  <Timeline row={timeline_row}>
-    {#each timeline_placements as placement, index (placementOrEmptyCellId(placement, index, timeline_row)) }
-      {@const is_cursor = isCursor(timeline_row, index)}
-      <!-- {@const is_editing = isEditing(timeline_row, index)} -->
-      {#if placement && placement.type === 'command'}
-        <Command id={placement.id} title={placement.title} description={placement.description}
-                 row={timeline_row} column={index}
-                 cursor={is_cursor} />
-      {:else if placement && placement.type === 'readModel'}
-        <ReadModel id={placement.id} title={placement.title} description={placement.description}
-                   row={timeline_row} column={index}
-                   cursor={is_cursor} />
-      {:else}
-        <EmptyCell row={timeline_row} column={index} cursor={is_cursor} />
-      {/if}
+    {#each streams as stream, lane_index (stream.id)}
+      {@const row = lane_index + timeline_row + 1}
+      <StreamLane
+        on:navigate_cursor={handleNavigateCursor}
+        on:move_event_placement={handleMoveEventPlacement}
+        on:duplicate_event_placement={handleDuplicateEventPlacement}
+        on:connect_flow={handleConnectFlow}
+        on:reorder_lane={handleReorderLane}
+        {row}
+        {stream}
+        {max_column}
+        {lane_index}
+      />
     {/each}
-  </Timeline>
-
-  {#each streams as stream, i}
-    {@const row = i + timeline_row + 1}
-    <Stream row={row} title="{stream.title}">
-      {#each stream.placements as placement, index (placementOrEmptyCellId(placement, index, row)) }
-        {@const is_cursor = isCursor(row, index)}
-        <!-- {@const is_editing = isEditing(row, index)} -->
-        {#if placement}
-          <Event id={placement.id} title={placement.title} description={placement.description}
-                 row={row} column={index}
-                 cursor={is_cursor} />
-        {:else}
-          <EmptyCell row={row} column={index} cursor={is_cursor} />
-        {/if}
-      {/each}
-    </Stream>
-  {/each}
-
-  <Stream row={default_stream_row}>
-    {#each default_stream_placements as placement, index (placementOrEmptyCellId(placement, index, default_stream_row)) }
-      {@const is_cursor = isCursor(default_stream_row, index)}
-      <!-- {@const is_editing = isEditing(default_stream_row, index)} -->
-      {#if placement}
-        <Event id={placement.id} title={placement.title} description={placement.description}
-               row={default_stream_row} column={index}
-               cursor={is_cursor} />
-      {:else}
-        <EmptyCell row={default_stream_row} column={index} cursor={is_cursor} />
-      {/if}
-    {/each}
-  </Stream>
+    <StreamLane
+      on:navigate_cursor={handleNavigateCursor}
+      on:move_event_placement={handleMoveEventPlacement}
+      on:duplicate_event_placement={handleDuplicateEventPlacement}
+      on:connect_flow={handleConnectFlow}
+      lane_index={streams.length}
+      row={default_stream_row}
+      stream={{ placements: default_stream_placements }}
+      {max_column}
+    />
+    <Cursor
+      on:begin_editing={handleBeginEditing}
+      on:cancel_editing={handleCancelEditing}
+      on:define_and_place_interface={handleDefineAndPlaceInterface}
+      on:define_and_place_event={handleDefineAndPlaceEvent}
+      on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
+      on:remove_placement={handleRemovePlacement}
+      on:rename_placement={handleRenamePlacement}
+      on:move_interface_placement={handleMoveInterfacePlacement}
+      on:move_timeline_placement={handleMoveTimelinePlacement}
+      on:move_event_placement={handleMoveEventPlacement}
+      on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
+      on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
+      on:duplicate_event_placement={handleDuplicateEventPlacement}
+      on:connect_flow={handleConnectFlow}
+      row={cursor_row}
+      column={cursor_column}
+      item={cursor_item}
+      mode={cursor_mode}
+    />
+    {#if mode === 'disambiguating' && disambiguation}
+      <TimelineDisambiguation
+        name={disambiguation.name}
+        index={disambiguation.index}
+        top={disambiguation.top}
+        left={disambiguation.left}
+        on:define_and_place_command={handleDefineAndPlaceCommand}
+        on:define_and_place_read_model={handleDefineAndPlaceReadModel}
+      />
+    {/if}
+  </div>
 </div>

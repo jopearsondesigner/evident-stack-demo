@@ -1,15 +1,19 @@
-/* Lato */
+/* Lato & Input Mono */
 @import url('https://use.typekit.net/dcj2uau.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @font-face {
-	font-family: 'strokeWeight';
-	src: url('/fonts/font.woff2') format('woff2-variations');
-	src: url('/fonts/font.woff') format('woff-variations');
+  font-family: 'strokeWeight';
+  src: url('/fonts/font.woff2') format('woff2-variations');
+  src: url('/fonts/font.woff') format('woff-variations');
 }
 
 body {
-	@apply bg-white dark:bg-dark-1;
+  @apply bg-white dark:bg-dark-1;
+  @apply min-h-screen;
+  @apply flex;
+  @apply flex-col;
 }

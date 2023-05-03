@@ -1,37 +1,86 @@
-<script>
+<script lang="ts">
   import MaybeTooltip from '../../utils/MaybeTooltip.svelte';
   import markdown from '../../utils/markdown.js';
+  import type { DragEventHandler } from 'svelte/elements';
+  import { createEventDispatcher } from 'svelte';
+  import FlowPort from './FlowPort.svelte';
 
-  /* TODO: UUID */
-  /* @type {string} */
-  export let id = "";
-
-  /* @type {string} */
-  export let title = "";
-
-  /* @type {string | null} */
-  export let description = "";
-
-  /* @type {number} */
-  export let row = 0;
-
-  /* @type {number} */
-  export let column = 0;
-
-  /* @type {boolean} */
-  export let cursor = false;
+  export let id: string;
+  export let command: string;
+  export let column: number;
+  export let name: string;
+  export let description = '';
 
   $: descriptionHTML = markdown(description);
+
+  const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
+    let transfer = e.dataTransfer;
+    if (transfer) {
+      transfer.setData('timeline', id);
+      if (e.shiftKey) {
+        transfer.effectAllowed = 'copy';
+      } else {
+        transfer.effectAllowed = 'move';
+      }
+    }
+  };
+
+  // Linking
+  const dispatch = createEventDispatcher();
+  let drop_target = false;
+
+  const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
+    let transfer = e.dataTransfer;
+    if (transfer) {
+      if (
+        (transfer.effectAllowed == 'link' && transfer.types.includes('interface')) ||
+        transfer.types.includes('event')
+      ) {
+        e.preventDefault();
+        transfer.dropEffect = 'link';
+        drop_target = true;
+      }
+    }
+  };
+
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
+    drop_target = false; // TODO: conditionally change style (cursor maybe?) while linking
+  };
+
+  const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
+    handleDragLeave(e);
+    let transfer = e.dataTransfer;
+    if (transfer) {
+      if (transfer.effectAllowed == 'link') {
+        let fromData = transfer.getData('interface') || transfer.getData('event');
+        if (fromData) {
+          let from = JSON.parse(fromData);
+          transfer.dropEffect = 'link';
+          dispatch('connect_flow', { from: from, to: id });
+        }
+      }
+    }
+  };
 </script>
 
 <div
-  id="{id}"
-  class="placement z-30 flex place-self-center align-items-center p-3"
-  class:cursor
-  style="grid-row: {row} / {row}; grid-column: {column} / {column};">
-  <MaybeTooltip tip="{descriptionHTML}">
-    <div class="command w-32 h-32 p-3 overflow-visible text-left leading-tight shadow-placement bg-gradient-to-b from-command to-command-light">
-      {title}
-    </div>
-  </MaybeTooltip>
+  class="relative group"
+  on:dragenter={handleDragEnter}
+  on:dragover={(e) => e.preventDefault()}
+  on:dragleave={handleDragLeave}
+  on:drop={handleDragDrop}
+>
+  <FlowPort position="bottom" type="command" placement={id} {column} />
+  <FlowPort position="right" type="command" placement={id} {column} />
+  <!-- TODO: tooltip interferes with link dragging -->
+  <!-- <MaybeTooltip tip={descriptionHTML}> -->
+  <div
+    {id}
+    draggable="true"
+    on:dragstart={handleDragStart}
+    class="command m-[1.375rem] w-[6.125rem] h-[6.125rem] p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-command-dark via-command to-command-light"
+  >
+    {name}
+  </div>
+  <!-- </MaybeTooltip> -->
 </div>

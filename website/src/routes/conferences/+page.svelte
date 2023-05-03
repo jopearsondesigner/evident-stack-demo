@@ -22,7 +22,7 @@
 	import BlogImage1 from '$components/assets/images/blog/conference-photo-1.png';
 </script>
 
-<Navbar navbarClass="w-full bg-black bg-opacity-90 px-4 py-3 sticky top-0 z-10 shadow-md">
+<Navbar navbarClass="w-full bg-black bg-opacity-90 px-4 py-3 top-0 z-10 shadow-md">
 	<NavWrapper navDivClass="sm:container">
 		<Nav website navWebClass="block">
 			<NavUl class="flex justify-center items-center pb-0 mr-4 space-x-8 list-none">

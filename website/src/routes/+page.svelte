@@ -59,7 +59,7 @@
 	import Icon from '$components/Icon.svelte';
 	import ArrowRight from '$components/icons/ArrowRight.svelte';
 	import ArrowLeft from '$components/icons/ArrowLeft.svelte';
-	import Logo from '$components/assets/images/global/evidentDesignLogo.svg';
+	import Logo from '$components/assets/images/product/design/evidentDesignLogo.svg';
 	import Navbar from '$components/navbar/Navbar.svelte';
 	import NavWrapper from '$components/navbar/NavWrapper.svelte';
 	import NabBrand from '$components/navbar/NavBrand.svelte';

@@ -1,0 +1,21 @@
+[package]
+name = "event-model-tests"
+version = "0.1.0"
+edition = "2021"
+
+[dev-dependencies]
+assert_matches = "1.5"
+epoch = { git = "https://github.com/Shearerbeard/Epoch", rev = "c731f85", default-features = false, features = ["in_memory"] }
+event-models = { path = "../event-models", features = ["in_memory"] }
+converge = { path = "../converge" }
+convergent-event-models = { path = "../convergent-event-models" }
+
+[dev-dependencies.uuid]
+version = "1.3"
+features = [
+    "v4",
+    "v5",
+    "fast-rng",
+    "macro-diagnostics",
+    "serde"
+]

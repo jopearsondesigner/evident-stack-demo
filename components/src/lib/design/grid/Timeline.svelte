@@ -1,10 +1,66 @@
-<script>
-  /* @type {number} */
-  export let row = 0;
+<script lang="ts">
+  import { placementOrEmptyCellId, type TimelinePlacement } from '../Grid';
+  import Command from './Command.svelte';
+  import EmptyCell from './EmptyCell.svelte';
+  import ReadModel from './ReadModel.svelte';
+  import { createEventDispatcher } from 'svelte';
+  import Cell from './Cell.svelte';
+
+  const dispatch = createEventDispatcher();
+
+  const forward = (event: CustomEvent) => {
+    dispatch(event.type, event.detail);
+  };
+
+  export let row: number;
+  $: gridRow = row + 1;
+
+  export let max_column: number;
+
+  export let placements: Array<TimelinePlacement>;
+
+  $: placements.length = max_column;
 </script>
 
-<h3 class="timeline laneTitle" style="grid-row: {row} / {row};">Timeline</h3>
+<h3
+  class="timelineName sticky left-3 justify-self-start self-center prose text-body-light dark:text-body-dark"
+  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
+>
+  Timeline
+</h3>
 
-<div style="grid-row: {row} / {row};" />
+<div
+  class="timeline z-[-1] absolute -top-px -left-3 bottom-0 -right-6 border-t border-b border-gray-brand-2 dark:border-white"
+  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
+/>
 
-<slot />
+{#each placements as placement, column (placementOrEmptyCellId(placement, column, row))}
+  <Cell {row} {column} on:navigate_cursor={forward}>
+    {#if placement && placement.kind === 'command'}
+      <Command
+        id={placement.id}
+        command={placement.component}
+        {column}
+        name={placement.name}
+        description={placement.description}
+        on:connect_flow={forward}
+      />
+    {:else if placement && placement.kind === 'readModel'}
+      <ReadModel
+        id={placement.id}
+        readModel={placement.component}
+        {column}
+        name={placement.name}
+        description={placement.description}
+        on:connect_flow={forward}
+      />
+    {:else}
+      <EmptyCell
+        {column}
+        kind="timeline"
+        on:move_timeline_placement={forward}
+        on:duplicate_timeline_placement={forward}
+      />
+    {/if}
+  </Cell>
+{/each}

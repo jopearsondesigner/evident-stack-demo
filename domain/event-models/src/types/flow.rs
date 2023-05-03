@@ -2,7 +2,7 @@ use crate::api::errors::EventModelError;
 use crate::types::placement::PlacementId;
 use crate::types::Entity;
 use crate::EventModel;
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 pub type FlowId = Uuid;
@@ -23,6 +23,16 @@ pub struct Port {
     anchor: Anchor, // TODO: InterfaceElement?
 }
 
+impl Port {
+    pub fn placement_id(&self) -> &PlacementId {
+        &self.placement
+    }
+
+    pub fn anchor(&self) -> &Anchor {
+        &self.anchor
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct FlowArrow {
     id: FlowId,
@@ -34,9 +44,32 @@ pub fn flow_id(from: &PlacementId, to: &PlacementId) -> FlowId {
     Uuid::new_v5(from, to.as_bytes())
 }
 
-// TODO: enforce business rules!
 impl FlowArrow {
-    fn create(model: &impl EventModel, from: Port, to: Port) -> Result<FlowArrow, EventModelError> {
+    pub fn create(
+        from: PlacementId,
+        from_anchor: Anchor,
+        to: PlacementId,
+        to_anchor: Anchor,
+    ) -> Result<FlowArrow, EventModelError> {
+        Ok(FlowArrow {
+            id: flow_id(&from, &to),
+            from: Port {
+                placement: from,
+                anchor: from_anchor,
+            },
+            to: Port {
+                placement: to,
+                anchor: to_anchor,
+            },
+        })
+    }
+
+    // TODO: enforce business rules!
+    pub fn connect(
+        model: &impl EventModel,
+        from: Port,
+        to: Port,
+    ) -> Result<FlowArrow, EventModelError> {
         let from_placement = model.placements().get(&from.placement);
         let to_placement = model.placements().get(&to.placement);
         todo!("Validation of flow arrow");
@@ -45,6 +78,14 @@ impl FlowArrow {
             from,
             to,
         })
+    }
+
+    pub fn to(&self) -> &Port {
+        &self.to
+    }
+
+    pub fn from(&self) -> &Port {
+        &self.from
     }
 
     // fun build(

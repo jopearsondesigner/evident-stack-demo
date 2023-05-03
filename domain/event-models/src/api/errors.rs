@@ -1,4 +1,6 @@
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
+
+use crate::types::LaneId;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventModelError {
@@ -7,4 +9,8 @@ pub enum EventModelError {
     CreationError(String),
     ModificationError(String),
     IllegalFlowArrow(String),
+    SerializationError(String),
+    LaneNotFound(LaneId),
+    LaneIndexOutOfBounds(LaneId, usize),
+    DescriptionTextOutOfBounds(String, usize, usize),
 }

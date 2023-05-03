@@ -1,6 +1,6 @@
 use crate::api::errors::EventModelError;
 use crate::types::{Described, Entity, Named};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
@@ -11,9 +11,17 @@ pub type InterfaceId = Uuid;
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum InterfaceConfig {
     #[default]
-    None,
-    Figma(Url, Option<u32>, Option<u32>),
-    Image(Url, Option<u32>, Option<u32>),
+    Blank,
+    Figma {
+        url: Url,
+        width: Option<usize>,
+        height: Option<usize>,
+    },
+    Image {
+        url: Url,
+        width: Option<usize>,
+        height: Option<usize>,
+    },
     Job,
 }
 
@@ -26,14 +34,23 @@ pub struct Interface {
 }
 
 impl Interface {
-    pub fn create(id: Uuid, name: &str) -> Result<Self, EventModelError> {
+    pub fn create(
+        id: Uuid,
+        name: String,
+        description: String,
+        config: InterfaceConfig,
+    ) -> Result<Self, EventModelError> {
         // TODO: validate name
         Ok(Interface {
             id,
-            name: name.to_string(),
-            description: Default::default(),
-            config: Default::default(),
+            name,
+            description,
+            config,
         })
+    }
+
+    pub fn config(&self) -> &InterfaceConfig {
+        &self.config
     }
 }
 
@@ -62,21 +79,7 @@ impl Described for Interface {
 }
 
 impl ModifiablyDescribed for Interface {
-    fn set_description(&mut self, description: &str) {
-        self.description = description.to_string();
-    }
-
-    fn add_to_description(&mut self, index: u32, addition: &str) {
-        if self.description.is_empty() {
-            self.set_description(addition);
-        } else {
-            self.description.insert_str(index as usize, addition);
-        }
-    }
-
-    fn delete_from_description(&mut self, index: u32) {
-        if !self.description.is_empty() {
-            self.description.remove(index as usize);
-        }
+    fn description_mut(&mut self) -> &mut String {
+        &mut self.description
     }
 }

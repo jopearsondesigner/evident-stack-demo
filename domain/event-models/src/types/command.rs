@@ -1,9 +1,7 @@
-use std::collections::HashMap;
-
 use crate::api::errors::EventModelError;
-use crate::types::schema::{CommandSchemaRole, Schema, SubSchemaName};
+use crate::types::schema::Schema;
 use crate::types::{Described, Entity, Named};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::schema::{HasModifiableSchema, HasSchema};
@@ -17,17 +15,20 @@ pub struct Command {
     name: String,
     description: String,
     schema: Schema,
-    schema_roles: HashMap<CommandSchemaRole, SubSchemaName>,
 }
 
 impl Command {
-    pub fn create(id: Uuid, name: &str) -> Result<Self, EventModelError> {
+    pub fn create(
+        id: Uuid,
+        name: String,
+        description: String,
+        schema: Schema,
+    ) -> Result<Self, EventModelError> {
         Ok(Command {
             id,
-            name: name.to_string(),
-            description: Default::default(),
-            schema: Default::default(),
-            schema_roles: Default::default(),
+            name,
+            description,
+            schema,
         })
     }
 }
@@ -57,22 +58,8 @@ impl Described for Command {
 }
 
 impl ModifiablyDescribed for Command {
-    fn set_description(&mut self, description: &str) {
-        self.description = description.to_string();
-    }
-
-    fn add_to_description(&mut self, index: u32, addition: &str) {
-        if self.description.is_empty() {
-            self.set_description(addition);
-        } else {
-            self.description.insert_str(index as usize, addition);
-        }
-    }
-
-    fn delete_from_description(&mut self, index: u32) {
-        if !self.description.is_empty() {
-            self.description.remove(index as usize);
-        }
+    fn description_mut(&mut self) -> &mut String {
+        &mut self.description
     }
 }
 

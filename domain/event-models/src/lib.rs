@@ -3,37 +3,39 @@ extern crate core;
 extern crate serde_cbor;
 extern crate url;
 extern crate uuid;
-
 use crate::types::audience::Audience;
 use crate::types::command::{Command, CommandId};
 use crate::types::event::{Event, EventId};
-use crate::types::flow::{FlowArrow, FlowId};
+use crate::types::flow::{flow_id, FlowArrow, FlowId};
 use crate::types::interface::{Interface, InterfaceId};
 use crate::types::placement::PlacementPosition;
 use crate::types::placement::{Placement, PlacementId};
 use crate::types::read_model::{ReadModel, ReadModelId};
-use crate::types::schema::HasSchema;
+use crate::types::schema::{HasModifiableSchema, HasSchema, Schema};
 use crate::types::stream::Stream;
-use crate::types::{Component, ComponentId, Described, Lane, LaneId, LaneIndex};
+use crate::types::{
+    Component, ComponentId, Described, Lane, LaneId, LaneIndex, ModifiablyDescribed, Renamable,
+};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use types::flow::flow_id;
-use types::schema::HasModifiableSchema;
-use types::{ModifiablyDescribed, Renamable};
+use std::fmt::Debug;
 use uuid::Uuid;
 
 pub mod api;
-//pub mod application;
-pub mod grid;
 pub mod implementation;
+pub mod json;
 pub mod types;
 
 pub type EventModelId = Uuid;
 
-pub trait EventModelCreator<T: EventModel> {
-    fn create(&self, id: EventModelId, name: String) -> T;
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum EventModelState<T: EventModel> {
+    BeforeCreation(T::CreationDetails),
+    EventModel(T),
+    Deleted(EventModelId),
 }
 
-pub trait EventModel: Described + HasSchema {
+pub trait EventModelData: HasSchema + Debug {
     fn interfaces(&self) -> &HashMap<InterfaceId, Interface>;
     fn commands(&self) -> &HashMap<CommandId, Command>;
     fn events(&self) -> &HashMap<EventId, Event>;
@@ -42,6 +44,24 @@ pub trait EventModel: Described + HasSchema {
     fn streams(&self) -> &Vec<Stream>;
     fn placements(&self) -> &HashMap<PlacementId, Placement>;
     fn flows(&self) -> &HashMap<FlowId, FlowArrow>;
+}
+
+struct EventModelDataTransfer {
+    schema: Schema,
+    interfaces: HashMap<InterfaceId, Interface>,
+    commands: HashMap<CommandId, Command>,
+    events: HashMap<EventId, Event>,
+    read_models: HashMap<ReadModelId, ReadModel>,
+    audiences: Vec<Audience>,
+    streams: Vec<Stream>,
+    placements: HashMap<PlacementId, Placement>,
+    flows: HashMap<FlowId, FlowArrow>,
+}
+
+pub trait EventModel: Described + EventModelData + Sized {
+    type CreationDetails: Clone + Debug;
+
+    fn create(initial: EventModelState<Self>, id: EventModelId, name: String) -> Self;
 }
 
 pub trait ModifiableEventModel:
@@ -64,35 +84,61 @@ pub trait ModifiableEventModel:
     fn added_to_component_description(
         &mut self,
         component_id: &ComponentId,
-        index: u32,
+        index: usize,
         addition: &str,
     );
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn deleted_from_component_description(&mut self, component_id: &ComponentId, index: u32);
+    fn deleted_from_component_description(
+        &mut self,
+        component_id: &ComponentId,
+        index: usize,
+        count: usize,
+    );
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn added_to_component_schema(&mut self, component_id: &ComponentId, index: u32, addition: &str);
+    fn added_to_component_schema(
+        &mut self,
+        component_id: &ComponentId,
+        index: usize,
+        addition: &str,
+    );
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn deleted_from_component_schema(&mut self, component_id: &ComponentId, index: u32);
+    fn deleted_from_component_schema(
+        &mut self,
+        component_id: &ComponentId,
+        index: usize,
+        count: usize,
+    );
 
     // ***** Placements *****
 
     fn component_placed(&mut self, placement: &Placement);
     fn placement_moved(&mut self, position: &PlacementPosition);
     fn placement_removed(&mut self, placement_id: &PlacementId);
+    fn placements_shifted(&mut self, offset: &usize, width: &usize);
 
     // Validation of presence of placement_id must be performed
     //  by `decide` prior to this step
-    fn added_to_placement_schema(&mut self, placement_id: &PlacementId, index: u32, addition: &str);
+    fn added_to_placement_schema(
+        &mut self,
+        placement_id: &PlacementId,
+        index: usize,
+        addition: &str,
+    );
 
     // Validation of presence of placement_id must be performed
     //  by `decide` prior to this step
-    fn deleted_from_placement_schema(&mut self, placement_id: &PlacementId, index: u32);
+    fn deleted_from_placement_schema(
+        &mut self,
+        placement_id: &PlacementId,
+        index: usize,
+        count: usize,
+    );
 
     // ***** Lanes *****
 

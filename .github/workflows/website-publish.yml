@@ -1,19 +1,21 @@
 ---
 name: Publish Website to Production
-run-name: Production publish by ${{ github.actor }}
+run-name: Production Website publish by ${{ github.actor }}
 on:
   release:
     types:
       - published
     paths:
-      - "website/**"
+      - 'package-lock.json'
+      - 'components/**'
+      - 'website/**'
 jobs:
   Publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       deployments: write
-    name: Publish to Cloudflare Pages
+    name: Publish Website to Cloudflare Pages
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -23,14 +25,16 @@ jobs:
           node-version: 16
 
       - name: Install dependencies
-        run: npm -w website install
+        run: npm -w website i && npm -w components i
 
       - name: Install playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Test
+        run: npm -w website run check && npm -w website run test
+
       - name: Build
         run: npm -w website run build
-        working-directory: website
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
@@ -40,4 +44,5 @@ jobs:
           projectName: evidentstack-website
           directory: website/.svelte-kit/cloudflare
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
           environment: production

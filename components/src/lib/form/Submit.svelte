@@ -1,12 +1,10 @@
 <script lang="ts">
 	import classNames from 'classnames';
 	import { createEventDispatcher } from 'svelte';
-	import type { ButtonType } from '../types';
 	export let gradient: boolean = false;
 	export let size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 	export const href: string | undefined = undefined;
 	export let btnClass: string | undefined = undefined;
-	export const type: ButtonType = 'button';
 	export const label = '';
 	export let value = '';
 	export let color:

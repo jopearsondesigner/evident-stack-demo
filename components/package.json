@@ -14,7 +14,7 @@
     "test:unit": "vitest",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6014",
     "build-storybook": "storybook build",
     "chromatic": "npx chromatic --project-token=ef524e4bbd6c"
   },
@@ -30,14 +30,16 @@
     "@storybook/sveltekit": "next",
     "@storybook/testing-library": "next",
     "@storybook/theming": "next",
-    "@sveltejs/adapter-auto": "^1.0.0",
-    "@sveltejs/kit": "^1.0.0",
+    "@sveltejs/adapter-cloudflare": "2.1.0",
+    "@sveltejs/kit": "^1.14.0",
     "@sveltejs/package": "^1.0.0",
-    "@tailwindcss/line-clamp": "^0.4.2",
     "@tailwindcss/typography": "^0.5.8",
+    "@types/codemirror": "^5.60.7",
     "@types/dompurify": "^2.4.0",
     "autoprefixer": "^10.4.13",
     "chromatic": "^6.13.1",
+    "classnames": "^2.3.2",
+    "codemirror-svelte": "^1.2.1",
     "daisyui": "^2.41.0",
     "dompurify": "^2.4.3",
     "eslint": "^8.28.0",
@@ -52,17 +54,15 @@
     "react-dom": "^18.2.0",
     "storybook": "next",
     "svelte": "^3.54.0",
+    "svelte-accessible-accordion": "^2.1.0",
     "svelte-check": "^2.9.2",
-    "svelte-markdown": "^0.2.3",
-    "tailwindcss": "^3.2.4",
+    "svelte-highlight": "^7.2.1",
+    "svelte-layout-aware-transitions": "^0.0.5",
+    "tailwindcss": "^3.3.0",
     "tslib": "^2.4.1",
     "typescript": "^4.9.3",
     "vite": "^4.0.0",
     "vitest": "^0.25.3"
-  },
-  "dependencies": {
-    "classnames": "^2.3.2",
-    "svelte-layout-aware-transitions": "^0.0.5"
   },
   "description": "Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).",
   "main": "playwright.config.js",
@@ -77,5 +77,9 @@
   "bugs": {
     "url": "https://github.com/evidentsystems/platform/issues"
   },
-  "homepage": "https://github.com/evidentsystems/platform#readme"
+  "homepage": "https://github.com/evidentsystems/platform#readme",
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.1.7",
+    "svelte-codemirror-editor": "^1.1.0"
+  }
 }

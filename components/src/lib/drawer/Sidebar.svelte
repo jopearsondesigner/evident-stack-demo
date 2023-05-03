@@ -1,36 +1,38 @@
-<script>
-	import classNames from 'classnames';
-	import './drawer.css';
-	export let asideClass = 'h-screen w-60 bg-white border-r border-gray-primary box-border';
-	export let menuClass = 'h-10 flex items-center px-4 border-b border-gray-primary';
-	export let spanClass = 'flex space-x-3 table my-0 mx-auto';
-	export let menuBtnClass = 'font-extrabold text-default transition duration-200 ease-in';
-	export let isEventModelOpen = true;
-	const handleMenu = () => {
-		isEventModelOpen = !isEventModelOpen;
-	};
+<script lang="ts">
+  import classNames from 'classnames';
+  export let asideClass =
+    'h-full bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-gray-brand-3 transition-width duration-200 ease-in';
+  export let nameClass =
+    'text-md font-bold text-body-light dark:text-body-dark text-center leading-[1.27] mx-4 mb-2';
+  export let descClass =
+    'font-medium text-default text-body dark:text-white leading-normal text-center mx-4 mt-2 max-h-16 overflow-auto';
+  export let divClass = 'border-b border-gray-primary py-4';
+  export let style = '';
+  let className = '';
+  export { className as class };
+  export let isClosed = true;
+  export let name = 'This is a Project Name!';
+  export let description =
+    'This is a top-level description of a project that is created with a new event model.';
 </script>
 
-<aside class={classNames(asideClass)}>
-	<nav id="sidebarMenu" class={classNames(menuClass)}>
-		<span class={classNames(spanClass)}>
-			{#if isEventModelOpen}
-				<button class={classNames('active', menuBtnClass)} on:click={() => handleMenu()}
-					>Event Model</button
-				>
-				<button class={classNames(menuBtnClass)} on:click={() => handleMenu()}>Domain Models</button
-				>
-			{:else}
-				<button class={classNames(menuBtnClass)} on:click={() => handleMenu()}>Event Model</button>
-				<button class={classNames('active', menuBtnClass)} on:click={() => handleMenu()}
-					>Domain Models</button
-				>
-			{/if}
-		</span>
-	</nav>
-	{#if isEventModelOpen}
-		<slot name="eventModel" />
-	{:else}
-		<slot name="domainModels" />
-	{/if}
+<aside class={classNames(className, asideClass)} {style}>
+  <div class={divClass}>
+    <h2 class={nameClass} contenteditable="true" bind:textContent={name}>{name}</h2>
+    <p class={descClass} contenteditable="true" bind:textContent={description}>
+      {description}
+    </p>
+  </div>
+  <slot />
 </aside>
+
+<style>
+  [contenteditable] {
+    padding: 0.125em;
+    border-radius: 4px;
+    border: none;
+  }
+  [contenteditable]:focus {
+    outline: 1px solid #1e6aff;
+  }
+</style>

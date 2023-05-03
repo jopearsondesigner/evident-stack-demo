@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { placementOrEmptyCellId, type Stream } from '../Grid';
+  import { DropTargetStatus, placementOrEmptyCellId, type Stream } from '../Grid';
   import EmptyCell from './EmptyCell.svelte';
   import Event from './Event.svelte';
   import { createEventDispatcher } from 'svelte';
@@ -23,7 +23,7 @@
 
   export let drop_target: number | undefined = undefined;
 
-  export let drop_target_status: 'good' | 'bad' | undefined = undefined;
+  export let drop_target_status: DropTargetStatus | undefined = undefined;
 
   $: stream.placements.length = max_column;
   $: good_target = drop_target == lane_index && drop_target_status == 'good';
@@ -56,12 +56,7 @@
 
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
     console.warn('Lane(Stream) Leave');
-    // setTimeout(() => {
-    //   dispatch('lane_drag_leave', {
-    //     laneIndex: lane_index,
-    //     laneType: 'stream'
-    //   });
-    // })
+    e.stopPropagation();
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {

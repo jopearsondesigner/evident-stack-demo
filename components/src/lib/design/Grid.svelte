@@ -6,11 +6,8 @@
     DraggingStateKind,
     type DragCommand,
     DraggingCommandKind,
-    evolveDraggingState,
     laneTargetFromState,
-
     buildEvolveAndReact
-
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -188,16 +185,16 @@
   };
 
   const handleOutOfBoundsEnter: DragEventHandler<EventTarget> = (_e) => {
-    console.warn("OUT OF BOUNDS");
-    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS }
+    console.warn('OUT OF BOUNDS');
+    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS };
     drag_state = evolveAndReactDraggingState(drag_state, command);
-  }
+  };
 
   const handleOutOfBoundsDrop: DragEventHandler<EventTarget> = (_e) => {
-    console.warn("OUT OF BOUNDS DROP");
-    const command: DragCommand = { kind: DraggingCommandKind.RESET }
+    console.warn('OUT OF BOUNDS DROP');
+    const command: DragCommand = { kind: DraggingCommandKind.RESET };
     drag_state = evolveAndReactDraggingState(drag_state, command);
-  }
+  };
 
   // Command Dispatch
 

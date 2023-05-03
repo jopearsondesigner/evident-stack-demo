@@ -29,16 +29,7 @@
   };
 
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn('Cell Drag Leave');
     e.stopPropagation();
-    // setTimeout(() => {
-    //   dispatch('placement_drag_leave', {
-    //     column,
-    //     laneIndex: lane_index,
-    //     laneKind: lane_kind,
-    //     laneId: lane_id
-    //   });
-    // });
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {

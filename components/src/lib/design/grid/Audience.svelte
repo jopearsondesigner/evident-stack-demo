@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { placementOrEmptyCellId, type Audience } from '../Grid';
+  import { placementOrEmptyCellId, type Audience, DropTargetStatus } from '../Grid';
   import EmptyCell from './EmptyCell.svelte';
   import Interface from './Interface.svelte';
   import { createEventDispatcher } from 'svelte';
@@ -22,7 +22,7 @@
 
   export let drop_target: number | undefined = undefined;
 
-  export let drop_target_status: 'good' | 'bad' | undefined = undefined;
+  export let drop_target_status: DropTargetStatus | undefined = undefined;
 
   $: gridRow = row + 1;
   $: audience.placements.length = max_column;
@@ -58,12 +58,6 @@
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
     console.warn('Lane(Audience) Leave');
     e.stopPropagation();
-    // setTimeout(() => {
-    //   dispatch('lane_drag_leave', {
-    //     laneIndex: lane_index,
-    //     laneType: 'audience'
-    //   });
-    // });
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {

@@ -368,7 +368,7 @@
 			Getting Started
 		</SectionLabel>
 		<Row
-			class="bg-white dark:bg-dark-1 lg:p-16 p-0 sm:p-8 mx-4 grid gap-4 lg:grid-cols-3 grid-col-1 bg-no-repeat lg:bg-[url('$components/assets/images/homepage/GettingStarted-BottomLeft.svg'),_url('$components/assets/images/homepage/GettingStarted-TopLeft.svg'),_url('$components/assets/images/homepage/GettingStarted-Bottom.svg'),_url('$components/assets/images/homepage/GettingStarted-Center.svg'),__url('$components/assets/images/homepage/GettingStarted-TopRight.svg')] lg:bg-[position:left_bottom,_left_-18px_top,_left_-180px_bottom_0px,_center_right_460px,_top_right] lg:bg-[length:140px_346px,_439px_221px,_602px_259px,_617px_225px,_160px_411px]"
+			class="bg-white dark:bg-dark-1 lg:p-16 p-0 sm:p-8 mx-4 grid gap-4 lg:grid-cols-3 grid-col-1 bg-no-repeat lg:bg-[url('$components/assets/images/homepage/GettingStarted-BottomLeft.svg'),_url('$components/assets/images/homepage/GettingStarted-TopLeft.svg'),_url('$components/assets/images/homepage/GettingStarted-Bottom.svg'),_url('$components/assets/images/homepage/GettingStarted-Center.svg'),__url('$components/assets/images/homepage/GettingStarted-TopRight.svg')] lg:bg-[position:left_bottom,_left_-18px_top,_left_-90px_bottom_0px,_center_right_460px,_top_right] lg:bg-[length:140px_346px,_380px_192px,_500px_216px,_500px_182px,_160px_411px]"
 		>
 			<div class="lg:col-span-1">
 				<Column class={classNames('h-full', flexClass)}>

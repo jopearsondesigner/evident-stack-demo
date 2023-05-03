@@ -29,7 +29,7 @@
 					tag="h2"
 					hClass="leading-[1.27] font-bold font-header mb-4 text-center"
 					customSize="lg:text-[30px] text-[24px]"
-					color="text-gray-brand-2 dark:text-gray-brand-4"
+					color="text-stack-brand-800 dark:text-stack-brand-300"
 				>
 					Have a question for us?
 				</SectionHeader>
@@ -39,13 +39,15 @@
 </Container>
 <Container class="sm:container w-full h-auto relative">
 	<Row class="grid px-4 lg:mt-24 mb-24" customCols="lg:grid-cols-2">
-		<Column class="flex justify-center items-center bg-stack-brand-800 lg:p-4 px-4 py-8">
+		<Column
+			class="flex justify-center items-center bg-stack-brand-900 dark:bg-stack-brand-900 lg:p-4 px-4 py-8"
+		>
 			<address>
 				<ul class="list-none">
 					<li class="my-3">
 						<div class="text-white inline-block pointer-events-none">
 							<span class="relative float-left align-middle mt-[3px] mr-2">
-								<Icon name="Pin" iconColor="text-white"><Pin /></Icon>
+								<Icon name="Pin" iconColor="text-white" pathName={Pin} />
 							</span>
 							<span class="text-base">12110 Sunset Hills Rd #600 Reston, VA 20190</span>
 						</div>
@@ -53,7 +55,7 @@
 					<li class="my-3">
 						<a href="tel:+13115552368" class="text-white inline-block">
 							<span class="relative float-left align-middle mt-[3px] mr-2">
-								<Icon name="Phone" iconColor="text-white"><Phone /></Icon>
+								<Icon name="Phone" iconColor="text-white" pathName={Phone} />
 							</span>
 							<span class="text-base">(703)-259-1199</span>
 						</a>
@@ -61,7 +63,7 @@
 					<li class="my-3">
 						<a href="mailto:hello@onote.com" class="text-white inline-block">
 							<span class="relative float-left align-middle mt-[3px] mr-2">
-								<Icon name="Email" iconColor="text-white"><Email /></Icon>
+								<Icon name="Email" iconColor="text-white" pathName={Email} />
 							</span>
 							<span class="text-base">hello@onote.com</span>
 						</a>

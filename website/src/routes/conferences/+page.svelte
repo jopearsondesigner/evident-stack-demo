@@ -82,7 +82,7 @@
 					<Section name="blog">
 						<SectionHeader tag="h2" customSize="text-[30px]">
 							<A
-								color="text-gray-brand-2 hover:text-gray-brand-1"
+								color="text-stack-brand-800 dark:text-stack-brand-300"
 								href="/conferences/kafka-summit-2021"
 							>
 								Kafka Summit 2021
@@ -119,8 +119,9 @@
 									slot="icon"
 									class="inline-flex ml-1 stroke-2"
 									iconColor="fill-current text-white"
-									size={12}><ArrowRight /></Icon
-								>
+									size={12}
+									pathName={ArrowRight}
+								/>
 							</Button>
 						</BlogCta>
 					</Section>
@@ -142,7 +143,7 @@
 					<Section name="blog" divClass="h-full">
 						<SectionHeader tag="h2" customSize="text-[30px]">
 							<A
-								color="text-gray-brand-2 hover:text-gray-brand-1"
+								color="text-stack-brand-800 dark:text-stack-brand-300"
 								href="conferences/kafka-summit-2020"
 							>
 								Kafka Summit 2020

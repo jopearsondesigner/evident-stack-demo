@@ -31,7 +31,7 @@
 						tag="h2"
 						hClass="leading-[1.27] font-bold font-header mb-4 text-center"
 						customSize="lg:text-[30px] text-[24px]"
-						color="text-gray-brand-2 dark:text-gray-brand-4"
+						color="text-stack-brand-800 dark:text-stack-brand-300"
 					>
 						Meet the Evident team!
 					</SectionHeader>

@@ -87,7 +87,7 @@
 					<Section name="blog">
 						<SectionHeader tag="h2" customSize="text-[30px]">
 							<A
-								color="text-gray-brand-2 hover:text-gray-brand-1"
+								color="text-stack-brand-800 dark:text-stack-brand-300"
 								href="/webinars/real-time-collaborative-event-modeling-with-onote"
 							>
 								Real-time Collaborative Event Modeling with oNote
@@ -126,8 +126,9 @@
 									slot="icon"
 									class="inline-flex ml-1 stroke-2"
 									iconColor="fill-current text-white"
-									size={12}><ArrowRight /></Icon
-								>
+									size={12}
+									pathName={ArrowRight}
+								/>
 							</Button>
 						</BlogCta>
 					</Section>
@@ -150,7 +151,7 @@
 					<Section name="blog" divClass="h-full">
 						<SectionHeader tag="h2" customSize="text-[30px]">
 							<A
-								color="text-gray-brand-2 hover:text-gray-brand-1"
+								color="text-stack-brand-800 dark:text-stack-brand-300"
 								href="/webinars/accelerate-from-event-model-to-implementation-with-onote-code-generation-event-store"
 							>
 								Accelerate from Event Model to Implementation with oNote Code-generation & Event
@@ -187,7 +188,7 @@
 					<Section name="blog" divClass="h-full">
 						<SectionHeader tag="h2" customSize="text-[30px]">
 							<A
-								color="text-gray-brand-2 hover:text-gray-brand-1"
+								color="text-stack-brand-800 dark:text-stack-brand-300"
 								href="/webinars/accelerate-from-event-model-to-implementation-with-onote-code-generation"
 							>
 								Accelerate from Event Model to implementation with oNote code-generation

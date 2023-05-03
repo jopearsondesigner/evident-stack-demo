@@ -88,8 +88,9 @@
 								slot="icon"
 								class="stroke-2 ml-1"
 								iconColor="fill-current"
-								size={12}><ArrowRight /></Icon
-							>
+								size={12}
+								pathName={ArrowRight}
+							/>
 						</Button>
 					</NavLi>
 				</NavUl>
@@ -140,8 +141,9 @@
 									slot="icon"
 									class="stroke-2 ml-1"
 									iconColor="fill-current"
-									size={12}><ArrowRight /></Icon
-								>
+									size={12}
+									pathName={ArrowRight}
+								/>
 							</Button>
 						</NavLi>
 					</NavUl>

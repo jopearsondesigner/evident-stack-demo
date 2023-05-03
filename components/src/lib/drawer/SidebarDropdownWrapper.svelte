@@ -1,87 +1,87 @@
 <script type="ts">
-	import classNames from 'classnames';
-	import { slide } from 'svelte/transition';
-	import { sineIn } from 'svelte/easing';
-	import { slideRight } from 'svelte-layout-aware-transitions';
-	import Icon from '../Icon.svelte';
-	import OpenRight from '../icons/OpenRight.svelte';
-	import OpenDown from '../icons/OpenDown.svelte';
-	import CloseLeft from '../icons/CloseLeft.svelte';
-	import CloseUp from '../icons/CloseUp.svelte';
-	export let verticalLiCLass = 'w-full relative inline-flex';
-	export let verticalULClass =
-		'sidebarDropdownItem w-60 border-t border-r border-b border-gray-primary';
-	export let verticalWrapperClass = 'left-full top-0 bottom-auto absolute';
-	export let headerTextClass = 'font-extrabold text-default text-body';
-	export let sidebarItemClass = 'flex items-center pl-4 pr-1 transition duration-200 ease-in';
-	export let sidebarBtnClass =
-		'bg-white hover:bg-focus/[.20] focus:text-white focus:bg-focus/[100] transition duration-200 ease-in w-full space-x-3 h-8 pointer-default';
-	export let sidebarSpanClass = 'flex-1 ml-3 text-left whitespace-nowrap';
-	export let label = '';
-	export let horizontal = false;
-	export let isHorizontalOpen = false;
+  import classNames from 'classnames';
+  import { slide } from 'svelte/transition';
+  import { sineIn } from 'svelte/easing';
+  import { slideRight } from 'svelte-layout-aware-transitions';
+  import Icon from '../Icon.svelte';
+  import OpenRight from '../icons/OpenRight.svelte';
+  import OpenDown from '../icons/OpenDown.svelte';
+  import CloseLeft from '../icons/CloseLeft.svelte';
+  import CloseUp from '../icons/CloseUp.svelte';
+  export let verticalLiCLass = 'w-full relative inline-flex';
+  export let verticalULClass =
+    'sidebarDropdownItem w-60 border-t border-r border-b border-gray-primary';
+  export let verticalWrapperClass = 'left-full top-0 bottom-auto absolute';
+  export let headerTextClass = 'font-extrabold text-default text-body';
+  export let sidebarItemClass = 'flex items-center pl-4 pr-1 transition duration-200 ease-in';
+  export let sidebarBtnClass =
+    'bg-white hover:bg-focus/[.20] focus:text-white focus:bg-focus/[100] transition duration-200 ease-in w-full space-x-3 h-8 pointer-default';
+  export let sidebarSpanClass = 'flex-1 ml-3 text-left whitespace-nowrap';
+  export let label = '';
+  export let horizontal = false;
+  export let isHorizontalOpen = false;
 
-	let container: HTMLButtonElement;
-	function onWindowClick(e: { target: any }) {
-		if (container.contains(e.target) == false) isHorizontalOpen = false;
-	}
-	export let isVerticalOpen = false;
-	const handleHorizontalDropdown = () => {
-		isHorizontalOpen = !isHorizontalOpen;
-	};
-	const handleVerticalDropdown = () => {
-		isVerticalOpen = !isVerticalOpen;
-	};
+  let container: HTMLButtonElement;
+  function onWindowClick(e: { target: any }) {
+    if (container.contains(e.target) == false) isHorizontalOpen = false;
+  }
+  export let isVerticalOpen = false;
+  const handleHorizontalDropdown = () => {
+    isHorizontalOpen = !isHorizontalOpen;
+  };
+  const handleVerticalDropdown = () => {
+    isVerticalOpen = !isVerticalOpen;
+  };
 </script>
 
 <svelte:window on:click={onWindowClick} />
 
 {#if horizontal}
-	<li class={classNames('sidebarDropdownWrapper', verticalLiCLass)}>
-		<button
-			bind:this={container}
-			class={classNames(sidebarItemClass, sidebarBtnClass)}
-			on:click={() => handleHorizontalDropdown()}
-		>
-			<slot name="icon" />
-			<span class={classNames(headerTextClass, sidebarSpanClass)}>{label}</span>
-			{#if isHorizontalOpen}
-				<Icon name="open-right" size={16} iconColor="text-brand-4"><OpenRight /></Icon>
-			{:else}
-				<Icon name="close-left" size={16} iconColor="text-brand-4"><CloseLeft /></Icon>
-			{/if}
-		</button>
-		<div class={classNames(verticalWrapperClass)}>
-			{#if isHorizontalOpen}
-				<ul
-					class={classNames(verticalULClass)}
-					transition:slideRight={{ x: 240, duration: 200, easing: sineIn }}
-				>
-					<slot />
-				</ul>
-			{/if}
-		</div>
-	</li>
+  <li class={classNames('sidebarDropdownWrapper', verticalLiCLass)}>
+    <button
+      bind:this={container}
+      class={classNames(sidebarItemClass, sidebarBtnClass)}
+      on:click={() => handleHorizontalDropdown()}
+    >
+      <slot name="icon" />
+      <span class={classNames(headerTextClass, sidebarSpanClass)}>{label}</span>
+      {#if isHorizontalOpen}
+        <Icon name="open-right" size={16} iconColor="text-brand-4" pathName={OpenRight} />
+      {:else}
+        <Icon name="close-left" size={16} iconColor="text-brand-4" pathName={CloseLeft} />
+      {/if}
+    </button>
+    <div class={classNames(verticalWrapperClass)}>
+      {#if isHorizontalOpen}
+        <ul
+          class={classNames(verticalULClass)}
+          transition:slideRight={{ x: 240, duration: 200, easing: sineIn }}
+        >
+          <slot />
+        </ul>
+      {/if}
+    </div>
+  </li>
 {:else}
-	<li class="sidebarDropdownWrapper">
-		<button
-			class={classNames(sidebarItemClass, sidebarBtnClass)}
-			on:click={() => handleVerticalDropdown()}
-		>
-			<span class={classNames(headerTextClass, sidebarSpanClass)}>{label}</span>
-			{#if isVerticalOpen}
-				<Icon name="close-down" size={16} iconColor="text-brand-4"><CloseUp /></Icon>
-			{:else}
-				<Icon name="open-down" size={16} iconColor="text-brand-4"><OpenDown /></Icon>
-			{/if}
-		</button>
-		{#if isVerticalOpen}
-			<ul
-				class="sidebarDropdownItem"
-				transition:slide={{ delay: 0, duration: 200, easing: sineIn }}
-			>
-				<slot />
-			</ul>
-		{/if}
-	</li>
+  <li class="sidebarDropdownWrapper">
+    <button
+      class={classNames(sidebarItemClass, sidebarBtnClass)}
+      on:click={() => handleVerticalDropdown()}
+    >
+      <span class={classNames(headerTextClass, sidebarSpanClass)}>{label}</span>
+      {#if isVerticalOpen}
+        <Icon name="close-down" size={16} iconColor="text-brand-4" pathName={CloseUp} />
+      {:else}
+        <Icon name="open-down" size={16} iconColor="text-brand-4" pathName={OpenDown} />
+      {/if}
+    </button>
+    {#if isVerticalOpen}
+      <ul
+        class="sidebarDropdownItem"
+        transition:slide={{ delay: 0, duration: 200, easing: sineIn }}
+      >
+        <slot />
+      </ul>
+    {/if}
+  </li>
 {/if}

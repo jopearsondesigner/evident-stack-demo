@@ -86,7 +86,7 @@
 					<Section name="blog">
 						<SectionHeader tag="h2" customSize="text-[30px]">
 							<A
-								color="text-gray-brand-2 hover:text-gray-brand-1"
+								color="text-stack-brand-800 dark:text-stack-brand-300"
 								href="/blog/new-features-announced-at-kafka-summit-2021"
 							>
 								New Features Announced at Kafka Summit 2021
@@ -122,8 +122,9 @@
 									slot="icon"
 									class="inline-flex ml-1 stroke-2"
 									iconColor="fill-current text-white"
-									size={12}><ArrowRight /></Icon
-								>
+									size={12}
+									pathName={ArrowRight}
+								/>
 							</Button>
 						</BlogCta>
 					</Section>
@@ -145,7 +146,7 @@
 					<Section name="blog" divClass="h-full">
 						<SectionHeader tag="h2" customSize="text-[30px]">
 							<A
-								color="text-gray-brand-2 hover:text-gray-brand-1"
+								color="text-stack-brand-800 dark:text-stack-brand-300"
 								href="/blog/event-modeling-explained"
 							>
 								Event Modeling Explained

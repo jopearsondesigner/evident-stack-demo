@@ -1,7 +1,7 @@
 <script lang="ts">
 	import classNames from 'classnames';
-	// import { Lottie } from 'lottie-svelte';
-	import { LottiePlayer } from '@lottiefiles/svelte-lottie-player';
+	// import { LottiePlayer } from '@lottiefiles/svelte-lottie-player';
+	import Player from '$components/utils/Player.svelte';
 
 	import Carousel from 'svelte-carousel';
 	import { browser } from '$app/environment';
@@ -21,10 +21,15 @@
 	import TextBrand from '$components/utils/TextBrand.svelte';
 	import Button from '$components/Button.svelte';
 	import BackgroundImage from '$components/assets/images/homepage/hero/heroBgO.svg';
+	import GettingStartedBottomLeft from '$components/assets/images/homepage/GettingStarted-BottomLeft.svg';
+	import GettingStartedTopLeft from '$components/assets/images/homepage/GettingStarted-TopLeft.svg';
+	import GettingStartedBottom from '$components/assets/images/homepage/GettingStarted-Bottom.svg';
+	import GettingStartedCenter from '$components/assets/images/homepage/GettingStarted-Center.svg';
+	import GettingStartedTopRight from '$components/assets/images/homepage/GettingStarted-TopRight.svg';
 	import ForegroundImage from '$components/assets/images/homepage/hero/heroLaptop.svg';
 	export let heroFlexboxClass = 'flex justify-center';
 	export let gradientDividerClass =
-		'xl:mt-[-224px] lg:mt-[-150px] sm:mt-[-60px] mt-[-70px] h-[64px] bg-gradient-to-t from-gradient to-transparency opacity-20';
+		'h-[64px] bg-gradient-to-t from-gradient to-transparency opacity-20';
 	import Container from '$components/Container.svelte';
 	import SectionLabel from '$components/typography/SectionLabel.svelte';
 	import Section from '$components/Section.svelte';
@@ -34,18 +39,23 @@
 	import Row from '$components/Row.svelte';
 	import Column from '$components/Column.svelte';
 	import PoorSoftwareQuality from '$components/assets/images/homepage/poorSoftwareQuality.svg';
+	import PoorSoftwareQualityDark from '$components/assets/images/homepage/poorSoftwareQualityDark.svg';
 	let mainClass = 'bg-white dark:bg-dark-1 w-full h-auto z-10 relative pb-[128px]';
-	export let gridClass: string = 'grid lg:grid-cols-2 grid-col-1 mt-[44px]';
+	export let gridClass: string = 'grid lg:grid-cols-2 grid-col-1 mt-[0px]';
 	export let flexClass: string = 'flex justify-center items-center px-4';
-	export let containerClass: string | undefined = 'container pb-[128px]';
+	export let containerClass: string | undefined = 'container lg:pb-[128px] pb-16';
 	import SeventyFive from '$components/assets/images/homepage/infoSeventyFive.svg';
 	import SeventyEight from '$components/assets/images/homepage/infoSeventyEight.svg';
 	import Eighty from '$components/assets/images/homepage/infoEighty.svg';
 	import FifyFive from '$components/assets/images/homepage/infoFiftyFive.svg';
+	import SeventyFiveDark from '$components/assets/images/homepage/infoSeventyFiveDark.svg';
+	import SeventyEightDark from '$components/assets/images/homepage/infoSeventyEightDark.svg';
+	import EightyDark from '$components/assets/images/homepage/infoEightyDark.svg';
+	import FifyFiveDark from '$components/assets/images/homepage/infoFiftyFiveDark.svg';
 	import GradientDivider from '$components/utils/GradientDivider.svelte';
 	import FifteenOBg from '$components/assets/images/homepage/fifteen-o-bg.svg';
-	import Community from '$components/assets/images/homepage/ico-community.svg';
-	import SearchDocs from '$components/assets/images/homepage/ico-search-docs.svg';
+	import Heart from '$components/icons/Heart.svelte';
+	import Docs from '$components/icons/Docs.svelte';
 	import Icon from '$components/Icon.svelte';
 	import ArrowRight from '$components/icons/ArrowRight.svelte';
 	import ArrowLeft from '$components/icons/ArrowLeft.svelte';
@@ -57,11 +67,17 @@
 </script>
 
 {#if browser}
-	<Carousel bind:this={carousel} autoplay autoplayDuration={9000} let:showPrevPage let:showNextPage>
+	<Carousel
+		bind:this={carousel}
+		autoplay
+		autoplayDuration={10000}
+		let:showPrevPage
+		let:showNextPage
+	>
 		<div
 			slot="prev"
 			on:click={showPrevPage}
-			class="flex items-center justify-center custom-arrow custom-arrow-prev"
+			class="absolute h-full left-0 z-20 flex items-center justify-center custom-arrow custom-arrow-prev"
 		>
 			<Icon
 				name="arrow-left"
@@ -71,14 +87,19 @@
 				pathName={ArrowLeft}
 			/>
 		</div>
-		<div class="bg-white dark:bg-dark-1 z-10">
+		<div class="bg-white dark:bg-dark-1 z-10 grid">
 			<Hero>
 				<HeroContainer>
 					<HeroGrid>
 						<HeroFlexbox
-							class={classNames('lg:mt-[56px] relative z-10 lg:px-0 px-4', heroFlexboxClass)}
+							class={classNames(
+								'lg:mt-[56px] md:mt-[136px] relative z-10 lg:px-0 px-4',
+								heroFlexboxClass
+							)}
 						>
-							<HeroCopy heroCopyClass="lg:mt-[11px] mt-8 sm:mt-[-130px] mt-[-53px] mb-16 lg:ml-16">
+							<HeroCopy
+								heroCopyClass="lg:mt-[11px] md:mt-[-140px] sm:mt-[-10px] mt-8 mt-[0px] lg:ml-16"
+							>
 								<span slot="hero-header"
 									><TextBrand
 										textBrand="text-transparent bg-clip-text bg-gradient-to-b from-stack-brand-700 via-stack-brand-500 to-stack-brand-300"
@@ -94,17 +115,15 @@
 						<HeroFlexbox
 							class={classNames('flex-row lg:order-last order-first mx-auto', heroFlexboxClass)}
 						>
-							<div class="flex justify-center items-center">
-								<LottiePlayer
-									src="lottie/teamCollaborationHero.json"
-									autoplay={true}
-									loop={true}
-									width={500}
-								/>
+							<div
+								class="xl:max-w-[500px] lg:max-w-[400px] md:max-w-[400px] sm:max-w-[400px] max-w-[250px] w-auto flex justify-center items-center"
+							>
+								<Player src="lottie/teamCollaborationHero.json" />
 							</div>
 						</HeroFlexbox>
 					</HeroGrid>
 				</HeroContainer>
+				<GradientDivider class={classNames('-mt-16', gradientDividerClass)} />
 			</Hero>
 		</div>
 		<div>
@@ -123,12 +142,13 @@
 							class={classNames('lg:mt-[56px] relative z-10 lg:px-0 px-4', heroFlexboxClass)}
 						>
 							<HeroCopy
-								heroCopyClass="lg:mt-[11px] xl:pr-4 mt-8 sm:mt-[-130px] mt-[-53px] mb-16 lg:ml-16"
+								heroCopyClass="lg:mt-[11px] md:-mt-8 sm:-mt-8 xl:pr-4 mt-8 sm:mt-[-130px] mt-[0px] mb-16 lg:ml-16"
 							>
-								<span slot="hero-header"
+								<span slot="hero-header" class=""
 									><TextBrand>Evident Design</TextBrand> helps teams to collaboratively design event-based
 									information systems using Event Modeling</span
 								>
+
 								<Button
 									slot="hero-cta"
 									gradient
@@ -151,33 +171,32 @@
 						<HeroFlexbox
 							class={classNames('flex-row lg:order-last order-first mx-auto', heroFlexboxClass)}
 						>
-							<HeroImage>
-								<img
-									src={ForegroundImage}
-									alt="Laptop with oNote screenshot"
-									width="100%"
-									height="100%"
-									class="absolute top-0 left-0"
-								/>
-								<div class="h-full oject-cover overflow-hidden">
+							<HeroImage
+								imgSize="xl:w-[897px] lg:w-[640px] md:w-[540px] sm:w-[540px] sm:mt-0 mt-[16px]"
+							>
+								<div
+									class="h-full w-auto table overflow-auto md:-mt-[0] bg-no-repeat bg-center bg-cover"
+									style="background-image: url({BackgroundImage})"
+								>
 									<img
-										src={BackgroundImage}
-										alt="Background"
+										src={ForegroundImage}
+										alt="Laptop with oNote screenshot"
 										width="100%"
 										height="100%"
-										class="xl:mt-[-154px] lg:mt-[-111px] sm:mt-[-115px] mt-[-60px]"
+										class="table-row"
 									/>
-								</div>
-							</HeroImage>
+								</div></HeroImage
+							>
 						</HeroFlexbox>
 					</HeroGrid>
 				</HeroContainer>
+				<GradientDivider class={classNames('-mt-16', gradientDividerClass)} />
 			</Hero>
 		</div>
 		<div
 			slot="next"
 			on:click={showNextPage}
-			class="flex items-center justify-center custom-arrow custom-arrow-next"
+			class="absolute h-full right-0 flex items-center justify-center custom-arrow custom-arrow-next"
 		>
 			<Icon
 				name="arrow-right"
@@ -188,31 +207,31 @@
 			/>
 		</div>
 	</Carousel>
-	<GradientDivider
-		class={classNames(
-			'xl:mt-[-224px] lg:mt-[-150px] sm:mt-[-60px] mt-[-70px]',
-			gradientDividerClass
-		)}
-	/>
 {/if}
 
 <main class={mainClass}>
-	<button class="" on:click={handleNextClick}>Next</button>
+	<!-- <button class="" on:click={handleNextClick}>Next</button> -->
 	<Container class={containerClass}>
 		<SectionLabel>The value of Evident Stack</SectionLabel>
 		<Row class="grid grid-col-1 mt-[44px]">
 			<Column class="flex mx-auto">
-				<LottiePlayer src="lottie/evidentStackVisualization.json" autoplay={true} loop={true} />
+				<Player src="lottie/evidentStackVisualization-1280.json" />
 			</Column>
 		</Row>
 	</Container>
 	<div class="bg-black dark:bg-white bg-opacity-[4%] dark:bg-opacity-[4%]">
 		<Container class={classNames('py-[60px]', containerClass)}>
 			<Row class={classNames('lg:mt-[44px] mb-8 lg:py-[69px]', gridClass)}>
-				<Column class="flex-col lg:order-last mx-auto mt-8 lg:mt-0 px-4">
+				<Column class="flex justify-center items-center lg:order-last mx-auto mt-8 lg:mt-0 px-4">
 					<img
 						src={PoorSoftwareQuality}
-						class="w-[640px]"
+						class="w-[640px] block dark:hidden"
+						width="auto"
+						alt="Poor software quality"
+					/>
+					<img
+						src={PoorSoftwareQualityDark}
+						class="w-[640px] hidden dark:block"
 						width="auto"
 						alt="Poor software quality"
 					/>
@@ -221,6 +240,7 @@
 					<Section name="benefit">
 						<SectionHeader
 							tag="h2"
+							color="text-stack-brand-800 dark:text-stack-brand-300"
 							class="mb-4 lg:pl-4 lg:text-left text-center"
 							customSize="text-[1.5rem]"
 						>
@@ -248,12 +268,26 @@
 					</Section>
 				</Column>
 			</Row>
-			<Row class="grid xl:grid-cols-4 lg:grid-cols-2 md:grid-cols-2 grid-col-1 lg:mt-8 mt-16 pt-8">
+			<Row
+				class="grid lg:mt-8 mt-0 pt-0"
+				customCols="xl:grid-cols-4 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-2"
+			>
 				<Column class="flex-col lg:order-last order-first mx-auto">
 					<Section name="info" divClass="mb-8 flex items-center justify-center">
-						<img src={SeventyFive} class="w-[165px]" width="auto" alt="75%" />
+						<img
+							src={SeventyFive}
+							class="lg:w-[165px] sm:w-[133px] w-[110px] block dark:hidden"
+							width="auto"
+							alt="75%"
+						/>
+						<img
+							src={SeventyFiveDark}
+							class="lg:w-[165px] sm:w-[133px] w-[110px] hidden dark:block"
+							width="auto"
+							alt="75%"
+						/>
 					</Section>
-					<Section name="info" divClass="xl:py-4 pt-0 pb-16">
+					<Section name="info" divClass="xl:py-4 pt-0 pb-4">
 						<SectionCopy class="text-center px-12" textSize="text-[1.125rem]">
 							75% admit that their projects are typically destined to fail.
 						</SectionCopy>
@@ -261,9 +295,20 @@
 				</Column>
 				<Column class="flex-col lg:order-last order-first mx-auto">
 					<Section name="info" divClass="mb-8 flex items-center justify-center">
-						<img src={SeventyEight} class="w-[165px]" width="auto" alt="78%" />
+						<img
+							src={SeventyEight}
+							class="lg:w-[165px] sm:w-[133px] w-[110px] block dark:hidden"
+							width="auto"
+							alt="78%"
+						/>
+						<img
+							src={SeventyEightDark}
+							class="lg:w-[165px] sm:w-[133px] w-[110px] hidden dark:block"
+							width="auto"
+							alt="78%"
+						/>
 					</Section>
-					<Section name="info" divClass="xl:py-4 pt-0 pb-16">
+					<Section name="info" divClass="xl:py-4 pt-0 pb-4">
 						<SectionCopy class="text-center px-12" textSize="text-[1.125rem]">
 							78% feel their organization is typically out of sync with project requirements.
 							Stakeholders should be more engaged in project requirements.
@@ -272,9 +317,20 @@
 				</Column>
 				<Column class="flex-col lg:order-last order-first mx-auto">
 					<Section name="info" divClass="mb-8 flex items-center justify-center">
-						<img src={Eighty} class="w-[165px]" width="auto" alt="80%" />
+						<img
+							src={Eighty}
+							class="lg:w-[165px] sm:w-[133px] w-[110px] block dark:hidden"
+							width="auto"
+							alt="80%"
+						/>
+						<img
+							src={EightyDark}
+							class="lg:w-[165px] sm:w-[133px] w-[110px] hidden dark:block"
+							width="auto"
+							alt="80%"
+						/>
 					</Section>
-					<Section name="info" divClass="xl:py-4 pt-0 pb-16">
+					<Section name="info" divClass="xl:py-4 pt-0 pb-4">
 						<SectionCopy class="text-center px-12" textSize="text-[1.125rem]">
 							80% admit they spend at least half their time on rework.
 						</SectionCopy>
@@ -282,9 +338,20 @@
 				</Column>
 				<Column class="flex-col lg:order-last order-first mx-auto">
 					<Section name="info" divClass="mb-8 flex items-center justify-center">
-						<img src={FifyFive} class="w-[165px]" width="auto" alt="55%" />
+						<img
+							src={FifyFive}
+							class="lg:w-[165px] sm:w-[133px] w-[110px] block dark:hidden"
+							width="auto"
+							alt="55%"
+						/>
+						<img
+							src={FifyFiveDark}
+							class="lg:w-[165px] sm:w-[133px] w-[110px] hidden dark:block"
+							width="auto"
+							alt="55%"
+						/>
 					</Section>
-					<Section name="info" divClass="xl:py-4 pt-0 pb-16">
+					<Section name="info" divClass="xl:py-4 pt-0 pb-4">
 						<SectionCopy class="text-center px-12" textSize="text-[1.125rem]">
 							Only 55% feel that the business objectives of their projects are clear to them.
 						</SectionCopy>
@@ -292,7 +359,7 @@
 				</Column>
 			</Row>
 		</Container>
-		<GradientDivider />
+		<GradientDivider class="=mt=16" />
 	</div>
 	<Container>
 		<SectionLabel
@@ -301,14 +368,14 @@
 			Getting Started
 		</SectionLabel>
 		<Row
-			class="bg-white dark:bg-dark-1 shadow-lg lg:p-16 p-8 mx-4 rounded-lg grid gap-4 lg:grid-cols-3 grid-col-1 bg-bottom bg-no-repeat bg-contain"
-			style="background-image: url({FifteenOBg})"
+			class="bg-white dark:bg-dark-1 lg:p-16 p-0 sm:p-8 mx-4 grid gap-4 lg:grid-cols-3 grid-col-1 bg-no-repeat lg:bg-[url('$components/assets/images/homepage/GettingStarted-BottomLeft.svg'),_url('$components/assets/images/homepage/GettingStarted-TopLeft.svg'),_url('$components/assets/images/homepage/GettingStarted-Bottom.svg'),_url('$components/assets/images/homepage/GettingStarted-Center.svg'),__url('$components/assets/images/homepage/GettingStarted-TopRight.svg')] lg:bg-[position:left_bottom,_left_-18px_top,_left_-180px_bottom_0px,_center_right_460px,_top_right] lg:bg-[length:140px_346px,_439px_221px,_602px_259px,_617px_225px,_160px_411px]"
 		>
 			<div class="lg:col-span-1">
 				<Column class={classNames('h-full', flexClass)}>
 					<Section name="benefit">
 						<SectionHeader
 							tag="h2"
+							color="text-stack-brand-800 dark:text-stack-brand-300"
 							class="mb-4 lg:pl-4 lg:text-left text-center"
 							customSize="text-[1.875rem]"
 						>
@@ -319,26 +386,28 @@
 			</div>
 			<div class="lg:col-span-1">
 				<div
-					class="p-4 h-full bg-white bg-opacity-[72%] dark:bg-dark-1 dark:bg-opacity-[72%] rounded-md border border-border-light dark:border-border-dark"
+					class="p-4 sm:p-12 h-full bg-white bg-opacity-[72%] dark:bg-dark-1 dark:bg-opacity-[72%] rounded-md border border-border-light dark:border-border-dark"
 				>
-					<img
-						src={Community}
+					<Icon
+						name="heart"
 						class="lg:m-4 mx-auto my-0"
-						width="28"
-						alt="Join the oNote community"
+						iconColor="text-red"
+						size={28}
+						pathName={Heart}
 					/>
-					<Section name="benefit" divClass="flex flex-col">
+					<Section name="benefit" divClass="">
 						<SectionHeader
 							tag="h4"
+							color="text-stack-brand-800 dark:text-stack-brand-300"
 							classes="min-h-[60px] mb-4 lg:pl-4 lg:text-left text-center"
 							customSize="text-[1.5rem]"
 						>
 							Join the Evident Design community
 						</SectionHeader>
-						<SectionCopy classes="min-h-[112px] flex lg:pl-4 lg:text-left text-center">
+						<SectionCopy classes="min-h-[112px] lg:pl-4 lg:text-left text-center">
 							Learn from others on their use cases and where they’ve levaraged Evident Design.
 						</SectionCopy>
-						<SectionCopy classes="flex lg:text-left text-center pl-4">
+						<SectionCopy classes="lg:text-left text-center pl-4">
 							<A href="/use-cases">
 								Go to Use Cases<Icon
 									name="arrow-right"
@@ -354,23 +423,25 @@
 			</div>
 			<div class="lg:col-span-1">
 				<div
-					class="p-4 h-full bg-white bg-opacity-[72%] dark:bg-dark-1 dark:bg-opacity-[72%] rounded-md border border-border-light dark:border-border-dark"
+					class="p-4 sm:p-12 h-full bg-white bg-opacity-[72%] dark:bg-dark-1 dark:bg-opacity-[72%] rounded-md border border-border-light dark:border-border-dark"
 				>
-					<img
-						src={SearchDocs}
+					<Icon
+						name="docs"
 						class="lg:m-4 mx-auto my-0"
-						width="28"
-						alt="Join the oNote community"
+						iconColor="fill-current text-body-light dark:text-white"
+						size={28}
+						pathName={Docs}
 					/>
-					<Section name="benefit" divClass="flex flex-col">
+					<Section name="benefit" divClass="">
 						<SectionHeader
 							tag="h4"
+							color="text-stack-brand-800 dark:text-stack-brand-300"
 							classes="min-h-[60px] mb-4 lg:pl-4 lg:text-left text-center"
 							customSize="text-[1.5rem]"
 						>
 							Read the docs
 						</SectionHeader>
-						<SectionCopy classes="min-h-[112px] flex lg:pl-4 lg:text-left text-center">
+						<SectionCopy classes="min-h-[112px] lg:pl-4 lg:text-left text-center">
 							Get a headstart on how to go in-depth with Evident Design.
 						</SectionCopy>
 						<SectionCopy classes="flex lg:text-left text-center pl-4">

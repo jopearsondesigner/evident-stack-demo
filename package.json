@@ -19,5 +19,8 @@
   "workspaces": [
     "website",
     "components"
-  ]
+  ],
+  "dependencies": {
+    "@lottiefiles/svelte-lottie-player": "^0.3.0"
+  }
 }

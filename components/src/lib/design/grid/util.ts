@@ -1,4 +1,4 @@
-import type { Decider, Lane, PlacementType } from "../Grid";
+import type { Decider, DropTargetStatus, LaneKind, PlacementType } from "../Grid";
 
 export enum DraggingStateKind {
     LANE,
@@ -11,11 +11,11 @@ export type DraggingState =
         value: {
             source: {
                 laneId: string,
-                laneType: Lane,
+                laneType: LaneKind,
             },
             target?: {
                 laneIndex: number,
-                laneKind: Lane, 
+                laneKind: LaneKind, 
             }} }
     | { kind: DraggingStateKind.PLACEMENT,
         value: {
@@ -32,11 +32,9 @@ export type DraggingState =
 export enum DraggingCommandKind {
     LANE_DRAG_START,
     LANE_DRAG_ENTER,
-    LANE_DRAG_LEAVE,
     LANE_DRAG_DROP,
     PLACEMENT_DRAG_START,
     PLACEMENT_DRAG_ENTER,
-    PLACEMENT_DRAG_LEAVE,
     PLACEMENT_DRAG_DROP,
     OUT_OF_BOUNDS,
     RESET,
@@ -46,12 +44,10 @@ export type DragCommand =
     | { kind: DraggingCommandKind.LANE_DRAG_START,
         value: {
             laneId: string,
-            laneType: Lane,
+            laneType: LaneKind,
         } }
     | { kind: DraggingCommandKind.LANE_DRAG_ENTER,
-        value: { laneIndex: number, laneType: Lane } }
-    // | { kind: DraggingCommandKind.LANE_DRAG_LEAVE,
-    //     value: { laneIndex: number, laneType: Lane }}
+        value: { laneIndex: number, laneType: LaneKind } }
     | { kind: DraggingCommandKind.LANE_DRAG_DROP }
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_START,
         value: {
@@ -62,18 +58,10 @@ export type DragCommand =
         value: {
             column: number
             laneIndex: number,
-            laneKind: Lane,
+            laneKind: LaneKind,
             laneId: string,
             placementId?: string,
         }}
-    // | { kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE,
-    //     value: {
-    //         column: number
-    //         laneIndex: number,
-    //         laneKind: Lane,
-    //         laneId: string,
-    //         placementId?: string,
-    //     }}
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS }
     | { kind:  DraggingCommandKind.RESET }
@@ -112,28 +100,6 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             return state;
                     }
                 } 
-                // case DraggingCommandKind.LANE_DRAG_LEAVE:
-                //     switch (state.kind) {
-                //         case DraggingStateKind.LANE:
-                //             let { laneIndex, laneType } = command.value;
-
-                //             if (state.value.target && state.value.target.laneIndex == laneIndex && state.value.target.laneKind == laneType) {
-                //                 console.warn("LANE DRAG CLEARING TARGET");
-                //                 return {
-                //                     ...state,
-                //                     value: {
-                //                         ...state.value,
-                //                         target: undefined
-                //                     }
-                //                 }
-                //             } else {
-                //                 console.info("Lane drag exiting - target already updated");
-                //                 return state;
-                //             }
-                            
-                //         default:
-                //             return state;
-                //     }
                 case DraggingCommandKind.LANE_DRAG_DROP: {
                     switch (state.kind) {
                         case DraggingStateKind.LANE:
@@ -189,44 +155,6 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             return state;
                     }
                 }
-                // case DraggingCommandKind.PLACEMENT_DRAG_LEAVE:
-                //     switch (state.kind) {
-                //         case DraggingStateKind.LANE: {
-                //             const { laneIndex, laneKind } = command.value;
-
-                //             if (state.value.target && state.value.target.laneIndex === laneIndex && state.value.target.laneKind == laneKind) {
-                //                 return {
-                //                 ...state,
-                //                 value: {
-                //                     ...state.value,
-                //                     target: undefined
-                //                 }
-                //             }
-                //             } else {
-                //                 return state;
-                //             }
-                            
-                //         }
-                //         case DraggingStateKind.PLACEMENT: {
-                //             const { column, laneId } = command.value;
-                //             if (state.value.target && state.value.target.column === column && state.value.target.laneId == laneId) {
-                //                 console.warn("PLACEMENT DRAG CLEARING TARGET");
-                //                 return {
-                //                     ...state,
-                //                     value: {
-                //                         ...state.value,
-                //                         target: undefined
-                //                     }
-                //                 }
-                //             } else {
-                //                 console.info("Placement drag exiting - target already updated");
-                //                 return state;
-                //             }
-                            
-                //         }
-                //         case DraggingStateKind.NONE:
-                //             return state;
-                //     }
                 case DraggingCommandKind.PLACEMENT_DRAG_DROP: {
                     switch (state.kind) {
                         case DraggingStateKind.LANE:
@@ -273,7 +201,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
     }
 }
 
-export function laneTargetFromState(state: DraggingState): { index: number, kind: Lane, target_type: "good" | "bad" } | void {
+export function laneTargetFromState(state: DraggingState): { index: number, kind: LaneKind, target_type: DropTargetStatus } | void {
     switch (state.kind) {
         case DraggingStateKind.LANE: {
             if (!state.value.target) {

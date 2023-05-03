@@ -35,7 +35,7 @@
     type PlacementType
   } from './Grid';
   import { onMount } from 'svelte';
-  import { itemAtCursor, type Lane } from './Grid';
+  import { itemAtCursor, type LaneKind } from './Grid';
   import TimelineDisambiguation from './grid/TimelineDisambiguation.svelte';
   import type { DragEventHandler } from 'svelte/elements';
 
@@ -68,7 +68,7 @@
   const handleLaneDragStart = async (e: CustomEvent) => {
     console.info('handleLaneDragStart', e.detail);
     const laneId: string = e.detail.laneId;
-    const laneType: Lane = e.detail.laneType;
+    const laneType: LaneKind = e.detail.laneType;
 
     const command: DragCommand = {
       kind: DraggingCommandKind.LANE_DRAG_START,
@@ -84,7 +84,7 @@
   const handleLaneDragEnter = async (e: CustomEvent) => {
     console.info('handleLaneDragEnter', e.detail);
     const laneIndex: number = e.detail.laneIndex;
-    const laneType: Lane = e.detail.laneType;
+    const laneType: LaneKind = e.detail.laneType;
 
     const command: DragCommand = {
       kind: DraggingCommandKind.LANE_DRAG_ENTER,
@@ -143,7 +143,7 @@
     console.info('handlePlacementDragEnter', e.detail);
     const column: number = e.detail.column;
     const laneIndex: number = e.detail.laneIndex;
-    const laneKind: Lane = e.detail.laneKind;
+    const laneKind: LaneKind = e.detail.laneKind;
     const laneId: string = e.detail.laneId;
 
     const command: DragCommand = {

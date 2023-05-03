@@ -1,12 +1,12 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import type { DragEventHandler, MouseEventHandler } from 'svelte/elements';
-  import { Lane } from '../Grid';
+  import { LaneKind } from '../Grid';
 
   export let row: number;
   export let column: number;
   export let lane_index: number;
-  export let lane_kind: Lane;
+  export let lane_kind: LaneKind;
   export let lane_id: string;
 
   $: gridRow = row + 1;

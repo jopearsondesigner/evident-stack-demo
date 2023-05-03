@@ -36,8 +36,8 @@ export enum DraggingCommandKind {
     PLACEMENT_DRAG_START,
     PLACEMENT_DRAG_ENTER,
     PLACEMENT_DRAG_DROP,
-    OUT_OF_BOUNDS,
-    RESET,
+    OUT_OF_BOUNDS_DRAG_ENTER,
+    OUT_OF_BOUNDS_DRAG_END,
 }
 
 export type DragCommand =
@@ -63,8 +63,8 @@ export type DragCommand =
             placementId?: string,
         }}
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP }
-    | { kind:  DraggingCommandKind.OUT_OF_BOUNDS }
-    | { kind:  DraggingCommandKind.RESET }
+    | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER }
+    | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END }
 
 export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState, c: DragCommand) => DraggingState {
     return (state: DraggingState, command: DragCommand) => {
@@ -169,7 +169,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
 
                     return { kind: DraggingStateKind.NONE };
                 }
-                case DraggingCommandKind.OUT_OF_BOUNDS: {
+                case DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER: {
                     switch (state.kind) {
                         case DraggingStateKind.LANE:
                             return {
@@ -192,7 +192,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             return state;
                     }
                 }
-                case DraggingCommandKind.RESET: {
+                case DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END: {
                     return {
                         kind: DraggingStateKind.NONE
                     };

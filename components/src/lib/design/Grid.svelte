@@ -149,13 +149,13 @@
 
   const handleOutOfBoundsEnter: DragEventHandler<EventTarget> = (_e) => {
     console.warn('OUT OF BOUNDS');
-    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS };
+    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER };
     drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 
   const handleOutOfBoundsDrop: DragEventHandler<EventTarget> = (_e) => {
     console.warn('OUT OF BOUNDS DROP');
-    const command: DragCommand = { kind: DraggingCommandKind.RESET };
+    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END };
     drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 

@@ -71,7 +71,7 @@
       kind: DraggingCommandKind.LANE_DRAG_START,
       value: {
         laneId,
-        laneType
+        laneKind: laneType
       }
     };
 
@@ -87,29 +87,12 @@
       kind: DraggingCommandKind.LANE_DRAG_ENTER,
       value: {
         laneIndex,
-        laneType
+        laneKind: laneType
       }
     };
 
     drag_state = evolveAndReactDraggingState(drag_state, command);
   };
-
-  // const handleLaneDragLeave = async (e: CustomEvent) => {
-  //   console.info('handleLaneDragLeave', e.detail);
-
-  //   const laneIndex: number = e.detail.laneIndex;
-  //   const laneType: Lane = e.detail.laneType;
-
-  //   const command: DragCommand = {
-  //     kind: DraggingCommandKind.LANE_DRAG_LEAVE,
-  //     value: {
-  //       laneIndex,
-  //       laneType
-  //     }
-  //   };
-
-  //   drag_state = evolveDraggingState(drag_state, command);
-  // };
 
   const handleLaneDragDrop = async (e: CustomEvent) => {
     console.info('TODO: handleLaneDragDrop');
@@ -155,26 +138,6 @@
 
     drag_state = evolveAndReactDraggingState(drag_state, command);
   };
-
-  // const handlePlacementDragLeave = async (e: CustomEvent) => {
-  //   console.info('handlePlacementDragLeave', e.detail);
-  //   const column: number = e.detail.column;
-  //   const laneIndex: number = e.detail.laneIndex;
-  //   const laneKind: Lane = e.detail.laneKind;
-  //   const laneId: string = e.detail.laneId;
-
-  //   const command: DragCommand = {
-  //     kind: DraggingCommandKind.PLACEMENT_DRAG_LEAVE,
-  //     value: {
-  //       column,
-  //       laneIndex,
-  //       laneKind,
-  //       laneId
-  //     }
-  //   };
-
-  //   drag_state = evolveDraggingState(drag_state, command);
-  // };
 
   const handlePlacementDragDrop = async (e: CustomEvent) => {
     console.info('handlePlacementDragDrop', e.detail);
@@ -256,20 +219,6 @@
     mode = 'navigation';
   };
 
-  // Lane Events
-  const handleReorderLane = async (e: CustomEvent) => {
-    console.info('TODO: handleReorderLane');
-    console.info(e.detail);
-    decider.reorder_lane(e.detail.kind, e.detail.lane_id, e.detail.index);
-  };
-
-  const handleRemoveLane = async (e: CustomEvent) => {
-    // Drag Drop
-    let drag_state: DraggingState;
-    console.info('TODO: handleRemoveLane');
-    console.info(e.detail);
-  };
-
   // Rows
 
   const default_audience_row = 0;
@@ -280,11 +229,15 @@
   // Lanes
   $: default_stream_lane_index = streams.length;
   $: default_audience_lane_index = audiences.length;
-  $: lane_drag_target = laneTargetFromState(drag_state);
-  $: audience_drag_target_index =
-    lane_drag_target?.kind == 'audience' ? lane_drag_target.index : undefined;
-  $: stream_drag_target_index =
-    lane_drag_target?.kind == 'stream' ? lane_drag_target.index : undefined;
+  $: lane_drop_target = laneTargetFromState(drag_state);
+  $: audience_drop_target =
+    lane_drop_target?.kind == 'audience'
+      ? { index: lane_drop_target.index, targetStatus: lane_drop_target.target_status }
+      : undefined;
+  $: stream_drop_target =
+    lane_drop_target?.kind == 'stream'
+      ? { index: lane_drop_target.index, targetStatus: lane_drop_target.target_status }
+      : undefined;
 
   // Cursor
 
@@ -487,6 +440,8 @@
 
     {#each audiences as audience, lane_index (audience.id)}
       {@const row = lane_index + 1}
+      {@const drop_target =
+        audience_drop_target?.index == lane_index ? audience_drop_target.targetStatus : undefined}
       <AudienceLane
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
@@ -499,8 +454,7 @@
         on:connect_flow={handleConnectFlow}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
-        drop_target={audience_drag_target_index}
-        drop_target_status={lane_drag_target?.target_type}
+        {drop_target}
         {row}
         {audience}
         {max_column}
@@ -520,19 +474,19 @@
 
     {#each streams as stream, lane_index (stream.id)}
       {@const row = lane_index + timeline_row + 1}
+      {@const drop_target =
+        stream_drop_target?.index == lane_index ? stream_drop_target.targetStatus : undefined}
       <StreamLane
         on:navigate_cursor={handleNavigateCursor}
         on:move_event_placement={handleMoveEventPlacement}
         on:duplicate_event_placement={handleDuplicateEventPlacement}
         on:connect_flow={handleConnectFlow}
-        on:reorder_lane={handleReorderLane}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
         on:lane_drag_drop={handleLaneDragDrop}
         on:placement_drag_enter={handlePlacementDragEnter}
         on:placement_drag_drop={handlePlacementDragDrop}
-        drop_target={stream_drag_target_index}
-        drop_target_status={lane_drag_target?.target_type}
+        {drop_target}
         {row}
         {stream}
         {max_column}

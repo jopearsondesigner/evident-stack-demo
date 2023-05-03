@@ -20,14 +20,12 @@
 
   export let lane_index: number;
 
-  export let drop_target: number | undefined = undefined;
-
-  export let drop_target_status: DropTargetStatus | undefined = undefined;
+  export let drop_target: DropTargetStatus | undefined = undefined;
 
   $: gridRow = row + 1;
   $: audience.placements.length = max_column;
-  $: good_target = drop_target == lane_index && drop_target_status == 'good';
-  $: bad_target = drop_target == lane_index && drop_target_status == 'bad';
+  $: good_target = drop_target == 'good';
+  $: bad_target = drop_target == 'bad';
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e: DragEvent) => {
     let transfer = e.dataTransfer;

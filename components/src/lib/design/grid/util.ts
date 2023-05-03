@@ -11,7 +11,7 @@ export type DraggingState =
         value: {
             source: {
                 laneId: string,
-                laneType: LaneKind,
+                laneKind: LaneKind,
             },
             target?: {
                 laneIndex: number,
@@ -44,10 +44,10 @@ export type DragCommand =
     | { kind: DraggingCommandKind.LANE_DRAG_START,
         value: {
             laneId: string,
-            laneType: LaneKind,
+            laneKind: LaneKind,
         } }
     | { kind: DraggingCommandKind.LANE_DRAG_ENTER,
-        value: { laneIndex: number, laneType: LaneKind } }
+        value: { laneIndex: number, laneKind: LaneKind } }
     | { kind: DraggingCommandKind.LANE_DRAG_DROP }
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_START,
         value: {
@@ -70,18 +70,18 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
     return (state: DraggingState, command: DragCommand) => {
         switch (command.kind) {
                 case DraggingCommandKind.LANE_DRAG_START: {
-                    let { laneId, laneType } = command.value
+                    let { laneId, laneKind: laneType } = command.value
 
                     return {
                         kind: DraggingStateKind.LANE,
                         value: {
-                            source: { laneId, laneType } ,
+                            source: { laneId, laneKind: laneType } ,
                         }
                     };
                 }
                     
                 case DraggingCommandKind.LANE_DRAG_ENTER: {
-                    let { laneIndex, laneType } = command.value;
+                    let { laneIndex, laneKind: laneType } = command.value;
 
                     switch (state.kind) {
                         case DraggingStateKind.LANE:
@@ -103,9 +103,9 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                 case DraggingCommandKind.LANE_DRAG_DROP: {
                     switch (state.kind) {
                         case DraggingStateKind.LANE:
-                            if (laneTargetFromState(state)?.target_type === "good" && state.value.target) {
+                            if (laneTargetFromState(state)?.target_status === "good" && state.value.target) {
                                 const { source, target } = state.value;
-                                const { laneId, laneType } = source;
+                                const { laneId, laneKind: laneType } = source;
                                 const { laneIndex } = target;
                                 reactionDecider.reorder_lane(laneType, laneId, laneIndex);
                             }
@@ -158,9 +158,9 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                 case DraggingCommandKind.PLACEMENT_DRAG_DROP: {
                     switch (state.kind) {
                         case DraggingStateKind.LANE:
-                            if (laneTargetFromState(state)?.target_type === "good" && state.value.target) {
+                            if (laneTargetFromState(state)?.target_status === "good" && state.value.target) {
                                 const { source, target } = state.value;
-                                const { laneId, laneType } = source;
+                                const { laneId, laneKind: laneType } = source;
                                 const { laneIndex } = target;
                                 reactionDecider.reorder_lane(laneType, laneId, laneIndex);
                             }
@@ -201,20 +201,20 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
     }
 }
 
-export function laneTargetFromState(state: DraggingState): { index: number, kind: LaneKind, target_type: DropTargetStatus } | void {
+export function laneTargetFromState(state: DraggingState): { index: number, kind: LaneKind, target_status: DropTargetStatus } | void {
     switch (state.kind) {
         case DraggingStateKind.LANE: {
             if (!state.value.target) {
                 return undefined;
             }
 
-            let sourceKind = state.value.source.laneType;
+            let sourceKind = state.value.source.laneKind;
             let targetKind = state.value.target?.laneKind;
 
             return {
                 index: state.value.target.laneIndex,
                 kind: targetKind,
-                target_type: (sourceKind == targetKind) ? "good" : "bad"
+                target_status: (sourceKind == targetKind) ? "good" : "bad"
             };
         }
         default:

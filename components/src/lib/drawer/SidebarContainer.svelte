@@ -2,6 +2,7 @@
   import classNames from 'classnames';
   import { slide } from 'svelte/transition';
   import { sineIn } from 'svelte/easing';
+  import { goto } from '$app/navigation';
 
   export let brandClass =
     'inline bg-white dark:bg-dark-2 flex justify-center w-full cursor-default';
@@ -50,6 +51,7 @@
 
   export let disabled = false;
   export const isClosed = true;
+  export let route = '';
 </script>
 
 <li data-accordion-item {...$$restProps} class:grow={expanded} class="flex flex-col">
@@ -60,7 +62,7 @@
     aria-controls={id}
     aria-disabled={disabled}
     id={button_id}
-    on:click
+    on:click={() => goto(`/${route}`)}
     disabled={expanded}
     class={expanded ? brandClass : btnClass}
     on:click={() => {
@@ -87,7 +89,8 @@
       aria-labelledby={button_id}
       hidden={!expanded}
       class={classNames('grow')}
-      transition:slide={{ delay: 0, duration: 200, easing: sineIn }}
+      in:slide={{ delay: 0, duration: 200, easing: sineIn }}
+      out:slide={{ delay: 0, duration: 200, easing: sineIn }}
     >
       <slot />
     </div>

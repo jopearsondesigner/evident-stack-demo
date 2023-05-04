@@ -176,7 +176,7 @@
   <Sidebar class={!isClosed ? 'w-[417px]' : 'w-[240px]'} {isClosed}>
     <SidebarWrapper>
       <Accordion class="flex flex-col" style="height: calc(100vh - 183px);">
-        <SidebarContainer src={DesignLogo} title="Design" id="design" bind:expanded>
+        <SidebarContainer src={DesignLogo} route="design" title="Design" id="design" bind:expanded>
           <SidebarGroup>
             <SidebarDropdownWrapper
               label="	Schema"
@@ -247,110 +247,40 @@
         </SidebarContainer>
         <SidebarContainer
           src={DataLogo}
+          route="data"
           href="/data"
           id="data"
           title="Data"
           on:click={() => (isClosed = true)}
           on:click={() => (isVerticalOpen = false)} >
-          <SidebarGroup>
-            <div class="h-full flex justify-center items-center">
-              <div>
-                <img src={DataGraphic} alt="Data Graphic" width="110" class="block mx-auto" />
-                <Button
-                  label="Keep me updated"
-                  gradient
-                  color="brandStackPrimary"
-                  size="sm"
-                  className="my-4"
-                  on:click
-                  class="block mr-auto ml-auto" />
-              </div>
-            </div>
-          </SidebarGroup>
+          <SidebarGroup />
         </SidebarContainer>
         <SidebarContainer
           src={DomainFunctionsLogo}
+          route="domain-functions"
           id="domain-functions"
           title="Domain Functions"
           on:click={() => (isClosed = true)}
           on:click={() => (isVerticalOpen = false)} >
-          <SidebarGroup>
-            <div class="h-full flex justify-center items-center">
-              <div>
-                <img
-                  src={DomainFunctionsGraphic}
-                  alt="Domain Functions Graphic"
-                  width="150"
-                  class="block mr-auto ml-auto"
-                />
-                <Button
-                  label="Keep me updated"
-                  gradient
-                  color="brandStackPrimary"
-                  size="sm"
-                  className="my-4"
-                  on:click
-                  class="block mr-auto ml-auto"
-                />
-              </div>
-            </div>
-          </SidebarGroup>
+          <SidebarGroup />
         </SidebarContainer>
         <SidebarContainer
           src={DeployLogo}
+          route="deploy"
           id="deploy"
           title="Deploy"
           on:click={() => (isClosed = true)}
           on:click={() => (isVerticalOpen = false)} >
-          <SidebarGroup>
-            <div class="h-full flex justify-center items-center">
-              <div>
-                <img
-                  src={DeployGraphic}
-                  alt="Deploy Graphic"
-                  width="100"
-                  class="block mr-auto ml-auto"
-                />
-                <Button
-                  label="Keep me updated"
-                  gradient
-                  color="brandStackPrimary"
-                  size="sm"
-                  className="my-4"
-                  on:click
-                  class="block mr-auto ml-auto"
-                />
-              </div>
-            </div>
-          </SidebarGroup>
+          <SidebarGroup />
         </SidebarContainer>
         <SidebarContainer
           src={DatabaseLogo}
+          route="db"
           id="database"
           title="Database"
           on:click={() => (isClosed = true)}
           on:click={() => (isVerticalOpen = false)} >
-          <SidebarGroup>
-            <div class="h-full flex justify-center items-center">
-              <div>
-                <img
-                  src={DatabaseGraphic}
-                  alt="Database Graphic"
-                  width="130"
-                  class="block mr-auto ml-auto"
-                />
-                <Button
-                  label="Keep me updated"
-                  gradient
-                  color="brandStackPrimary"
-                  size="sm"
-                  className="my-4"
-                  on:click
-                  class="block mr-auto ml-auto"
-                />
-              </div>
-            </div>
-          </SidebarGroup>
+          <SidebarGroup />
         </SidebarContainer>
       </Accordion>
     </SidebarWrapper>

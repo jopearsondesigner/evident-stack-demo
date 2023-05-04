@@ -1,7 +1,8 @@
 import { default as init, EventModelGrid, EventModelStateManager, setPanicHook } from "state-client";
-import { readable, type Readable } from 'svelte/store';
+import { derived, readable, type Readable } from 'svelte/store';
 import type { Decider, Lane } from '$components/design/Grid';
 import { dev } from "$app/environment";
+import { compositePatchStore } from "$lib/indexed_db";
 
 export type InitializationPayload = {
   grid: Readable<EventModelGrid>,
@@ -15,11 +16,23 @@ const initialize_decider = async (id: string | undefined, user: string) => {
   }
 
   let manager = await new EventModelStateManager(id, user);
+  let store;
 
-  let store = readable(await manager.state(), (setter) => {
-    manager.store_setter = setter;
-    return () => console.debug("Unsubscribed last subscriber to Event Model State", id);
-  });
+  if (id) {
+    let doc_binary_store = compositePatchStore(id, user);
+
+    store = derived(doc_binary_store, (patch) => {
+      try {
+        return manager.refresh(patch.data, patch.id)
+      } catch {
+        return null
+      }
+    });
+  } else {
+    store = readable(null, (_) => {
+      return () => console.debug("Unsubscribed last subscriber to empty Event Model State");
+    })
+  }
 
   return {
     grid: store,

@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use async_trait::async_trait;
-use automerge::AutoCommit;
+use automerge::{ActorId, AutoCommit};
 use event_models::{
     implementation::automerge::AutomergeEventModel, Described, EventModelState, Named,
 };
@@ -10,11 +10,12 @@ use serde::Deserialize;
 use state_shared::{automerge::Reconcilable, strategies::StateRepository, HasKey};
 use uuid::Uuid;
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
+use web_sys::console;
 
 #[wasm_bindgen(module = "$lib/indexed_db")]
 extern "C" {
     #[wasm_bindgen(catch)]
-    async fn patches(id: &str, user: &str) -> Result<JsValue, JsValue>;
+    async fn patches(id: &str, user: &str, starting_at: Option<usize>) -> Result<JsValue, JsValue>;
 
     #[wasm_bindgen(catch)]
     async fn save(model: Model, patch: Patch) -> Result<(), JsValue>;
@@ -40,36 +41,51 @@ pub struct Model {
 #[derive(Clone, Deserialize)]
 #[wasm_bindgen(getter_with_clone)]
 pub struct Patch {
+    pub id: Option<usize>,
     pub user: String,
     pub model: String,
     pub data: Vec<u8>,
 }
 
 pub struct IndexedDbStateRepository {
-    key: Option<Uuid>,
-    user: String,
-    automerge: AutoCommit,
+    pub(crate) key: Option<Uuid>,
+    pub(crate) user: String,
+    pub(crate) automerge: AutoCommit,
+    pub(crate) latest_patch: Option<usize>,
 }
 
 impl IndexedDbStateRepository {
-    pub async fn new(key: Option<Uuid>, user: String) -> Result<Self, IndexedDbError> {
-        let automerge = AutoCommit::new();
+    pub async fn new(
+        key: Option<Uuid>,
+        user: String,
+        actor: ActorId,
+    ) -> Result<Self, IndexedDbError> {
+        let automerge = AutoCommit::new().with_actor(actor);
         Ok(Self {
             key,
             user,
             automerge,
+            latest_patch: None,
         })
     }
 
-    pub fn load_incremental(&mut self, data: Vec<u8>) -> Result<(), IndexedDbError> {
-        self.automerge
-            .load_incremental(&data)
-            .map(|_| ())
-            .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))
+    pub fn load_incremental(&mut self, patch: Patch) -> Result<(), IndexedDbError> {
+        let loaded_count = self
+            .automerge
+            .load_incremental(&patch.data)
+            .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
+        console::log_1(&format!("loaded ops into automerge {:?}", loaded_count).into());
+        self.latest_patch = patch.id;
+        Ok(())
     }
 
     pub fn save_incremental(&mut self) -> Vec<u8> {
         self.automerge.save_incremental()
+    }
+
+    pub fn state(&self) -> Result<EventModelState<AutomergeEventModel>, IndexedDbError> {
+        EventModelState::<AutomergeEventModel>::hydrate(&self.automerge)
+            .map_err(|e| IndexedDbError::Hydrate(format!("{:?}", e)))
     }
 }
 
@@ -80,12 +96,9 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
     async fn reify(&mut self) -> Result<EventModelState<AutomergeEventModel>, IndexedDbError> {
         match &self.key {
             Some(key) => {
-                let lookup_key = Array::new_with_length(2);
                 let name: &str = &self.user;
-                lookup_key.set(0, name.into());
-                lookup_key.set(1, key.to_string().into());
 
-                let patches = patches(&key.to_string(), &self.user)
+                let patches = patches(&key.to_string(), &self.user, self.latest_patch)
                     .await
                     .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
 
@@ -98,10 +111,9 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
                             let patch: Patch = serde_wasm_bindgen::from_value(patch)
                                 .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
 
-                            self.load_incremental(patch.data)?;
+                            self.load_incremental(patch)?;
                         }
-                        EventModelState::<AutomergeEventModel>::hydrate(&self.automerge)
-                            .map_err(|e| IndexedDbError::Hydrate(format!("{:?}", e)))
+                        self.state()
                     }
                     Ok(None) => Ok(EventModelState::BeforeCreation),
                     Err(e) => Err(IndexedDbError::PatchLoad(format!("{:?}", e))),
@@ -132,6 +144,7 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
                             description: m.description().to_owned(),
                         };
                         let patch = Patch {
+                            id: None,
                             model: id.to_string(),
                             user: self.user.to_owned(),
                             data: self.save_incremental(),

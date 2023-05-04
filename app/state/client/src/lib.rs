@@ -10,13 +10,15 @@ pub use crate::grid::EventModelGrid;
 use crate::grid::Lane;
 use crate::indexed_db::{IndexedDbError, IndexedDbStateRepository};
 pub use crate::indexed_db::{Model, Patch};
+use automerge::ActorId;
 use event_models::api::commands::EventModelCommand;
 use event_models::EventModelError;
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
-use js_sys::{Function, Uint8Array};
+use js_sys::Uint8Array;
 use state_shared::strategies::{ReifyDecideSave, ReifyDecideSaveError, StateRepository};
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
+use web_sys::{console, window};
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -39,7 +41,6 @@ pub fn set_panic_hook() {
 #[wasm_bindgen]
 pub struct EventModelStateManager {
     repository: IndexedDbStateRepository,
-    store_setter: Option<js_sys::Function>,
 }
 
 struct EventModelDecider;
@@ -53,37 +54,87 @@ fn parse_uuid(uuid_str: String) -> Result<Uuid, JsValue> {
         .map_err(|e| JsValue::from(format!("Error parsing Uuid from string: {:?}", e)))
 }
 
+const ACTOR_ID_STORAGE_KEY: &str = "";
+
+fn get_actor() -> ActorId {
+    match window() {
+        Some(win) => match win.session_storage() {
+            Ok(Some(storage)) => match storage.get_item(ACTOR_ID_STORAGE_KEY) {
+                Ok(Some(actor_id_str)) => match ActorId::from_str(&actor_id_str) {
+                    Ok(actor) => actor,
+                    Err(_) => {
+                        console::log_2(
+                            &"Invalid Actor ID string found in session storage: ".into(),
+                            &actor_id_str.into(),
+                        );
+                        let actor = ActorId::random();
+                        storage
+                            .set_item(ACTOR_ID_STORAGE_KEY, &actor.to_string())
+                            .expect("Session storage error");
+                        actor
+                    }
+                },
+                Ok(None) => {
+                    let actor = ActorId::random();
+                    storage
+                        .set_item(ACTOR_ID_STORAGE_KEY, &actor.to_string())
+                        .expect("Session storage error");
+                    actor
+                }
+                Err(_) => ActorId::random(),
+            },
+            _ => ActorId::random(),
+        },
+        None => ActorId::random(),
+    }
+}
+
 #[wasm_bindgen]
 impl EventModelStateManager {
-    // TODO: we'll need to store a reference to the Svelte store's
-    // setter here, for non-Command-driven state changes (e.g. background sync)
     #[wasm_bindgen(constructor)]
     pub async fn new(
         maybe_id_str: Option<String>,
         user: String,
     ) -> Result<EventModelStateManager, JsValue> {
+        let actor = get_actor();
         if let Some(id_str) = maybe_id_str {
             let event_model_id: EventModelId =
                 Uuid::from_str(&id_str).map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
             Ok(EventModelStateManager {
-                repository: IndexedDbStateRepository::new(Some(event_model_id), user)
+                repository: IndexedDbStateRepository::new(Some(event_model_id), user, actor)
                     .await
                     .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?,
-                store_setter: None,
             })
         } else {
             Ok(EventModelStateManager {
-                repository: IndexedDbStateRepository::new(None, user)
+                repository: IndexedDbStateRepository::new(None, user, actor)
                     .await
                     .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?,
-                store_setter: None,
             })
         }
     }
 
-    #[wasm_bindgen(setter)]
-    pub fn set_store_setter(&mut self, setter: Option<Function>) {
-        self.store_setter = setter
+    pub fn refresh(
+        &mut self,
+        data: Uint8Array,
+        latest_patch_id: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        if let Some(model) = self.repository.key {
+            self.repository
+                .load_incremental(Patch {
+                    id: Some(latest_patch_id),
+                    user: self.repository.user.to_owned(),
+                    model: model.to_string(),
+                    data: data.to_vec(),
+                })
+                .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
+            self.repository
+                .state()
+                .map(|ref state| state.into())
+                .map_err(|e| JsValue::from_str(&format!("{:?}", e)))
+        } else {
+            Err("Can't load data into a state manager with no model key!".into())
+        }
     }
 
     pub async fn state(&mut self) -> Result<EventModelGrid, JsValue> {
@@ -425,14 +476,7 @@ impl EventModelStateManager {
             ReifyDecideSaveError<EventModelError, IndexedDbError>,
         > = EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command).await;
         match &result {
-            Ok(state) => {
-                let grid: EventModelGrid = state.into();
-                if let Some(setter) = &self.store_setter {
-                    let this = JsValue::null();
-                    let _ = setter.call1(&this, &JsValue::from(grid.clone()));
-                }
-                Ok(grid)
-            }
+            Ok(state) => Ok(state.into()),
             Err(err) => Err(JsValue::from(format!(
                 "Error dispatching command {:?}: {:?}",
                 command, err

@@ -34,8 +34,8 @@ export enum DraggingCommandKind {
     LANE_DRAG_ENTER,
     LANE_DRAG_DROP,
     PLACEMENT_DRAG_START,
-    PLACEMENT_DRAG_ENTER,
-    PLACEMENT_DRAG_DROP,
+    CELL_DRAG_ENTER,
+    CELL_DRAG_DROP,
     OUT_OF_BOUNDS_DRAG_ENTER,
     OUT_OF_BOUNDS_DRAG_END,
 }
@@ -54,7 +54,7 @@ export type DragCommand =
             placementId: string,
             placementKind: PlacementType
         }}
-    | { kind: DraggingCommandKind.PLACEMENT_DRAG_ENTER,
+    | { kind: DraggingCommandKind.CELL_DRAG_ENTER,
         value: {
             column: number
             laneIndex: number,
@@ -62,7 +62,7 @@ export type DragCommand =
             laneId: string,
             placementId?: string,
         }}
-    | { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP }
+    | { kind: DraggingCommandKind.CELL_DRAG_DROP }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END }
 
@@ -125,7 +125,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             }
                         }
                     };
-                case DraggingCommandKind.PLACEMENT_DRAG_ENTER: {
+                case DraggingCommandKind.CELL_DRAG_ENTER: {
                     const { column, laneIndex, laneKind, laneId } = command.value;
 
                     switch (state.kind) {
@@ -155,7 +155,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             return state;
                     }
                 }
-                case DraggingCommandKind.PLACEMENT_DRAG_DROP: {
+                case DraggingCommandKind.CELL_DRAG_DROP: {
                     switch (state.kind) {
                         case DraggingStateKind.LANE:
                             if (laneTargetFromState(state)?.target_status === "good" && state.value.target) {

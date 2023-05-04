@@ -104,9 +104,8 @@
     lane_id={audience.id || ''}
     lane_kind="audience"
     on:navigate_cursor={forward}
-    on:placement_drag_enter={forward}
-    on:placement_drag_leave={forward}
-    on:placement_drag_drop={forward}
+    on:cell_drag_enter={forward}
+    on:cell_drag_drop={forward}
   >
     {#if placement?.id}
       <Interface

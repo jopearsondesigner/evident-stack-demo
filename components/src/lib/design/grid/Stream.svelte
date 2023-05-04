@@ -104,9 +104,8 @@
     lane_id={stream.id || ''}
     lane_kind="stream"
     on:navigate_cursor={forward}
-    on:placement_drag_enter={forward}
-    on:placement_drag_leave={forward}
-    on:placement_drag_drop={forward}
+    on:cell_drag_enter={forward}
+    on:cell_drag_drop={forward}
   >
     {#if placement?.id}
       <Event

@@ -20,7 +20,7 @@
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
     console.warn('Cell Drag Enter');
     e.stopPropagation();
-    dispatch('placement_drag_enter', {
+    dispatch('cell_drag_enter', {
       column,
       laneIndex: lane_index,
       laneKind: lane_kind,
@@ -34,7 +34,7 @@
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
     console.warn('Cell Drag Drop');
-    dispatch('placement_drag_drop');
+    dispatch('cell_drag_drop');
   };
 </script>
 

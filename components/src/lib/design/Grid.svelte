@@ -127,7 +127,7 @@
     const laneId: string = e.detail.laneId;
 
     const command: DragCommand = {
-      kind: DraggingCommandKind.PLACEMENT_DRAG_ENTER,
+      kind: DraggingCommandKind.CELL_DRAG_ENTER,
       value: {
         column,
         laneIndex,
@@ -142,20 +142,20 @@
   const handlePlacementDragDrop = async (e: CustomEvent) => {
     console.info('handlePlacementDragDrop', e.detail);
 
-    const command: DragCommand = { kind: DraggingCommandKind.PLACEMENT_DRAG_DROP };
+    const command: DragCommand = { kind: DraggingCommandKind.CELL_DRAG_DROP };
 
     drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 
-  const handleOutOfBoundsEnter: DragEventHandler<EventTarget> = (_e) => {
+  const handleOutOfBoundsDragEnter: DragEventHandler<EventTarget> = (_e) => {
     console.warn('OUT OF BOUNDS');
     const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER };
     drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 
-  const handleOutOfBoundsDrop: DragEventHandler<EventTarget> = (_e) => {
-    console.warn('OUT OF BOUNDS DROP');
-    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END };
+  const handleOutOfBoundsDragEnd: DragEventHandler<EventTarget> = (_e) => {
+    console.warn('OUT OF BOUNDS END');
+    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END};
     drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 
@@ -414,8 +414,8 @@
 
 <svelte:window
   on:keydown={keyboardHandler}
-  on:dragenter={handleOutOfBoundsEnter}
-  on:dragend={handleOutOfBoundsDrop}
+  on:dragenter={handleOutOfBoundsDragEnter}
+  on:dragend={handleOutOfBoundsDragEnd}
 />
 
 <h3>{mode}</h3>
@@ -442,18 +442,17 @@
       {@const row = lane_index + 1}
       {@const drop_target =
         audience_drop_target?.index == lane_index ? audience_drop_target.targetStatus : undefined}
-      <AudienceLane
-        on:lane_drag_start={handleLaneDragStart}
-        on:lane_drag_enter={handleLaneDragEnter}
-        on:lane_drag_drop={handleLaneDragDrop}
-        on:placement_drag_enter={handlePlacementDragEnter}
-        on:placement_drag_drop={handlePlacementDragDrop}
+      <AudienceLane 
         on:navigate_cursor={handleNavigateCursor}
         on:move_interface_placement={handleMoveInterfacePlacement}
         on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
         on:connect_flow={handleConnectFlow}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
+        on:lane_drag_drop={handleLaneDragDrop}
+        on:placement_drag_start={handlePlacementDragStart}
+        on:cell_drag_enter={handlePlacementDragEnter}
+        on:cell_drag_drop={handlePlacementDragDrop}
         {drop_target}
         {row}
         {audience}
@@ -484,8 +483,9 @@
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
         on:lane_drag_drop={handleLaneDragDrop}
-        on:placement_drag_enter={handlePlacementDragEnter}
-        on:placement_drag_drop={handlePlacementDragDrop}
+        on:placement_drag_start={handlePlacementDragStart}
+        on:cell_drag_enter={handlePlacementDragEnter}
+        on:cell_drag_drop={handlePlacementDragDrop}
         {drop_target}
         {row}
         {stream}

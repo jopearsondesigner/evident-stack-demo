@@ -157,14 +157,34 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                 }
                 case DraggingCommandKind.CELL_DRAG_DROP: {
                     switch (state.kind) {
-                        case DraggingStateKind.LANE:
+                        case DraggingStateKind.LANE: {
                             if (laneTargetFromState(state)?.targetStatus === "good" && state.value.target) {
                                 const { source, target } = state.value;
                                 const { laneId, laneKind: laneType } = source;
                                 const { laneIndex } = target;
                                 reactionDecider.reorder_lane(laneType, laneId, laneIndex);
                             }
-                        case DraggingStateKind.PLACEMENT:
+                            return { kind: DraggingStateKind.NONE }
+                        }
+                        case DraggingStateKind.PLACEMENT: {
+                            if (placementTargetFromState(state)?.targetStatus === "good" && state.value.target) {
+                                const { source, target } = state.value;
+                                const { placementId, placementKind } = source;
+                                const { column, laneId } = target
+                                switch (placementKind) {
+                                    case "command":
+                                    case "readModel":
+                                        reactionDecider.move_timeline_placement(placementId, column);
+                                        break;
+                                    case "event":
+                                        reactionDecider.move_event_placement(placementId, column, laneId);
+                                        break;
+                                    case "interface":
+                                        reactionDecider.move_interface_placement(placementId, column, laneId);
+                                }
+                            }
+                            return { kind: DraggingStateKind.NONE }
+                        }
                     }
 
                     return { kind: DraggingStateKind.NONE };

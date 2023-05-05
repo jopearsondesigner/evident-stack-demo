@@ -67,6 +67,7 @@
 {#if audience.name}
   <h3
     on:dragstart={handleDragStart}
+    draggable=true
     class="audienceName sticky left-3 z-30 justify-self-start self-start cursor-pointer prose text-body-light dark:text-body-dark mt-3 select-none cursor-move"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
   >

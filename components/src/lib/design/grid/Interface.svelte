@@ -1,5 +1,4 @@
 <script lang="ts">
-  import MaybeTooltip from '../../utils/MaybeTooltip.svelte';
   import markdown from '../../utils/markdown.js';
   import type { DragEventHandler } from 'svelte/elements';
   import FlowPort from './FlowPort.svelte';
@@ -31,50 +30,57 @@
 
   $: descriptionHTML = markdown(description);
 
+  const dispatch = createEventDispatcher();
+
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
-    let transfer = e.dataTransfer;
-    if (transfer) {
-      transfer.setData('interface', id);
-      if (e.shiftKey) {
-        transfer.effectAllowed = 'copy';
-      } else {
-        transfer.effectAllowed = 'move';
-      }
-    }
+    // let transfer = e.dataTransfer;
+    // if (transfer) {
+    //   transfer.setData('interface', id);
+    //   if (e.shiftKey) {
+    //     transfer.effectAllowed = 'copy';
+    //   } else {
+    //     transfer.effectAllowed = 'move';
+    //   }
+    // }
+    dispatch('placement_drag_start', {
+      placementId: interface_id,
+      placementType: 'interface'
+    });
   };
 
   // Linking
-  const dispatch = createEventDispatcher();
   let drop_target = false;
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    let transfer = e.dataTransfer;
-    if (transfer) {
-      if (transfer.effectAllowed == 'link' && transfer.types.includes('readModel')) {
-        e.preventDefault();
-        transfer.dropEffect = 'link';
-        drop_target = true;
-      }
-    }
+    // let transfer = e.dataTransfer;
+    // if (transfer) {
+    //   if (transfer.effectAllowed == 'link' && transfer.types.includes('readModel')) {
+    //     e.preventDefault();
+    //     transfer.dropEffect = 'link';
+    //     drop_target = true;
+    //   }
+    // }
+    e.stopPropagation();
   };
 
-  const handleDragLeave: DragEventHandler<HTMLDivElement> = (_e) => {
-    drop_target = false; // TODO: conditionally change style (cursor maybe?) while linking
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
+    // drop_target = false; // TODO: conditionally change style (cursor maybe?) while linking
+    e.stopPropagation();
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
-    handleDragLeave(e);
-    let transfer = e.dataTransfer;
-    if (transfer) {
-      if (transfer.effectAllowed == 'link') {
-        let fromData = transfer.getData('readModel');
-        if (fromData) {
-          let from = JSON.parse(fromData);
-          transfer.dropEffect = 'link';
-          dispatch('connect_flow', { from: from, to: id });
-        }
-      }
-    }
+    // handleDragLeave(e);
+    // let transfer = e.dataTransfer;
+    // if (transfer) {
+    //   if (transfer.effectAllowed == 'link') {
+    //     let fromData = transfer.getData('readModel');
+    //     if (fromData) {
+    //       let from = JSON.parse(fromData);
+    //       transfer.dropEffect = 'link';
+    //       dispatch('connect_flow', { from: from, to: id });
+    //     }
+    //   }
+    // }
   };
 </script>
 

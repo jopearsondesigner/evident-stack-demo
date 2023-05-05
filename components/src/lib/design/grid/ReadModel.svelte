@@ -13,35 +13,41 @@
 
   $: descriptionHTML = markdown(description);
 
+  const dispatch = createEventDispatcher();
+
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
-    let transfer = e.dataTransfer;
-    if (transfer) {
-      transfer.setData('timeline', id);
-      if (e.shiftKey) {
-        transfer.effectAllowed = 'copy';
-      } else {
-        transfer.effectAllowed = 'move';
-      }
-    }
+    // let transfer = e.dataTransfer;
+    // if (transfer) {
+    //   transfer.setData('timeline', id);
+    //   if (e.shiftKey) {
+    //     transfer.effectAllowed = 'copy';
+    //   } else {
+    //     transfer.effectAllowed = 'move';
+    //   }
+    // }
+    dispatch('placement_drag_start', {
+      placementId: id,
+      placementType: 'interface'
+    });
   };
 
   // Linking
-  const dispatch = createEventDispatcher();
-  let drop_target = false; // TODO: conditionally change style (cursor maybe?) while linking
+  // const dispatch = createEventDispatcher();
+  // let drop_target = false; // TODO: conditionally change style (cursor maybe?) while linking
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    let transfer = e.dataTransfer;
-    if (transfer) {
-      if (transfer.effectAllowed == 'link' && transfer.types.includes('event')) {
-        e.preventDefault();
-        transfer.dropEffect = 'link';
-        drop_target = true;
-      }
-    }
+    // let transfer = e.dataTransfer;
+    // if (transfer) {
+    //   if (transfer.effectAllowed == 'link' && transfer.types.includes('event')) {
+    //     e.preventDefault();
+    //     transfer.dropEffect = 'link';
+    //     drop_target = true;
+    //   }
+    // }
   };
 
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (_e) => {
-    drop_target = false;
+    // drop_target = false;
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {

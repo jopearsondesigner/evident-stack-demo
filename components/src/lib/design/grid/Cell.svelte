@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import type { DragEventHandler, MouseEventHandler } from 'svelte/elements';
-  import { LaneKind } from '../Grid';
+  import type { LaneKind } from '../Grid';
 
   export let row: number;
   export let column: number;

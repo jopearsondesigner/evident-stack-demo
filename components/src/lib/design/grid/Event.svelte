@@ -13,50 +13,56 @@
 
   $: descriptionHTML = markdown(description);
 
+  const dispatch = createEventDispatcher();
+
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
-    let transfer = e.dataTransfer;
-    if (transfer) {
-      transfer.setData('event', id);
-      if (e.shiftKey) {
-        transfer.effectAllowed = 'copy';
-      } else {
-        transfer.effectAllowed = 'move';
+    // let transfer = e.dataTransfer;
+    // if (transfer) {
+    //   transfer.setData('event', id);
+    //   if (e.shiftKey) {
+    //     transfer.effectAllowed = 'copy';
+    //   } else {
+    //     transfer.effectAllowed = 'move';
+    //   }
+    // }
+    dispatch('placement_drag_start', {
+        placementId: id,
+        placementType: 'event'
       }
-    }
+    );
   };
 
   // Linking
-  const dispatch = createEventDispatcher();
-  let drop_target = false; // TODO: conditionally change style (cursor maybe?) while linking
+  // let drop_target = false; // TODO: conditionally change style (cursor maybe?) while linking
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
-    if (transfer) {
-      if (transfer.effectAllowed == 'link' && transfer.types.includes('command')) {
-        e.preventDefault();
-        transfer.dropEffect = 'link';
-        drop_target = true;
-      }
-    }
+    // if (transfer) {
+    //   if (transfer.effectAllowed == 'link' && transfer.types.includes('command')) {
+    //     e.preventDefault();
+    //     transfer.dropEffect = 'link';
+    //     drop_target = true;
+    //   }
+    // }
   };
 
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (_e) => {
-    drop_target = false;
+    // drop_target = false;
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
-    handleDragLeave(e);
-    let transfer = e.dataTransfer;
-    if (transfer) {
-      if (transfer.effectAllowed == 'link') {
-        let fromData = transfer.getData('command');
-        if (fromData) {
-          let from = JSON.parse(fromData);
-          transfer.dropEffect = 'link';
-          dispatch('connect_flow', { from: from, to: id });
-        }
-      }
-    }
+    // handleDragLeave(e);
+    // let transfer = e.dataTransfer;
+    // if (transfer) {
+    //   if (transfer.effectAllowed == 'link') {
+    //     let fromData = transfer.getData('command');
+    //     if (fromData) {
+    //       let from = JSON.parse(fromData);
+    //       transfer.dropEffect = 'link';
+    //       dispatch('connect_flow', { from: from, to: id });
+    //     }
+    //   }
+    // }
   };
 </script>
 

@@ -2,7 +2,7 @@ import { default as init, EventModelGrid, EventModelStateManager, setPanicHook }
 import { derived, readable, type Readable } from 'svelte/store';
 import type { Decider, Lane } from '$components/design/Grid';
 import { dev } from "$app/environment";
-import { compositePatchStore } from "$lib/indexed_db";
+import { compositePatchStore } from "$lib/state/dexie";
 
 export type InitializationPayload = {
   grid: Readable<EventModelGrid>,

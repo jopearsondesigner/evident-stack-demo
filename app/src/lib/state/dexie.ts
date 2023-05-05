@@ -1,5 +1,5 @@
 import { Dexie, liveQuery, type Observable } from "dexie";
-import { derived, readable, type Readable } from "svelte/store";
+import { readable } from "svelte/store";
 
 type Model = {
   id: string,
@@ -15,25 +15,15 @@ type Patch = {
   data: Uint8Array
 }
 
-type SentPatch = {
-  user: string,
-  model: string,
-  patch_id: number
-}
-
 class EventModelDatabase extends Dexie {
-  local_patches!: Dexie.Table<Patch, number>;
-  remote_patches!: Dexie.Table<Patch, number>;
-  sent_patches!: Dexie.Table<SentPatch, [string, string]>;
+  patches!: Dexie.Table<Patch, string>;
   models!: Dexie.Table<Model, string>;
 
   constructor() {
     super("evidentstack");
     this.version(1).stores({
       models: "&id, user, name",
-      local_patches: "id++, [model+user]",
-      remote_patches: "id++, [model+user]",
-      sent_patches: "&[model+user]",
+      patches: "$$id, [model+user]",
     });
   }
 }
@@ -54,7 +44,7 @@ const concatBuffers = (buf1: Uint8Array, buf2: Uint8Array) => {
 };
 
 const patchesObservable = (model: string, user: string): Observable<Patch[]> => {
-  return liveQuery(() => db.local_patches.where({ model, user }).toArray())
+  return liveQuery(() => db.patches.where({ model, user }).toArray())
 }
 
 export const compositePatchStore = (model: string, user: string) => {
@@ -79,7 +69,7 @@ export const compositePatchStore = (model: string, user: string) => {
 }
 
 export const patches = async (model: string, user: string, starting_at: number | undefined): Promise<Array<Patch>> => {
-  let patches = db.local_patches.where({ model, user })
+  let patches = db.patches.where({ model, user })
   if (starting_at) {
     return await patches.and(patch => patch.id! > starting_at).toArray()
   } else {
@@ -90,30 +80,9 @@ export const patches = async (model: string, user: string, starting_at: number |
 export const save = async (model: Model, patch: Patch) => {
   let model_dto = { id: model.id, user: model.user, name: model.name, description: model.description }
   let patch_dto = { user: patch.user, model: patch.model, data: patch.data }
-  await db.transaction('rw', [db.models, db.local_patches], async () => {
+  await db.transaction('rw', [db.models, db.patches], async () => {
     db.models.put(model_dto, model_dto.id);
-    db.local_patches.add(patch_dto)
+    db.patches.add(patch_dto)
   });
 }
 
-export const save_remote_patch = async (patch: Patch) => {
-  let patch_dto = { user: patch.user, model: patch.model, data: patch.data }
-  await db.remote_patches.add(patch_dto);
-}
-
-export const import_remote_patches = async (model: string, user: string) => {
-  await db.transaction('rw', [db.local_patches, db.remote_patches], async () => {
-    db.remote_patches.where({ model, user }).each((patch) => {
-      if (patch.id) {
-        let remote_patch_id = patch.id
-        delete patch.id
-        db.remote_patches.delete(remote_patch_id)
-        db.local_patches.add(patch)
-      }
-    });
-  });
-}
-
-export const save_latest_sent_patch = async (patch: SentPatch) => {
-  await db.sent_patches.put(patch, [patch.model, patch.user])
-}

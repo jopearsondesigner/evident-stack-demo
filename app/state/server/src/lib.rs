@@ -1,12 +1,6 @@
-mod firestore;
-
 use std::str::FromStr;
 
-use crate::firestore::{FirestoreAutomergeStateRepository, FirestoreError};
-use collaboration::{
-    server::{CollaborationCommand, CollaborationDecider, CollaborativeDocument},
-    CollaborationError,
-};
+use collaboration::server::{CollaborationCommand, CollaborationDecider, CollaborativeDocument};
 use js_sys::Uint8Array;
 use state_shared::strategies::{ReifyDecideSave, ReifyDecideSaveError, StateRepository};
 use uuid::Uuid;
@@ -32,14 +26,14 @@ pub fn set_panic_hook() {
 
 #[wasm_bindgen]
 pub struct AutomergeSyncServerStateManager {
-    repository: FirestoreAutomergeStateRepository,
+    // repository: FirestoreAutomergeStateRepository,
 }
 
 struct AutomergeSyncServerDecider;
 
-impl ReifyDecideSave for AutomergeSyncServerDecider {
-    type Decide = CollaborationDecider;
-}
+// impl ReifyDecideSave for AutomergeSyncServerDecider {
+//     type Decide = CollaborationDecider;
+// }
 
 fn parse_uuid(uuid_str: String) -> Result<Uuid, JsValue> {
     Uuid::from_str(&uuid_str)
@@ -55,14 +49,14 @@ pub enum Role {
     Viewer,
 }
 
-impl From<Role> for collaboration::Role {
+impl From<Role> for collaboration::server::Role {
     fn from(value: Role) -> Self {
         todo!()
     }
 }
 
-impl From<collaboration::Role> for Role {
-    fn from(value: collaboration::Role) -> Self {
+impl From<collaboration::server::Role> for Role {
+    fn from(value: collaboration::server::Role) -> Self {
         todo!()
     }
 }
@@ -158,8 +152,9 @@ impl AutomergeSyncServerStateManager {
         &mut self,
         command: CollaborationCommand,
     ) -> Result<CollaborativeDocument, JsValue> {
-        AutomergeSyncServerDecider::execute_reify_decide(&mut self.repository, &(), &command)
-            .await
-            .map_err(|e| JsValue::from(format!("Error dispatching command {:?}: {:?}", command, e)))
+        todo!()
+        // AutomergeSyncServerDecider::execute_reify_decide(&mut self.repository, &(), &command)
+        //     .await
+        //     .map_err(|e| JsValue::from(format!("Error dispatching command {:?}: {:?}", command, e)))
     }
 }

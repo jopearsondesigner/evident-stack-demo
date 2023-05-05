@@ -103,7 +103,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                 case DraggingCommandKind.LANE_DRAG_DROP: {
                     switch (state.kind) {
                         case DraggingStateKind.LANE:
-                            if (laneTargetFromState(state)?.target_status === "good" && state.value.target) {
+                            if (laneTargetFromState(state)?.targetStatus === "good" && state.value.target) {
                                 const { source, target } = state.value;
                                 const { laneId, laneKind: laneType } = source;
                                 const { laneIndex } = target;
@@ -158,7 +158,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                 case DraggingCommandKind.CELL_DRAG_DROP: {
                     switch (state.kind) {
                         case DraggingStateKind.LANE:
-                            if (laneTargetFromState(state)?.target_status === "good" && state.value.target) {
+                            if (laneTargetFromState(state)?.targetStatus === "good" && state.value.target) {
                                 const { source, target } = state.value;
                                 const { laneId, laneKind: laneType } = source;
                                 const { laneIndex } = target;
@@ -201,7 +201,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
     }
 }
 
-export function laneTargetFromState(state: DraggingState): { index: number, kind: LaneKind, target_status: DropTargetStatus } | void {
+export function laneTargetFromState(state: DraggingState): { index: number, kind: LaneKind, targetStatus: DropTargetStatus } | void {
     switch (state.kind) {
         case DraggingStateKind.LANE: {
             if (!state.value.target) {
@@ -214,8 +214,28 @@ export function laneTargetFromState(state: DraggingState): { index: number, kind
             return {
                 index: state.value.target.laneIndex,
                 kind: targetKind,
-                target_status: (sourceKind == targetKind) ? "good" : "bad"
+                targetStatus: (sourceKind == targetKind) ? "good" : "bad"
             };
+        }
+        default:
+            return undefined;
+    }
+}
+
+export function placementTargetFromState(state: DraggingState): { column: number, laneId: string, targetStatus: DropTargetStatus } | void {
+    switch (state.kind) {
+        case DraggingStateKind.PLACEMENT: {
+            if (!state.value.target) {
+                return undefined;
+            }
+
+            const { column, laneId } = state.value.target;
+
+            return {
+                column,
+                laneId,
+                targetStatus: "good"
+            }
         }
         default:
             return undefined;

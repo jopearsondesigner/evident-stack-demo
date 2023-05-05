@@ -7,7 +7,8 @@
     type DragCommand,
     DraggingCommandKind,
     laneTargetFromState,
-    buildEvolveAndReact
+    buildEvolveAndReact,
+    placementTargetFromState
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -155,7 +156,7 @@
 
   const handleOutOfBoundsDragEnd: DragEventHandler<EventTarget> = (_e) => {
     console.warn('OUT OF BOUNDS END');
-    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END};
+    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END };
     drag_state = evolveAndReactDraggingState(drag_state, command);
   };
 
@@ -232,12 +233,14 @@
   $: lane_drop_target = laneTargetFromState(drag_state);
   $: audience_drop_target =
     lane_drop_target?.kind == 'audience'
-      ? { index: lane_drop_target.index, targetStatus: lane_drop_target.target_status }
+      ? { index: lane_drop_target.index, targetStatus: lane_drop_target.targetStatus }
       : undefined;
   $: stream_drop_target =
     lane_drop_target?.kind == 'stream'
-      ? { index: lane_drop_target.index, targetStatus: lane_drop_target.target_status }
+      ? { index: lane_drop_target.index, targetStatus: lane_drop_target.targetStatus }
       : undefined;
+
+  $: placement_drop_target = placementTargetFromState(drag_state);
 
   // Cursor
 
@@ -442,7 +445,14 @@
       {@const row = lane_index + 1}
       {@const drop_target =
         audience_drop_target?.index == lane_index ? audience_drop_target.targetStatus : undefined}
-      <AudienceLane 
+      {@const cell_drop_target =
+        placement_drop_target && placement_drop_target.laneId == audience.id
+          ? {
+              column: placement_drop_target.column,
+              targetStatus: placement_drop_target.targetStatus
+            }
+          : undefined}
+      <AudienceLane
         on:navigate_cursor={handleNavigateCursor}
         on:move_interface_placement={handleMoveInterfacePlacement}
         on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
@@ -453,6 +463,7 @@
         on:placement_drag_start={handlePlacementDragStart}
         on:cell_drag_enter={handlePlacementDragEnter}
         on:cell_drag_drop={handlePlacementDragDrop}
+        {cell_drop_target}
         {drop_target}
         {row}
         {audience}
@@ -466,6 +477,9 @@
       on:move_timeline_placement={handleMoveTimelinePlacement}
       on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
       on:connect_flow={handleConnectFlow}
+      on:placement_drag_start={handlePlacementDragStart}
+      on:cell_drag_enter={handlePlacementDragEnter}
+      on:cell_drag_drop={handlePlacementDragDrop}
       row={timeline_row}
       placements={timeline_placements}
       {max_column}
@@ -475,6 +489,13 @@
       {@const row = lane_index + timeline_row + 1}
       {@const drop_target =
         stream_drop_target?.index == lane_index ? stream_drop_target.targetStatus : undefined}
+      {@const cell_drop_target =
+        placement_drop_target && placement_drop_target.laneId == stream.id
+          ? {
+              column: placement_drop_target.column,
+              targetStatus: placement_drop_target.targetStatus
+            }
+          : undefined}
       <StreamLane
         on:navigate_cursor={handleNavigateCursor}
         on:move_event_placement={handleMoveEventPlacement}
@@ -487,6 +508,7 @@
         on:cell_drag_enter={handlePlacementDragEnter}
         on:cell_drag_drop={handlePlacementDragDrop}
         {drop_target}
+        {cell_drop_target}
         {row}
         {stream}
         {max_column}

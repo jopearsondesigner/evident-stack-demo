@@ -22,6 +22,9 @@
 
   export let drop_target: DropTargetStatus | undefined = undefined;
 
+  export let cell_drop_target: { column: number; targetStatus: DropTargetStatus } | undefined =
+    undefined;
+
   $: gridRow = row + 1;
   $: audience.placements.length = max_column;
   $: good_target = drop_target == 'good';
@@ -31,16 +34,14 @@
     let transfer = e.dataTransfer;
     console.warn('Audience Drag Start', e);
 
-    if (transfer && audience.id) {
-      console.warn(`Setting transfer with Audience ${audience.id}`);
-      transfer.setData('lane', audience.id);
+    if (transfer) {
       transfer.effectAllowed = 'move';
-
-      dispatch('lane_drag_start', {
-        laneId: audience.id,
-        laneType: 'audience'
-      });
     }
+
+    dispatch('lane_drag_start', {
+      laneId: audience.id,
+      laneType: 'audience'
+    });
   };
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
@@ -67,7 +68,7 @@
 {#if audience.name}
   <h3
     on:dragstart={handleDragStart}
-    draggable=true
+    draggable="true"
     class="audienceName sticky left-3 z-30 justify-self-start self-start cursor-pointer prose text-body-light dark:text-body-dark mt-3 select-none cursor-move"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
   >
@@ -98,10 +99,15 @@
 />
 
 {#each audience.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
+  {@const drop_target =
+    cell_drop_target && cell_drop_target.column === column
+      ? cell_drop_target.targetStatus
+      : undefined}
   <Cell
     {row}
     {column}
     {lane_index}
+    {drop_target}
     lane_id={audience.id || ''}
     lane_kind="audience"
     on:navigate_cursor={forward}
@@ -115,6 +121,7 @@
         {column}
         name={placement.name}
         description={placement.description}
+        on:placement_drag_start={forward}
         on:connect_flow={forward}
       />
     {:else}

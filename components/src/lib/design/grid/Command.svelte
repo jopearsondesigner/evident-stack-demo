@@ -1,5 +1,4 @@
 <script lang="ts">
-  import MaybeTooltip from '../../utils/MaybeTooltip.svelte';
   import markdown from '../../utils/markdown.js';
   import type { DragEventHandler } from 'svelte/elements';
   import { createEventDispatcher } from 'svelte';
@@ -27,7 +26,7 @@
     // }
   dispatch('placement_drag_start', {
       placementId: id,
-      placementType: 'interface'
+      placementType: 'command'
     });
   };
 

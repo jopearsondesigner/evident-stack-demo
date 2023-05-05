@@ -1,16 +1,19 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import type { DragEventHandler, MouseEventHandler } from 'svelte/elements';
-  import type { LaneKind } from '../Grid';
+  import type { DropTargetStatus, LaneKind } from '../Grid';
 
   export let row: number;
   export let column: number;
   export let lane_index: number;
   export let lane_kind: LaneKind;
   export let lane_id: string;
+  export let drop_target: DropTargetStatus | undefined;
 
   $: gridRow = row + 1;
   $: gridColumn = column + 1;
+  $: good_target = drop_target == 'good';
+  $: bad_target = drop_target == 'bad';
 
   const dispatch = createEventDispatcher();
   const handleClick: MouseEventHandler<HTMLDivElement> = (_event) => {
@@ -47,6 +50,8 @@
   on:dragleave={handleDragLeave}
   on:drop={handleDragDrop}
   class="cell z-20 flex place-self-center align-items-center hover:bg-focus/[.18] transition duration-200 ease-in border-2 border-transparent"
+  class:bg-emerald-200={good_target}
+  class:bg-rose-400={bad_target}
   style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
 >
   <slot />

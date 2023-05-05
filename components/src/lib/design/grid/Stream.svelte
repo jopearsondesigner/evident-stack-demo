@@ -23,6 +23,9 @@
 
   export let drop_target: DropTargetStatus | undefined = undefined;
 
+  export let cell_drop_target: { column: number; targetStatus: DropTargetStatus } | undefined =
+    undefined;
+
   $: stream.placements.length = max_column;
   $: good_target = drop_target == 'good';
   $: bad_target = drop_target == 'bad';
@@ -97,10 +100,15 @@
 />
 
 {#each stream.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
+  {@const drop_target =
+    cell_drop_target && cell_drop_target.column === column
+      ? cell_drop_target.targetStatus
+      : undefined}
   <Cell
     {row}
     {column}
     {lane_index}
+    {drop_target}
     lane_id={stream.id || ''}
     lane_kind="stream"
     on:navigate_cursor={forward}
@@ -114,6 +122,7 @@
         {column}
         name={placement.name}
         description={placement.description}
+        on:placement_drag_start={forward}
         on:connect_flow={forward}
       />
     {:else}

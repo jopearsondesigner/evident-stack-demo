@@ -43,6 +43,7 @@
         {column}
         name={placement.name}
         description={placement.description}
+        on:placement_drag_start={forward}
         on:connect_flow={forward}
       />
     {:else if placement && placement.kind === 'readModel'}
@@ -52,6 +53,7 @@
         {column}
         name={placement.name}
         description={placement.description}
+        on:placement_drag_start={forward}
         on:connect_flow={forward}
       />
     {:else}

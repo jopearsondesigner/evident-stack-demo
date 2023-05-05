@@ -1,5 +1,4 @@
 <script lang="ts">
-  import MaybeTooltip from '../../utils/MaybeTooltip.svelte';
   import markdown from '../../utils/markdown.js';
   import type { DragEventHandler } from 'svelte/elements';
   import FlowPort from './FlowPort.svelte';

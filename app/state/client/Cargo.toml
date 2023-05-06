@@ -16,6 +16,7 @@ async-trait = { workspace = true }
 event-models = { path = "../../../domain/event-models", features = ["automerge"] }
 automerge = { workspace = true }
 autosurgeon = { workspace = true, features = ["uuid"] }
+base64 = { workspace = true }
 # domain_functions = { git = "https://github.com/evidentstack/domain_functions.rs" }
 epoch = { workspace = true }
 getrandom = { version = "0.2", features = ["js"] }

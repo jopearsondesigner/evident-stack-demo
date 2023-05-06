@@ -114,19 +114,10 @@ impl EventModelStateManager {
         }
     }
 
-    pub fn refresh(
-        &mut self,
-        data: Uint8Array,
-        latest_patch_id: usize,
-    ) -> Result<EventModelGrid, JsValue> {
+    pub fn refresh(&mut self, bin: Uint8Array) -> Result<EventModelGrid, JsValue> {
         if let Some(model) = self.repository.key {
             self.repository
-                .load_incremental(Patch {
-                    id: Some(latest_patch_id),
-                    user: self.repository.user.to_owned(),
-                    model: model.to_string(),
-                    data: data.to_vec(),
-                })
+                .load_incremental(bin.to_vec())
                 .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
             self.repository
                 .state()

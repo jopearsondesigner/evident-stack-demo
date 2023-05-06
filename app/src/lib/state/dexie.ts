@@ -1,5 +1,11 @@
+import { browser } from "$app/environment";
 import { Dexie, liveQuery, type Observable } from "dexie";
 import { readable } from "svelte/store";
+
+if (browser) {
+  await import('dexie-observable');
+  await import('dexie-syncable');
+}
 
 type Model = {
   id: string,
@@ -9,7 +15,7 @@ type Model = {
 }
 
 type Patch = {
-  id?: number,
+  id?: string,
   user: string,
   model: string,
   data: Uint8Array
@@ -47,34 +53,23 @@ const patchesObservable = (model: string, user: string): Observable<Patch[]> => 
   return liveQuery(() => db.patches.where({ model, user }).toArray())
 }
 
-export const compositePatchStore = (model: string, user: string) => {
+export const documentBinaryStore = (model: string, user: string) => {
   return readable(
-    { id: 0, model, user, data: new Uint8Array() },
+    new Uint8Array(),
     setter => {
       let subscription = patchesObservable(model, user).subscribe(patches => {
         let data = patches.reduce(
           (acc: Uint8Array, patch: Patch) => concatBuffers(acc, patch.data),
           new Uint8Array()
         );
-        setter({
-          id: patches[patches.length - 1].id || 0,
-          user,
-          model,
-          data
-        })
+        setter(data)
       });
-
       () => subscription.unsubscribe()
     })
 }
 
-export const patches = async (model: string, user: string, starting_at: number | undefined): Promise<Array<Patch>> => {
-  let patches = db.patches.where({ model, user })
-  if (starting_at) {
-    return await patches.and(patch => patch.id! > starting_at).toArray()
-  } else {
-    return await patches.toArray()
-  }
+export const patches = async (model: string, user: string | undefined): Promise<Array<Patch>> => {
+  return await db.patches.where({ model, user }).toArray()
 }
 
 export const save = async (model: Model, patch: Patch) => {
@@ -85,4 +80,3 @@ export const save = async (model: Model, patch: Patch) => {
     db.patches.add(patch_dto)
   });
 }
-

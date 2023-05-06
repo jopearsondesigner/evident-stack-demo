@@ -511,6 +511,7 @@ dependencies = [
  "async-trait",
  "automerge",
  "autosurgeon",
+ "base64",
  "console_error_panic_hook",
  "epoch",
  "event-models",

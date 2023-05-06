@@ -5,17 +5,15 @@ use automerge::{ActorId, AutoCommit};
 use event_models::{
     implementation::automerge::AutomergeEventModel, Described, EventModelState, Named,
 };
-use js_sys::Array;
 use serde::Deserialize;
 use state_shared::{automerge::Reconcilable, strategies::StateRepository, HasKey};
 use uuid::Uuid;
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
-use web_sys::console;
 
-#[wasm_bindgen(module = "$lib/indexed_db")]
+#[wasm_bindgen(module = "$lib/state/dexie")]
 extern "C" {
     #[wasm_bindgen(catch)]
-    async fn patches(id: &str, user: &str, starting_at: Option<usize>) -> Result<JsValue, JsValue>;
+    async fn patches(id: &str, user: &str) -> Result<JsValue, JsValue>;
 
     #[wasm_bindgen(catch)]
     async fn save(model: Model, patch: Patch) -> Result<(), JsValue>;
@@ -41,7 +39,6 @@ pub struct Model {
 #[derive(Clone, Deserialize)]
 #[wasm_bindgen(getter_with_clone)]
 pub struct Patch {
-    pub id: Option<usize>,
     pub user: String,
     pub model: String,
     pub data: Vec<u8>,
@@ -51,7 +48,6 @@ pub struct IndexedDbStateRepository {
     pub(crate) key: Option<Uuid>,
     pub(crate) user: String,
     pub(crate) automerge: AutoCommit,
-    pub(crate) latest_patch: Option<usize>,
 }
 
 impl IndexedDbStateRepository {
@@ -65,17 +61,13 @@ impl IndexedDbStateRepository {
             key,
             user,
             automerge,
-            latest_patch: None,
         })
     }
 
-    pub fn load_incremental(&mut self, patch: Patch) -> Result<(), IndexedDbError> {
-        let loaded_count = self
-            .automerge
-            .load_incremental(&patch.data)
+    pub fn load_incremental(&mut self, data: Vec<u8>) -> Result<(), IndexedDbError> {
+        self.automerge
+            .load_incremental(&data)
             .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
-        console::log_1(&format!("loaded ops into automerge {:?}", loaded_count).into());
-        self.latest_patch = patch.id;
         Ok(())
     }
 
@@ -98,7 +90,7 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
             Some(key) => {
                 let name: &str = &self.user;
 
-                let patches = patches(&key.to_string(), &self.user, self.latest_patch)
+                let patches = patches(&key.to_string(), &self.user)
                     .await
                     .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
 
@@ -111,7 +103,7 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
                             let patch: Patch = serde_wasm_bindgen::from_value(patch)
                                 .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
 
-                            self.load_incremental(patch)?;
+                            self.load_incremental(patch.data)?;
                         }
                         self.state()
                     }
@@ -144,7 +136,6 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
                             description: m.description().to_owned(),
                         };
                         let patch = Patch {
-                            id: None,
                             model: id.to_string(),
                             user: self.user.to_owned(),
                             data: self.save_incremental(),

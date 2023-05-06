@@ -2,7 +2,7 @@ import { default as init, EventModelGrid, EventModelStateManager, setPanicHook }
 import { derived, readable, type Readable } from 'svelte/store';
 import type { Decider, Lane } from '$components/design/Grid';
 import { dev } from "$app/environment";
-import { compositePatchStore } from "$lib/state/dexie";
+import { documentBinaryStore } from "$lib/state/dexie";
 
 export type InitializationPayload = {
   grid: Readable<EventModelGrid>,
@@ -19,11 +19,11 @@ const initialize_decider = async (id: string | undefined, user: string) => {
   let store;
 
   if (id) {
-    let doc_binary_store = compositePatchStore(id, user);
+    let $doc_binary = documentBinaryStore(id, user);
 
-    store = derived(doc_binary_store, (patch) => {
+    store = derived($doc_binary, (bin) => {
       try {
-        return manager.refresh(patch.data, patch.id)
+        return manager.refresh(bin)
       } catch {
         return null
       }

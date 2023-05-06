@@ -86,33 +86,7 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
     for IndexedDbStateRepository
 {
     async fn reify(&mut self) -> Result<EventModelState<AutomergeEventModel>, IndexedDbError> {
-        match &self.key {
-            Some(key) => {
-                let name: &str = &self.user;
-
-                let patches = patches(&key.to_string(), &self.user)
-                    .await
-                    .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
-
-                match js_sys::try_iter(&patches) {
-                    Ok(Some(it)) => {
-                        for patch in it {
-                            let patch =
-                                patch.map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
-
-                            let patch: Patch = serde_wasm_bindgen::from_value(patch)
-                                .map_err(|e| IndexedDbError::PatchLoad(format!("{:?}", e)))?;
-
-                            self.load_incremental(patch.data)?;
-                        }
-                        self.state()
-                    }
-                    Ok(None) => Ok(EventModelState::BeforeCreation),
-                    Err(e) => Err(IndexedDbError::PatchLoad(format!("{:?}", e))),
-                }
-            }
-            None => Ok(EventModelState::BeforeCreation),
-        }
+        self.state()
     }
 
     async fn save(

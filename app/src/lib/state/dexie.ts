@@ -36,11 +36,11 @@ class EventModelDatabase extends Dexie {
 
 const db = new EventModelDatabase();
 
-// TODO: ensure we handle upgrades blocked by other open tabs/windows
-// db.on("blocked", function() {
-//     alert ("Database upgrading was blocked by another window. " +
-//            "Please close down any other tabs or windows that has this page open");
-// });
+// TODO: more gracefully handle upgrades blocked by other open tabs/windows
+db.on("blocked", function() {
+  alert ("Database upgrading was blocked by another window. " +
+    "Please close down any other tabs or windows that has this page open");
+});
 
 const concatBuffers = (buf1: Uint8Array, buf2: Uint8Array) => {
   let ret = new Uint8Array(buf1.length + buf2.length);

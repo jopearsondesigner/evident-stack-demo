@@ -5,6 +5,7 @@
   import { invalidate } from '$app/navigation';
   import { handleSignOut } from '$lib/user';
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
 
   import CodeMirror from 'svelte-codemirror-editor';
   import { javascript } from '@codemirror/lang-javascript';
@@ -50,10 +51,53 @@
   import DropdownMenu from '$components/dropdown/DropdownMenu.svelte';
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
-  import DataGraphic from '$components/assets/images/product/global/DataGraphic.svg';
-  import DomainFunctionsGraphic from '$components/assets/images/product/global/DomainFunctionsGraphic.svg';
-  import DeployGraphic from '$components/assets/images/product/global/DeployGraphic.svg';
-  import DatabaseGraphic from '$components/assets/images/product/global/DatabaseGraphic.svg';
+  import { onMount } from 'svelte';
+  let expanded = false;
+  let designExpanded = false;
+  let dataExpanded = false;
+  let domainfunctionsExpanded = false;
+  let deployExpanded = false;
+  let databaseExpanded = false;
+  let path: string;
+
+  $: path = $page.url.pathname;
+  console.log(path);
+
+  $: if (path == '/design/models') {
+    designExpanded = true;
+    console.log(path);
+    console.log(dataExpanded);
+  } else {
+    designExpanded = false;
+  }
+  $: if (path == '/data') {
+    dataExpanded = true;
+    console.log(path);
+    console.log(dataExpanded);
+  } else {
+    dataExpanded = false;
+  }
+  $: if (path == '/domain-functions') {
+    domainfunctionsExpanded = true;
+    console.log(path);
+    console.log(dataExpanded);
+  } else {
+    domainfunctionsExpanded = false;
+  }
+  $: if (path == '/deploy') {
+    deployExpanded = true;
+    console.log(path);
+    console.log(dataExpanded);
+  } else {
+    deployExpanded = false;
+  }
+  $: if (path == '/db') {
+    databaseExpanded = true;
+    console.log(path);
+    console.log(dataExpanded);
+  } else {
+    databaseExpanded = false;
+  }
 
   export let data: LayoutData;
 
@@ -72,11 +116,11 @@
   })
 
   let isClosed = true;
-  let hidden = true;
-  let expanded = true;
-  let handleDrawer = () => {
+  let hidden = false;
+  let grid = true;
+  $: handleDrawer = () => {
     hidden = !hidden;
-    expanded = true;
+    expanded = !expanded;
   };
   let handleClick = () => {
     isClosed = !isClosed;
@@ -90,7 +134,7 @@
     hidden = !hidden;
   };
 
-  let code = '"domain" {\n' + '\tfoo: string, \n' + '\tbar: string, \n' + '\tbaz: int\n' + '}';
+  let data: LayoutData;
 </script>
 
 <Navbar website={false}>
@@ -115,58 +159,59 @@
         </MaybeTooltip>
       </div>
     </NavToolbar>
-    <NavToolbar navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark">
-      {#if data.session?.user}
-        <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
-          <IconButton slot="button" margin="mx-2 mt-1">
-            <Icon
-              name="profile"
-              size={32}
-              viewBox="0 0 32 32"
-              class="vertical-middle"
-              iconColor=""
-              pathName={Profile} />
-          </IconButton>
-          <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
-            {data.session?.user.email}
-          </DropdownItem>
-          <DropdownItem href="/account">Account</DropdownItem>
-          <DropdownDivider />
-          <DropdownItem className="flex-1">
-            <form method="post" action="/auth/sign-out">
-              <button class="button block">Sign Out</button>
-            </form>
-          </DropdownItem>
-        </DropdownMenu>
+    <NavToolbar
+      navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark">
+      <!-- {#if data.session.user} -->
+      <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
+        <IconButton slot="button" margin="mx-2 mt-1">
+          <Icon
+            name="profile"
+            size={32}
+            viewBox="0 0 32 32"
+            class="vertical-middle"
+            iconColor=""
+            pathName={Profile}
+          />
+        </IconButton>
+        <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
+          <!-- fake email for testing -->
+          lutobor.kostalova66@centrum.cz</DropdownItem>
+        <DropdownItem href="/account">Account</DropdownItem>
+        <DropdownDivider />
+        <DropdownItem className="flex-1" on:click={handleSignOut}>Sign Out</DropdownItem>
+      </DropdownMenu>
 
-        <MaybeTooltip tip="Docs" position="tooltip-bottom">
-          <IconButton>
-            <Icon
-              name="docs"
-              size={18}
-              iconColor="text-body-light dark:text-body-dark"
-              pathName={Docs} />
-          </IconButton>
-        </MaybeTooltip>
-        <MaybeTooltip tip="Support" position="tooltip-bottom">
-          <IconButton
-            ><Icon
-               name="support"
-               size={18}
-               iconColor="text-body-light dark:text-body-dark"
-               pathName={Support}
-               />
-          </IconButton>
-        </MaybeTooltip>
-      {:else}
+      <MaybeTooltip tip="Docs" position="tooltip-bottom">
+        <IconButton
+          ><Icon
+            name="docs"
+            size={18}
+            iconColor="text-body-light dark:text-body-dark"
+            pathName={Docs}
+          />
+        </IconButton>
+      </MaybeTooltip>
+      <MaybeTooltip tip="Support" position="tooltip-bottom">
+        <IconButton
+          ><Icon
+            name="support"
+            size={18}
+            iconColor="text-body-light dark:text-body-dark"
+            pathName={Support}
+          />
+        </IconButton>
+      </MaybeTooltip>
+      <!-- {:else}
         <Button
           href="/auth/sign-in"
           gradient
           color="brandStackPrimary"
           size="sm"
-          label="Sign In" />
-        {/if}
-      </NavToolbar>
+          on:click
+          label="Sign In"
+        />
+      {/if} -->
+    </NavToolbar>
   </NavInner>
 </Navbar>
 
@@ -176,12 +221,17 @@
   <Sidebar class={!isClosed ? 'w-[417px]' : 'w-[240px]'} {isClosed}>
     <SidebarWrapper>
       <Accordion class="flex flex-col" style="height: calc(100vh - 183px);">
-        <SidebarContainer src={DesignLogo} route="design" title="Design" id="design" bind:expanded>
+        <SidebarContainer
+          src={DesignLogo}
+          title="Design"
+          id="design/models"
+          on:click={() => (grid = true)}
+          bind:expanded={designExpanded} >
           <SidebarGroup>
             <SidebarDropdownWrapper
-              label="	Schema"
+              label="Schema"
               on:click={handleClick}
-              bind:isVerticalOpen >
+              bind:isVerticalOpen>
               <Icon
                 slot="icon"
                 name="schema"
@@ -197,9 +247,9 @@
                 pathName={Schema}
                 />
               <SidebarDropdownItem feature>
-                <Label class="mt-8"
-                  ><span class="mb-1 text-body dark:text-white">Event Model Schema</span></Label
-                >
+                <Label class="mt-8">
+                  <span class="mb-1 text-body dark:text-white">Event Model Schema</span>
+                </Label>
                 <CodeMirror
                   value={valueEventModel}
                   theme={oneDark}
@@ -247,39 +297,42 @@
         </SidebarContainer>
         <SidebarContainer
           src={DataLogo}
-          route="data"
-          href="/data"
           id="data"
           title="Data"
           on:click={() => (isClosed = true)}
-          on:click={() => (isVerticalOpen = false)} >
+          on:click={() => (isVerticalOpen = false)}
+          on:click={() => (grid = false)}
+          bind:expanded={dataExpanded} >
           <SidebarGroup />
         </SidebarContainer>
         <SidebarContainer
           src={DomainFunctionsLogo}
-          route="domain-functions"
           id="domain-functions"
           title="Domain Functions"
           on:click={() => (isClosed = true)}
-          on:click={() => (isVerticalOpen = false)} >
+          on:click={() => (isVerticalOpen = false)}
+          on:click={() => (grid = false)}
+          bind:expanded={domainfunctionsExpanded} >
           <SidebarGroup />
         </SidebarContainer>
         <SidebarContainer
           src={DeployLogo}
-          route="deploy"
           id="deploy"
           title="Deploy"
           on:click={() => (isClosed = true)}
-          on:click={() => (isVerticalOpen = false)} >
+          on:click={() => (isVerticalOpen = false)}
+          on:click={() => (grid = false)}
+          bind:expanded={deployExpanded} >
           <SidebarGroup />
         </SidebarContainer>
         <SidebarContainer
           src={DatabaseLogo}
-          route="db"
-          id="database"
+          id="db"
           title="Database"
           on:click={() => (isClosed = true)}
-          on:click={() => (isVerticalOpen = false)} >
+          on:click={() => (isVerticalOpen = false)}
+          on:click={() => (grid = false)}
+          bind:expanded={databaseExpanded} >
           <SidebarGroup />
         </SidebarContainer>
       </Accordion>
@@ -288,7 +341,7 @@
 </Drawer>
 
 <main
-  class="mt-16 left-0 relative transition-all duration-[200ms] ml-0"
+  class="{grid ? 'relative' : 'absolute'} left-0 right-0 transition-all duration-[200ms] ml-0"
   class:left-60={!hidden}
   class:ml-[177px]={!isClosed}
   class:ease-in={!isClosed} >

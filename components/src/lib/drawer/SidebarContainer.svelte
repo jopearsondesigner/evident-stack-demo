@@ -3,6 +3,14 @@
   import { slide } from 'svelte/transition';
   import { sineIn } from 'svelte/easing';
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
+  /**
+   * @type {string | string[]}
+   */
+  let path;
+  $: path = $page.url.pathname;
+
+  export let expanded = false;
 
   export let brandClass =
     'inline bg-white dark:bg-dark-2 flex justify-center w-full cursor-default';
@@ -10,9 +18,6 @@
     'pl-4 pr-1 h-8 transition duration-200 ease-in w-full bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] focus:text-body focus:bg-focus/[.20] dark:focus:bg-focus/[.20] cursor-default font-extrabold text-default text-body dark:text-white text-left whitespace-nowrap';
 
   export let title = 'Title';
-
-  export let expanded = false;
-
   export let id = 'item' + Math.random().toString(36);
   export let alt = '';
   export let height = 28;
@@ -51,7 +56,6 @@
 
   export let disabled = false;
   export const isClosed = true;
-  export let route = '';
 </script>
 
 <li data-accordion-item {...$$restProps} class:grow={expanded} class="flex flex-col">
@@ -62,9 +66,10 @@
     aria-controls={id}
     aria-disabled={disabled}
     id={button_id}
-    on:click={() => goto(`/${route}`)}
-    disabled={expanded}
+    on:click={() => goto(`/${id}`)}
+    on:click
     class={expanded ? brandClass : btnClass}
+    disabled={expanded}
     on:click={() => {
       if (ctx) {
         ctx.toggle({ id, expanded: !expanded });

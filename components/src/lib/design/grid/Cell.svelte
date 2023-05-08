@@ -6,7 +6,7 @@
   export let row: number;
   export let column: number;
   export let lane_index: number;
-  export let lane_kind: LaneKind;
+  export let lane_kind: LaneKind | "timeline";
   export let lane_id: string;
   export let drop_target: DropTargetStatus | undefined;
 

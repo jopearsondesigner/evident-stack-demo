@@ -6,9 +6,9 @@
     DraggingStateKind,
     type DragCommand,
     DraggingCommandKind,
-    laneTargetFromState,
+    laneTargetStatus,
     buildEvolveAndReact,
-    placementTargetFromState
+    placementTargetStatus
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -230,7 +230,7 @@
   // Lanes
   $: default_stream_lane_index = streams.length;
   $: default_audience_lane_index = audiences.length;
-  $: lane_drop_target = laneTargetFromState(drag_state);
+  $: lane_drop_target = laneTargetStatus(drag_state);
   $: audience_drop_target =
     lane_drop_target?.kind == 'audience'
       ? { index: lane_drop_target.index, targetStatus: lane_drop_target.targetStatus }
@@ -240,7 +240,7 @@
       ? { index: lane_drop_target.index, targetStatus: lane_drop_target.targetStatus }
       : undefined;
 
-  $: placement_drop_target = placementTargetFromState(drag_state);
+  $: placement_drop_target = placementTargetStatus(drag_state);
 
   // Cursor
 

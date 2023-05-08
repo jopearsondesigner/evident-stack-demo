@@ -21,14 +21,14 @@
 
   export let lane_index: number;
 
-  export let drop_target: DropTargetStatus | undefined = undefined;
+  export let targeted_lane: DropTargetStatus | undefined = undefined;
 
-  export let cell_drop_target: { column: number; targetStatus: DropTargetStatus } | undefined =
+  export let targeted_cell: { column: number; targetStatus: DropTargetStatus } | undefined =
     undefined;
 
   $: stream.placements.length = max_column;
-  $: good_target = drop_target == 'good';
-  $: bad_target = drop_target == 'bad';
+  $: good_target = targeted_lane == 'good';
+  $: bad_target = targeted_lane == 'bad';
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
@@ -101,8 +101,8 @@
 
 {#each stream.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
   {@const drop_target =
-    cell_drop_target && cell_drop_target.column === column
-      ? cell_drop_target.targetStatus
+    targeted_cell && targeted_cell.column === column
+      ? targeted_cell.targetStatus
       : undefined}
   <Cell
     {row}

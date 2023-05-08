@@ -230,17 +230,17 @@
   // Lanes
   $: default_stream_lane_index = streams.length;
   $: default_audience_lane_index = audiences.length;
-  $: lane_drop_target = laneTargetStatus(drag_state);
+  $: lane_drop_target = (drag_state.kind === DraggingStateKind.LANE) ? drag_state.value.target : undefined;
   $: audience_drop_target =
-    lane_drop_target?.kind == 'audience'
-      ? { index: lane_drop_target.index, targetStatus: lane_drop_target.targetStatus }
+    lane_drop_target?.laneKind == 'audience'
+      ? { index: lane_drop_target.laneIndex, targetStatus: lane_drop_target.targetStatus }
       : undefined;
   $: stream_drop_target =
-    lane_drop_target?.kind == 'stream'
-      ? { index: lane_drop_target.index, targetStatus: lane_drop_target.targetStatus }
+    lane_drop_target?.laneKind == 'stream'
+      ? { index: lane_drop_target.laneIndex, targetStatus: lane_drop_target.targetStatus }
       : undefined;
 
-  $: placement_drop_target = placementTargetStatus(drag_state);
+  $: cell_drop_target = (drag_state.kind === DraggingStateKind.PLACEMENT) ? drag_state.value.target : undefined;
 
   // Cursor
 
@@ -443,13 +443,13 @@
 
     {#each audiences as audience, lane_index (audience.id)}
       {@const row = lane_index + 1}
-      {@const drop_target =
+      {@const targeted_lane =
         audience_drop_target?.index == lane_index ? audience_drop_target.targetStatus : undefined}
-      {@const cell_drop_target =
-        placement_drop_target && placement_drop_target.laneId == audience.id
+      {@const targeted_cell =
+        cell_drop_target && cell_drop_target.laneId == audience.id
           ? {
-              column: placement_drop_target.column,
-              targetStatus: placement_drop_target.targetStatus
+              column: cell_drop_target.column,
+              targetStatus: cell_drop_target.targetStatus
             }
           : undefined}
       <AudienceLane
@@ -463,8 +463,8 @@
         on:placement_drag_start={handlePlacementDragStart}
         on:cell_drag_enter={handlePlacementDragEnter}
         on:cell_drag_drop={handlePlacementDragDrop}
-        {cell_drop_target}
-        {drop_target}
+        {targeted_cell}
+        {targeted_lane}
         {row}
         {audience}
         {max_column}
@@ -487,13 +487,13 @@
 
     {#each streams as stream, lane_index (stream.id)}
       {@const row = lane_index + timeline_row + 1}
-      {@const drop_target =
+      {@const targeted_lane =
         stream_drop_target?.index == lane_index ? stream_drop_target.targetStatus : undefined}
-      {@const cell_drop_target =
-        placement_drop_target && placement_drop_target.laneId == stream.id
+      {@const targeted_cell =
+        cell_drop_target && cell_drop_target.laneId == stream.id
           ? {
-              column: placement_drop_target.column,
-              targetStatus: placement_drop_target.targetStatus
+              column: cell_drop_target.column,
+              targetStatus: cell_drop_target.targetStatus
             }
           : undefined}
       <StreamLane
@@ -507,8 +507,8 @@
         on:placement_drag_start={handlePlacementDragStart}
         on:cell_drag_enter={handlePlacementDragEnter}
         on:cell_drag_drop={handlePlacementDragDrop}
-        {drop_target}
-        {cell_drop_target}
+        {targeted_lane}
+        {targeted_cell}
         {row}
         {stream}
         {max_column}

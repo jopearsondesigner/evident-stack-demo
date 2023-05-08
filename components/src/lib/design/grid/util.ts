@@ -1,27 +1,28 @@
 import type { Decider, DropTargetStatus, LaneKind, PlacementType } from "../Grid";
 
 // Types
-interface DropTargetWithStatus { targetStatus: DropTargetStatus}
+interface WithDropTargetStatus { targetStatus: DropTargetStatus}
 
-interface LaneTarget {
-    laneIndex: number,
-    laneKind: LaneKind, 
-}
-
-interface PlacementTarget {
-    column: number,
-    laneId: string,
-    laneKind: LaneKind,
-}
-
-interface LaneSource {
+export interface LaneSource {
     laneId: string,
     laneKind: LaneKind
 }
 
-interface PlacementSource {
+export interface PlacementSource {
     placementId: string,
     placementKind: PlacementType
+}
+
+export interface LaneTarget {
+    laneIndex: number,
+    laneKind: LaneKind, 
+}
+
+export interface CellTarget {
+    column: number,
+    laneId: string,
+    laneKind: LaneKind,
+    placementId?: string
 }
 
 export enum DraggingStateKind {
@@ -34,11 +35,11 @@ export type DraggingState =
     | { kind: DraggingStateKind.LANE,
         value: {
             source: LaneSource,
-            target?: LaneTarget & DropTargetWithStatus} }
+            target?: LaneTarget & WithDropTargetStatus} }
     | { kind: DraggingStateKind.PLACEMENT,
         value: {
             source: PlacementSource,
-            target?: PlacementTarget & DropTargetWithStatus } }
+            target?: CellTarget & WithDropTargetStatus } }
     | { kind: DraggingStateKind.NONE };
 
 export enum DraggingCommandKind {
@@ -54,26 +55,14 @@ export enum DraggingCommandKind {
 
 export type DragCommand =
     | { kind: DraggingCommandKind.LANE_DRAG_START,
-        value: {
-            laneId: string,
-            laneKind: LaneKind,
-        } }
+        value: LaneSource }
     | { kind: DraggingCommandKind.LANE_DRAG_ENTER,
-        value: { laneIndex: number, laneKind: LaneKind } }
+        value: LaneTarget }
     | { kind: DraggingCommandKind.LANE_DRAG_DROP }
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_START,
-        value: {
-            placementId: string,
-            placementKind: PlacementType
-        }}
+        value: PlacementSource }
     | { kind: DraggingCommandKind.CELL_DRAG_ENTER,
-        value: {
-            column: number
-            laneIndex: number,
-            laneKind: LaneKind,
-            laneId: string,
-            placementId?: string,
-        }}
+        value: CellTarget & LaneTarget }
     | { kind: DraggingCommandKind.CELL_DRAG_DROP }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END }
@@ -164,7 +153,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             }
                         }
                         case DraggingStateKind.PLACEMENT: {
-                            const target: PlacementTarget = {
+                            const target: CellTarget = {
                                 column,
                                 laneId,
                                 laneKind,
@@ -255,11 +244,11 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
     }
 }
 
-export function laneTargetStatus(source: LaneSource, target: LaneTarget): DropTargetStatus {
+function laneTargetStatus(source: LaneSource, target: LaneTarget): DropTargetStatus {
     return (source.laneKind == target.laneKind) ? "good" : "bad";
 }
 
-export function placementTargetStatus({ placementKind }: PlacementSource, { laneKind }: PlacementTarget): DropTargetStatus {
+function placementTargetStatus({ placementKind }: PlacementSource, { laneKind }: CellTarget): DropTargetStatus {
     switch (laneKind) {
         case "audience":
             return ( placementKind == "interface" ) ? "good" : "bad";

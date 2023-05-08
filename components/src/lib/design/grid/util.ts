@@ -22,7 +22,6 @@ export interface CellTarget {
     column: number,
     laneId: string,
     laneKind: LaneKind,
-    placementId?: string
 }
 
 export enum DraggingStateKind {
@@ -192,6 +191,9 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                 const { source, target } = state.value;
                                 const { placementId, placementKind } = source;
                                 const { column, laneId } = target
+
+
+                                console.warn("GOT HERE", { placementId, column, laneId });
 
                                 switch (placementKind) {
                                     case "command":

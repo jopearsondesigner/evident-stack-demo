@@ -133,7 +133,7 @@
         column,
         laneIndex,
         laneKind,
-        laneId
+        laneId,
       }
     };
 

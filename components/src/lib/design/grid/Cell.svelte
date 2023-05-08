@@ -27,7 +27,7 @@
       column,
       laneIndex: lane_index,
       laneKind: lane_kind,
-      laneId: lane_id
+      laneId: lane_id,
     });
   };
 

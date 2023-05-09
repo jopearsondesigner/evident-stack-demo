@@ -18,7 +18,7 @@
   "scripts": {
     "app:dev": "vite dev",
     "app:build": "vite build",
-    "state:dev": "cd state && cargo watch -i .gitignore -i \"pkg/*\" -s \"wasm-pack build --target web\"",
+    "state:dev": "cd state && cargo watch -i .gitignore -i \"pkg/*\" -s \"wasm-pack build --dev --target web\"",
     "state:build": "cd state && wasm-pack build --target web",
     "dev": "concurrently -k \"npm:state:dev\" \"npm:app:dev\"",
     "preview": "vite preview",

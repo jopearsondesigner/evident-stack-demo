@@ -33,19 +33,27 @@
   const dispatch = createEventDispatcher();
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
-    // let transfer = e.dataTransfer;
-    // if (transfer) {
-    //   transfer.setData('interface', id);
-    //   if (e.shiftKey) {
-    //     transfer.effectAllowed = 'copy';
-    //   } else {
-    //     transfer.effectAllowed = 'move';
-    //   }
-    // }
-    dispatch('placement_drag_start', {
-      placementId: interface_id,
-      placementType: 'interface'
-    });
+    let transfer = e.dataTransfer;
+
+    if (transfer) {
+      if (e.shiftKey) {
+        console.info('START DUPLICATE');
+        transfer.effectAllowed = 'copy';
+        dispatch('placement_drag_start', {
+          placementId: id,
+          placementType: 'interface',
+          sourceEffect: 'DUPLICATE'
+        });
+      } else {
+        console.info('START MOVE');
+        transfer.effectAllowed = 'move';
+        dispatch('placement_drag_start', {
+          placementId: id,
+          placementType: 'interface',
+          sourceEffect: 'MOVE'
+        });
+      }
+    }
   };
 
   // Linking

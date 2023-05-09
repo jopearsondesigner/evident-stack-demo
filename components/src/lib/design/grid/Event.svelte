@@ -15,20 +15,25 @@
   const dispatch = createEventDispatcher();
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
-    // let transfer = e.dataTransfer;
-    // if (transfer) {
-    //   transfer.setData('event', id);
-    //   if (e.shiftKey) {
-    //     transfer.effectAllowed = 'copy';
-    //   } else {
-    //     transfer.effectAllowed = 'move';
-    //   }
-    // }
-    dispatch('placement_drag_start', {
-        placementId: id,
-        placementType: 'event'
+    let transfer = e.dataTransfer;
+
+    if (transfer) {
+      if (e.shiftKey) {
+        transfer.effectAllowed = 'copy';
+        dispatch('placement_drag_start', {
+          placementId: id,
+          placementType: 'event',
+          sourceEffect: 'DUPLICATE'
+        });
+      } else {
+        transfer.effectAllowed = 'move';
+        dispatch('placement_drag_start', {
+          placementId: id,
+          placementType: 'event',
+          sourceEffect: 'MOVE'
+        });
       }
-    );
+    }
   };
 
   // Linking

@@ -3,6 +3,8 @@ import type { Decider, DropTargetStatus, LaneKind, PlacementType } from "../Grid
 // Types
 interface WithDropTargetStatus { targetStatus: DropTargetStatus}
 
+export type SourceEffect = "MOVE" | "DUPLICATE";
+
 export interface LaneSource {
     laneId: string,
     laneKind: LaneKind
@@ -10,7 +12,8 @@ export interface LaneSource {
 
 export interface PlacementSource {
     placementId: string,
-    placementKind: PlacementType
+    placementKind: PlacementType,
+    sourceEffect: SourceEffect,
 }
 
 export interface LaneTarget {
@@ -120,13 +123,15 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                     return { kind: DraggingStateKind.NONE }
                 };
                 case DraggingCommandKind.PLACEMENT_DRAG_START:
-                    const { placementId, placementKind } = command.value;
+                    const { placementId, placementKind, sourceEffect } = command.value;
+
                     return {
                         kind: DraggingStateKind.PLACEMENT,
                         value: {
                             source: {
                                 placementId,
-                                placementKind
+                                placementKind,
+                                sourceEffect
                             }
                         }
                     };
@@ -189,24 +194,38 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                         case DraggingStateKind.PLACEMENT: {
                             if (state.value.target && state.value.target.targetStatus === "good") {
                                 const { source, target } = state.value;
-                                const { placementId, placementKind } = source;
+                                const { placementId, placementKind, sourceEffect } = source;
                                 const { column, laneId } = target
 
-
-                                console.warn("GOT HERE", { placementId, column, laneId });
-
-                                switch (placementKind) {
-                                    case "command":
-                                        reactionDecider.move_timeline_placement(placementId, column);
-                                        break;
-                                    case "readModel":
-                                        reactionDecider.move_timeline_placement(placementId, column);
-                                        break;
-                                    case "event":
-                                        reactionDecider.move_event_placement(placementId, column, laneId);
-                                        break;
-                                    case "interface":
-                                        reactionDecider.move_interface_placement(placementId, column, laneId);
+                                switch (sourceEffect) {
+                                    case "MOVE":
+                                        switch (placementKind) {
+                                            case "command":
+                                                reactionDecider.move_timeline_placement(placementId, column);
+                                                break;
+                                            case "readModel":
+                                                reactionDecider.move_timeline_placement(placementId, column);
+                                                break;
+                                            case "event":
+                                                reactionDecider.move_event_placement(placementId, column, laneId);
+                                                break;
+                                            case "interface":
+                                                reactionDecider.move_interface_placement(placementId, column, laneId);
+                                        }
+                                    case "DUPLICATE":
+                                        switch (placementKind) {
+                                            case "command":
+                                                reactionDecider.duplicate_timeline_placement(placementId, column);
+                                                break;
+                                            case "readModel":
+                                                reactionDecider.duplicate_timeline_placement(placementId, column);
+                                                break;
+                                            case "event":
+                                                reactionDecider.duplicate_event_placement(placementId, column, laneId);
+                                                break;
+                                            case "interface":
+                                                reactionDecider.duplicate_interface_placement(placementId, column, laneId);
+                                        }
                                 }
                             }
                         }

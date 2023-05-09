@@ -1,6 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
+	import { SourceEffect } from './grid/util.ts';
   import {
     type DraggingState,
     DraggingStateKind,
@@ -8,7 +9,10 @@
     DraggingCommandKind,
     laneTargetStatus,
     buildEvolveAndReact,
-    placementTargetStatus
+    placementTargetStatus,
+
+    SourceEffect
+
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -108,12 +112,14 @@
     console.info('handlePlacementDragStart', e.detail);
     const placementId: string = e.detail.placementId;
     const placementKind: PlacementType = e.detail.placementType;
+    const sourceEffect: SourceEffect = e.detail.sourceEffect;
 
     const command: DragCommand = {
       kind: DraggingCommandKind.PLACEMENT_DRAG_START,
       value: {
         placementId,
-        placementKind
+        placementKind,
+        sourceEffect
       }
     };
 

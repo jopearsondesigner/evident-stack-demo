@@ -11,23 +11,29 @@
   export let description = '';
 
   $: descriptionHTML = markdown(description);
-  
+
   const dispatch = createEventDispatcher();
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
-    // let transfer = e.dataTransfer;
-    // if (transfer) {
-    //   transfer.setData('timeline', id);
-    //   if (e.shiftKey) {
-    //     transfer.effectAllowed = 'copy';
-    //   } else {
-    //     transfer.effectAllowed = 'move';
-    //   }
-    // }
-  dispatch('placement_drag_start', {
-      placementId: id,
-      placementType: 'command'
-    });
+    let transfer = e.dataTransfer;
+
+    if (transfer) {
+      if (e.shiftKey) {
+        transfer.effectAllowed = 'copy';
+        dispatch('placement_drag_start', {
+          placementId: id,
+          placementType: 'command',
+          sourceEffect: 'DUPLICATE'
+        });
+      } else {
+        transfer.effectAllowed = 'move';
+        dispatch('placement_drag_start', {
+          placementId: id,
+          placementType: 'command',
+          sourceEffect: 'MOVE'
+        });
+      }
+    }
   };
 
   // Linking

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { placementOrEmptyCellId, type Audience, DropTargetStatus } from '../Grid';
+  import { placementOrEmptyCellId, type Audience, type DropTargetStatus } from '../Grid';
   import EmptyCell from './EmptyCell.svelte';
   import Interface from './Interface.svelte';
   import { createEventDispatcher } from 'svelte';
@@ -40,7 +40,7 @@
 
     dispatch('lane_drag_start', {
       laneId: audience.id,
-      laneType: 'audience'
+      laneKind: 'audience'
     });
   };
 
@@ -49,8 +49,9 @@
     e.stopPropagation();
 
     dispatch('lane_drag_enter', {
+      audienceId: audience.id,
       laneIndex: lane_index,
-      laneType: 'audience'
+      rowKind: 'audience'
     });
   };
 
@@ -104,12 +105,15 @@
       ? targeted_cell.targetStatus
       : undefined}
   <Cell
-    {row}
     {column}
-    {lane_index}
-    {drop_target}
-    lane_id={audience.id || ''}
-    lane_kind="audience"
+    row={{
+      rowIndex: row,
+      audienceId: audience.id || '',
+      laneIndex: lane_index,
+      rowKind: "audience",
+    }}
+    maybe_placement={placement?.id}
+    target_status={drop_target}
     on:navigate_cursor={forward}
     on:cell_drag_enter={forward}
     on:cell_drag_drop={forward}

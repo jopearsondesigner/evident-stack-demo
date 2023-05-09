@@ -82,7 +82,7 @@ export type DragCommand =
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_START,
         value: PlacementSource }
     | { kind: DraggingCommandKind.CELL_DRAG_ENTER,
-        value: CellTarget & RowTarget }
+        value: CellTarget }
     | { kind: DraggingCommandKind.CELL_DRAG_DROP }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END }

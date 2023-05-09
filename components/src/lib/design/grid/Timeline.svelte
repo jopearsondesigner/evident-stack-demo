@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { placementOrEmptyCellId, type TimelinePlacement } from '../Grid';
+  import { type DropTargetStatus, placementOrEmptyCellId, type TimelinePlacement } from '../Grid';
   import Command from './Command.svelte';
   import EmptyCell from './EmptyCell.svelte';
   import ReadModel from './ReadModel.svelte';
@@ -19,7 +19,14 @@
 
   export let placements: Array<TimelinePlacement>;
 
+  export let targeted_lane: DropTargetStatus | undefined = undefined;
+
+  export let targeted_cell: { column: number; targetStatus: DropTargetStatus } | undefined =
+    undefined;
+
   $: placements.length = max_column;
+  $: good_target = targeted_lane == 'good';
+  $: bad_target = targeted_lane == 'bad';
 </script>
 
 <h3
@@ -31,11 +38,25 @@
 
 <div
   class="timeline z-[-1] absolute -top-px -left-3 bottom-0 -right-6 border-t border-b border-gray-brand-2 dark:border-white"
+  class:bg-emerald-200={good_target}
+  class:bg-rose-400={bad_target}
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 />
 
 {#each placements as placement, column (placementOrEmptyCellId(placement, column, row))}
-  <Cell {row} {column} on:navigate_cursor={forward}>
+  {@const drop_target =
+    targeted_cell && targeted_cell.column === column
+      ? targeted_cell.targetStatus
+      : undefined}
+  <Cell
+    {column}
+    row={{
+      rowIndex: row,
+      rowKind: "timeline"
+    }}
+    maybe_placement={placement?.id}
+    target_status={ drop_target}
+    on:navigate_cursor={forward}>
     {#if placement && placement.kind === 'command'}
       <Command
         id={placement.id}

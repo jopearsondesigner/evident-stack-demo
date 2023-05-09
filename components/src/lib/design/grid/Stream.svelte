@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { DropTargetStatus, placementOrEmptyCellId, type Stream } from '../Grid';
+  import { type DropTargetStatus, placementOrEmptyCellId, type Stream } from '../Grid';
   import EmptyCell from './EmptyCell.svelte';
   import Event from './Event.svelte';
   import { createEventDispatcher } from 'svelte';
@@ -50,8 +50,9 @@
     e.stopPropagation();
 
     dispatch('lane_drag_enter', {
+      streamId: stream.id,
       laneIndex: lane_index,
-      laneType: 'stream'
+      rowKind: 'stream'
     });
   };
 
@@ -105,12 +106,15 @@
       ? targeted_cell.targetStatus
       : undefined}
   <Cell
-    {row}
     {column}
-    {lane_index}
-    {drop_target}
-    lane_id={stream.id || ''}
-    lane_kind="stream"
+    row={{
+      rowIndex: row,
+      streamId: stream.id || '',
+      laneIndex: lane_index,
+      rowKind: "stream",
+    }}
+    maybe_placement={placement?.id}
+    target_status={drop_target}
     on:navigate_cursor={forward}
     on:cell_drag_enter={forward}
     on:cell_drag_drop={forward}

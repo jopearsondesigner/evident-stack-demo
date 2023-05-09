@@ -1,18 +1,16 @@
 <svelte:options immutable />
 
 <script lang="ts">
-	import { SourceEffect } from './grid/util.ts';
   import {
     type DraggingState,
     DraggingStateKind,
     type DragCommand,
     DraggingCommandKind,
-    laneTargetStatus,
     buildEvolveAndReact,
-    placementTargetStatus,
-
-    SourceEffect
-
+    type LaneSource,
+    type PlacementSource,
+    type RowTarget,
+    type CellTarget,
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -34,7 +32,6 @@
     type CursorMode,
     type GridMode,
     type Flow,
-    type PlacementType
   } from './Grid';
   import { onMount } from 'svelte';
   import { itemAtCursor, type LaneKind } from './Grid';
@@ -63,40 +60,29 @@
   let disambiguation: Disambiguation = null;
 
   // Drag Drop
-  let drag_state: DraggingState = { kind: DraggingStateKind.NONE };
+  let dragState: DraggingState = { kind: DraggingStateKind.NONE };
 
   const evolveAndReactDraggingState = buildEvolveAndReact(decider);
 
-  const handleLaneDragStart = async (e: CustomEvent) => {
+  const handleLaneDragStart = async (e: CustomEvent<LaneSource>) => {
     console.info('handleLaneDragStart', e.detail);
-    const laneId: string = e.detail.laneId;
-    const laneType: LaneKind = e.detail.laneType;
-
     const command: DragCommand = {
       kind: DraggingCommandKind.LANE_DRAG_START,
-      value: {
-        laneId,
-        laneKind: laneType
-      }
+      value: e.detail
     };
 
-    drag_state = evolveAndReactDraggingState(drag_state, command);
+    dragState = evolveAndReactDraggingState(dragState, command);
   };
 
-  const handleLaneDragEnter = async (e: CustomEvent) => {
+  const handleLaneDragEnter = async (e: CustomEvent<RowTarget>) => {
     console.info('handleLaneDragEnter', e.detail);
-    const laneIndex: number = e.detail.laneIndex;
-    const laneType: LaneKind = e.detail.laneType;
 
     const command: DragCommand = {
       kind: DraggingCommandKind.LANE_DRAG_ENTER,
-      value: {
-        laneIndex,
-        laneKind: laneType
-      }
+      value: e.detail
     };
 
-    drag_state = evolveAndReactDraggingState(drag_state, command);
+    dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handleLaneDragDrop = async (e: CustomEvent) => {
@@ -105,45 +91,32 @@
       kind: DraggingCommandKind.LANE_DRAG_DROP
     };
 
-    drag_state = evolveAndReactDraggingState(drag_state, command);
+    dragState = evolveAndReactDraggingState(dragState, command);
   };
 
-  const handlePlacementDragStart = async (e: CustomEvent) => {
+  const handlePlacementDragStart = async (e: CustomEvent<PlacementSource>) => {
     console.info('handlePlacementDragStart', e.detail);
-    const placementId: string = e.detail.placementId;
-    const placementKind: PlacementType = e.detail.placementType;
-    const sourceEffect: SourceEffect = e.detail.sourceEffect;
-
     const command: DragCommand = {
       kind: DraggingCommandKind.PLACEMENT_DRAG_START,
-      value: {
-        placementId,
-        placementKind,
-        sourceEffect
-      }
+      value: e.detail
     };
 
-    drag_state = evolveAndReactDraggingState(drag_state, command);
+    dragState = evolveAndReactDraggingState(dragState, command);
   };
 
-  const handlePlacementDragEnter = async (e: CustomEvent) => {
+  const handlePlacementDragEnter = async (e: CustomEvent<CellTarget>) => {
     console.info('handlePlacementDragEnter', e.detail);
-    const column: number = e.detail.column;
-    const laneIndex: number = e.detail.laneIndex;
-    const laneKind: LaneKind = e.detail.laneKind;
-    const laneId: string = e.detail.laneId;
+    const { column, row } = e.detail;
 
     const command: DragCommand = {
       kind: DraggingCommandKind.CELL_DRAG_ENTER,
       value: {
         column,
-        laneIndex,
-        rowKind: laneKind,
-        laneId,
+        row
       }
     };
 
-    drag_state = evolveAndReactDraggingState(drag_state, command);
+    dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handlePlacementDragDrop = async (e: CustomEvent) => {
@@ -151,19 +124,19 @@
 
     const command: DragCommand = { kind: DraggingCommandKind.CELL_DRAG_DROP };
 
-    drag_state = evolveAndReactDraggingState(drag_state, command);
+    dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handleOutOfBoundsDragEnter: DragEventHandler<EventTarget> = (_e) => {
     console.warn('OUT OF BOUNDS');
     const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER };
-    drag_state = evolveAndReactDraggingState(drag_state, command);
+    dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handleOutOfBoundsDragEnd: DragEventHandler<EventTarget> = (_e) => {
     console.warn('OUT OF BOUNDS END');
     const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END };
-    drag_state = evolveAndReactDraggingState(drag_state, command);
+    dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   // Command Dispatch
@@ -236,17 +209,22 @@
   // Lanes
   $: default_stream_lane_index = streams.length;
   $: default_audience_lane_index = audiences.length;
-  $: lane_drop_target = (drag_state.kind === DraggingStateKind.LANE) ? drag_state.value.target : undefined;
+  $: lane_drop_target =
+    dragState.kind === DraggingStateKind.LANE ? dragState.value.target : undefined;
   $: audience_drop_target =
-    lane_drop_target?.laneKind == 'audience'
+    lane_drop_target?.rowKind == 'audience'
       ? { index: lane_drop_target.laneIndex, targetStatus: lane_drop_target.targetStatus }
       : undefined;
   $: stream_drop_target =
-    lane_drop_target?.laneKind == 'stream'
+    lane_drop_target?.rowKind == 'stream'
       ? { index: lane_drop_target.laneIndex, targetStatus: lane_drop_target.targetStatus }
       : undefined;
 
-  $: cell_drop_target = (drag_state.kind === DraggingStateKind.PLACEMENT) ? drag_state.value.target : undefined;
+  $: timeline_drop_target =
+    lane_drop_target?.rowKind == 'timeline' ? lane_drop_target.targetStatus : undefined;
+
+  $: cell_drop_target =
+    dragState.kind === DraggingStateKind.PLACEMENT ? dragState.value.target : undefined;
 
   // Cursor
 
@@ -418,7 +396,7 @@
     return JSON.stringify({ ...state, kind });
   };
 
-  $: drag_json = genDragDebugJson(drag_state);
+  $: drag_json = genDragDebugJson(dragState);
 </script>
 
 <svelte:window
@@ -452,7 +430,9 @@
       {@const targeted_lane =
         audience_drop_target?.index == lane_index ? audience_drop_target.targetStatus : undefined}
       {@const targeted_cell =
-        cell_drop_target && cell_drop_target.laneId == audience.id
+        cell_drop_target &&
+        cell_drop_target.row.rowKind === 'audience' &&
+        cell_drop_target.row.audienceId == audience.id
           ? {
               column: cell_drop_target.column,
               targetStatus: cell_drop_target.targetStatus
@@ -488,6 +468,10 @@
       on:cell_drag_drop={handlePlacementDragDrop}
       row={timeline_row}
       placements={timeline_placements}
+      targeted_lane={timeline_drop_target}
+      targeted_cell={cell_drop_target && cell_drop_target.row.rowKind === 'timeline'
+        ? { column: cell_drop_target.column, targetStatus: cell_drop_target.targetStatus }
+        : undefined}
       {max_column}
     />
 
@@ -496,7 +480,9 @@
       {@const targeted_lane =
         stream_drop_target?.index == lane_index ? stream_drop_target.targetStatus : undefined}
       {@const targeted_cell =
-        cell_drop_target && cell_drop_target.laneId == stream.id
+        cell_drop_target &&
+        cell_drop_target.row.rowKind === 'stream' &&
+        cell_drop_target.row.streamId == stream.id
           ? {
               column: cell_drop_target.column,
               targetStatus: cell_drop_target.targetStatus

@@ -19,7 +19,7 @@
     "app:dev": "vite dev",
     "app:build": "vite build",
     "state:dev": "cd state && cargo watch -i .gitignore -i \"pkg/*\" -s \"wasm-pack build --dev --target web\"",
-    "state:build": "cd state && wasm-pack build --target web",
+    "state:build": "cd state && wasm-pack build --release --target web",
     "dev": "concurrently -k \"npm:state:dev\" \"npm:app:dev\"",
     "preview": "vite preview",
     "build": "npm run state:build && npm run app:build",

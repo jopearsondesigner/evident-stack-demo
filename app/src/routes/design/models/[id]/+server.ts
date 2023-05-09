@@ -1,4 +1,3 @@
-import { patches, addPatch } from "$lib/firebase/admin/firestore";
 import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 

@@ -115,7 +115,7 @@ impl EventModelStateManager {
     }
 
     pub fn refresh(&mut self, bin: Uint8Array) -> Result<EventModelGrid, JsValue> {
-        if let Some(model) = self.repository.key {
+        if let Some(_model) = self.repository.key {
             self.repository
                 .load_incremental(bin.to_vec())
                 .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;

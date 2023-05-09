@@ -2,9 +2,13 @@ import { browser } from "$app/environment";
 import { Dexie, liveQuery, type Observable } from "dexie";
 import { readable } from "svelte/store";
 
+export { Dexie };
+
 if (browser) {
   await import('dexie-observable');
   await import('dexie-syncable');
+  const { SupabaseSync } = await import("./sync_protocol");
+  Dexie.Syncable.registerSyncProtocol("evidentstack", SupabaseSync)
 }
 
 type Model = {
@@ -22,19 +26,19 @@ type Patch = {
 }
 
 class EventModelDatabase extends Dexie {
-  patches!: Dexie.Table<Patch, string>;
+  model_patches!: Dexie.Table<Patch, string>;
   models!: Dexie.Table<Model, string>;
 
   constructor() {
     super("evidentstack");
     this.version(1).stores({
       models: "&id, user, name",
-      patches: "$$id, [model+user]",
+      model_patches: "$$id, model",
     });
   }
 }
 
-const db = new EventModelDatabase();
+export const db = new EventModelDatabase();
 
 // TODO: more gracefully handle upgrades blocked by other open tabs/windows
 db.on("blocked", function() {
@@ -49,15 +53,15 @@ const concatBuffers = (buf1: Uint8Array, buf2: Uint8Array) => {
   return ret;
 };
 
-const patchesObservable = (model: string, user: string): Observable<Patch[]> => {
-  return liveQuery(() => db.patches.where({ model, user }).toArray())
+const patchesObservable = (model: string): Observable<Patch[]> => {
+  return liveQuery(() => db.model_patches.where({ model }).toArray())
 }
 
-export const documentBinaryStore = (model: string, user: string) => {
+export const documentBinaryStore = (model: string) => {
   return readable(
     new Uint8Array(),
     setter => {
-      let subscription = patchesObservable(model, user).subscribe(patches => {
+      let subscription = patchesObservable(model).subscribe(patches => {
         let data = patches.reduce(
           (acc: Uint8Array, patch: Patch) => concatBuffers(acc, patch.data),
           new Uint8Array()
@@ -68,15 +72,15 @@ export const documentBinaryStore = (model: string, user: string) => {
     })
 }
 
-export const patches = async (model: string, user: string | undefined): Promise<Array<Patch>> => {
-  return await db.patches.where({ model, user }).toArray()
+export const patches = async (model: string | undefined): Promise<Array<Patch>> => {
+  return await db.model_patches.where({ model }).toArray()
 }
 
 export const save = async (model: Model, patch: Patch) => {
   let model_dto = { id: model.id, user: model.user, name: model.name, description: model.description }
   let patch_dto = { user: patch.user, model: patch.model, data: patch.data }
-  await db.transaction('rw', [db.models, db.patches], async () => {
+  await db.transaction('rw', [db.models, db.model_patches], async () => {
     db.models.put(model_dto, model_dto.id);
-    db.patches.add(patch_dto)
+    db.model_patches.add(patch_dto)
   });
 }

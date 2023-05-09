@@ -2,7 +2,6 @@ import { default as init, EventModelGrid, EventModelStateManager, setPanicHook }
 import { derived, readable, type Readable } from 'svelte/store';
 import type { Decider, Lane } from '$components/design/Grid';
 import { dev } from "$app/environment";
-import { documentBinaryStore } from "$lib/state/dexie";
 
 export type InitializationPayload = {
   grid: Readable<EventModelGrid>,
@@ -10,16 +9,42 @@ export type InitializationPayload = {
 }
 
 const initialize_decider = async (id: string | undefined, user: string) => {
+  // Initialize Dexie
+  const { Dexie, documentBinaryStore, db } = await import("$lib/state/dexie");
+
+  // Initialize Wasm decider
   await init();
   if (dev) {
     setPanicHook();
+  }
+
+  let $syncing: Readable<string>;
+  if (id) {
+    // TODO: make schema/table names configurable?
+    db.syncable.connect("evidentstack", id,
+      {
+        user,
+        schema: "public",
+        patches_table: "model_patches",
+        models_table: "models",
+      }
+    );
+    $syncing = readable("before connection", setter => {
+      db.syncable.on('statusChanged', function (newStatus, url) {
+        if (url == id) {
+          setter(Dexie.Syncable.StatusTexts[newStatus]);
+        }
+      });
+    })
+  } else {
+    $syncing = readable("not connected")
   }
 
   let manager = await new EventModelStateManager(id, user);
   let store;
 
   if (id) {
-    let $doc_binary = documentBinaryStore(id, user);
+    let $doc_binary = documentBinaryStore(id);
 
     store = derived($doc_binary, (bin) => {
       try {
@@ -35,6 +60,7 @@ const initialize_decider = async (id: string | undefined, user: string) => {
   }
 
   return {
+    syncing: $syncing,
     grid: store,
     decider: {
       create_model: async (name: string) => {

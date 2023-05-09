@@ -13,9 +13,6 @@ use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 #[wasm_bindgen(module = "$lib/state/dexie")]
 extern "C" {
     #[wasm_bindgen(catch)]
-    async fn patches(id: &str, user: &str) -> Result<JsValue, JsValue>;
-
-    #[wasm_bindgen(catch)]
     async fn save(model: Model, patch: Patch) -> Result<(), JsValue>;
 }
 
@@ -75,9 +72,13 @@ impl IndexedDbStateRepository {
         self.automerge.save_incremental()
     }
 
-    pub fn state(&self) -> Result<EventModelState<AutomergeEventModel>, IndexedDbError> {
-        EventModelState::<AutomergeEventModel>::hydrate(&self.automerge)
-            .map_err(|e| IndexedDbError::Hydrate(format!("{:?}", e)))
+    pub fn state(&mut self) -> Result<EventModelState<AutomergeEventModel>, IndexedDbError> {
+        if self.automerge.document().is_empty() {
+            Ok(EventModelState::BeforeCreation)
+        } else {
+            EventModelState::<AutomergeEventModel>::hydrate(&self.automerge)
+                .map_err(|e| IndexedDbError::Hydrate(format!("{:?}", e)))
+        }
     }
 }
 
@@ -86,6 +87,7 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
     for IndexedDbStateRepository
 {
     async fn reify(&mut self) -> Result<EventModelState<AutomergeEventModel>, IndexedDbError> {
+        // We rely on in-memory AutoCommit doc, updated out-of-band via load_incremental, rather than reifying from storage
         self.state()
     }
 

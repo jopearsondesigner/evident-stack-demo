@@ -22,14 +22,14 @@
         transfer.effectAllowed = 'copy';
         dispatch('placement_drag_start', {
           placementId: id,
-          placementType: 'command',
+          placementKind: 'command',
           sourceEffect: 'DUPLICATE'
         });
       } else {
         transfer.effectAllowed = 'move';
         dispatch('placement_drag_start', {
           placementId: id,
-          placementType: 'command',
+          placementKind: 'command',
           sourceEffect: 'MOVE'
         });
       }

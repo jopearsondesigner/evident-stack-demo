@@ -45,18 +45,19 @@
 
 {#each placements as placement, column (placementOrEmptyCellId(placement, column, row))}
   {@const drop_target =
-    targeted_cell && targeted_cell.column === column
-      ? targeted_cell.targetStatus
-      : undefined}
+    targeted_cell && targeted_cell.column === column ? targeted_cell.targetStatus : undefined}
   <Cell
     {column}
     row={{
       rowIndex: row,
-      rowKind: "timeline"
+      rowKind: 'timeline'
     }}
     maybe_placement={placement?.id}
-    target_status={ drop_target}
-    on:navigate_cursor={forward}>
+    target_status={drop_target}
+    on:navigate_cursor={forward}
+    on:cell_drag_enter={forward}
+    on:cell_drag_drop={forward}
+  >
     {#if placement && placement.kind === 'command'}
       <Command
         id={placement.id}

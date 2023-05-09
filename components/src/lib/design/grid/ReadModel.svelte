@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PlacementSource } from './util';
   import markdown from '../../utils/markdown.js';
   import type { DragEventHandler } from 'svelte/elements';
   import FlowPort from './FlowPort.svelte';
@@ -22,14 +23,14 @@
         transfer.effectAllowed = 'copy';
         dispatch('placement_drag_start', {
           placementId: id,
-          placementType: 'readModel',
+          placementKind: 'readModel',
           sourceEffect: 'DUPLICATE'
         });
       } else {
         transfer.effectAllowed = 'move';
         dispatch('placement_drag_start', {
           placementId: id,
-          placementType: 'readModel',
+          placementKind: 'readModel',
           sourceEffect: 'MOVE'
         });
       }

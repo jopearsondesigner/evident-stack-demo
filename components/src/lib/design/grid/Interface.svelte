@@ -41,7 +41,7 @@
         transfer.effectAllowed = 'copy';
         dispatch('placement_drag_start', {
           placementId: id,
-          placementType: 'interface',
+          placementKind: 'interface',
           sourceEffect: 'DUPLICATE'
         });
       } else {
@@ -49,7 +49,7 @@
         transfer.effectAllowed = 'move';
         dispatch('placement_drag_start', {
           placementId: id,
-          placementType: 'interface',
+          placementKind: 'interface',
           sourceEffect: 'MOVE'
         });
       }

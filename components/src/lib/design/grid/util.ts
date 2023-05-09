@@ -136,16 +136,12 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                     return { kind: DraggingStateKind.NONE }
                 };
                 case DraggingCommandKind.PLACEMENT_DRAG_START:
-                    const { placementId, placementKind, sourceEffect } = command.value;
+                    console.warn("DraggingCommandKind.PLACEMENT_DRAG_START", command.value)
 
                     return {
                         kind: DraggingStateKind.PLACEMENT,
                         value: {
-                            source: {
-                                placementId,
-                                placementKind,
-                                sourceEffect
-                            }
+                            source: command.value
                         }
                     };
                 case DraggingCommandKind.CELL_DRAG_ENTER: {
@@ -166,6 +162,8 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                         }
                         case DraggingStateKind.PLACEMENT: {
                             const target = command.value;
+
+                            console.warn("PLACEMENT ENTER DECIDER", state.value.source, command.value);
 
                             return {
                                 ...state,
@@ -276,6 +274,7 @@ function laneTargetStatus(source: LaneSource, target: RowTarget): DropTargetStat
 }
 
 function placementTargetStatus({ placementKind }: PlacementSource, { row: { rowKind }}: CellTarget): DropTargetStatus {
+    console.warn("CALCULATE!!! => source, target", placementKind, rowKind)
     switch (rowKind) {
         case "audience":
             return ( placementKind == "interface" ) ? "good" : "bad";

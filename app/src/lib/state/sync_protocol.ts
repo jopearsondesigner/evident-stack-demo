@@ -53,12 +53,15 @@ export const SupabaseSync: ISyncProtocol = {
             case DELETE: if (change.table == options.models_table) {
               // TODO: invoke a deletion function here instead of direct DB modification?
               acc.model_deletions.push(change.key);
+            } else if (change.table == options.patches_table) {
+              acc.patch_deletions.push(change.key);
             }; break
           }
           return acc;
         },
         {
           patch_insertions: [] as any[],
+          patch_deletions: [] as any[],
           model_insertions: [] as any[],
           model_updates: [] as any[],
           model_deletions: [] as any[]

@@ -4,7 +4,9 @@
   import type { DropTargetStatus } from '../Grid';
   import type { RowTarget } from './util';
 
-  interface WithRowIndex { rowIndex: number };
+  interface WithRowIndex {
+    rowIndex: number;
+  }
 
   export let column: number;
   export let row: RowTarget & WithRowIndex;
@@ -22,11 +24,11 @@
   };
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn('Cell Drag Enter');
     e.stopPropagation();
     dispatch('cell_drag_enter', {
       column,
-      row
+      row,
+      placementId: maybe_placement
     });
   };
 

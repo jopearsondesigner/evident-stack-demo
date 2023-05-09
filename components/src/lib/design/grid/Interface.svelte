@@ -37,7 +37,6 @@
 
     if (transfer) {
       if (e.shiftKey) {
-        console.info('START DUPLICATE');
         transfer.effectAllowed = 'copy';
         dispatch('placement_drag_start', {
           placementId: id,
@@ -45,7 +44,6 @@
           sourceEffect: 'DUPLICATE'
         });
       } else {
-        console.info('START MOVE');
         transfer.effectAllowed = 'move';
         dispatch('placement_drag_start', {
           placementId: id,

@@ -10,7 +10,7 @@
     type LaneSource,
     type PlacementSource,
     type RowTarget,
-    type CellTarget,
+    type CellTarget
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -31,7 +31,7 @@
     type Disambiguation,
     type CursorMode,
     type GridMode,
-    type Flow,
+    type Flow
   } from './Grid';
   import { onMount } from 'svelte';
   import { itemAtCursor, type LaneKind } from './Grid';
@@ -65,7 +65,6 @@
   const evolveAndReactDraggingState = buildEvolveAndReact(decider);
 
   const handleLaneDragStart = async (e: CustomEvent<LaneSource>) => {
-    console.info('handleLaneDragStart', e.detail);
     const command: DragCommand = {
       kind: DraggingCommandKind.LANE_DRAG_START,
       value: e.detail
@@ -75,8 +74,6 @@
   };
 
   const handleLaneDragEnter = async (e: CustomEvent<RowTarget>) => {
-    console.info('handleLaneDragEnter', e.detail);
-
     const command: DragCommand = {
       kind: DraggingCommandKind.LANE_DRAG_ENTER,
       value: e.detail
@@ -86,7 +83,6 @@
   };
 
   const handleLaneDragDrop = async (e: CustomEvent) => {
-    console.info('TODO: handleLaneDragDrop');
     const command: DragCommand = {
       kind: DraggingCommandKind.LANE_DRAG_DROP
     };
@@ -95,7 +91,6 @@
   };
 
   const handlePlacementDragStart = async (e: CustomEvent<PlacementSource>) => {
-    console.info('handlePlacementDragStart', e.detail);
     const command: DragCommand = {
       kind: DraggingCommandKind.PLACEMENT_DRAG_START,
       value: e.detail
@@ -104,37 +99,29 @@
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
-  const handlePlacementDragEnter = async (e: CustomEvent<CellTarget>) => {
-    console.info('handlePlacementDragEnter', e.detail);
-    const { column, row } = e.detail;
-
+  const handleCellDragEnter = async (e: CustomEvent<CellTarget>) => {
     const command: DragCommand = {
       kind: DraggingCommandKind.CELL_DRAG_ENTER,
-      value: {
-        column,
-        row
-      }
+      value: e.detail
     };
 
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
-  const handlePlacementDragDrop = async (e: CustomEvent) => {
-    console.info('handlePlacementDragDrop', e.detail);
-
+  const handleCellDragDrop = async (e: CustomEvent) => {
     const command: DragCommand = { kind: DraggingCommandKind.CELL_DRAG_DROP };
 
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handleOutOfBoundsDragEnter: DragEventHandler<EventTarget> = (_e) => {
-    console.warn('OUT OF BOUNDS');
+    console.warn('DRAG OUT OF BOUNDS');
     const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER };
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handleOutOfBoundsDragEnd: DragEventHandler<EventTarget> = (_e) => {
-    console.warn('OUT OF BOUNDS END');
+    console.warn('DRAG DROP OUT OF BOUNDS END');
     const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END };
     dragState = evolveAndReactDraggingState(dragState, command);
   };
@@ -447,8 +434,8 @@
         on:lane_drag_enter={handleLaneDragEnter}
         on:lane_drag_drop={handleLaneDragDrop}
         on:placement_drag_start={handlePlacementDragStart}
-        on:cell_drag_enter={handlePlacementDragEnter}
-        on:cell_drag_drop={handlePlacementDragDrop}
+        on:cell_drag_enter={handleCellDragEnter}
+        on:cell_drag_drop={handleCellDragDrop}
         {targeted_cell}
         {targeted_lane}
         {row}
@@ -464,8 +451,8 @@
       on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
       on:connect_flow={handleConnectFlow}
       on:placement_drag_start={handlePlacementDragStart}
-      on:cell_drag_enter={handlePlacementDragEnter}
-      on:cell_drag_drop={handlePlacementDragDrop}
+      on:cell_drag_enter={handleCellDragEnter}
+      on:cell_drag_drop={handleCellDragDrop}
       row={timeline_row}
       placements={timeline_placements}
       targeted_lane={timeline_drop_target}
@@ -497,8 +484,8 @@
         on:lane_drag_enter={handleLaneDragEnter}
         on:lane_drag_drop={handleLaneDragDrop}
         on:placement_drag_start={handlePlacementDragStart}
-        on:cell_drag_enter={handlePlacementDragEnter}
-        on:cell_drag_drop={handlePlacementDragDrop}
+        on:cell_drag_enter={handleCellDragEnter}
+        on:cell_drag_drop={handleCellDragDrop}
         {targeted_lane}
         {targeted_cell}
         {row}

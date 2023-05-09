@@ -32,7 +32,6 @@
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
-    console.warn('Lane(Stream) Drag Start', e);
 
     if (transfer && stream.id) {
       transfer.setData('lane', stream.id);
@@ -46,7 +45,6 @@
   };
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn('Lane(Stream) Enter', e);
     e.stopPropagation();
 
     dispatch('lane_drag_enter', {
@@ -57,12 +55,10 @@
   };
 
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn('Lane(Stream) Leave');
     e.stopPropagation();
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn('Lane(Stream) Drop');
     dispatch('lane_drag_drop');
   };
 </script>
@@ -102,16 +98,14 @@
 
 {#each stream.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
   {@const drop_target =
-    targeted_cell && targeted_cell.column === column
-      ? targeted_cell.targetStatus
-      : undefined}
+    targeted_cell && targeted_cell.column === column ? targeted_cell.targetStatus : undefined}
   <Cell
     {column}
     row={{
       rowIndex: row,
       streamId: stream.id || '',
       laneIndex: lane_index,
-      rowKind: "stream",
+      rowKind: 'stream'
     }}
     maybe_placement={placement?.id}
     target_status={drop_target}

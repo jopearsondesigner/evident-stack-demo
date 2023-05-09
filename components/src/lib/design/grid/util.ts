@@ -43,6 +43,7 @@ export type RowTarget = | AudienceTarget | StreamTarget | TimelineTarget;
 export interface CellTarget {
     column: number,
     row: RowTarget,
+    placementId?: string,
 }
 
 export enum DraggingStateKind {
@@ -136,8 +137,6 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                     return { kind: DraggingStateKind.NONE }
                 };
                 case DraggingCommandKind.PLACEMENT_DRAG_START:
-                    console.warn("DraggingCommandKind.PLACEMENT_DRAG_START", command.value)
-
                     return {
                         kind: DraggingStateKind.PLACEMENT,
                         value: {
@@ -162,8 +161,6 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                         }
                         case DraggingStateKind.PLACEMENT: {
                             const target = command.value;
-
-                            console.warn("PLACEMENT ENTER DECIDER", state.value.source, command.value);
 
                             return {
                                 ...state,
@@ -273,8 +270,11 @@ function laneTargetStatus(source: LaneSource, target: RowTarget): DropTargetStat
     return (source.laneKind == target.rowKind) ? "good" : "bad";
 }
 
-function placementTargetStatus({ placementKind }: PlacementSource, { row: { rowKind }}: CellTarget): DropTargetStatus {
-    console.warn("CALCULATE!!! => source, target", placementKind, rowKind)
+function placementTargetStatus({ placementKind }: PlacementSource, { placementId, row: { rowKind }}: CellTarget): DropTargetStatus {
+    if (placementId) { // Don't drop on occupied cell
+        return "bad";
+    }
+
     switch (rowKind) {
         case "audience":
             return ( placementKind == "interface" ) ? "good" : "bad";

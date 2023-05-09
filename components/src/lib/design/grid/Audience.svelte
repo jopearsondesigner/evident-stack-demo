@@ -32,7 +32,6 @@
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e: DragEvent) => {
     let transfer = e.dataTransfer;
-    console.warn('Audience Drag Start', e);
 
     if (transfer) {
       transfer.effectAllowed = 'move';
@@ -45,7 +44,6 @@
   };
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn('Lane(Audience) Enter', e);
     e.stopPropagation();
 
     dispatch('lane_drag_enter', {
@@ -56,12 +54,10 @@
   };
 
   const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn('Lane(Audience) Leave');
     e.stopPropagation();
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn('Lane(Audience) Drop');
     dispatch('lane_drag_drop');
   };
 </script>
@@ -101,16 +97,14 @@
 
 {#each audience.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
   {@const drop_target =
-    targeted_cell && targeted_cell.column === column
-      ? targeted_cell.targetStatus
-      : undefined}
+    targeted_cell && targeted_cell.column === column ? targeted_cell.targetStatus : undefined}
   <Cell
     {column}
     row={{
       rowIndex: row,
       audienceId: audience.id || '',
       laneIndex: lane_index,
-      rowKind: "audience",
+      rowKind: 'audience'
     }}
     maybe_placement={placement?.id}
     target_status={drop_target}

@@ -138,7 +138,7 @@
       value: {
         column,
         laneIndex,
-        laneKind,
+        rowKind: laneKind,
         laneId,
       }
     };

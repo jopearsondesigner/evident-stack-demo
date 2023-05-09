@@ -4,6 +4,7 @@ import type { Decider, DropTargetStatus, LaneKind, PlacementType } from "../Grid
 interface WithDropTargetStatus { targetStatus: DropTargetStatus}
 
 export type SourceEffect = "MOVE" | "DUPLICATE";
+export type RowKind = LaneKind | "timeline";
 
 export interface LaneSource {
     laneId: string,
@@ -21,10 +22,27 @@ export interface LaneTarget {
     laneKind: LaneKind, 
 }
 
+export type AudienceTarget = {
+    audienceId: string,
+    laneIndex: number,
+    rowKind: "audience"
+};
+
+export type StreamTarget = {
+    streamId: string,
+    laneIndex: number,
+    rowKind: "stream"
+};
+
+export type TimelineTarget = {
+    rowKind: "timeline"
+};
+
+export type RowTarget = | AudienceTarget | StreamTarget | TimelineTarget;
+
 export interface CellTarget {
     column: number,
-    laneId: string,
-    laneKind: LaneKind,
+    row: RowTarget,
 }
 
 export enum DraggingStateKind {
@@ -37,7 +55,7 @@ export type DraggingState =
     | { kind: DraggingStateKind.LANE,
         value: {
             source: LaneSource,
-            target?: LaneTarget & WithDropTargetStatus} }
+            target?: RowTarget & WithDropTargetStatus} }
     | { kind: DraggingStateKind.PLACEMENT,
         value: {
             source: PlacementSource,
@@ -59,12 +77,12 @@ export type DragCommand =
     | { kind: DraggingCommandKind.LANE_DRAG_START,
         value: LaneSource }
     | { kind: DraggingCommandKind.LANE_DRAG_ENTER,
-        value: LaneTarget }
+        value: RowTarget }
     | { kind: DraggingCommandKind.LANE_DRAG_DROP }
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_START,
         value: PlacementSource }
     | { kind: DraggingCommandKind.CELL_DRAG_ENTER,
-        value: CellTarget & LaneTarget }
+        value: CellTarget & RowTarget }
     | { kind: DraggingCommandKind.CELL_DRAG_DROP }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END }
@@ -84,15 +102,10 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                 }
                     
                 case DraggingCommandKind.LANE_DRAG_ENTER: {
-                    let { laneIndex, laneKind: laneType } = command.value;
+                    const target = command.value;
 
                     switch (state.kind) {
                         case DraggingStateKind.LANE:
-                            const target = {
-                                laneIndex,
-                                laneKind: laneType,
-                            };
-
                             return {
                                 ...state,
                                 value: {
@@ -111,7 +124,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                 case DraggingCommandKind.LANE_DRAG_DROP: {
                     switch (state.kind) {
                         case DraggingStateKind.LANE:
-                            if (state.value.target?.targetStatus == "good") {
+                            if (state.value.target?.targetStatus == "good" && state.value.target?.rowKind !== "timeline") {
                                 const { source, target } = state.value;
                                 const { laneId, laneKind: laneType } = source;
                                 const { laneIndex } = target;
@@ -136,39 +149,30 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                         }
                     };
                 case DraggingCommandKind.CELL_DRAG_ENTER: {
-                    const { column, laneIndex, laneKind, laneId } = command.value;
+                    const { row } = command.value;
 
                     switch (state.kind) {
                         case DraggingStateKind.LANE: {
-                            const target: LaneTarget = {
-                                laneIndex,
-                                laneKind,
-                            };
-
                             return {
                                 ...state,
                                 value: {
                                     ...state.value,
                                     target: {
-                                        ...target,
-                                        targetStatus: laneTargetStatus(state.value.source, target)
+                                        ...row,
+                                        targetStatus: laneTargetStatus(state.value.source, row)
                                     }
                                 }
                             }
                         }
                         case DraggingStateKind.PLACEMENT: {
-                            const target: CellTarget = {
-                                column,
-                                laneId,
-                                laneKind,
-                            };
+                            const target = command.value;
 
                             return {
                                 ...state,
                                 value: {
                                     ...state.value,
                                     target: {
-                                        ...target,                                        
+                                        ...command.value,                                        
                                         targetStatus: placementTargetStatus(state.value.source, target)
                                     }
                                 }
@@ -182,7 +186,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                 case DraggingCommandKind.CELL_DRAG_DROP: {
                     switch (state.kind) {
                         case DraggingStateKind.LANE: {
-                            if (state.value.target && state.value.target.targetStatus === "good") {
+                            if (state.value.target && state.value.target.rowKind !== "timeline" && state.value.target.targetStatus === "good") {
                                 const { source, target } = state.value;
                                 const { laneId, laneKind: laneType } = source;
                                 const { laneIndex } = target;
@@ -195,7 +199,9 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             if (state.value.target && state.value.target.targetStatus === "good") {
                                 const { source, target } = state.value;
                                 const { placementId, placementKind, sourceEffect } = source;
-                                const { column, laneId } = target
+                                const { column, row } = target
+
+                                const laneId = rowtargetToLaneId(row);
 
                                 switch (sourceEffect) {
                                     case "MOVE":
@@ -265,15 +271,31 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
     }
 }
 
-function laneTargetStatus(source: LaneSource, target: LaneTarget): DropTargetStatus {
-    return (source.laneKind == target.laneKind) ? "good" : "bad";
+function laneTargetStatus(source: LaneSource, target: RowTarget): DropTargetStatus {
+    return (source.laneKind == target.rowKind) ? "good" : "bad";
 }
 
-function placementTargetStatus({ placementKind }: PlacementSource, { laneKind }: CellTarget): DropTargetStatus {
-    switch (laneKind) {
+function placementTargetStatus({ placementKind }: PlacementSource, { row: { rowKind }}: CellTarget): DropTargetStatus {
+    switch (rowKind) {
         case "audience":
             return ( placementKind == "interface" ) ? "good" : "bad";
         case "stream":
             return ( placementKind == "event" ) ? "good" : "bad";
+        case "timeline":
+            return (["readModel", "command"].includes(placementKind) ? "good" : "bad" )
+    }
+}
+
+const rowtargetToLaneId = (row: RowTarget): string | undefined => {
+    switch (row.rowKind) {
+        case "audience": {
+            return row.audienceId;
+        }
+        case "stream": {
+            return row.streamId
+        }
+        case "timeline": {
+            return undefined;
+        }
     }
 }

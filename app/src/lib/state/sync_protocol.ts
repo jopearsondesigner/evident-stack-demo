@@ -8,13 +8,11 @@ import { supabase } from "$lib/supabase/init";
 const CHANNEL_PREFIX = "model";
 
 const dexie_change_to_model_obj = (change: ICreateChange | IUpdateChange) => {
-  console.log("model change", change)
   let obj = change.obj
   return { id: obj.id, name: obj.name, description: obj.description }
 };
 
 const dexie_change_to_patch_obj = (change: ICreateChange) => {
-  console.log("patch insertion", change)
   let obj = change.obj
   return { id: obj.id, model: obj.model, user: obj.user, data: fromByteArray(obj.data) }
 };
@@ -43,56 +41,36 @@ export const SupabaseSync: ISyncProtocol = {
             case CREATE: if (change.table == options.models_table) {
               acc.model_insertions.push(dexie_change_to_model_obj(change));
             } else if (change.table == options.patches_table) {
-              // Append patch
               acc.patch_insertions.push(dexie_change_to_patch_obj(change));
             }; break;
             case UPDATE: if (change.table == options.models_table) {
-              // Model metadata
               acc.model_updates.push(dexie_change_to_model_obj(change));
             }; break;
             case DELETE: if (change.table == options.models_table) {
-              // TODO: invoke a deletion function here instead of direct DB modification?
               acc.model_deletions.push(change.key);
-            } else if (change.table == options.patches_table) {
-              acc.patch_deletions.push(change.key);
             }; break
           }
           return acc;
         },
         {
           patch_insertions: [] as any[],
-          patch_deletions: [] as any[],
           model_insertions: [] as any[],
           model_updates: [] as any[],
           model_deletions: [] as any[]
         });
 
-      Promise.all([
-        supabase.from(options.patches_table).insert(changes.patch_insertions)
+      supabase.rpc("apply_client_changes", changes)
           .then(({ error }) => {
             if (error) {
               // TODO: if model w/ id doesn't exist error
               // (or we don't have permissions to write a patch for a given model id), we should delete the local model
               // on a primary key collision, continue since server already has that patch
+              onError(error, Infinity); // retry?
+            } else {
               // TODO: also broadcast on a channel to reduce latency?
-              onError(error, Infinity); // retry?
+              on_changes_accepted()
             }
-          }),
-        // TODO: if model w/ id doesn't exist error (or we don't have permissions to write a patch for a given model id), we should delete the local model
-        supabase.from(options.models_table).update(changes.model_updates)
-          .then(({ error }) => {
-            if (error) {
-              // TODO: invoke the create model server-side command, for role insertion
-              onError(error, Infinity); // retry?
-            }
-          }),
-        supabase.from(options.patches_table).delete().in('id', changes.model_deletions)
-          .then(({ error }) => {
-            if (error) {
-              onError(error, Infinity); // retry?
-            }
-          })
-      ]).then(_result => on_changes_accepted())
+          });
     };
 
     const cleanup = () => {

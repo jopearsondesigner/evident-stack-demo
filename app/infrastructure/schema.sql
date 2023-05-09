@@ -14,6 +14,7 @@ create table if not exists
 DO $$ BEGIN
   CREATE TYPE event_type AS ENUM
   ('created',
+   'updated',
    'patched',
    'deleted',
    'collaborator_invited',

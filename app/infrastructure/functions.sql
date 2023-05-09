@@ -20,6 +20,24 @@ as $$
   end;
 $$ language plpgsql;
 
+create or replace function update_model(model_id uuid, model_name text, model_description text)
+returns uuid
+as $$
+  declare
+    event_id uuid := gen_random_uuid();
+    user_id uuid := auth.uid();
+  begin
+    update public.models set name = model_name, description = model_description
+      where id = model_id;
+
+    insert into public.model_events (id, type, subject, "user", data)
+      values (event_id, 'updated', model_id, user_id,
+              jsonb_build_object('name', model_name, 'description', model_description));
+
+    return event_id;
+  end;
+$$ language plpgsql;
+
 create or replace function delete_model(model_id uuid)
 returns uuid
 as $$
@@ -50,6 +68,23 @@ as $$
       values (event_id, 'patched', model_id, user_id, jsonb_build_object('patch_id', patch_id));
 
     return event_id;
+  end;
+$$ language plpgsql;
+
+create or replace function apply_client_changes(changes json)
+returns uuid
+as $$
+  declare
+    user_id uuid := auth.uid();
+  begin
+    select create_model(model_insertion -> 'id', model_insertion -> 'name', model_insertion -> 'description')
+      from json_array_elements(changes -> 'model_insertions') as model_insertion;
+    select update_model(model_update -> 'id', model_update -> 'name', model_update -> 'description')
+      from json_array_elements(changes -> 'model_updates') as model_update;
+    select append_patch(patch -> 'model', patch -> 'id', patch -> 'data')
+      from json_array_elements(changes -> 'patch_insertions') as patch;
+    select delete_model(model_id)
+      from json_array_elements(changes -> 'model_deletions') as model_id;
   end;
 $$ language plpgsql;
 

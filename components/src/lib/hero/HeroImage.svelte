@@ -1,7 +1,7 @@
 <script lang="ts">
   import classNames from 'classnames';
   export let heroImage = 'h-full relative w-auto overflow-hidden';
-  export let imgSize = '';
+  export let imgSize: string = '';
   export const alt: string = '';
   export const width: any = '';
   export const height: any = '';

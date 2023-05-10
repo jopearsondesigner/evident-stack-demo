@@ -17,7 +17,7 @@
 
   export let data: PageData;
 
-  $: Modal_id = "modal-editing-window" // TODO: derive this from model ID?
+  $: Modal_id = 'modal-editing-window'; // TODO: derive this from model ID?
 
   let deleteModal = false;
   let project = [{ done: false }];
@@ -33,7 +33,7 @@
   }
 
   const handleDeleteModel = async () => {
-    console.log("TODO: delete model")
+    console.log('TODO: delete model');
     goto('/');
   };
 
@@ -41,7 +41,7 @@
     const formData = new FormData(e.target as HTMLFormElement);
     let name = formData.get('name')?.toString();
     if (name) {
-      console.log("TODO: create model")
+      console.log('TODO: create model');
     }
   };
 

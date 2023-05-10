@@ -141,10 +141,10 @@
         <MaybeTooltip tip="Docs" position="tooltip-bottom">
           <IconButton>
             <Icon
-               name="docs"
-               size={18}
-               iconColor="text-body-light dark:text-body-dark"
-               pathName={Docs} />
+              name="docs"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Docs} />
           </IconButton>
         </MaybeTooltip>
         <MaybeTooltip tip="Support" position="tooltip-bottom">

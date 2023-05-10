@@ -39,7 +39,7 @@
     type Flow
   } from './Grid';
   import { onMount } from 'svelte';
-  import { itemAtCursor, type LaneKind } from './Grid';
+  import { itemAtCursor } from './Grid';
   import TimelineDisambiguation from './grid/TimelineDisambiguation.svelte';
   import type { DragEventHandler } from 'svelte/elements';
 
@@ -435,8 +435,9 @@
       {max_column}
     />
 
-    {#each audiences as audience, lane_index (audience.id)}
-      {@const row = lane_index + 1}
+    {#each audiences as audience, i (audience.id)}
+      {@const row = i + 1}
+      {@const lane_index = (audiences.length - 1) - i}
       {@const targeted_lane =
         audience_drop_target?.index == lane_index ? audience_drop_target.targetStatus : undefined}
       {@const targeted_cell =

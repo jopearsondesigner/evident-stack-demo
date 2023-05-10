@@ -7,8 +7,8 @@ export { Dexie };
 if (browser) {
   await import('dexie-observable');
   await import('dexie-syncable');
-  // const { SupabaseSync } = await import("./sync_protocol");
-  // Dexie.Syncable.registerSyncProtocol("evidentstack", SupabaseSync)
+  const { SupabaseSync } = await import("./sync_protocol");
+  Dexie.Syncable.registerSyncProtocol("evidentstack", SupabaseSync)
 }
 
 type Model = {

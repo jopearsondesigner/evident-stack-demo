@@ -2,8 +2,9 @@ use crate::api::commands::EventModelCommand;
 use crate::api::events::EventModelEvent;
 use crate::json::import;
 use crate::{
-    Command, Component, Entity, Event, EventModelDataTransfer, EventModelError, Interface, Lane,
-    LaneId, Name, Placement, PlacementPosition, ReadModel,
+    Anchor, Audience, AudienceId, Command, Component, Entity, Event, EventModelDataTransfer,
+    EventModelError, FlowArrow, Interface, Lane, LaneId, Name, Placement, PlacementPosition,
+    ReadModel, Stream, StreamId,
 };
 use crate::{EventModel, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
@@ -331,39 +332,20 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         index,
                         maybe_audience_id,
                     ) => {
-                        let _ = match model.placements().get(placement_id) {
-                            Some(Placement::Interface { id, .. }) => Ok(id),
-                            _ => Err(EventModelError::ModificationError(format!(
-                                "No interface placement found with id {:?}",
-                                placement_id
-                            ))),
-                        }?;
-                        let audience = if let Some(id) = maybe_audience_id {
-                            match model.audiences().iter().find(|a| a.id() == *id) {
-                                Some(a) => Ok(LaneId::Audience(a.id())),
-                                None => Err(EventModelError::ModificationError(format!(
-                                    "No audience found with id {:?}",
-                                    maybe_audience_id
-                                ))),
-                            }
-                        } else {
-                            Ok(LaneId::DefaultAudience)
-                        }?;
+                        get_placement_by_id(model, placement_id)?;
+
+                        let audience_id = match maybe_audience_id {
+                            Some(id) => LaneId::Audience(get_audience_by_id(model, id)?.id),
+                            None => LaneId::DefaultAudience,
+                        };
 
                         Ok(vec![EventModelEvent::PlacementMoved(
                             *model_id,
-                            PlacementPosition(*placement_id, *index, audience),
+                            PlacementPosition(*placement_id, *index, audience_id),
                         )])
                     }
                     EventModelCommand::MoveTimelinePlacement(model_id, placement_id, index) => {
-                        let _ = match model.placements().get(placement_id) {
-                            Some(Placement::Command { id, .. }) => Ok(id),
-                            Some(Placement::ReadModel { id, .. }) => Ok(id),
-                            _ => Err(EventModelError::ModificationError(format!(
-                                "No timeline placement found with id {:?}",
-                                placement_id
-                            ))),
-                        }?;
+                        get_placement_by_id(model, placement_id)?;
 
                         Ok(vec![EventModelEvent::PlacementMoved(
                             *model_id,
@@ -376,32 +358,20 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         index,
                         maybe_stream_id,
                     ) => {
-                        let _ = match model.placements().get(placement_id) {
-                            Some(Placement::Event { id, .. }) => Ok(id),
-                            _ => Err(EventModelError::ModificationError(format!(
-                                "No event placement found with id {:?}",
-                                placement_id
-                            ))),
-                        }?;
-                        let stream = if let Some(id) = maybe_stream_id {
-                            match model.streams().iter().find(|a| a.id() == *id) {
-                                Some(a) => Ok(LaneId::Stream(a.id())),
-                                None => Err(EventModelError::ModificationError(format!(
-                                    "No stream found with id {:?}",
-                                    maybe_stream_id
-                                ))),
-                            }
-                        } else {
-                            Ok(LaneId::DefaultStream)
-                        }?;
+                        get_placement_by_id(model, placement_id)?;
+                        let stream_id = match maybe_stream_id {
+                            Some(id) => LaneId::Stream(get_stream_by_id(model, id)?.id),
+                            None => LaneId::DefaultStream,
+                        };
 
                         Ok(vec![EventModelEvent::PlacementMoved(
                             *model_id,
-                            PlacementPosition(*placement_id, *index, stream),
+                            PlacementPosition(*placement_id, *index, stream_id),
                         )])
                     }
                     EventModelCommand::RemovePlacement(model_id, placement_id) => {
-                        // TODO: test that placement with given id exists
+                        get_placement_by_id(model, placement_id)?;
+
                         Ok(vec![EventModelEvent::PlacementRemoved(
                             *model_id,
                             *placement_id,
@@ -413,24 +383,11 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         index,
                         maybe_audience_id,
                     ) => {
-                        let interface = match model.get_placement(placement_id) {
-                            Some(Placement::Interface { interface, .. }) => Ok(interface),
-                            _ => Err(EventModelError::ModificationError(format!(
-                                "No interface placement found with id {:?}",
-                                placement_id
-                            ))),
-                        }?;
-                        let audience = if let Some(id) = maybe_audience_id {
-                            match model.audiences().iter().find(|a| a.id() == *id) {
-                                Some(a) => Ok(Some(a.id().to_owned())),
-                                None => Err(EventModelError::ModificationError(format!(
-                                    "No audience found with id {:?}",
-                                    maybe_audience_id
-                                ))),
-                            }
-                        } else {
-                            Ok(None)
-                        }?;
+                        let interface = get_placement_by_id(model, placement_id)?.id();
+                        let audience = match maybe_audience_id {
+                            Some(id) => Some(get_audience_by_id(model, id)?.id),
+                            None => None,
+                        };
 
                         Ok(vec![EventModelEvent::ComponentPlaced(
                             *model_id,
@@ -538,9 +495,21 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::EditPlacementSchema(_, _, _, _, _) => todo!(),
 
                     // Flows
-                    EventModelCommand::ConnectFlow(_, _, _, _, _) => {
-                        todo!()
-                    }
+                    EventModelCommand::ConnectFlow(
+                        event_model_id,
+                        source_placement_id,
+                        source_anchor,
+                        target_placement_id,
+                        target_anchor,
+                    ) => Ok(vec![EventModelEvent::FlowConnected(
+                        *event_model_id,
+                        FlowArrow::create(
+                            get_placement_by_id(model, &source_placement_id)?.id(),
+                            source_anchor.to_owned(),
+                            get_placement_by_id(model, &target_placement_id)?.id(),
+                            target_anchor.to_owned(),
+                        )?,
+                    )]),
                     EventModelCommand::DisconnectFlow(_, _) => {
                         todo!()
                     }
@@ -736,4 +705,36 @@ fn valid_lane_index(
         }
         _ => Ok(()),
     }
+}
+
+fn get_placement_by_id(model: &impl EventModel, id: &Uuid) -> Result<Placement, EventModelError> {
+    // TODO: Give error string context of lane type
+    model.placements().get(id).cloned().ok_or_else(|| {
+        EventModelError::ModificationError(format!("No placement found with id {:?}", id))
+    })
+}
+
+fn get_audience_by_id(
+    model: &impl EventModel,
+    id: &AudienceId,
+) -> Result<Audience, EventModelError> {
+    model
+        .audiences()
+        .iter()
+        .find(|a| a.id() == *id)
+        .cloned()
+        .ok_or_else(|| {
+            EventModelError::ModificationError(format!("No audience found with id {:?}", id))
+        })
+}
+
+fn get_stream_by_id(model: &impl EventModel, id: &StreamId) -> Result<Stream, EventModelError> {
+    model
+        .streams()
+        .iter()
+        .find(|a| a.id() == *id)
+        .cloned()
+        .ok_or_else(|| {
+            EventModelError::ModificationError(format!("No stream found with id {:?}", id))
+        })
 }

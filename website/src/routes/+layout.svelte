@@ -50,6 +50,7 @@
   import Textarea from '$components/form/Textarea.svelte';
   import A from '$components/typography/A.svelte';
   import Submit from '$components/form/Submit.svelte';
+  import EarlyAccessSignupForm from '$lib/EarlyAccessSignupForm.svelte';
 
   $: Modal_id = 'modal-editing-window'; // TODO: derive this from model ID?
 
@@ -228,53 +229,7 @@
 
 <Modal bind:open={contactModal} size="xs" autoclose title="Contact Form" color="brand">
   <div class="text-center w-full inline-flex justify-center items-center p px-6">
-    <h2 class="whitespace-nowrap text-lg text-body dark:text-body-dark">
-      Enter your text here, Bobby.
-    </h2>
+    <EarlyAccessSignupForm />
   </div>
-  <Form action="create_ticket" method="post">
-    <ul>
-      <li class="mb-4">
-        <Input
-          type="text"
-          placeholder="ticket subject"
-          colorClasses="dark"
-          name="subject"
-          class="border bg-white"
-          required
-        />
-      </li>
-      <li class="mb-4">
-        <Textarea placeholder="what's the problem?" name="description" rows="6" class="" required />
-      </li>
-      <li class="mb-4">
-        <Input type="email" placeholder="your email address" name="email" class="border" required />
-        <div class="text-xs">
-          <A
-            href="https://evidentsystems.zendesk.com/auth/v2/login/registration"
-            target="_blank"
-            class="transition duration-300 ease-in">Register</A
-          >
-          <span class="text-body-light dark:text-body-dark"
-            >so our support team can email you to solve your problem.</span
-          >
-        </div>
-      </li>
-      <li class="mb-4 space-x-3 flex justify-end">
-        <button
-          class="text-sm underline text-focus dark:text-body-dark hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-          on:click={hide}>cancel</button
-        >
-        <Submit
-          type="submit"
-          value="Submit"
-          gradient
-          color="brandStackPrimary"
-          size="sm"
-          on:click={handleContactModel}
-        />
-      </li>
-    </ul>
-  </Form>
   <!-- <div slot="footer" class="mx-3 flex items-end space-x-3" /> -->
 </Modal>

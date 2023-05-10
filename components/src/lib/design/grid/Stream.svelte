@@ -40,7 +40,7 @@
 
       dispatch('lane_drag_start', {
         laneId: stream.id,
-        laneType: 'stream'
+        laneKind: 'stream'
       });
     }
   };
@@ -71,7 +71,7 @@
     class="streamName laneName sticky left-3 z-30 justify-self-start self-end cursor-pointer prose text-body-light nndark:text-body-dark mb-3 cursor-move"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
   >
-    {stream.name + lane_index}
+    {stream.name}
   </h3>
 {:else}
   <!-- TODO: reduce the color to disabled text -->
@@ -79,7 +79,7 @@
     class="streamName sticky left-3 z-30 justify-self-start self-end prose text-body-light dark:text-body-dark mb-3 select-none"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
   >
-    Default Stream {lane_index}
+    Default Stream
   </h3>
 {/if}
 

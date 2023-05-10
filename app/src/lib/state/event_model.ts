@@ -21,31 +21,31 @@ const initialize_decider = async (id: string | undefined, user: string, supabase
 
   // Initialize Dexie and sync protocol
   const { Dexie, db, documentBinaryStore } = await import("$lib/state/dexie");
-  const { initSupabase } = await import("$lib/state/sync_protocol");
+  // const { initSupabase } = await import("$lib/state/sync_protocol");
 
   let $syncing: Readable<string>;
-  if (id) {
-    initSupabase(supabase);
-    // TODO: make schema/table names configurable?
-    db.syncable.connect("evidentstack", id,
-      {
-        user,
-        local_patches_table: "model_patches",
-        local_models_table: "models",
-        remote_schema: "public",            // TODO: configurable?
-        remote_events_table: "model_events" // TODO: configurable?
-      }
-    );
-    $syncing = readable("before connection", setter => {
-      db.syncable.on('statusChanged', function (newStatus, url) {
-        if (url == id) {
-          setter(Dexie.Syncable.StatusTexts[newStatus]);
-        }
-      });
-    })
-  } else {
+  // if (id) {
+  //   initSupabase(supabase);
+  //   // TODO: make schema/table names configurable?
+  //   db.syncable.connect("evidentstack", id,
+  //     {
+  //       user,
+  //       local_patches_table: "model_patches",
+  //       local_models_table: "models",
+  //       remote_schema: "public",            // TODO: configurable?
+  //       remote_events_table: "model_events" // TODO: configurable?
+  //     }
+  //   );
+  //   $syncing = readable("before connection", setter => {
+  //     db.syncable.on('statusChanged', function (newStatus, url) {
+  //       if (url == id) {
+  //         setter(Dexie.Syncable.StatusTexts[newStatus]);
+  //       }
+  //     });
+  //   })
+  // } else {
     $syncing = readable("not connected")
-  }
+  // }
 
   let store;
 

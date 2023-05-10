@@ -100,72 +100,68 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             *offset,
                             data_transfer
                                 .placements
-                                .iter()
-                                .map(|(_, placement)| *placement.index())
+                                .values()
+                                .map(|placement| *placement.index())
                                 .max()
                                 .unwrap_or(0),
                         );
                         events.push(placements_shifted_event);
 
-                        events.extend(data_transfer.interfaces.into_iter().map(
-                            |(_, interface)| {
-                                // TODO: what to do when interface w/ id exists?
-                                EventModelEvent::ComponentDefined(
-                                    *model_id,
-                                    Component::Interface(interface),
-                                )
-                            },
-                        ));
-                        events.extend(data_transfer.commands.into_iter().map(|(_, command)| {
+                        events.extend(data_transfer.interfaces.into_values().map(|interface| {
+                            // TODO: what to do when interface w/ id exists?
+                            EventModelEvent::ComponentDefined(
+                                *model_id,
+                                Component::Interface(interface),
+                            )
+                        }));
+                        events.extend(data_transfer.commands.into_values().map(|command| {
                             // TODO: what to do when command w/ id exists?
                             EventModelEvent::ComponentDefined(
                                 *model_id,
                                 Component::Command(command),
                             )
                         }));
-                        events.extend(data_transfer.events.into_iter().map(|(_, event)| {
+                        events.extend(data_transfer.events.into_values().map(|event| {
                             // TODO: what to do when event w/ id exists?
                             EventModelEvent::ComponentDefined(*model_id, Component::Event(event))
                         }));
-                        events.extend(data_transfer.read_models.into_iter().map(
-                            |(_, read_model)| {
-                                // TODO: what to do when read model w/ id exists?
-                                EventModelEvent::ComponentDefined(
-                                    *model_id,
-                                    Component::ReadModel(read_model),
-                                )
-                            },
-                        ));
-                        let mut audience_insertion_index = model.audiences().len() - 1;
+                        events.extend(data_transfer.read_models.into_values().map(|read_model| {
+                            // TODO: what to do when read model w/ id exists?
+                            EventModelEvent::ComponentDefined(
+                                *model_id,
+                                Component::ReadModel(read_model),
+                            )
+                        }));
+                        let mut audience_insertion_index = model.audiences().len();
                         events.extend(data_transfer.audiences.into_iter().map(|audience| {
                             // TODO: what to do when audience w/ id exists?
                             audience_insertion_index += 1;
                             EventModelEvent::LaneAdded(
                                 *model_id,
                                 Lane::Audience(audience),
-                                audience_insertion_index,
+                                audience_insertion_index - 1,
                             )
                         }));
-                        let mut stream_insertion_index = model.streams().len() - 1;
+                        let mut stream_insertion_index = model.streams().len();
                         events.extend(data_transfer.streams.into_iter().map(|stream| {
                             // TODO: what to do when stream w/ id exists?
                             stream_insertion_index += 1;
                             EventModelEvent::LaneAdded(
                                 *model_id,
                                 Lane::Stream(stream),
-                                stream_insertion_index,
+                                stream_insertion_index - 1,
                             )
                         }));
 
-                        events.extend(data_transfer.placements.into_iter().map(
-                            |(_, mut placement)| {
+                        events.extend(data_transfer.placements.into_values().map(
+                            |mut placement| {
                                 // TODO: what to do when placement w/ id and/or index,component_id exists?
                                 //       currently we generate a new id for each placement, to allow multiple imports
                                 placement.shift_right(*offset);
                                 EventModelEvent::ComponentPlaced(*model_id, placement)
                             },
                         ));
-                        events.extend(data_transfer.flows.into_iter().map(|(_, flow_arrow)| {
+                        events.extend(data_transfer.flows.into_values().map(|flow_arrow| {
                             // Automatically deduped via id generation
                             EventModelEvent::FlowConnected(*model_id, flow_arrow)
                         }));

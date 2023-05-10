@@ -70,7 +70,7 @@
   import Input from '$components/form/Input.svelte';
   import Textarea from '$components/form/Textarea.svelte';
   import Submit from '$components/form/Submit.svelte';
-  import EarlyAccessSignupForm from '../lib/EarlyAccessSignupForm.svelte';
+  import EarlyAccessSignupForm from '$lib/EarlyAccessSignupForm.svelte';
 
   $: Modal_id = 'modal-editing-window'; // TODO: derive this from model ID?
 

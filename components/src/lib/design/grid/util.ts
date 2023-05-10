@@ -257,14 +257,25 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                                 reactionDecider.duplicate_interface_placement(placementId, column, laneId);
                                         }
                                 }
+
                             }
+
+                            return { kind: DraggingStateKind.NONE };
                         }
                         case DraggingStateKind.FLOW: {
 
                             if (state.value.target && state.value.target.targetStatus === "good") {
                                 const { source, target } = state.value;
-                                // TODO:  reactionDecider.<linkingFlow>
+                                if (target.placementId) {
+                                    reactionDecider.connect_flow(
+                                        source.placement.placementId,
+                                        undefined, // TODO: Leaving Anchors null until we get more time to add some port rules
+                                        target.placementId,
+                                        undefined// TODO: Leaving Anchors null until we get more time to add some port rules
+                                    )
+                                }
                             }
+                            return { kind: DraggingStateKind.NONE };
                         }
                         default:
                             return { kind: DraggingStateKind.NONE };

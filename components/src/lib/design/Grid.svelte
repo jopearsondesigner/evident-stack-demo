@@ -358,16 +358,6 @@
     mode = 'navigation';
   };
 
-  // Linking
-
-  // const linkingKeyboardHandler = createKeybindingsHandler({
-  // })
-
-  // TODO: wire up to decider
-  const handleConnectFlow = async (e: CustomEvent) => {
-    console.log('connect_flow:', e);
-  };
-
   // Keyboard
   const keyboardHandler: EventListener = (e) => {
     if (mode === 'navigation') {
@@ -414,7 +404,6 @@
       on:navigate_cursor={handleNavigateCursor}
       on:move_interface_placement={handleMoveInterfacePlacement}
       on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
-      on:connect_flow={handleConnectFlow}
       on:lane_drag_drop={handleLaneDragDrop}
       on:placement_drag_start={handlePlacementDragStart}
       on:cell_drag_enter={handleCellDragEnter}
@@ -443,7 +432,6 @@
         on:navigate_cursor={handleNavigateCursor}
         on:move_interface_placement={handleMoveInterfacePlacement}
         on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
-        on:connect_flow={handleConnectFlow}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
         on:lane_drag_drop={handleLaneDragDrop}
@@ -464,10 +452,10 @@
       on:navigate_cursor={handleNavigateCursor}
       on:move_timeline_placement={handleMoveTimelinePlacement}
       on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
-      on:connect_flow={handleConnectFlow}
       on:placement_drag_start={handlePlacementDragStart}
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
+      on:flow_drag_start={handleFlowDragStart}
       row={timeline_row}
       placements={timeline_placements}
       targeted_lane={timeline_drop_target}
@@ -494,7 +482,6 @@
         on:navigate_cursor={handleNavigateCursor}
         on:move_event_placement={handleMoveEventPlacement}
         on:duplicate_event_placement={handleDuplicateEventPlacement}
-        on:connect_flow={handleConnectFlow}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
         on:lane_drag_drop={handleLaneDragDrop}
@@ -514,7 +501,6 @@
       on:navigate_cursor={handleNavigateCursor}
       on:move_event_placement={handleMoveEventPlacement}
       on:duplicate_event_placement={handleDuplicateEventPlacement}
-      on:connect_flow={handleConnectFlow}
       on:lane_drag_drop={handleLaneDragDrop}
       on:placement_drag_start={handlePlacementDragStart}
       on:cell_drag_enter={handleCellDragEnter}
@@ -539,7 +525,6 @@
       on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
       on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
       on:duplicate_event_placement={handleDuplicateEventPlacement}
-      on:connect_flow={handleConnectFlow}
       row={cursor_row}
       column={cursor_column}
       item={cursor_item}

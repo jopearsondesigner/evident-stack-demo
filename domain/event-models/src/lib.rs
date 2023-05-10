@@ -114,6 +114,12 @@ pub trait ModifiableEventModel: EventModel {
     fn minus_flow(&mut self, flow_id: &FlowId);
 }
 
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum FieldError {
+    FlowAnchorString(Option<String>)
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventModelError {
     IllegalState(String),
@@ -125,6 +131,7 @@ pub enum EventModelError {
     LaneNotFound(LaneId),
     LaneIndexOutOfBounds(LaneId, usize),
     DescriptionTextOutOfBounds(String, usize, usize),
+    FieldError(FieldError)
 }
 
 //// ***** Types *****
@@ -620,6 +627,24 @@ pub enum Anchor {
     Left,
     Bottom,
     Right,
+}
+
+impl TryFrom<Option<String>> for Anchor {
+    type Error = FieldError;
+
+    fn try_from(value: Option<String>) -> Result<Self, Self::Error> {
+        match value.clone() {
+            Some(str) => match str.as_str() {
+                "None" => Ok(Anchor::None),
+                "Top" => Ok(Anchor::Top),
+                "Bottom" => Ok(Anchor::Bottom),
+                "Left" => Ok(Anchor::Left),
+                "Right" => Ok(Anchor::Right),
+                _ => Err(FieldError::FlowAnchorString(value))
+            },
+            None => Ok(Anchor::default()),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

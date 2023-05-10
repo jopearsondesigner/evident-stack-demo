@@ -55,12 +55,15 @@ const initialize_decider = async (id: string | undefined, user: string) => {
         return await manager.import(id!, json_bytes, offset)
       },
       move_interface_placement: async (placement_id: string, index: number, audience: string | undefined) => {
+        console.info("MOVE INTERFACE PLACMENT => ", id!, placement_id, index, audience);
         return await manager.move_interface_placement(id!, placement_id, index, audience)
       },
       move_timeline_placement: async (placement_id: string, index: number) => {
+        console.info("MOVE TIMELINE PLACMENT => ", id!, placement_id, index);
         return await manager.move_timeline_placement(id!, placement_id, index)
       },
       move_event_placement: async (placement_id: string, index: number, stream: string | undefined) => {
+        console.info("MOVE EVENT PLACMENT => ", id!, placement_id, index, stream);
         return await manager.move_event_placement(id!, placement_id, index, stream)
       },
       remove_placement: async (placement: string) => {

@@ -12,7 +12,10 @@
     type RowTarget,
     type CellTarget,
     type WithSourceEffect,
-    type FlowPortSource
+    type FlowPortSource,
+
+    DEFAULT_LANE
+
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -385,7 +388,7 @@
         kind = 'None';
     }
 
-    return JSON.stringify({ ...state, kind });
+    return JSON.stringify({ ...state, kind }, null, 2);
   };
 
   $: drag_json = genDragDebugJson(dragState);
@@ -415,6 +418,17 @@
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
+      targeted_cell={
+        cell_drop_target &&
+        cell_drop_target.row.rowKind === 'audience' &&
+        cell_drop_target.row.audienceId == DEFAULT_LANE
+          ? {
+              column: cell_drop_target.column,
+              targetStatus: cell_drop_target.targetStatus
+            }
+          : undefined
+      }
+      targeted_lane={audience_drop_target?.index === default_audience_lane_index ? audience_drop_target.targetStatus : undefined}
       row={default_audience_row}
       audience={{ placements: default_audience_placements }}
       lane_index={default_audience_lane_index}
@@ -512,6 +526,20 @@
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
+      targeted_cell={
+        cell_drop_target &&
+        cell_drop_target.row.rowKind === 'stream' &&
+        cell_drop_target.row.streamId == DEFAULT_LANE
+          ? {
+              column: cell_drop_target.column,
+              targetStatus: cell_drop_target.targetStatus
+            }
+          : undefined
+      }
+      targeted_lane={
+        stream_drop_target?.index === default_stream_lane_index ?
+          stream_drop_target.targetStatus : undefined
+      }
       lane_index={default_stream_lane_index}
       row={default_stream_row}
       stream={{ placements: default_stream_placements }}

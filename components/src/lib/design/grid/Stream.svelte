@@ -5,6 +5,7 @@
   import { createEventDispatcher } from 'svelte';
   import Cell from './Cell.svelte';
   import type { DragEventHandler } from 'svelte/elements';
+  import { DEFAULT_LANE } from './util';
 
   const dispatch = createEventDispatcher();
 
@@ -103,7 +104,7 @@
     {column}
     row={{
       rowIndex: row,
-      streamId: stream.id || '',
+      streamId: stream.id || DEFAULT_LANE,
       laneIndex: lane_index,
       rowKind: 'stream'
     }}

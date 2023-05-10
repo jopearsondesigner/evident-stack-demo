@@ -4,6 +4,8 @@ import type { Decider, DropTargetStatus, LaneKind, PlacementType } from "../Grid
 export interface WithDropTargetStatus { targetStatus: DropTargetStatus}
 export interface WithSourceEffect { sourceEffect: SourceEffect }
 
+export const DEFAULT_LANE = "DEFAULT_LANE";
+export type DefaultLane = "DEFAULT_LANE";
 export type SourceEffect = "MOVE" | "DUPLICATE";
 export type RowKind = LaneKind | "timeline";
 
@@ -22,19 +24,14 @@ export interface FlowPortSource {
     position: string
 }
 
-export interface LaneTarget {
-    laneIndex: number,
-    laneKind: LaneKind, 
-}
-
 export type AudienceTarget = {
-    audienceId: string,
+    audienceId: string | DefaultLane,
     laneIndex: number,
     rowKind: "audience"
 };
 
 export type StreamTarget = {
-    streamId: string,
+    streamId: string | DefaultLane,
     laneIndex: number,
     rowKind: "stream"
 };
@@ -225,7 +222,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                 const { placementId, placementKind, sourceEffect } = source;
                                 const { column, row } = target
 
-                                const laneId = rowtargetToLaneId(row);
+                                const laneId = laneIdFilterDefault(rowtargetToLaneId(row));
 
                                 switch (sourceEffect) {
                                     case "MOVE":
@@ -323,6 +320,10 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
 }
 
 function laneTargetStatus(source: LaneSource, target: RowTarget): DropTargetStatus {
+    if (rowtargetToLaneId(target) === "DEFAULT_LANE") {
+        return "bad"; // Do not drop rows on default row
+    }
+
     return (source.laneKind == target.rowKind) ? "good" : "bad";
 }
 
@@ -365,7 +366,7 @@ function flowTargetStatus({ placement: { placementKind, placementId } }: FlowPor
     }
 }
 
-const rowtargetToLaneId = (row: RowTarget): string | undefined => {
+const rowtargetToLaneId = (row: RowTarget): string | DefaultLane | undefined => {
     switch (row.rowKind) {
         case "audience": {
             return row.audienceId;
@@ -378,3 +379,6 @@ const rowtargetToLaneId = (row: RowTarget): string | undefined => {
         }
     }
 }
+
+const laneIdFilterDefault = (laneId: string | DefaultLane | undefined): string | undefined =>
+    (laneId === "DEFAULT_LANE") ? undefined : laneId;

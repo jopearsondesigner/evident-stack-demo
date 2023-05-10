@@ -62,6 +62,7 @@
     "prettier-plugin-svelte": "^2.8.1",
     "state-client": "0.1.0",
     "state-server": "0.1.0",
+    "supabase": "^1.57.3",
     "svelte": "^3.57.0",
     "svelte-accessible-accordion": "^2.1.0",
     "svelte-check": "^2.9.2",

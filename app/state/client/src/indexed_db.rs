@@ -36,7 +36,6 @@ pub struct Model {
 #[derive(Clone, Deserialize)]
 #[wasm_bindgen(getter_with_clone)]
 pub struct Patch {
-    pub user: String,
     pub model: String,
     pub data: Vec<u8>,
 }
@@ -113,7 +112,6 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
                         };
                         let patch = Patch {
                             model: id.to_string(),
-                            user: self.user.to_owned(),
                             data: self.save_incremental(),
                         };
                         save(model, patch)

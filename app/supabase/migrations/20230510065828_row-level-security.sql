@@ -122,6 +122,19 @@ create policy "All granted roles can view model events"
     )
   );
 
+drop policy if exists "All authenticated users can view model access terminating events"
+  on public.model_events;
+
+create policy "All authenticated users can view model access terminating events"
+  on public.model_events
+  for select to authenticated
+  using (
+    type in (
+      'collaborator_role_revoked',
+      'deleted'
+    )
+  );
+
 drop policy if exists "Editors or better can insert model events"
   on public.model_events;
 

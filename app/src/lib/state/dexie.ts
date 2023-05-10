@@ -20,7 +20,6 @@ type Model = {
 
 type Patch = {
   id?: string,
-  user: string,
   model: string,
   data: Uint8Array
 }
@@ -78,7 +77,7 @@ export const patches = async (model: string | undefined): Promise<Array<Patch>> 
 
 export const save = async (model: Model, patch: Patch) => {
   let model_dto = { id: model.id, user: model.user, name: model.name, description: model.description }
-  let patch_dto = { user: patch.user, model: patch.model, data: patch.data }
+  let patch_dto = { model: patch.model, data: patch.data }
   await db.transaction('rw', [db.models, db.model_patches], async () => {
     db.models.put(model_dto, model_dto.id);
     db.model_patches.add(patch_dto)

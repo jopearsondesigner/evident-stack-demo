@@ -50,13 +50,18 @@
   $: ({ supabase, session } = data)
 
   onMount(() => {
-    const { data } = supabase.auth.onAuthStateChange((_event, session_) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session_) => {
       if (session_?.expires_at !== session?.expires_at) {
-        invalidate('supabase:auth')
+        invalidate('supabase:auth');
       }
-    })
+    });
 
-    return () => data.subscription.unsubscribe()
+    return () => subscription.unsubscribe();
+  })
+
+  onMount(() => {
   })
 
   let isClosed = true;

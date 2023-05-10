@@ -2,31 +2,38 @@ import { default as init, EventModelGrid, EventModelStateManager, setPanicHook }
 import { derived, readable, type Readable } from 'svelte/store';
 import type { Decider, Lane } from '$components/design/Grid';
 import { dev } from "$app/environment";
+import type { Database } from "$lib/supabase/database.types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type InitializationPayload = {
   grid: Readable<EventModelGrid>,
   decider: Decider
 }
 
-const initialize_decider = async (id: string | undefined, user: string) => {
-  // Initialize Dexie
-  const { Dexie, documentBinaryStore, db } = await import("$lib/state/dexie");
-
+const initialize_decider = async (id: string | undefined, user: string, supabase: SupabaseClient<Database>) => {
   // Initialize Wasm decider
   await init();
   if (dev) {
     setPanicHook();
   }
 
+  let manager = await new EventModelStateManager(id, user);
+
+  // Initialize Dexie and sync protocol
+  const { Dexie, db, documentBinaryStore } = await import("$lib/state/dexie");
+  const { initSupabase } = await import("$lib/state/sync_protocol");
+
   let $syncing: Readable<string>;
   if (id) {
+    initSupabase(supabase);
     // TODO: make schema/table names configurable?
     db.syncable.connect("evidentstack", id,
       {
         user,
-        schema: "public",
-        patches_table: "model_patches",
-        models_table: "models",
+        local_patches_table: "model_patches",
+        local_models_table: "models",
+        remote_schema: "public",            // TODO: configurable?
+        remote_events_table: "model_events" // TODO: configurable?
       }
     );
     $syncing = readable("before connection", setter => {
@@ -40,7 +47,6 @@ const initialize_decider = async (id: string | undefined, user: string) => {
     $syncing = readable("not connected")
   }
 
-  let manager = await new EventModelStateManager(id, user);
   let store;
 
   if (id) {

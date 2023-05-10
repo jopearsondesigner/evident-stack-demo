@@ -4,9 +4,9 @@ import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async (event) => {
   if (browser) {
-    let { session } = await event.parent()
+    let { session, supabase } = await event.parent()
     if (session) {
-      let { grid, decider } = await initialize_decider(event.params.id, session.user.id);
+      let { grid, decider } = await initialize_decider(event.params.id, session.user.id, supabase);
       return { grid, decider };
     }
     return {};

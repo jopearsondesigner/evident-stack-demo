@@ -84,6 +84,7 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       delete_from_description: async (index: number, count: number) => {
         return await manager.delete_from_description(id!, index, count)
       }
+      // TODO: Add linking flows
     }
   };
 }

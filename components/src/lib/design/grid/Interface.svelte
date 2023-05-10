@@ -31,6 +31,9 @@
   $: descriptionHTML = markdown(description);
 
   const dispatch = createEventDispatcher();
+  const forward = (event: CustomEvent) => {
+    dispatch(event.type, event.detail);
+  };
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
@@ -53,52 +56,14 @@
       }
     }
   };
-
-  // Linking
-  let drop_target = false;
-
-  const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    // let transfer = e.dataTransfer;
-    // if (transfer) {
-    //   if (transfer.effectAllowed == 'link' && transfer.types.includes('readModel')) {
-    //     e.preventDefault();
-    //     transfer.dropEffect = 'link';
-    //     drop_target = true;
-    //   }
-    // }
-    e.stopPropagation();
-  };
-
-  const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
-    // drop_target = false; // TODO: conditionally change style (cursor maybe?) while linking
-    e.stopPropagation();
-  };
-
-  const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
-    // handleDragLeave(e);
-    // let transfer = e.dataTransfer;
-    // if (transfer) {
-    //   if (transfer.effectAllowed == 'link') {
-    //     let fromData = transfer.getData('readModel');
-    //     if (fromData) {
-    //       let from = JSON.parse(fromData);
-    //       transfer.dropEffect = 'link';
-    //       dispatch('connect_flow', { from: from, to: id });
-    //     }
-    //   }
-    // }
-  };
 </script>
 
 <div
   class="relative group"
-  on:dragenter={handleDragEnter}
   on:dragover={(e) => e.preventDefault()}
-  on:dragleave={handleDragLeave}
-  on:drop={handleDragDrop}
 >
-  <FlowPort position="bottom" type="interface" placement={id} {column} />
-  <FlowPort position="right" type="interface" placement={id} {column} />
+  <FlowPort on:flow_drag_start={forward} position="bottom" type="interface" placement={id} placement_kind="interface" {column} />
+  <FlowPort on:flow_drag_start={forward} position="right" type="interface" placement={id} placement_kind="interface" {column} />
   <!-- TODO: tooltip interferes with link dragging -->
   <!-- <MaybeTooltip tip={descriptionHTML}> -->
   <div

@@ -13,6 +13,9 @@
   $: descriptionHTML = markdown(description);
 
   const dispatch = createEventDispatcher();
+  const forward = (event: CustomEvent) => {
+    dispatch(event.type, event.detail);
+  };
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
@@ -35,50 +38,14 @@
       }
     }
   };
-
-  // Linking
-  // let drop_target = false; // TODO: conditionally change style (cursor maybe?) while linking
-
-  const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    let transfer = e.dataTransfer;
-    // if (transfer) {
-    //   if (transfer.effectAllowed == 'link' && transfer.types.includes('command')) {
-    //     e.preventDefault();
-    //     transfer.dropEffect = 'link';
-    //     drop_target = true;
-    //   }
-    // }
-  };
-
-  const handleDragLeave: DragEventHandler<HTMLDivElement> = (_e) => {
-    // drop_target = false;
-  };
-
-  const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
-    // handleDragLeave(e);
-    // let transfer = e.dataTransfer;
-    // if (transfer) {
-    //   if (transfer.effectAllowed == 'link') {
-    //     let fromData = transfer.getData('command');
-    //     if (fromData) {
-    //       let from = JSON.parse(fromData);
-    //       transfer.dropEffect = 'link';
-    //       dispatch('connect_flow', { from: from, to: id });
-    //     }
-    //   }
-    // }
-  };
 </script>
 
 <div
   class="relative group"
-  on:dragenter={handleDragEnter}
   on:dragover={(e) => e.preventDefault()}
-  on:dragleave={handleDragLeave}
-  on:drop={handleDragDrop}
 >
-  <FlowPort position="top" type="event" placement={id} {column} />
-  <FlowPort position="right" type="event" placement={id} {column} />
+  <FlowPort on:flow_drag_start={forward} position="top" type="event" placement={id} placement_kind="event" {column} />
+  <FlowPort on:flow_drag_start={forward} position="right" type="event" placement={id} placement_kind="event"{column} />
   <!-- TODO: tooltip interferes with link dragging -->
   <!-- <MaybeTooltip tip={descriptionHTML}> -->
   <div

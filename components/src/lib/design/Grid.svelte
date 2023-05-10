@@ -10,7 +10,9 @@
     type LaneSource,
     type PlacementSource,
     type RowTarget,
-    type CellTarget
+    type CellTarget,
+    type WithSourceEffect,
+    type FlowPortSource
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -90,13 +92,20 @@
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
-  const handlePlacementDragStart = async (e: CustomEvent<PlacementSource>) => {
+  const handlePlacementDragStart = async (e: CustomEvent<PlacementSource & WithSourceEffect>) => {
     const command: DragCommand = {
       kind: DraggingCommandKind.PLACEMENT_DRAG_START,
       value: e.detail
     };
 
     dragState = evolveAndReactDraggingState(dragState, command);
+  };
+
+  const handleFlowDragStart = async (e: CustomEvent<FlowPortSource>) => {
+    const command: DragCommand = {
+      kind: DraggingCommandKind.FLOW_PORT_DRAG_START,
+      value: e.detail
+    };
   };
 
   const handleCellDragEnter = async (e: CustomEvent<CellTarget>) => {
@@ -406,6 +415,11 @@
       on:move_interface_placement={handleMoveInterfacePlacement}
       on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
       on:connect_flow={handleConnectFlow}
+      on:lane_drag_drop={handleLaneDragDrop}
+      on:placement_drag_start={handlePlacementDragStart}
+      on:cell_drag_enter={handleCellDragEnter}
+      on:cell_drag_drop={handleCellDragDrop}
+      on:flow_drag_start={handleFlowDragStart}
       row={default_audience_row}
       audience={{ placements: default_audience_placements }}
       lane_index={default_audience_lane_index}
@@ -436,6 +450,7 @@
         on:placement_drag_start={handlePlacementDragStart}
         on:cell_drag_enter={handleCellDragEnter}
         on:cell_drag_drop={handleCellDragDrop}
+        on:flow_drag_start={handleFlowDragStart}
         {targeted_cell}
         {targeted_lane}
         {row}
@@ -486,6 +501,7 @@
         on:placement_drag_start={handlePlacementDragStart}
         on:cell_drag_enter={handleCellDragEnter}
         on:cell_drag_drop={handleCellDragDrop}
+        on:flow_drag_start={handleFlowDragStart}
         {targeted_lane}
         {targeted_cell}
         {row}
@@ -499,6 +515,11 @@
       on:move_event_placement={handleMoveEventPlacement}
       on:duplicate_event_placement={handleDuplicateEventPlacement}
       on:connect_flow={handleConnectFlow}
+      on:lane_drag_drop={handleLaneDragDrop}
+      on:placement_drag_start={handlePlacementDragStart}
+      on:cell_drag_enter={handleCellDragEnter}
+      on:cell_drag_drop={handleCellDragDrop}
+      on:flow_drag_start={handleFlowDragStart}
       lane_index={default_stream_lane_index}
       row={default_stream_row}
       stream={{ placements: default_stream_placements }}

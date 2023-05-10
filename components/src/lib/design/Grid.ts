@@ -30,6 +30,7 @@ export type Decider = {
   remove_lane: (kind: LaneKind, lane_id: string) => any;
   add_to_description: (index: number, addition: string) => any;
   delete_from_description: (index: number, count: number) => any;
+  // TODO: Add linking flows
 };
 
 export const default_decider: Decider = {

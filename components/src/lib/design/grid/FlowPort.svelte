@@ -1,12 +1,15 @@
 <script lang="ts">
   import type { DragEventHandler } from 'svelte/elements';
   import type { PlacementType } from '../Grid';
+  import { createEventDispatcher } from 'svelte';
 
   type Position = 'top' | 'bottom' | 'right';
   export let position: Position;
   export let type: PlacementType;
   export let placement: string;
+  export let placement_kind: PlacementType;
   export let column: number;
+  const dispatch = createEventDispatcher();
 
   const classesByPosition = (position: Position) => {
     if (position == 'top') {
@@ -23,17 +26,14 @@
   $: bottom = position == 'bottom' ? '0' : null;
 
   // Drag/drop
-
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
-    let transfer = e.dataTransfer;
-    if (transfer) {
-      transfer.effectAllowed = 'link';
-      transfer.setData(type, JSON.stringify({ placement, position }));
-    }
-  };
-
-  const handleDragEnd: DragEventHandler<HTMLDivElement> = (_e) => {
-    // TODO: show linking flow
+    dispatch("flow_drag_start", {
+      position,
+      placement: {
+        placementId: placement,
+        placementKind: placement_kind
+      }
+    })
   };
 </script>
 
@@ -44,5 +44,4 @@
   class="absolute hidden group-hover:block {classesByPosition(position)}"
   draggable={true}
   on:dragstart={handleDragStart}
-  on:dragend={handleDragEnd}
 />

@@ -121,6 +121,7 @@
         description={placement.description}
         on:placement_drag_start={forward}
         on:connect_flow={forward}
+        on:flow_drag_start={forward}
       />
     {:else}
       <EmptyCell

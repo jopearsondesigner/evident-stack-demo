@@ -1,7 +1,8 @@
 import type { Decider, DropTargetStatus, LaneKind, PlacementType } from "../Grid";
 
 // Types
-interface WithDropTargetStatus { targetStatus: DropTargetStatus}
+export interface WithDropTargetStatus { targetStatus: DropTargetStatus}
+export interface WithSourceEffect { sourceEffect: SourceEffect }
 
 export type SourceEffect = "MOVE" | "DUPLICATE";
 export type RowKind = LaneKind | "timeline";
@@ -14,7 +15,11 @@ export interface LaneSource {
 export interface PlacementSource {
     placementId: string,
     placementKind: PlacementType,
-    sourceEffect: SourceEffect,
+}
+
+export interface FlowPortSource {
+    placement: PlacementSource,
+    position: string
 }
 
 export interface LaneTarget {
@@ -44,11 +49,13 @@ export interface CellTarget {
     column: number,
     row: RowTarget,
     placementId?: string,
+    placementKind?: PlacementType,
 }
 
 export enum DraggingStateKind {
     LANE,
     PLACEMENT,
+    FLOW,
     NONE
 }
 
@@ -59,8 +66,13 @@ export type DraggingState =
             target?: RowTarget & WithDropTargetStatus} }
     | { kind: DraggingStateKind.PLACEMENT,
         value: {
-            source: PlacementSource,
+            source: PlacementSource & WithSourceEffect,
             target?: CellTarget & WithDropTargetStatus } }
+    | { kind: DraggingStateKind.FLOW,
+        value: {
+            source: FlowPortSource,
+            target?: CellTarget & WithDropTargetStatus
+        }}
     | { kind: DraggingStateKind.NONE };
 
 export enum DraggingCommandKind {
@@ -70,6 +82,7 @@ export enum DraggingCommandKind {
     PLACEMENT_DRAG_START,
     CELL_DRAG_ENTER,
     CELL_DRAG_DROP,
+    FLOW_PORT_DRAG_START,
     OUT_OF_BOUNDS_DRAG_ENTER,
     OUT_OF_BOUNDS_DRAG_END,
 }
@@ -81,10 +94,12 @@ export type DragCommand =
         value: RowTarget }
     | { kind: DraggingCommandKind.LANE_DRAG_DROP }
     | { kind: DraggingCommandKind.PLACEMENT_DRAG_START,
-        value: PlacementSource }
+        value: PlacementSource & WithSourceEffect }
     | { kind: DraggingCommandKind.CELL_DRAG_ENTER,
         value: CellTarget }
     | { kind: DraggingCommandKind.CELL_DRAG_DROP }
+    | { kind: DraggingCommandKind.FLOW_PORT_DRAG_START,
+        value: FlowPortSource }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END }
 
@@ -173,6 +188,20 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                 }
                             }
                         }
+                        case DraggingStateKind.FLOW: {
+                            const target = command.value;
+
+                            return {
+                                ...state,
+                                value: {
+                                    ...state.value,
+                                    target: {
+                                        ...command.value,                                        
+                                        targetStatus: flowTargetStatus(state.value.source, target)
+                                    }
+                                }
+                            }
+                        }
                             
                         case DraggingStateKind.NONE:
                             return state;
@@ -230,8 +259,23 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                 }
                             }
                         }
+                        case DraggingStateKind.FLOW: {
+
+                            if (state.value.target && state.value.target.targetStatus === "good") {
+                                const { source, target } = state.value;
+                                // TODO:  reactionDecider.<linkingFlow>
+                            }
+                        }
                         default:
                             return { kind: DraggingStateKind.NONE };
+                    }
+                }
+                case DraggingCommandKind.FLOW_PORT_DRAG_START: {
+                    return {
+                        kind: DraggingStateKind.FLOW,
+                        value: {
+                            source: command.value
+                        }
                     }
                 }
                 case DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER: {
@@ -282,6 +326,30 @@ function placementTargetStatus({ placementKind }: PlacementSource, { placementId
             return ( placementKind == "event" ) ? "good" : "bad";
         case "timeline":
             return (["readModel", "command"].includes(placementKind) ? "good" : "bad" )
+    }
+}
+
+function flowTargetStatus({ placement: { placementKind, placementId } }: FlowPortSource, target: CellTarget): DropTargetStatus {
+    if (!target.placementId || !target.placementKind) {
+        return "bad";
+    }
+
+    const targetPlacementId = target.placementId;
+    const targetPlacementKind = target.placementKind;
+
+    if (placementId === targetPlacementId) { // Cant link to self
+        return "bad";
+    }
+
+    switch(placementKind) {
+        case "command":
+            return (targetPlacementKind === "event") ? "good" : "bad";
+        case "event":
+            return (targetPlacementKind === "readModel") ? "good" : "bad";
+        case "interface":
+            return (targetPlacementKind === "command") ? "good" : "bad";
+        case "readModel":
+            return (targetPlacementKind === "interface") ? "good" : "bad";
     }
 }
 

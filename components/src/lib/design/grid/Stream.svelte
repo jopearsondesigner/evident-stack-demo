@@ -108,6 +108,7 @@
       rowKind: 'stream'
     }}
     maybe_placement={placement?.id}
+    maybe_placement_kind="event"
     target_status={drop_target}
     on:navigate_cursor={forward}
     on:cell_drag_enter={forward}

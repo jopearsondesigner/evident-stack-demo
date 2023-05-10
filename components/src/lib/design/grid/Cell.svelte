@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import type { DragEventHandler, MouseEventHandler } from 'svelte/elements';
-  import type { DropTargetStatus } from '../Grid';
+  import type { DropTargetStatus, PlacementType } from '../Grid';
   import type { RowTarget } from './util';
 
   interface WithRowIndex {
@@ -11,6 +11,7 @@
   export let column: number;
   export let row: RowTarget & WithRowIndex;
   export let maybe_placement: string | undefined;
+  export let maybe_placement_kind: PlacementType | undefined;
   export let target_status: DropTargetStatus | undefined;
 
   $: gridRow = row.rowIndex + 1;
@@ -28,7 +29,8 @@
     dispatch('cell_drag_enter', {
       column,
       row,
-      placementId: maybe_placement
+      placementId: maybe_placement,
+      placementKind: maybe_placement_kind,
     });
   };
 

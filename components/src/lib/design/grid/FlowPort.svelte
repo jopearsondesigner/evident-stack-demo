@@ -27,6 +27,7 @@
 
   // Drag/drop
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
+    console.warn("flow_drag_start");
     dispatch("flow_drag_start", {
       position,
       placement: {
@@ -44,4 +45,7 @@
   class="absolute hidden group-hover:block {classesByPosition(position)}"
   draggable={true}
   on:dragstart={handleDragStart}
+  on:dragover={e => e.preventDefault()}
+  on:dragenter={e => e.preventDefault()}
+  on:dragend={e => e.preventDefault()}
 />

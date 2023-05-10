@@ -53,6 +53,7 @@
       rowKind: 'timeline'
     }}
     maybe_placement={placement?.id}
+    maybe_placement_kind={placement?.kind}
     target_status={drop_target}
     on:navigate_cursor={forward}
     on:cell_drag_enter={forward}

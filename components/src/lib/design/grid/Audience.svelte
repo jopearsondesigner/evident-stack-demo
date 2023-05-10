@@ -107,6 +107,7 @@
       rowKind: 'audience'
     }}
     maybe_placement={placement?.id}
+    maybe_placement_kind="interface"
     target_status={drop_target}
     on:navigate_cursor={forward}
     on:cell_drag_enter={forward}

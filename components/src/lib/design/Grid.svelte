@@ -106,6 +106,9 @@
       kind: DraggingCommandKind.FLOW_PORT_DRAG_START,
       value: e.detail
     };
+
+    console.warn("DRAG START COMMAND", command);
+    dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handleCellDragEnter = async (e: CustomEvent<CellTarget>) => {
@@ -374,6 +377,9 @@
         break;
       case DraggingStateKind.PLACEMENT:
         kind = 'PLACEMENT';
+        break;
+      case DraggingStateKind.FLOW:
+        kind = "FLOW"
         break;
       default:
         kind = 'None';

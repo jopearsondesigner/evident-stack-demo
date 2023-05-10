@@ -565,6 +565,13 @@ pub enum Placement {
     },
 }
 
+pub enum PlacementKind {
+    Interface,
+    Command,
+    Event,
+    ReadModel
+}
+
 impl Placement {
     pub fn index(&self) -> &PlacementIndex {
         match self {

@@ -72,7 +72,7 @@
     on:dragstart={handleDragStart}
     class="interface m-[1.4375rem] w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary"
   >
-    {name}
+    {name + id}
   </div>
   <!-- </MaybeTooltip> -->
 </div>

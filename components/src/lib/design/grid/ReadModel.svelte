@@ -54,7 +54,7 @@
     on:dragstart={handleDragStart}
     class="readModel m-[1.375rem] w-[6.125rem] h-[6.125rem] p-3 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-readModel to-readModel-light"
   >
-    {name}
+    {name + id}
   </div>
   <!-- </MaybeTooltip> -->
 </div>

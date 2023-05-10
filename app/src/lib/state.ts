@@ -88,7 +88,10 @@ const initialize_decider = async (id: string | undefined, user: string) => {
         return await manager.delete_from_description(id!, index, count)
       },
       connect_flow: async (source_placement_id_str: string, source_anchor_str: string | undefined, target_placement_id_str: string, target_anchor_str: string | undefined) => {
-        return await manager.connect_flow(id!, source_placement_id_str, source_anchor_str, target_placement_id_str, target_anchor_str)
+        console.warn("CALL connect_flow", id!, source_placement_id_str, source_anchor_str, target_placement_id_str, target_anchor_str);
+        const res = await manager.connect_flow(id!, source_placement_id_str, source_anchor_str, target_placement_id_str, target_anchor_str);
+        console.warn(res);
+        return res
       },
     }
   };

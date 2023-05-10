@@ -266,9 +266,9 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                 if (target.placementId) {
                                     reactionDecider.connect_flow(
                                         source.placement.placementId,
-                                        undefined, // TODO: Leaving Anchors null until we get more time to add some port rules
+                                        "Top", // TODO: Leaving Anchors null until we get more time to add some port rules
                                         target.placementId,
-                                        undefined// TODO: Leaving Anchors null until we get more time to add some port rules
+                                        "Bottom"// TODO: Leaving Anchors null until we get more time to add some port rules
                                     )
                                 }
                             }

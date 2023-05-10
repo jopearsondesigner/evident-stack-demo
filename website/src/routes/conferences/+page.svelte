@@ -22,7 +22,7 @@
   import BlogImage1 from '$components/assets/images/blog/conference-photo-1.png';
 </script>
 
-<Navbar navbarClass="w-full bg-black bg-opacity-90 px-4 py-3 sticky top-0 z-10 shadow-md">
+<Navbar navbarClass="w-full bg-black bg-opacity-90 px-4 py-3 top-0 z-10 shadow-md">
   <NavWrapper navDivClass="sm:container">
     <Nav website navWebClass="block">
       <NavUl class="flex justify-center items-center pb-0 mr-4 space-x-8 list-none">
@@ -82,7 +82,7 @@
           <Section name="blog">
             <SectionHeader tag="h2" customSize="text-[30px]">
               <A
-                color="text-gray-brand-2 hover:text-gray-brand-1"
+                color="text-stack-brand-800 dark:text-stack-brand-300"
                 href="/conferences/kafka-summit-2021"
               >
                 Kafka Summit 2021
@@ -108,11 +108,11 @@
             <BlogCta label="Join the community.">
               <Button
                 gradient
-                color="brandDesignPrimary"
+                color="brandStackPrimary"
                 size="sm"
                 label="Get Started"
                 class="flex items-center"
-                href="#"
+                href="/contact"
               >
                 <Icon
                   name="arrow-right"
@@ -143,7 +143,7 @@
           <Section name="blog" divClass="h-full">
             <SectionHeader tag="h2" customSize="text-[30px]">
               <A
-                color="text-gray-brand-2 hover:text-gray-brand-1"
+                color="text-stack-brand-800 dark:text-stack-brand-300"
                 href="conferences/kafka-summit-2020"
               >
                 Kafka Summit 2020

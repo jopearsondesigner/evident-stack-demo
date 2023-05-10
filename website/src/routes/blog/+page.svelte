@@ -22,7 +22,7 @@
   import BlogImage1 from '$components/assets/images/blog/blog-photo-1.png';
 </script>
 
-<Navbar navbarClass="w-full bg-black bg-opacity-90 px-4 py-3 sticky top-0 z-10 shadow-md">
+<Navbar navbarClass="w-full bg-black bg-opacity-90 px-4 py-3 top-0 z-10 shadow-md">
   <NavWrapper navDivClass="sm:container">
     <Nav website navWebClass="block">
       <NavUl class="flex justify-center items-center pb-0 mr-4 space-x-8 list-none">
@@ -86,7 +86,7 @@
           <Section name="blog">
             <SectionHeader tag="h2" customSize="text-[30px]">
               <A
-                color="text-gray-brand-2 hover:text-gray-brand-1"
+                color="text-stack-brand-800 dark:text-stack-brand-300"
                 href="/blog/new-features-announced-at-kafka-summit-2021"
               >
                 New Features Announced at Kafka Summit 2021
@@ -115,7 +115,7 @@
                 size="sm"
                 label="Get Started"
                 class="flex items-center"
-                href="https://app.onote.com/sign-up"
+                href="/contact"
               >
                 <Icon
                   name="arrow-right"
@@ -146,7 +146,7 @@
           <Section name="blog" divClass="h-full">
             <SectionHeader tag="h2" customSize="text-[30px]">
               <A
-                color="text-gray-brand-2 hover:text-gray-brand-1"
+                color="text-stack-brand-800 dark:text-stack-brand-300"
                 href="/blog/event-modeling-explained"
               >
                 Event Modeling Explained

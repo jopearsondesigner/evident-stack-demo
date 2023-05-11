@@ -41,8 +41,8 @@
   import InterfaceBlank from '$components/assets/images/product/global/InterfaceBlank.svg';
   import InterfaceJob from '$components/assets/images/product/global/InterfaceJob.svg';
   import ImgPlaceholder from '$components/assets/images/product/global/ImagePlaceholder.svg';
-  import Download from '$components/icons/Download.svelte';
-  import ImageUpload from '$components/icons/ImageUpload.svelte';
+  // import Download from '$components/icons/Download.svelte';
+  // import ImagePlacholder from '$components/icons/ImagePlacholder.svelte';
 
   let iconShadow = 'shadow-[0_2.5px_4px_-2px_rgba(0,0,0,0.82)]';
   let code: string =
@@ -324,7 +324,7 @@
                     class="cursor-pointer"
                     size={40}
                     iconColor="text-body dark:text-body-dark"
-                    pathName={ImageUpload}
+                    pathName={ImgPlaceholder}
                     viewBox="0 0 20 20"
                   />
                 </IconButton>

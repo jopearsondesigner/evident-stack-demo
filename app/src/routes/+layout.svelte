@@ -4,7 +4,6 @@
   import { onMount } from 'svelte';
   import { invalidate } from '$app/navigation';
   import { handleSignOut } from '$lib/user';
-  import { goto } from '$app/navigation';
   import { page } from '$app/stores';
 
   import CodeMirror from 'svelte-codemirror-editor';
@@ -51,7 +50,6 @@
   import DropdownMenu from '$components/dropdown/DropdownMenu.svelte';
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
-  import { onMount } from 'svelte';
   let expanded = false;
   let designExpanded = false;
   let dataExpanded = false;
@@ -221,90 +219,8 @@
   <Sidebar class={!isClosed ? 'w-[417px]' : 'w-[240px]'} {isClosed}>
     <SidebarWrapper>
       <Accordion class="flex flex-col" style="height: calc(100vh - 183px);">
-        <SidebarContainer
-          src={DesignLogo}
-          title="Design"
-          id="design/models"
-          on:click={() => (grid = true)}
-          bind:expanded={designExpanded} >
-          <SidebarGroup>
-            <SidebarDropdownWrapper
-              label="Schema"
-              on:click={handleClick}
-              bind:isVerticalOpen>
-              <Icon
-                slot="icon"
-                name="schema"
-                size={16}
-                iconColor="fill-current text-gray-brand-4 dark:text-white transition duration-200 ease-in"
-                pathName={Schema}
-                />
-              <Icon
-                slot="icon-open"
-                name="schema"
-                size={16}
-                iconColor="fill-current text-white dark:text-white transition duration-200 ease-in"
-                pathName={Schema}
-                />
-              <SidebarDropdownItem feature>
-                <Label class="mt-8">
-                  <span class="mb-1 text-body dark:text-white">Event Model Schema</span>
-                </Label>
-                <CodeMirror
-                  value={valueEventModel}
-                  theme={oneDark}
-                  lang={javascript()}
-                  styles={{
-                    '&': {
-                      width: '100%',
-                      height: '8.875rem',
-                      backgroundColor: '#303841',
-                      fontFamily: 'input-mono',
-                      color: '#D8DEE9'
-                    }
-                  }}
-                  class="mt-1"
-                />
-                <div class="mt-6 mx-3 space-x-3 flex justify-end">
-                  <button
-                    class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-                    on:click={handleClick}
-                    on:click={() => isVerticalOpen = false}>cancel</button>
-                  <Button color="default" size="sm" label="Save" on:click class="" />
-                </div>
-              </SidebarDropdownItem>
-            </SidebarDropdownWrapper>
-            <SidebarItem blank>
-              <Button
-                label="Export"
-                gradient
-                color="ghost"
-                size="sm"
-                className="my-4"
-                on:click
-                class=""
-                ><Icon
-                   slot="icon"
-                   name="download"
-                   size={12}
-                   iconColor="text-body-light dark:text-white"
-                   class="inline-flex mb-1"
-                   pathName={Download}
-                   /></Button
-                       >
-            </SidebarItem>
-          </SidebarGroup>
-        </SidebarContainer>
-        <SidebarContainer
-          src={DataLogo}
-          id="data"
-          title="Data"
-          on:click={() => (isClosed = true)}
-          on:click={() => (isVerticalOpen = false)}
-          on:click={() => (grid = false)}
-          bind:expanded={dataExpanded} >
-          <SidebarGroup />
-        </SidebarContainer>
+        <slot name="design" />
+        <slot name="data" />
         <SidebarContainer
           src={DomainFunctionsLogo}
           id="domain-functions"

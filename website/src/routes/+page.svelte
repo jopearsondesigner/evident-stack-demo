@@ -124,7 +124,7 @@
                 >
                 <span slot="hero-copy"
                   >Each layer in the Stack can be used individually, but work best together since
-                  each layer builds upon the one before it</span
+                  each layer builds upon the one before it.</span
                 >
               </HeroCopy>
             </HeroFlexbox>

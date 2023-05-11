@@ -279,7 +279,6 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                     }
                 }
                 case DraggingCommandKind.FLOW_PORT_DRAG_START: {
-                    console.warn("GOt HERRE");
                     return {
                         kind: DraggingStateKind.FLOW,
                         value: {

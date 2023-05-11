@@ -13,9 +13,7 @@
     type CellTarget,
     type WithSourceEffect,
     type FlowPortSource,
-
     DEFAULT_LANE
-
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -110,7 +108,6 @@
       value: e.detail
     };
 
-    console.warn("DRAG START COMMAND", command);
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
@@ -130,13 +127,13 @@
   };
 
   const handleOutOfBoundsDragEnter: DragEventHandler<EventTarget> = (_e) => {
-    console.warn('DRAG OUT OF BOUNDS');
+    console.info('DRAG OUT OF BOUNDS');
     const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER };
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handleOutOfBoundsDragEnd: DragEventHandler<EventTarget> = (_e) => {
-    console.warn('DRAG DROP OUT OF BOUNDS END');
+    console.info('DRAG DROP OUT OF BOUNDS END');
     const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END };
     dragState = evolveAndReactDraggingState(dragState, command);
   };
@@ -382,7 +379,7 @@
         kind = 'PLACEMENT';
         break;
       case DraggingStateKind.FLOW:
-        kind = "FLOW"
+        kind = 'FLOW';
         break;
       default:
         kind = 'None';
@@ -401,7 +398,6 @@
 />
 
 <h3>{mode}</h3>
-<h2>draggingLane: {drag_json}</h2>
 
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <FlowCanvas {flows} />
@@ -418,17 +414,17 @@
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
-      targeted_cell={
-        cell_drop_target &&
-        cell_drop_target.row.rowKind === 'audience' &&
-        cell_drop_target.row.audienceId == DEFAULT_LANE
-          ? {
-              column: cell_drop_target.column,
-              targetStatus: cell_drop_target.targetStatus
-            }
-          : undefined
-      }
-      targeted_lane={audience_drop_target?.index === default_audience_lane_index ? audience_drop_target.targetStatus : undefined}
+      targeted_cell={cell_drop_target &&
+      cell_drop_target.row.rowKind === 'audience' &&
+      cell_drop_target.row.audienceId == DEFAULT_LANE
+        ? {
+            column: cell_drop_target.column,
+            targetStatus: cell_drop_target.targetStatus
+          }
+        : undefined}
+      targeted_lane={audience_drop_target?.index === default_audience_lane_index
+        ? audience_drop_target.targetStatus
+        : undefined}
       row={default_audience_row}
       audience={{ placements: default_audience_placements }}
       lane_index={default_audience_lane_index}
@@ -437,7 +433,7 @@
 
     {#each audiences as audience, i (audience.id)}
       {@const row = i + 1}
-      {@const lane_index = (audiences.length - 1) - i}
+      {@const lane_index = audiences.length - 1 - i}
       {@const targeted_lane =
         audience_drop_target?.index == lane_index ? audience_drop_target.targetStatus : undefined}
       {@const targeted_cell =
@@ -527,20 +523,17 @@
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
-      targeted_cell={
-        cell_drop_target &&
-        cell_drop_target.row.rowKind === 'stream' &&
-        cell_drop_target.row.streamId == DEFAULT_LANE
-          ? {
-              column: cell_drop_target.column,
-              targetStatus: cell_drop_target.targetStatus
-            }
-          : undefined
-      }
-      targeted_lane={
-        stream_drop_target?.index === default_stream_lane_index ?
-          stream_drop_target.targetStatus : undefined
-      }
+      targeted_cell={cell_drop_target &&
+      cell_drop_target.row.rowKind === 'stream' &&
+      cell_drop_target.row.streamId == DEFAULT_LANE
+        ? {
+            column: cell_drop_target.column,
+            targetStatus: cell_drop_target.targetStatus
+          }
+        : undefined}
+      targeted_lane={stream_drop_target?.index === default_stream_lane_index
+        ? stream_drop_target.targetStatus
+        : undefined}
       lane_index={default_stream_lane_index}
       row={default_stream_row}
       stream={{ placements: default_stream_placements }}

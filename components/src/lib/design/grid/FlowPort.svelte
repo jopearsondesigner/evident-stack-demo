@@ -9,6 +9,7 @@
   export let placement: string;
   export let placement_kind: PlacementType;
   export let column: number;
+
   const dispatch = createEventDispatcher();
 
   const classesByPosition = (position: Position) => {
@@ -27,7 +28,6 @@
 
   // Drag/drop
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn("flow_drag_start");
     dispatch("flow_drag_start", {
       position,
       placement: {

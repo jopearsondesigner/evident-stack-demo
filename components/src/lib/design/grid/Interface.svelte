@@ -58,12 +58,23 @@
   };
 </script>
 
-<div
-  class="relative group"
-  on:dragover={(e) => e.preventDefault()}
->
-  <FlowPort on:flow_drag_start={forward} position="bottom" type="interface" placement={id} placement_kind="interface" {column} />
-  <FlowPort on:flow_drag_start={forward} position="right" type="interface" placement={id} placement_kind="interface" {column} />
+<div class="relative group" on:dragover={(e) => e.preventDefault()}>
+  <FlowPort
+    on:flow_drag_start={forward}
+    position="bottom"
+    type="interface"
+    placement={id}
+    placement_kind="interface"
+    {column}
+  />
+  <FlowPort
+    on:flow_drag_start={forward}
+    position="right"
+    type="interface"
+    placement={id}
+    placement_kind="interface"
+    {column}
+  />
   <!-- TODO: tooltip interferes with link dragging -->
   <!-- <MaybeTooltip tip={descriptionHTML}> -->
   <div

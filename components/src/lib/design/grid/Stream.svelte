@@ -71,7 +71,7 @@
     class="streamName laneName sticky left-3 z-30 justify-self-start self-end cursor-pointer prose text-body-light nndark:text-body-dark mb-3 cursor-move"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
   >
-    {stream.name + lane_index}
+    {stream.name}
   </h3>
 {:else}
   <!-- TODO: reduce the color to disabled text -->

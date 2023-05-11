@@ -114,7 +114,6 @@ pub trait ModifiableEventModel: EventModel {
     fn minus_flow(&mut self, flow_id: &FlowId);
 }
 
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum FieldError {
     FlowAnchorString(Option<String>)
@@ -131,7 +130,7 @@ pub enum EventModelError {
     LaneNotFound(LaneId),
     LaneIndexOutOfBounds(LaneId, usize),
     DescriptionTextOutOfBounds(String, usize, usize),
-    FieldError(FieldError)
+    FieldError(FieldError),
 }
 
 //// ***** Types *****

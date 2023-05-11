@@ -1,7 +1,8 @@
 <script lang="ts">
   import '../app.css';
   import type { LayoutData } from './$types';
-  import { handleSignOut } from '$lib/user';
+  import { onMount } from 'svelte';
+  import { invalidate } from '$app/navigation';
 
   import Navbar from '$components/navbar/Navbar.svelte';
   import NavInner from '$components/navbar/NavInner.svelte';
@@ -44,6 +45,25 @@
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
 
+  export let data: LayoutData;
+
+  $: ({ supabase, session } = data)
+
+  onMount(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session_) => {
+      if (session_?.expires_at !== session?.expires_at) {
+        invalidate('supabase:auth');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  })
+
+  onMount(() => {
+  })
+
   let isClosed = true;
   let hidden = true;
   let expanded = true;
@@ -64,8 +84,6 @@
   };
 
   let code = '"domain" {\n' + '\tfoo: string, \n' + '\tbar: string, \n' + '\tbaz: int\n' + '}';
-
-  export let data: LayoutData;
 </script>
 
 <Navbar website={false}>
@@ -76,27 +94,27 @@
         hamburgerClass="mx-2"
         on:click={() => handleDrawer()}
         on:click={() => (isClosed = true)}
-      />
-      <NavBrand src={Logo} height={28} logoClass="flex no-underline mx-3 cursor-default" />
-      <div
-        class="h-9 pr-3 border-r border-gray-secondary dark:border-border-dark flex items-center"
-      >
-        <MaybeTooltip tip="Home" position="tooltip-bottom">
-          <IconButton href="/"
-            ><Icon
-              name="home"
-              size={16}
-              iconColor="text-body-light dark:text-body-dark"
-              pathName={Home}
-            />
-          </IconButton>
-        </MaybeTooltip>
-      </div>
+        />
+        <NavBrand src={Logo} height={28} logoClass="flex no-underline mx-3 cursor-default" />
+        <div
+          class="h-9 pr-3 border-r border-gray-secondary dark:border-border-dark flex items-center"
+          >
+          <MaybeTooltip tip="Home" position="tooltip-bottom">
+            <IconButton href="/"
+                        ><Icon
+                           name="home"
+                           size={16}
+                           iconColor="text-body-light dark:text-body-dark"
+                           pathName={Home}
+                           />
+            </IconButton>
+          </MaybeTooltip>
+        </div>
     </NavToolbar>
     <NavToolbar
       navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark"
-    >
-      {#if data.session.user}
+      >
+      {#if data.session?.user}
         <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
           <IconButton slot="button" margin="mx-2 mt-1">
             <Icon
@@ -106,35 +124,37 @@
               class="vertical-middle"
               iconColor=""
               pathName={Profile}
-            />
+              />
           </IconButton>
           <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
-            <!-- fake email for testing -->
-            lutobor.kostalova66@centrum.cz</DropdownItem
-          >
+            {data.session?.user.email}
+          </DropdownItem>
           <DropdownItem href="/account">Account</DropdownItem>
           <DropdownDivider />
-          <DropdownItem className="flex-1" on:click={handleSignOut}>Sign Out</DropdownItem>
+          <DropdownItem className="flex-1">
+            <form method="post" action="/auth/sign-out">
+              <button class="button block">Sign Out</button>
+            </form>
+          </DropdownItem>
         </DropdownMenu>
 
         <MaybeTooltip tip="Docs" position="tooltip-bottom">
-          <IconButton
-            ><Icon
+          <IconButton>
+            <Icon
               name="docs"
               size={18}
               iconColor="text-body-light dark:text-body-dark"
-              pathName={Docs}
-            />
+              pathName={Docs} />
           </IconButton>
         </MaybeTooltip>
         <MaybeTooltip tip="Support" position="tooltip-bottom">
           <IconButton
             ><Icon
-              name="support"
-              size={18}
-              iconColor="text-body-light dark:text-body-dark"
-              pathName={Support}
-            />
+               name="support"
+               size={18}
+               iconColor="text-body-light dark:text-body-dark"
+               pathName={Support}
+               />
           </IconButton>
         </MaybeTooltip>
       {:else}
@@ -143,11 +163,9 @@
           gradient
           color="brandStackPrimary"
           size="sm"
-          on:click
-          label="Sign In"
-        />
-      {/if}
-    </NavToolbar>
+          label="Sign In" />
+        {/if}
+      </NavToolbar>
   </NavInner>
 </Navbar>
 
@@ -159,24 +177,24 @@
       <Accordion class="flex flex-col" style="height: calc(100vh - 183px);">
         <SidebarContainer src={DesignLogo} title="Design" id="design" bind:expanded>
           <SidebarGroup>
-            <SidebarDropdownWrapper label="	Schema" on:click={() => handleClick()}>
+            <SidebarDropdownWrapper label=" Schema" on:click={() => handleClick()}>
               <Icon
                 slot="icon"
                 name="schema"
                 size={16}
                 iconColor="fill-current text-gray-brand-4 dark:text-white transition duration-200 ease-in"
                 pathName={Schema}
-              />
+                />
               <Icon
                 slot="icon-open"
                 name="schema"
                 size={16}
                 iconColor="fill-current text-white dark:text-white transition duration-200 ease-in"
                 pathName={Schema}
-              />
+                />
               <SidebarDropdownItem feature>
                 <Label class="mt-2 mb-6" color="default"
-                  ><span class="text-body dark:text-white">Event Model Schema</span>
+                       ><span class="text-body dark:text-white">Event Model Schema</span>
                   <Textarea
                     placeholder=""
                     value={code}
@@ -185,13 +203,13 @@
                     class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
                     style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
                     disabled
-                  />
+                    />
                 </Label>
                 <div class="mt-6 mx-3 space-x-3 flex justify-end">
                   <button
                     class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
                     on:click>cancel</button
-                  >
+                                     >
                   <Button color="default" size="sm" label="Edit" on:click class="" />
                 </div>
               </SidebarDropdownItem>
@@ -206,14 +224,14 @@
                 on:click
                 class=""
                 ><Icon
-                  slot="icon"
-                  name="download"
-                  size={12}
-                  iconColor="text-body-light dark:text-white"
-                  class="inline-flex mb-1"
-                  pathName={Download}
-                /></Button
-              >
+                   slot="icon"
+                   name="download"
+                   size={12}
+                   iconColor="text-body-light dark:text-white"
+                   class="inline-flex mb-1"
+                   pathName={Download}
+                   /></Button
+                       >
             </SidebarItem>
           </SidebarGroup>
         </SidebarContainer>
@@ -227,7 +245,7 @@
           id="domain-functions"
           title="Domain Functions"
           on:click={() => (isClosed = true)}
-        >
+          >
           <SidebarGroup>
             <SidebarItem label="Hello, please develop me!" blank />
           </SidebarGroup>
@@ -237,7 +255,7 @@
           id="deploy"
           title="Deploy"
           on:click={() => (isClosed = true)}
-        >
+          >
           <SidebarGroup>
             <SidebarItem label="Hello, please develop me!" blank />
           </SidebarGroup>
@@ -247,7 +265,7 @@
           id="database"
           title="Database"
           on:click={() => (isClosed = true)}
-        >
+          >
           <SidebarGroup>
             <SidebarItem label="Hello, please develop me!" blank />
           </SidebarGroup>
@@ -258,10 +276,9 @@
 </Drawer>
 
 <main
-  class="left-0 relative transition-all duration-[200ms] ml-0"
+  class="mt-16 left-0 relative transition-all duration-[200ms] ml-0"
   class:left-60={!hidden}
   class:ml-[177px]={!isClosed}
-  class:ease-in={!isClosed}
->
+  class:ease-in={!isClosed} >
   <slot />
 </main>

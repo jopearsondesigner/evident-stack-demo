@@ -14,11 +14,12 @@
   "homepage": "https://github.com/evidentsystems/platform#readme",
   "workspaces": [
     "app",
-    "app/state/pkg",
+    "app/state/client/pkg",
+    "app/state/server/pkg",
     "website",
     "components"
   ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "dependencies": {
+    "@lottiefiles/svelte-lottie-player": "^0.3.0"
   }
 }

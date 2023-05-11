@@ -15,6 +15,7 @@
   import NavLi from '$components/navbar/NavLi.svelte';
   import Button from '$components/Button.svelte';
   import Icon from '$components/Icon.svelte';
+  import Modal from '$components/Modal.svelte';
   import ArrowRight from '$components/icons/ArrowRight.svelte';
   import Footer from '$components/footer/Footer.svelte';
   import FooterBrand from '$components/footer/FooterBrand.svelte';
@@ -43,30 +44,49 @@
     !hidden && bgColor,
     !hidden && bgOpacity
   );
+
+  import Form from '$components/form/Form.svelte';
+  import Input from '$components/form/Input.svelte';
+  import Textarea from '$components/form/Textarea.svelte';
+  import A from '$components/typography/A.svelte';
+  import Submit from '$components/form/Submit.svelte';
+  import EarlyAccessSignupForm from '$lib/EarlyAccessSignupForm.svelte';
+
+  $: Modal_id = 'modal-editing-window'; // TODO: derive this from model ID?
+
+  let contactModal = false;
+  export let open = false;
+  const hide = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    open = false;
+  };
+
+  const handleContactModel = async () => {
+    console.log('TODO: submit form');
+  };
 </script>
 
-<Navbar>
+<Navbar website={true}>
   {#if !hidden}
     <NavWrapper {hidden}>
       <NabBrand href="/" src={Logo} height={32} class="flex my-4" />
       <NavHamburger website on:click={() => handleMenu()} />
       <Nav>
         <NavUl>
-          <NavLi href="/features">Features</NavLi>
           <NavLi href="http://docs.onote.com/">Docs</NavLi>
-          <DropdownMenu name="Learn" {website}>
+          <DropdownMenu name="Learn" marginTop="mt-12" {website}>
             <NavUl>
               <NavLi href="/blog">Blog</NavLi>
               <NavLi href="/webinars">Webinars</NavLi>
               <NavLi href="/conferences">Conferences</NavLi>
             </NavUl>
           </DropdownMenu>
-          <DropdownMenu name="Service & Support" {website}>
+          <DropdownMenu name="Service & Support" marginTop="mt-12" {website}>
             <NavUl>
               <NavLi href="https://support.onote.com/">Support</NavLi>
             </NavUl>
           </DropdownMenu>
-          <DropdownMenu name="Company" {website}>
+          <DropdownMenu name="Company" marginTop="mt-12" {website}>
             <NavUl>
               <NavLi href="/team">Team</NavLi>
               <NavLi href="/contact">Contact</NavLi>
@@ -74,15 +94,15 @@
           </DropdownMenu>
         </NavUl>
         <NavUl class={classNames('lg:mr-12', ulClass)}>
-          <NavLi href="https://app.onote.com/">Log In</NavLi>
+          <!-- <NavLi href="https://app.onote.com/">Log In</NavLi> -->
           <NavLi>
             <Button
-              href="https://app.onote.com/sign-up"
               gradient
               color="brandStackPrimary"
               class="flex items-center"
               size="sm"
-              label="Sign In"
+              on:click={() => (contactModal = true)}
+              label="Sign Up for Early Access"
             >
               <Icon
                 name="arrow-right"
@@ -106,7 +126,6 @@
               <ThemeSwitch />
               <CloseButton on:click={() => handleMenu()} />
             </NavLi>
-            <NavLi hidden href="/features">Features</NavLi>
             <NavLi hidden href="http://docs.onote.com/">Docs</NavLi>
             <DropdownMenuMobile name="Learn">
               <NavUl hidden>
@@ -128,15 +147,15 @@
             </DropdownMenuMobile>
           </NavUl>
           <NavUl mobileNavUl="p-3 border-t border-border-light dark:border-border-dark" hidden>
-            <NavLi href="https://app.onote.com/" class="p-0" hidden footer>Log In</NavLi>
+            <!-- <NavLi href="https://app.onote.com/" class="p-0" hidden footer>Log In</NavLi> -->
             <NavLi hidden footer>
               <Button
-                href="https://app.onote.com/sign-up"
                 gradient
                 color="brandStackPrimary"
                 class="flex items-center"
                 size="sm"
-                label="Sign In"
+                on:click={() => (contactModal = true)}
+                label="Sign Up for Early Access"
               >
                 <Icon
                   name="arrow-right"
@@ -154,7 +173,7 @@
     </NavWrapper>
   {/if}
 </Navbar>
-<span class="lg:block hidden right-0 z-20 absolute pt-3 pr-10"><ThemeSwitch /></span>
+<span class="lg:block hidden right-0 z-20 absolute pt-3 pr-10 mt-16"><ThemeSwitch /></span>
 
 {#if !hidden}
   <slot />
@@ -171,12 +190,12 @@
           <FooterBrand src={Logo} />
         </Column>
         <Column class="flex-none col-span-3">
-          <Row class="grid grid-cols-3 gap-4 py-4">
+          <Row class="grid grid-cols-3 md:grid-cols-4 gap-4 py-4">
             <Column class="flex">
               <FooterLinkGroup
                 liClass="pb-2 w-full text-sm font-bold text-body-light dark:text-body-dark"
               >
-                <FooterLink label="Features" href="/features" />
+                <FooterLink label="Docs" href="http://docs.onote.com/" />
               </FooterLinkGroup>
             </Column>
             <Column class="flex">
@@ -186,15 +205,6 @@
                 <FooterLink label="Conferences" href="/conferences" />
               </FooterLinkGroup>
             </Column>
-            <Column class="flex">
-              <FooterLinkGroup
-                liClass="pb-2 w-full text-sm font-bold text-body-light dark:text-body-dark"
-              >
-                <FooterLink label="Docs" href="http://docs.onote.com/" />
-              </FooterLinkGroup>
-            </Column>
-          </Row>
-          <Row class="grid grid-cols-3 gap-4 py-4">
             <Column class="flex">
               <FooterLinkGroup label="Service & Support">
                 <FooterLink label="Support" href="https://support.onote.com/" />
@@ -216,3 +226,10 @@
     </Container>
   </Footer>
 </div>
+
+<Modal bind:open={contactModal} size="xs" autoclose title="Contact Form" color="brand">
+  <div class="text-center w-full inline-flex justify-center items-center p px-6">
+    <EarlyAccessSignupForm />
+  </div>
+  <!-- <div slot="footer" class="mx-3 flex items-end space-x-3" /> -->
+</Modal>

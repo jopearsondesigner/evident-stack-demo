@@ -26,7 +26,8 @@
     | 'navbar'
     | 'navbarUl'
     | 'form'
-    | 'none' = 'default';
+    | 'none'
+    | 'brand' = 'default';
   export let rounded: boolean = false;
   export let border: boolean = false;
   export let shadow: boolean = false;
@@ -61,6 +62,7 @@
     navbarUl: 'bg-gray-50 dark:bg-gray-800',
     form: 'bg-gray-50 dark:bg-gray-700',
     primary: 'bg-primary-50 dark:bg-gray-800 ',
+    brand: 'bg-white dark:bg-dark-2 ',
     none: ''
   };
 
@@ -81,6 +83,7 @@
     navbarUl: 'text-gray-700 dark:text-gray-400',
     form: 'text-gray-900 dark:text-white',
     primary: 'text-primary-800 dark:text-primary-400',
+    brand: 'text-body-light dark:text-body-dark',
     none: ''
   };
 

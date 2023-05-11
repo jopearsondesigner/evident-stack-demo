@@ -8,7 +8,11 @@ as $$
     user_id uuid := auth.uid();
   begin
     insert into public.models (id, name, description, creator)
-      values (model_id, model_name, model_description, user_id);
+      values (model_id, model_name, model_description, user_id)
+      on conflict do nothing;
+    if not found then
+      rollback;
+    end if;
 
     insert into public.model_collaborators ("user", model, role, grantor)
       values (user_id, model_id, 'owner', user_id);
@@ -18,6 +22,9 @@ as $$
               jsonb_build_object('id', model_id, 'name', model_name, 'description', model_description));
 
     return event_id;
+  exception
+    when transaction_rollback then
+      return null;
   end;
 $$ language plpgsql;
 
@@ -30,12 +37,18 @@ as $$
   begin
     update public.models set name = model_name, description = model_description
       where id = model_id;
+    if not found then
+      rollback;
+    end if;
 
     insert into public.model_events (id, type, subject, "user", data)
       values (event_id, 'updated', model_id, user_id,
               jsonb_build_object('name', model_name, 'description', model_description));
 
     return event_id;
+  exception
+    when transaction_rollback then
+      return null;
   end;
 $$ language plpgsql;
 
@@ -50,8 +63,14 @@ as $$
       values (event_id, 'deleted', model_id, user_id, null);
 
     delete from public.models where id = model_id;
+    if not found then
+      rollback;
+    end if;
 
     return event_id;
+  exception
+    when transaction_rollback then
+      return null;
   end;
 $$ language plpgsql;
 
@@ -63,13 +82,22 @@ as $$
     user_id uuid := auth.uid();
   begin
     insert into public.model_patches (id, model, data)
-      values (patch_id, model_id, patch_data);
+      values (patch_id, model_id, patch_data)
+      on conflict do nothing;
+    if not found then
+      rollback;
+    end if;
 
     insert into public.model_events (id, type, subject, "user", data)
       values (event_id, 'patched', model_id, user_id,
               jsonb_build_object('patch_id', patch_id));
 
     return event_id;
+  exception
+    when transaction_rollback then
+      return null;
+    when foreign_key_violation then
+      return null;
   end;
 $$ language plpgsql;
 

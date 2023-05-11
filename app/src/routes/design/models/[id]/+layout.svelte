@@ -91,9 +91,9 @@
     editable = !editable;
   }
 
-  let imgUpload: string | undefined | null, fileinput: HTMLInputElement;
+  let imgUpload: string | null | undefined, fileinput: HTMLInputElement;
 
-  const onFileSelected = (e) => {
+  const onFileSelected = (e: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
     let image = e.target.files[0];
     let reader = new FileReader();
     reader.readAsDataURL(image);
@@ -276,14 +276,7 @@
             incididunt ut labore et dolore magna aliqua.
           </p>
           <Form formClass="p-3 w-full">
-            <Select
-              {ArrowDown}
-              size="sm"
-              margin="my-6"
-              items={types}
-              placeholder="Choose Interface Type"
-              bind:value
-            />
+            <Select class="mt-2" items={types} bind:value={selected} />
             {#if figma}
               <Input class="my-6" size="sm" placeholder="Figma URL" />
             {/if}

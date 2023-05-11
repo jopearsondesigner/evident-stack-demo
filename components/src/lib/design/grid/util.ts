@@ -264,11 +264,26 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             if (state.value.target && state.value.target.targetStatus === "good") {
                                 const { source, target } = state.value;
                                 if (target.placementId) {
+                                    const [sourceAnchor, targetAnchor] = (() => {
+                                        switch ([source.placement.placementKind, target.placementKind]) {
+                                            case ["interface", "command"]:
+                                                return ["Bottom", "Top"]
+                                            case ["command", "event"]:
+                                                return ["Top", "Bottom"]
+                                            case ["event", "readModel"]:
+                                                return ["Top", "Bottom"]
+                                            case ["readModel", "interface"]:
+                                                return ["Top", "Bottom"]
+                                            default: 
+                                                return ["Top", "Bottom"]
+                                        }
+                                    })();
+
                                     reactionDecider.connect_flow(
                                         source.placement.placementId,
-                                        "Top", // TODO: Leaving Anchors null until we get more time to add some port rules
+                                        sourceAnchor,
                                         target.placementId,
-                                        "Bottom"// TODO: Leaving Anchors null until we get more time to add some port rules
+                                        targetAnchor,
                                     )
                                 }
                             }

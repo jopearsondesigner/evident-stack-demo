@@ -501,15 +501,22 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         source_anchor,
                         target_placement_id,
                         target_anchor,
-                    ) => Ok(vec![EventModelEvent::FlowConnected(
-                        *event_model_id,
-                        FlowArrow::create(
-                            get_placement_by_id(model, &source_placement_id)?.id(),
-                            source_anchor.to_owned(),
-                            get_placement_by_id(model, &target_placement_id)?.id(),
-                            target_anchor.to_owned(),
-                        )?,
-                    )]),
+                    ) => {
+                        let source_placement = get_placement_by_id(model, &source_placement_id)?;
+                        let target_placement = get_placement_by_id(model, &target_placement_id)?;
+
+                        valid_flow(&source_placement, &target_placement)?;
+
+                        Ok(vec![EventModelEvent::FlowConnected(
+                            *event_model_id,
+                            FlowArrow::create(
+                                source_placement.id(),
+                                source_anchor.to_owned(),
+                                target_placement.id(),
+                                target_anchor.to_owned(),
+                            )?,
+                        )])
+                    }
                     EventModelCommand::DisconnectFlow(_, _) => {
                         todo!()
                     }
@@ -737,4 +744,17 @@ fn get_stream_by_id(model: &impl EventModel, id: &StreamId) -> Result<Stream, Ev
         .ok_or_else(|| {
             EventModelError::ModificationError(format!("No stream found with id {:?}", id))
         })
+}
+
+fn valid_flow(source: &Placement, target: &Placement) -> Result<(), EventModelError> {
+    match (source, target) {
+        (Placement::Interface { .. }, Placement::Command { .. }) => Ok(()),
+        (Placement::Command { .. }, Placement::Event { .. }) => Ok(()),
+        (Placement::Event { .. }, Placement::ReadModel { .. }) => Ok(()),
+        (Placement::ReadModel { .. }, Placement::Interface { .. }) => Ok(()),
+        _ => Err(EventModelError::IllegalFlowArrow(format!(
+            "Cannot connect flows: {:?} -> {:?}",
+            source, target
+        ))),
+    }
 }

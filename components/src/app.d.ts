@@ -19,3 +19,5 @@ interface HTMLOrSVGElement {
   blur(): void;
   focus(options?: FocusOptions): void;
 }
+
+declare module 'lottie-web/build/player/lottie';

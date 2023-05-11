@@ -2,7 +2,7 @@
   import Container from '$components/Container.svelte';
   import Row from '$components/Row.svelte';
   import Column from '$components/Column.svelte';
-  import Section from '$components/Column.svelte';
+  import Section from '$components/Section.svelte';
   import SectionHeader from '$components/typography/SectionHeader.svelte';
   import SectionLabel from '$components/typography/SectionLabel.svelte';
   import Icon from '$components/Icon.svelte';

@@ -35,8 +35,8 @@
   import CommandIcon from '$components/icons/CommandIcon.svelte';
   import ReadModelIcon from '$components/icons/ReadModelIcon.svelte';
   import InterfaceIcon from '$components/icons/InterfaceIcon.svelte';
-  import InterfaceBlank from '$components/assets/images/product/global/InterfaceBlank.svg';
-  import InterfaceJob from '$components/assets/images/product/global/InterfaceJob.svg';
+  import InterfaceBlank from '$components/assets/images/product/design/InterfaceBlank.svg';
+  import InterfaceJob from '$components/assets/images/product/design/InterfaceJob.svg';
   import ImgPlaceholder from '$components/assets/images/product/global/ImagePlaceholder.svg';
   import Download from '$components/icons/Download.svelte';
 

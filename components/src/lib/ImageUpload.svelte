@@ -1,7 +1,7 @@
 <script lang="ts">
   // @ts-nocheck
   import ImageUploadIcon from './icons/ImageUpload.svelte';
-  import ImagePlaceholder from './assets/images/product/global/ImagePlacholder.svg';
+  import ImagePlaceholder from './assets/images/product/design/ImagePlacholder.svg';
   import Icon from './Icon.svelte';
   import IconButton from './IconButton.svelte';
 

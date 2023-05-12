@@ -37,7 +37,6 @@
   import InterfaceIcon from '$components/icons/InterfaceIcon.svelte';
   import InterfaceBlank from '$components/assets/images/product/design/InterfaceBlank.svg';
   import InterfaceJob from '$components/assets/images/product/design/InterfaceJob.svg';
-  import ImgPlaceholder from '$components/assets/images/product/global/ImagePlaceholder.svg';
   import Download from '$components/icons/Download.svelte';
 
   let iconShadow = 'shadow-[0_2.5px_4px_-2px_rgba(0,0,0,0.82)]';

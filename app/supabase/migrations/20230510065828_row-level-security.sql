@@ -57,16 +57,6 @@ create policy "Authenticated users can create a model"
     creator = auth.uid()
   );
 
-drop policy if exists "Model creators can see their own models"
-  on public.models;
-
-create policy "Model creators can see their own models"
-  on public.models
-  for select to authenticated
-  using (
-    creator = auth.uid()
-  );
-
 drop policy if exists "All granted roles can view a model"
   on public.models;
 
@@ -96,15 +86,15 @@ create policy "Editors or better can update a model"
     creator = null
   );
 
-drop policy if exists "Admins or better can delete a model"
+drop policy if exists "Owners can delete a model"
   on public.models;
 
-create policy "Admins or better can delete a model"
+create policy "Owners can delete a model"
   on public.models
   for delete to authenticated
   using (
     id in (
-      select get_admin_or_better_models_for_auth_user()
+      select get_models_owned_by_auth_user()
     )
   );
 
@@ -130,7 +120,7 @@ create policy "All authenticated users can view model access terminating events"
   for select to authenticated
   using (
     type in (
-      'collaborator_role_revoked',
+      'collaborator_role_revoked', -- TODO: make this specific to when I'm the revokee?
       'deleted'
     )
   );
@@ -157,7 +147,7 @@ create policy "All granted roles can view model patches"
   for select to authenticated
   using (
     model in (
-      select get_editor_or_better_models_for_auth_user()
+      select get_all_models_for_auth_user()
     )
   );
 
@@ -220,10 +210,10 @@ create policy "Model collaborators can view other collaborators"
     )
   );
 
-drop policy if exists "Model creator can grant themselves access as and owner collaborator"
+drop policy if exists "Model creator can grant themselves access as an owner collaborator"
   on public.model_collaborators;
 
-create policy "Model creator can grant themselves access as and owner collaborator"
+create policy "Model creator can grant themselves access as an owner collaborator"
   on public.model_collaborators
   for insert to authenticated
   with check (

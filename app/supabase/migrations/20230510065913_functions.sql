@@ -243,5 +243,6 @@ as $$
    where model_events.subject = model_id
      and sequence > COALESCE((select sequence
                               from public.model_events
-                              where id = starting_event_id), 0);
+                              where id = starting_event_id), 0)
+   order by sequence asc;
 $$ language sql stable;

@@ -4,13 +4,12 @@
   import Modal from '$components/Modal.svelte';
   import Button from '$components/Button.svelte';
   import Icon from '$components/Icon.svelte';
-  import IconButton from '$components/IconButton.svelte';
   import ProgressBar from '$components/utils/ProgressBar.svelte';
   import Warning from '$components/icons/Warning.svelte';
   import FileIcon from '$components/icons/FileIcon.svelte';
   import Checkmark from '$components/icons/Checkmark.svelte';
   import Grid from '$components/design/Grid.svelte';
-
+  import ImageUpload from '$components/ImageUpload.svelte';
   import Drawer from '$components/drawer/Drawer.svelte';
   import Form from '$components/form/Form.svelte';
   import Textarea from '$components/form/Textarea.svelte';
@@ -23,8 +22,6 @@
   let image: boolean = true;
   let job: boolean = false;
   let selected: string = '';
-  let ImgUrl: string =
-    'https://cdn.dribbble.com/users/4838879/screenshots/15120947/media/92b243f9e1089780124a08943ed44f92.jpg';
 
   export let value: string | number;
   let types = [
@@ -42,7 +39,6 @@
   import InterfaceJob from '$components/assets/images/product/global/InterfaceJob.svg';
   import ImgPlaceholder from '$components/assets/images/product/global/ImagePlaceholder.svg';
   import Download from '$components/icons/Download.svelte';
-  import ImageUpload from '$components/icons/ImageUpload.svelte';
 
   let iconShadow = 'shadow-[0_2.5px_4px_-2px_rgba(0,0,0,0.82)]';
   let code: string =
@@ -90,17 +86,6 @@
   function handleDblClick() {
     editable = !editable;
   }
-
-  let imgUpload: string | null | undefined, fileinput: HTMLInputElement;
-
-  const onFileSelected = (e: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
-    let image = e.target.files[0];
-    let reader = new FileReader();
-    reader.readAsDataURL(image);
-    reader.onload = (e) => {
-      imgUpload = e.target.result;
-    };
-  };
 </script>
 
 <form id="importModel" on:submit|preventDefault={handleImportJson}>
@@ -300,43 +285,7 @@
               </div>
             {:else if image}
               <div class="h-full flex flex-col justify-center items-center">
-                {#if imgUpload}
-                  <img class="imgUpload" src={imgUpload} alt="d" />
-                {:else}
-                  <img class="imgUpload opacity-20" src={ImgPlaceholder} alt="placehoder" />
-                {/if}
-                <IconButton
-                  size={50}
-                  on:click={() => {
-                    fileinput.click();
-                  }}
-                  class=""
-                >
-                  <Icon
-                    name="image-upload"
-                    class="cursor-pointer"
-                    size={40}
-                    iconColor="text-body dark:text-body-dark"
-                    pathName={ImageUpload}
-                    viewBox="0 0 20 20"
-                  />
-                </IconButton>
-                <div
-                  class="chan text-center relative"
-                  on:click={() => {
-                    fileinput.click();
-                  }}
-                  on:keydown
-                >
-                  Choose Image
-                </div>
-                <input
-                  style="display:none"
-                  type="file"
-                  accept=".jpg, .jpeg, .png"
-                  on:change={(e) => onFileSelected(e)}
-                  bind:this={fileinput}
-                />
+                <ImageUpload />
               </div>
             {:else if job}
               <div class="h-full flex justify-center items-center">

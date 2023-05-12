@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  let LottiePlayer;
+  let LottiePlayer: any;
 
   onMount(async () => {
     const module = await import('@lottiefiles/svelte-lottie-player');

@@ -72,6 +72,11 @@
   import Submit from '$components/form/Submit.svelte';
   import EarlyAccessSignupForm from '$lib/EarlyAccessSignupForm.svelte';
 
+  import { MetaTags } from 'svelte-meta-tags';
+  let title = 'Evident Stack';
+  let description =
+    'Each layer in the Stack can be used individually, but work best together since each layer builds upon the one before it.';
+
   $: Modal_id = 'modal-editing-window'; // TODO: derive this from model ID?
 
   let contactModal = false;
@@ -80,6 +85,34 @@
     console.log('TODO: submit form');
   };
 </script>
+
+<MetaTags
+  {title}
+  {description}
+  openGraph={{
+    type: 'website',
+    url: `https://evidentstack.com/`,
+    title: `Evident Stack`,
+    description: `${description}`,
+    images: [
+      {
+        url: 'https://evidentstack.com//social/OGEvidentStack.jpg',
+        width: 1200,
+        height: 630,
+        alt: `${title}`
+      }
+    ],
+    site_name: 'Flowbite-Svelte'
+  }}
+  twitter={{
+    handle: '@shinokada',
+    cardType: 'summary_large_image',
+    title: `${title}`,
+    description: `${description}`,
+    image: 'https://evidentstack.com//social/OGEvidentStack.jpg',
+    imageAlt: `${title}`
+  }}
+/>
 
 {#if browser}
   <Carousel

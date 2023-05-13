@@ -172,7 +172,7 @@ export interface Database {
         Args: {
           changes: Json
         }
-        Returns: string
+        Returns: undefined
       }
       create_model: {
         Args: {
@@ -214,7 +214,6 @@ export interface Database {
       }
       model_events_since: {
         Args: {
-          model_id: string
           starting_event_id: string
         }
         Returns: {

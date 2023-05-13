@@ -22,6 +22,7 @@
     "client:build": "cd state/client && wasm-pack build --release --target web",
     "server:dev": "cd state/server && cargo watch -i .gitignore -i \"pkg/*\" -s \"wasm-pack build --dev --target web\"",
     "server:build": "cd state/server && wasm-pack build --release --target web",
+    "db:types": "npx supabase gen types typescript --local > src/lib/supabase/database.types.ts",
     "dev": "concurrently -k \"npm:client:dev\" \"npm:server:dev\" \"npm:app:dev\"",
     "preview": "vite preview",
     "build": "npm run client:build && npm run server:build && npm run app:build",

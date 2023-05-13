@@ -10,4 +10,4 @@ create publication supabase_realtime;
 commit;
 
 -- add a table to the publication
-alter publication supabase_realtime add table public.model_events;
+alter publication supabase_realtime add table public.model_events, public.model_patches;

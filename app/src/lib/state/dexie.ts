@@ -1,8 +1,8 @@
 import { browser } from "$app/environment";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "$lib/supabase/database.types";
 import { Dexie, liveQuery, type Observable } from "dexie";
-import { readable } from "svelte/store";
-
-export { Dexie };
+import { readable, type Readable } from "svelte/store";
 
 if (browser) {
   await import('dexie-observable');
@@ -39,9 +39,40 @@ class EventModelDatabase extends Dexie {
 
 export const db = new EventModelDatabase();
 
+export const connect = async (supabase: SupabaseClient<Database>): Promise<Readable<string>> => {
+  if (browser) {
+    const { initSupabase } = await import("./sync_protocol");
+    initSupabase(supabase);
+
+    const url = window.location.origin;
+
+    await db.syncable.connect("evidentstack", url,
+      {
+        local_patches_table: "model_patches",
+        local_models_table: "models",
+        remote_schema: "public",            // TODO: configurable?
+        remote_events_table: "model_events", // TODO: configurable?
+        remote_patches_table: "model_patches" // TODO: configurable?
+      }
+    );
+
+    // Return a store that tracks connection status
+    return readable("before connection", setter => {
+      db.syncable.on('statusChanged', function (newStatus, url_) {
+        console.log("Dexie DB status changing to:", newStatus, Dexie.Syncable.StatusTexts[newStatus]);
+        if (url_ == url) {
+          setter(Dexie.Syncable.StatusTexts[newStatus]);
+        }
+      });
+    })
+  };
+
+  return readable("not connected")
+}
+
 // TODO: more gracefully handle upgrades blocked by other open tabs/windows
-db.on("blocked", function() {
-  alert ("Database upgrading was blocked by another window. " +
+db.on("blocked", () => {
+  alert("Database upgrading was blocked by another window. " +
     "Please close down any other tabs or windows that has this page open");
 });
 

@@ -196,3 +196,7 @@ gradle-app.setting
 # Added by cargo
 
 /target
+
+# Mac OS
+
+.DS_Store

@@ -1,8 +1,7 @@
 import type { ISyncProtocol } from 'dexie-syncable/api';
 import type { IDatabaseChange, ICreateChange, IUpdateChange } from 'dexie-observable/api';
 import { toByteArray, fromByteArray } from 'base64-js';
-import type { Database } from "$lib/supabase/database.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { supabase } from '$lib/supabase/client';
 import { debug } from '$lib/util';
 
 const CREATE = 1;
@@ -12,7 +11,6 @@ const DELETE = 3;
 const INITIAL_BACKOFF = 2;
 let local_to_remote_backoff = INITIAL_BACKOFF;
 let remote_to_local_backoff = INITIAL_BACKOFF;
-
 
 const dexie_change_to_model_obj = (change: ICreateChange | IUpdateChange) => {
   let obj = change.obj
@@ -24,16 +22,18 @@ const dexie_change_to_patch_obj = (change: ICreateChange) => {
   return { id: obj.id, model: obj.model, user: obj.user, data: fromByteArray(obj.data) }
 };
 
-export let supabase: SupabaseClient<Database>;
-
-export const initSupabase = (client: SupabaseClient<Database>): void => {
-  supabase = client;
-}
-
 export const SupabaseSync: ISyncProtocol = {
   sync: async function (context, url, options, baseRevision, syncedRevision, changes, partial,
     applyRemoteChanges, onChangesAccepted, onSuccess, onError) {
-    debug("Syncing:", url, options, baseRevision, syncedRevision, changes, partial)
+    debug("Syncing:", url, options, baseRevision, syncedRevision, changes, partial);
+
+    debug("Supabase", supabase);
+
+    const session = await supabase.auth.getSession()
+    if (!session.data.session) {
+      onError(`User is not logged in: ${session.error}`) // TODO: retry?
+      return;
+    }
 
     const send_changes = async (
       new_changes: typeof changes,
@@ -158,7 +158,7 @@ export const SupabaseSync: ISyncProtocol = {
             // which should be the next message received
             let patch = payload['new'];
             debug("storing unapplied patch", patch);
-            context.unapplied_patches = {...context.unapplied_patches, [patch.id]: patch}
+            context.unapplied_patches = { ...context.unapplied_patches, [patch.id]: patch }
             await context.save();
           } else if (payload.table == options.remote_events_table) {
             debug("received model event via postgres_changes on channel", payload)

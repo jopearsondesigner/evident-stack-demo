@@ -1,8 +1,8 @@
 import { browser } from "$app/environment";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "$lib/supabase/database.types";
+import { init_supabase } from "$lib/supabase/client";
+import type { Session } from "@supabase/supabase-js";
 import { Dexie, liveQuery, type Observable } from "dexie";
-import { readable, type Readable } from "svelte/store";
+import { readable } from "svelte/store";
 
 if (browser) {
   await import('dexie-observable');
@@ -39,12 +39,9 @@ class EventModelDatabase extends Dexie {
 
 export const db = new EventModelDatabase();
 
-export const connect = async (supabase: SupabaseClient<Database>): Promise<Readable<string>> => {
+export const connect = async (url: string, session: Session, statusCallback: (status: string) => void) => {
   if (browser) {
-    const { initSupabase } = await import("./sync_protocol");
-    initSupabase(supabase);
-
-    const url = window.location.origin;
+    init_supabase(session);
 
     await db.syncable.connect("evidentstack", url,
       {
@@ -56,18 +53,13 @@ export const connect = async (supabase: SupabaseClient<Database>): Promise<Reada
       }
     );
 
-    // Return a store that tracks connection status
-    return readable("before connection", setter => {
-      db.syncable.on('statusChanged', function (newStatus, url_) {
-        console.log("Dexie DB status changing to:", newStatus, Dexie.Syncable.StatusTexts[newStatus]);
-        if (url_ == url) {
-          setter(Dexie.Syncable.StatusTexts[newStatus]);
-        }
-      });
-    })
+    db.syncable.on('statusChanged', function (newStatus, url_) {
+      console.log("Dexie DB status changing to:", newStatus, Dexie.Syncable.StatusTexts[newStatus]);
+      if (url_ == url) {
+        statusCallback(Dexie.Syncable.StatusTexts[newStatus]);
+      }
+    });
   };
-
-  return readable("not connected")
 }
 
 // TODO: more gracefully handle upgrades blocked by other open tabs/windows

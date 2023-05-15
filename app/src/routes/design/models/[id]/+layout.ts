@@ -4,9 +4,7 @@ import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async (event) => {
   if (browser) {
-    let { connect } = await import('$lib/state/dexie');
-    let { session, supabase } = await event.parent()
-    let syncing = await connect(supabase);
+    let { session } = await event.parent()
 
     if (session) {
       // TODO: check Dexie for model
@@ -14,7 +12,7 @@ export const load: LayoutLoad = async (event) => {
       //     if model exists in Supabase, render and rely on initial Dexie sync to do its thing
       //     else if model doesn't exist in Supabase, throw 404
       let { grid, decider } = await initialize_decider(event.params.id, session.user.id);
-      return { grid, decider, syncing };
+      return { grid, decider, session };
     }
     return {};
   }

@@ -25,15 +25,24 @@
   import InterfaceBlank from '$components/assets/images/product/global/InterfaceBlank.svg';
   import InterfaceJob from '$components/assets/images/product/global/InterfaceJob.svg';
   import ImgPlaceholder from '$components/assets/images/product/global/ImagePlaceholder.svg';
+  import type { Readable } from 'svelte/store';
+  import { onMount } from 'svelte';
+  import { loadSyncWorker } from '$lib/state/sync';
   // import Download from '$components/icons/Download.svelte';
   // import ImagePlacholder from '$components/icons/ImagePlacholder.svelte';
 
 
   // ==== Model State
   export let data: PageData;
-  const { grid, decider, syncing } = data;
+  const { grid, decider, session } = data;
 
   $: event_model_id = $grid?.id();
+
+  let syncing: Readable<string>;
+
+  onMount(async () => {
+    syncing = await loadSyncWorker(session!);
+  });
 
   // ==== end Model State
 

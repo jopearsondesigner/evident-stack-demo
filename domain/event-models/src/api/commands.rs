@@ -1,10 +1,6 @@
-use crate::types::audience::AudienceId;
-use crate::types::flow::{Anchor, FlowId};
-use crate::types::interface::InterfaceConfig;
-use crate::types::placement::PlacementId;
-use crate::types::stream::StreamId;
-use crate::types::ComponentId;
-use crate::EventModelId;
+use crate::{
+    Anchor, AudienceId, ComponentId, EventModelId, FlowId, InterfaceConfig, PlacementId, StreamId,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -12,13 +8,18 @@ pub enum EventModelCommand {
     // Event Model Details
     Create(String),
     Rename(EventModelId, String),
+    Delete(EventModelId),
+    EditDescription(EventModelId, usize, usize, String),
+    EditSchema(EventModelId, usize, usize, String),
+
+    // TODO: remove these:
     SetDescription(EventModelId, String),
     AddToDescription(EventModelId, usize, String),
     DeleteFromDescription(EventModelId, usize, usize),
     SetSchema(EventModelId, String),
     AddToSchema(EventModelId, usize, String),
     DeleteFromSchema(EventModelId, usize),
-    Delete(EventModelId),
+    // </TODO: remove these>
 
     // Composite Actions
     Import(EventModelId, usize, Vec<u8>),
@@ -51,13 +52,21 @@ pub enum EventModelCommand {
 
     // Component Details
     RenameComponent(EventModelId, ComponentId, String),
+    ConfigureInterface(EventModelId, ComponentId, InterfaceConfig),
+    EditComponentDescription(EventModelId, ComponentId, usize, usize, String),
+    EditComponentSchema(EventModelId, ComponentId, usize, usize, String),
+
+    // TODO: remove these:
     SetComponentDescription(EventModelId, ComponentId, String),
     AddToComponentDescription(EventModelId, ComponentId, usize, String),
     DeleteFromComponentDescription(EventModelId, ComponentId, usize),
     SetComponentSchema(EventModelId, ComponentId, String),
     AddToComponentSchema(EventModelId, ComponentId, usize, String),
     DeleteFromComponentSchema(EventModelId, ComponentId, usize),
-    ConfigureInterface(EventModelId, InterfaceConfig),
+    // </TODO: remove these>
+
+    // Placement Details
+    EditPlacementSchema(EventModelId, PlacementId, usize, usize, String),
 
     // Flows
     ConnectFlow(EventModelId, PlacementId, Anchor, PlacementId, Anchor),

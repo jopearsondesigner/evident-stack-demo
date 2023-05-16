@@ -18,7 +18,7 @@
 </script>
 
 <form on:submit|preventDefault={handleCreateEventModel}>
-  <div class="form-control w-full max-w-xs mt-16">
+  <div class="form-control w-full max-w-xs">
     <label class="label" for="name">
       <span class="label-text">Name</span>
     </label>

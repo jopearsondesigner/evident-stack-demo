@@ -5,7 +5,7 @@
   export let data: LayoutData
 </script>
 
-{#if data.session.user}
+{#if data.session?.user}
   <slot />
 {:else}
   <p>Whoops, you're not signed in! Please <a class='text-primary' href='/auth/sign-in'>sign in</a> to continue.</p>

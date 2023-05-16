@@ -52,8 +52,8 @@
   $: remaining = project.filter((t) => !t.done).length;
 </script>
 
-{#if data.session.user}
-  <section class="mt-20">
+{#if data.session?.user}
+  <section class="mt-4">
     <Button gradient color="brandStackPrimary" size="sm" href="/new" label="Create New Model" />
   </section>
 
@@ -71,8 +71,7 @@
               size={20}
               iconColor="fill-current"
               class=""
-              pathName={Add}
-            />
+              pathName={Add}/>
           </div>
         </IndexNavButton>
       </Column>

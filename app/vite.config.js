@@ -6,7 +6,7 @@ import wasm from 'vite-plugin-wasm';
 const config = {
   server: {
     fs: {
-      allow: ["./state/client/pkg", "./state/server/pkg"]
+      allow: ["./state/pkg"]
     }
   },
   plugins: [sveltekit(), wasm(), topLevelAwait()],

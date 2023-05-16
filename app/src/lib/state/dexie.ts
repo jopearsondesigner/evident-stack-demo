@@ -71,8 +71,13 @@ export const documentBinaryStore = (model: string) => {
     })
 }
 
-export const model_by_id = async (id: string) => {
-  return await db.models.get(id);
+export const models_for_user = async (user: string) => {
+  return await db.models.where({ user }).toArray();
+}
+
+export const model_by_id = async (id: string, user: string) => {
+  let results = await db.models.where({ id, user }).toArray();
+  return results[0];
 }
 
 export const patches = async (model: string | undefined): Promise<Array<Patch>> => {

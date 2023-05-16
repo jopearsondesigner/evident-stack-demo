@@ -61,9 +61,6 @@
     return () => subscription.unsubscribe();
   })
 
-  onMount(() => {
-  })
-
   let isClosed = true;
   let hidden = true;
   let expanded = true;

@@ -1,11 +1,8 @@
 import type { ISyncProtocol } from 'dexie-syncable/api';
 import type { IDatabaseChange, ICreateChange, IUpdateChange } from 'dexie-observable/api';
 import { toByteArray, fromByteArray } from 'base64-js';
-import { dev } from '$app/environment';
-import type { Database } from "$lib/supabase/database.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
-
-const CHANNEL_PREFIX = "model";
+import { supabase } from '$lib/supabase/client';
+import { debug } from '$lib/util';
 
 const CREATE = 1;
 const UPDATE = 2;
@@ -14,7 +11,6 @@ const DELETE = 3;
 const INITIAL_BACKOFF = 2;
 let local_to_remote_backoff = INITIAL_BACKOFF;
 let remote_to_local_backoff = INITIAL_BACKOFF;
-
 
 const dexie_change_to_model_obj = (change: ICreateChange | IUpdateChange) => {
   let obj = change.obj
@@ -26,24 +22,18 @@ const dexie_change_to_patch_obj = (change: ICreateChange) => {
   return { id: obj.id, model: obj.model, user: obj.user, data: fromByteArray(obj.data) }
 };
 
-const debug = (...args: any[]) => {
-  if (dev) {
-    console.debug(...args)
-  }
-}
-
-export let supabase: SupabaseClient<Database>;
-
-export const initSupabase = (client: SupabaseClient<Database>): void => {
-  supabase = client;
-}
-
-// `url` is the model UUID
 export const SupabaseSync: ISyncProtocol = {
-  sync: async function (_context, url, options, baseRevision, syncedRevision, changes, partial,
+  sync: async function (context, url, options, baseRevision, syncedRevision, changes, partial,
     applyRemoteChanges, onChangesAccepted, onSuccess, onError) {
-    debug("Syncing:", url, options, baseRevision, syncedRevision, changes, partial)
-    const channel = supabase.channel(`${CHANNEL_PREFIX}-${url}`)
+    debug("Syncing:", url, options, baseRevision, syncedRevision, changes, partial);
+
+    debug("Supabase", supabase);
+
+    const session = await supabase.auth.getSession()
+    if (!session.data.session) {
+      onError(`User is not logged in: ${session.error}`) // TODO: retry?
+      return;
+    }
 
     const send_changes = async (
       new_changes: typeof changes,
@@ -51,6 +41,8 @@ export const SupabaseSync: ISyncProtocol = {
       _is_partial: typeof partial,
       on_changes_accepted: typeof onChangesAccepted
     ) => {
+      debug("Preparing to send changes to Supabase:", new_changes);
+
       let changes = new_changes.reduce(
         (acc, change) => {
           switch (change.type) {
@@ -60,7 +52,7 @@ export const SupabaseSync: ISyncProtocol = {
               acc.patch_insertions.push(dexie_change_to_patch_obj(change));
             }; break;
             case UPDATE: if (change.table == options.local_models_table) {
-              acc.model_updates.push(dexie_change_to_model_obj(change));
+              // acc.model_updates.push(dexie_change_to_model_obj(change));
             }; break;
             case DELETE: if (change.table == options.local_models_table) {
               acc.model_deletions.push(change.key);
@@ -75,13 +67,14 @@ export const SupabaseSync: ISyncProtocol = {
           model_deletions: [] as any[]
         });
 
-      debug("applying local changes to Supabase", changes, "by user:", await supabase.auth.getUser());
+      // TODO: ensure we don't send empty changes?
+      debug("applying local changes to Supabase", changes);
       let { error, ...response } = await supabase.rpc("apply_client_changes", { changes });
       debug("apply_client_changes response:", { error, ...response })
       if (error) {
         // TODO: if model w/ id doesn't exist error
         // (or we don't have permissions to write a patch for a given model id), we should delete the local model
-        // TODO: on a primary key collision, continue since server already has that patch
+        console.warn("Error applying local changes to remote server:", error);
         local_to_remote_backoff *= 2;
         onError(error, local_to_remote_backoff);
       } else {
@@ -91,13 +84,7 @@ export const SupabaseSync: ISyncProtocol = {
       }
     };
 
-    const cleanup = () => {
-      debug("cleaning up Supabase channel on disconnect", channel)
-      supabase.removeChannel(channel);
-    };
-
     const model_event_to_dexie_change = (event: any): IDatabaseChange[] => {
-      debug("mapping model_event to a Dexie change", event)
       switch (event.type) {
         case 'created': return [{
           type: CREATE,
@@ -152,48 +139,72 @@ export const SupabaseSync: ISyncProtocol = {
       return [];
     };
 
-    debug("Fetching events for model:", url,
-      "by user:", await supabase.auth.getUser(),
-      "since event id:", syncedRevision)
-    // 1. query events since syncedRevision offset, convert them to changes and invoke applyRemoteChanges
-    let { error, data, ...response } = await supabase.rpc(
-      "model_events_since",
-      { model_id: url, starting_event_id: syncedRevision }
-    )
-    debug("Received events for model:", url,
-      "since event id:", syncedRevision,
-      "response:", { error, data, ...response })
-    if (error) {
-      remote_to_local_backoff *= 2;
-      onError(error, remote_to_local_backoff);
-    } else {
-      remote_to_local_backoff = INITIAL_BACKOFF;
-      const changes = data?.flatMap(model_event_to_dexie_change) || [];
-
-      debug("initial sync remote data", data, "as local changes", changes)
-
-      applyRemoteChanges(changes, data?.length && data.length > 0 ? data[data.length - 1].id : null, false, false)
-
-      // 2. call onSuccess w/ react continuation for future local changes
-      onSuccess({ react: send_changes, disconnect: cleanup });
-    }
-
-    // 3. react to postgres changes on channel by calling applyRemoteChanges
-    // TODO: there is a small window for permenantly missing an event between query above and first conveyed event!!!
-    //   should we just rely on broadcast channel for incremental patches
+    // 1. react to postgres changes on channel by calling applyRemoteChanges
+    // (do this first for at-least-once semantics applying remote events to local)
+    debug("Subscribing to postgres_changes")
+    const channel = supabase.channel('evidentsystems-model-events')
     channel
       .on('postgres_changes',
         {
           event: 'INSERT',
           schema: options.remote_schema,
-          table: options.remote_events_table,
-          filter: `subject=eq.${url}`
         },
-        payload => {
-          let event = payload['new'];
-          debug("received model event from remote on channel", payload)
-          applyRemoteChanges(model_event_to_dexie_change(event), event.id, false, false)
+        async payload => {
+          if (payload.table == options.remote_patches_table) {
+            debug("received model patch via postgres_changes on channel", payload)
+            // We should receive patches first, since we write patches
+            // before events in the SQL decider functions, so we store
+            // it in the context for use by the associated event,
+            // which should be the next message received
+            let patch = payload['new'];
+            debug("storing unapplied patch", patch);
+            context.unapplied_patches = { ...context.unapplied_patches, [patch.id]: patch }
+            await context.save();
+          } else if (payload.table == options.remote_events_table) {
+            debug("received model event via postgres_changes on channel", payload)
+            let event = payload['new'];
+            if (event.type == 'patched' || event.type == 'snapshotted') {
+              // Get the patch data from the previously stored unapplied_patch on the context
+              let patch = context.unapplied_patches[event.data.patch_id];
+              delete context.unapplied_patches[event.data.patch_id];
+              debug("looked up patch data from context", patch);
+              event.patch_data = patch.data;
+              await applyRemoteChanges(model_event_to_dexie_change(event), event.id)
+              await context.save()
+            } else {
+              await applyRemoteChanges(model_event_to_dexie_change(event), event.id)
+            }
+          }
         })
+      .subscribe()
+    const cleanup = () => {
+      debug("cleaning up Supabase channel on disconnect", channel)
+      supabase.removeChannel(channel);
+    };
+
+    debug("Fetching events since event id:", syncedRevision)
+    // 2. query events since syncedRevision offset, convert them to changes and invoke applyRemoteChanges
+    let { error, data, ...response } = await supabase.rpc(
+      "model_events_since",
+      { starting_event_id: syncedRevision }
+    )
+    debug("Received events: since event id:", syncedRevision, "response:", { error, data, ...response })
+    if (error) {
+      console.warn("Error fetching remote changes from remote server:", error);
+      remote_to_local_backoff *= 2;
+      onError(error, remote_to_local_backoff);
+    } else {
+      remote_to_local_backoff = INITIAL_BACKOFF;
+      const changes = data?.flatMap(model_event_to_dexie_change) || [];
+      const revision = data?.length && data.length > 0 ? data[data.length - 1].id : null;
+
+      debug("initial sync remote data", data, "as local changes", changes, "as revision", revision);
+
+      await applyRemoteChanges(changes, revision);
+
+      // 3. call onSuccess w/ react continuation for future local changes
+      onSuccess({ react: send_changes, disconnect: cleanup });
+    }
 
     // 4. send current local changes to server via supabase postgrest client,
     // then call top-level onChangesAccepted()

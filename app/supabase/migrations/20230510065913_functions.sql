@@ -52,6 +52,7 @@ as $$
   end;
 $$ language plpgsql;
 
+-- Soft delete by removing all roles/creator?
 create or replace function delete_model(model_id uuid)
 returns uuid
 as $$
@@ -59,6 +60,8 @@ as $$
     event_id uuid := gen_random_uuid();
     user_id uuid := auth.uid();
   begin
+    -- delete roles/creator here?
+
     insert into public.model_events (id, type, subject, "user", data)
       values (event_id, 'deleted', model_id, user_id, null);
 
@@ -98,28 +101,6 @@ as $$
       return null;
     when foreign_key_violation then
       return null;
-  end;
-$$ language plpgsql;
-
--- TODO: from the [ISyncProtocol remarks](https://dexie.org/docs/Syncable/Dexie.Syncable.ISyncProtocol#remarks)
---   "The implementation must not fail if trying to create an object with the same key twice,
---    or delete an object with a key that does not exist."
-create or replace function apply_client_changes(changes json)
-returns void
-as $$
-  declare
-    user_id uuid := auth.uid();
-  begin
-    perform create_model((model_insertion ->> 'id')::uuid,
-                        model_insertion ->> 'name',
-                        model_insertion ->> 'description')
-      from json_array_elements(changes -> 'model_insertions') as model_insertion;
-    perform update_model((model_update ->> 'id')::uuid, model_update ->> 'name', model_update ->> 'description')
-      from json_array_elements(changes -> 'model_updates') as model_update;
-    perform append_patch((patch ->> 'model')::uuid, (patch ->> 'id')::uuid, patch ->> 'data')
-      from json_array_elements(changes -> 'patch_insertions') as patch;
-    perform delete_model(model_id::uuid)
-      from json_array_elements_text(changes -> 'model_deletions') as model_id;
   end;
 $$ language plpgsql;
 
@@ -222,9 +203,33 @@ as $$
   end;
 $$ language plpgsql;
 
+-- Convenience composite command for Sync
+
+-- TODO: from the [ISyncProtocol remarks](https://dexie.org/docs/Syncable/Dexie.Syncable.ISyncProtocol#remarks)
+--   "The implementation must not fail if trying to create an object with the same key twice,
+--    or delete an object with a key that does not exist."
+create or replace function apply_client_changes(changes json)
+returns void
+as $$
+  declare
+    user_id uuid := auth.uid();
+  begin
+    perform create_model((model_insertion ->> 'id')::uuid,
+                        model_insertion ->> 'name',
+                        model_insertion ->> 'description')
+      from json_array_elements(changes -> 'model_insertions') as model_insertion;
+    perform update_model((model_update ->> 'id')::uuid, model_update ->> 'name', model_update ->> 'description')
+      from json_array_elements(changes -> 'model_updates') as model_update;
+    perform append_patch((patch ->> 'model')::uuid, (patch ->> 'id')::uuid, patch ->> 'data')
+      from json_array_elements(changes -> 'patch_insertions') as patch;
+    perform delete_model(model_id::uuid)
+      from json_array_elements_text(changes -> 'model_deletions') as model_id;
+  end;
+$$ language plpgsql;
+
 -- Read Models
 
-create or replace function model_events_since(model_id uuid, starting_event_id uuid)
+create or replace function model_events_since(starting_event_id uuid)
 returns table("id" uuid,
               "type" event_type,
               "subject" uuid,
@@ -235,14 +240,13 @@ as $$
    select model_events.id,
           model_events.type,
           model_events.subject,
-          model_events.user,
+          model_events."user",
           model_events.data,
           model_patches.data as patch_data
    from public.model_events
    left join public.model_patches on model_patches.id = (model_events.data ->> 'patch_id')::uuid
-   where model_events.subject = model_id
-     and sequence > COALESCE((select sequence
-                              from public.model_events
-                              where id = starting_event_id), 0)
+   where model_events.sequence > COALESCE((select model_events.sequence
+                                           from public.model_events
+                                           where id = starting_event_id), 0)
    order by sequence asc;
 $$ language sql stable;

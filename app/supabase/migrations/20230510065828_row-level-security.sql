@@ -57,6 +57,18 @@ create policy "Authenticated users can create a model"
     creator = auth.uid()
   );
 
+drop policy if exists "Model creators can see their own models"
+  on public.models;
+
+-- This is necessary to be able to execute the security policy below
+-- that enables creators to themselves as collaborators
+create policy "Model creators can see their own models"
+  on public.models
+  for select to authenticated
+  using (
+    creator = auth.uid()
+  );
+
 drop policy if exists "All granted roles can view a model"
   on public.models;
 

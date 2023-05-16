@@ -1,16 +1,10 @@
-import { default as init, EventModelGrid, EventModelStateManager, setPanicHook } from "state-client";
-import { derived, readable, type Readable } from 'svelte/store';
+
+import { default as init, EventModelStateManager, setPanicHook } from "state-client";
+import { derived, readable } from 'svelte/store';
 import type { Decider, LaneKind } from '$components/design/Grid';
 import { dev } from "$app/environment";
-import type { Database } from "$lib/supabase/database.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
-export type InitializationPayload = {
-  grid: Readable<EventModelGrid>,
-  decider: Decider
-}
-
-const initialize_decider = async (id: string | undefined, user: string, supabase: SupabaseClient<Database>) => {
+const initialize_decider = async (id: string | undefined, user: string) => {
   // Initialize Wasm decider
   await init();
   if (dev) {
@@ -19,33 +13,8 @@ const initialize_decider = async (id: string | undefined, user: string, supabase
 
   let manager = await new EventModelStateManager(id, user);
 
-  // Initialize Dexie and sync protocol
-  const { Dexie, db, documentBinaryStore } = await import("$lib/state/dexie");
-  const { initSupabase } = await import("$lib/state/sync_protocol");
-
-  let $syncing: Readable<string>;
-  if (id) {
-    initSupabase(supabase);
-    // TODO: make schema/table names configurable?
-    db.syncable.connect("evidentstack", id,
-      {
-        user,
-        local_patches_table: "model_patches",
-        local_models_table: "models",
-        remote_schema: "public",            // TODO: configurable?
-        remote_events_table: "model_events" // TODO: configurable?
-      }
-    );
-    $syncing = readable("before connection", setter => {
-      db.syncable.on('statusChanged', function (newStatus, url) {
-        if (url == id) {
-          setter(Dexie.Syncable.StatusTexts[newStatus]);
-        }
-      });
-    })
-  } else {
-    $syncing = readable("not connected")
-  }
+  // Initialize Dexie documentBinaryStore
+  const { documentBinaryStore } = await import("./dexie");
 
   let store;
 
@@ -66,7 +35,6 @@ const initialize_decider = async (id: string | undefined, user: string, supabase
   }
 
   return {
-    syncing: $syncing,
     grid: store,
     decider: {
       create_model: async (name: string) => {

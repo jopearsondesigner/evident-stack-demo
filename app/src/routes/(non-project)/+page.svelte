@@ -34,7 +34,7 @@
   <Container class="container-fluid p-3 m-4">
     <Row class="grid grid-cols-6 gap-6">
       <Column class="flex justify-center items-center">
-        <IndexNavButton href="" height={156} rounded="rounded-lg">
+        <IndexNavButton href="/projects/new" height={156} rounded="rounded-lg">
           <div class="inline-flex justify-center w-full">
             Add New Project <Icon
                               name="add"

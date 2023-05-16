@@ -1,15 +1,9 @@
 <script lang="ts">
-  import '../app.css';
+  import '../../../../app.css';
   import type { LayoutData } from './$types';
   import { onMount } from 'svelte';
   import { invalidate } from '$app/navigation';
-  import { handleSignOut } from '$lib/user';
   import { page } from '$app/stores';
-
-  import CodeMirror from 'svelte-codemirror-editor';
-  import { javascript } from '@codemirror/lang-javascript';
-  import { oneDark } from '@codemirror/theme-one-dark';
-  let valueEventModel = '';
 
   import Navbar from '$components/navbar/Navbar.svelte';
   import NavInner from '$components/navbar/NavInner.svelte';
@@ -50,52 +44,8 @@
   import DropdownMenu from '$components/dropdown/DropdownMenu.svelte';
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
-  let expanded = false;
-  let designExpanded = false;
-  let dataExpanded = false;
-  let domainfunctionsExpanded = false;
-  let deployExpanded = false;
-  let databaseExpanded = false;
-  let path: string;
 
-  $: path = $page.url.pathname;
-  console.log(path);
-
-  $: if (path == '/design/models') {
-    designExpanded = true;
-    console.log(path);
-    console.log(dataExpanded);
-  } else {
-    designExpanded = false;
-  }
-  $: if (path == '/data') {
-    dataExpanded = true;
-    console.log(path);
-    console.log(dataExpanded);
-  } else {
-    dataExpanded = false;
-  }
-  $: if (path == '/domain-functions') {
-    domainfunctionsExpanded = true;
-    console.log(path);
-    console.log(dataExpanded);
-  } else {
-    domainfunctionsExpanded = false;
-  }
-  $: if (path == '/deploy') {
-    deployExpanded = true;
-    console.log(path);
-    console.log(dataExpanded);
-  } else {
-    deployExpanded = false;
-  }
-  $: if (path == '/db') {
-    databaseExpanded = true;
-    console.log(path);
-    console.log(dataExpanded);
-  } else {
-    databaseExpanded = false;
-  }
+  // === Authentication Handling
 
   export let data: LayoutData;
 
@@ -113,6 +63,23 @@
     return () => subscription.unsubscribe();
   })
 
+  let signOutLoading = false;
+
+  function handleSignOutSubmit() {
+    signOutLoading = true;
+    return async () => {
+      signOutLoading = false;
+    };
+  }
+
+  // === End Authentication Handling
+
+  let expanded = false;
+  let designExpanded = false;
+  let dataExpanded = false;
+  let domainfunctionsExpanded = false;
+  let deployExpanded = false;
+  let databaseExpanded = false;
   let isClosed = true;
   let hidden = false;
   let grid = true;
@@ -131,8 +98,6 @@
   const handleDropdown = () => {
     hidden = !hidden;
   };
-
-  let data: LayoutData;
 </script>
 
 <Navbar website={false}>

@@ -12,7 +12,8 @@ export const load: PageLoad = async (event) => {
     }
     throw error(404, "not found")
   } else {
-    const projects = await supabase.from("models").select();
-    return { projects }
+    const _projects = await supabase.from("models").select();
+    // TODO: map `_projects` from remote into Model[]
+    return { projects:  []}
   }
 }

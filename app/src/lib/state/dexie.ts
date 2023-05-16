@@ -75,7 +75,7 @@ export const models_for_user = async (user: string) => {
   return await db.models.where({ user }).toArray();
 }
 
-export const model_by_id = async (id: string, user: string) => {
+export const model_by_id = async (user: string, id: string) => {
   let results = await db.models.where({ id, user }).toArray();
   return results[0];
 }

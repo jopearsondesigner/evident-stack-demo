@@ -14,8 +14,7 @@
   "homepage": "https://github.com/evidentsystems/platform#readme",
   "workspaces": [
     "app",
-    "app/state/client/pkg",
-    "app/state/server/pkg",
+    "app/state/pkg",
     "website",
     "components"
   ],

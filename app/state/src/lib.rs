@@ -2,6 +2,7 @@ extern crate event_models;
 
 pub mod grid;
 mod indexed_db;
+pub mod strategies;
 mod sync;
 
 use std::str::FromStr;
@@ -10,12 +11,13 @@ pub use crate::grid::EventModelGrid;
 use crate::grid::Lane;
 use crate::indexed_db::{IndexedDbError, IndexedDbStateRepository};
 pub use crate::indexed_db::{Model, Patch};
+use crate::strategies::{ReifyDecideSave, ReifyDecideSaveError, StateRepository};
 use automerge::ActorId;
+use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError};
 use event_models::api::commands::EventModelCommand;
-use event_models::{EventModelError, Anchor};
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
+use event_models::{Anchor, EventModel, EventModelError};
 use js_sys::Uint8Array;
-use state_shared::strategies::{ReifyDecideSave, ReifyDecideSaveError, StateRepository};
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 use web_sys::{console, window};
@@ -36,6 +38,43 @@ pub fn set_panic_hook() {
     // https://github.com/rustwasm/console_error_panic_hook#readme
     #[cfg(feature = "console_error_panic_hook")]
     console_error_panic_hook::set_once();
+}
+
+pub trait Reconcilable
+where
+    Self: Sized,
+{
+    fn reconcile(&self, doc: &mut impl Doc) -> Result<(), ReconcileError>;
+    fn hydrate(doc: &impl ReadDoc) -> Result<Self, HydrateError>;
+}
+
+pub trait HasKey {
+    fn get_key(&self) -> Option<Uuid>;
+}
+
+impl<E: EventModel> HasKey for EventModelState<E> {
+    fn get_key(&self) -> Option<Uuid> {
+        match self {
+            EventModelState::BeforeCreation => None,
+            EventModelState::EventModel(model) => Some(model.id()),
+            EventModelState::Deleted(id) => Some(*id),
+        }
+    }
+}
+
+impl Reconcilable for EventModelState<AutomergeEventModel> {
+    fn reconcile(&self, doc: &mut impl Doc) -> Result<(), ReconcileError> {
+        if let EventModelState::EventModel(m) = self {
+            reconcile(doc, m)
+        } else {
+            Ok(())
+        }
+    }
+
+    fn hydrate(doc: &impl ReadDoc) -> Result<Self, HydrateError> {
+        let model = hydrate(doc)?;
+        Ok(EventModelState::EventModel(model))
+    }
 }
 
 #[wasm_bindgen]
@@ -485,8 +524,9 @@ impl EventModelStateManager {
             source_placement_id,
             source_anchor,
             target_placement_id,
-            target_anchor
-        )).await
+            target_anchor,
+        ))
+        .await
     }
 
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {

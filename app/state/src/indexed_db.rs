@@ -1,12 +1,12 @@
 use std::fmt::Debug;
 
+use crate::{strategies::StateRepository, HasKey, Reconcilable};
 use async_trait::async_trait;
 use automerge::{ActorId, AutoCommit};
 use event_models::{
     implementation::automerge::AutomergeEventModel, Described, EventModelState, Named,
 };
 use serde::Deserialize;
-use state_shared::{automerge::Reconcilable, strategies::StateRepository, HasKey};
 use uuid::Uuid;
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 

@@ -52,6 +52,7 @@ as $$
   end;
 $$ language plpgsql;
 
+-- Soft delete by removing all roles/creator?
 create or replace function delete_model(model_id uuid)
 returns uuid
 as $$
@@ -59,6 +60,8 @@ as $$
     event_id uuid := gen_random_uuid();
     user_id uuid := auth.uid();
   begin
+    -- delete roles/creator here?
+
     insert into public.model_events (id, type, subject, "user", data)
       values (event_id, 'deleted', model_id, user_id, null);
 

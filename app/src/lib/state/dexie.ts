@@ -39,29 +39,6 @@ class EventModelDatabase extends Dexie {
 
 export const db = new EventModelDatabase();
 
-export const connect = async (url: string, session: Session, statusCallback: (status: string) => void) => {
-  if (browser) {
-    init_supabase(session);
-
-    await db.syncable.connect("evidentstack", url,
-      {
-        local_patches_table: "model_patches",
-        local_models_table: "models",
-        remote_schema: "public",            // TODO: configurable?
-        remote_events_table: "model_events", // TODO: configurable?
-        remote_patches_table: "model_patches" // TODO: configurable?
-      }
-    );
-
-    db.syncable.on('statusChanged', function (newStatus, url_) {
-      console.log("Dexie DB status changing to:", newStatus, Dexie.Syncable.StatusTexts[newStatus]);
-      if (url_ == url) {
-        statusCallback(Dexie.Syncable.StatusTexts[newStatus]);
-      }
-    });
-  };
-}
-
 // TODO: more gracefully handle upgrades blocked by other open tabs/windows
 db.on("blocked", () => {
   alert("Database upgrading was blocked by another window. " +
@@ -94,6 +71,10 @@ export const documentBinaryStore = (model: string) => {
     })
 }
 
+export const model_by_id = async (id: string) => {
+  return await db.models.get(id);
+}
+
 export const patches = async (model: string | undefined): Promise<Array<Patch>> => {
   return await db.model_patches.where({ model }).toArray()
 }
@@ -105,4 +86,27 @@ export const save = async (model: Model, patch: Patch) => {
     db.models.put(model_dto, model_dto.id);
     db.model_patches.add(patch_dto)
   });
+}
+
+export const connect = async (url: string, session: Session, statusCallback: (status: string) => void) => {
+  if (browser) {
+    init_supabase(session);
+
+    await db.syncable.connect("evidentstack", url,
+      {
+        local_patches_table: "model_patches",
+        local_models_table: "models",
+        remote_schema: "public",            // TODO: configurable?
+        remote_events_table: "model_events", // TODO: configurable?
+        remote_patches_table: "model_patches" // TODO: configurable?
+      }
+    );
+
+    db.syncable.on('statusChanged', function (newStatus, url_) {
+      console.log("Dexie DB status changing to:", newStatus, Dexie.Syncable.StatusTexts[newStatus]);
+      if (url_ == url) {
+        statusCallback(Dexie.Syncable.StatusTexts[newStatus]);
+      }
+    });
+  };
 }

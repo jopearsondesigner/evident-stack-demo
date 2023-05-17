@@ -12,3 +12,8 @@ export declare const lg = 'lg';
 export declare const xl = 'xl';
 export declare type SizeType = typeof xs | typeof sm | typeof md | typeof lg | typeof xl;
 export declare type FormSizeType = typeof sm | typeof md | typeof lg;
+
+export type SelectOptionType = {
+  name: string | number;
+  value: string | number;
+};

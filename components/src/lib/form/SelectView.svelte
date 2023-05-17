@@ -1,6 +1,7 @@
 <script>
-	import Select from '$lib/form/Select.svelte';
-	import Label from '$lib/form/Label.svelte';
+  import Select from '$lib/form/Select.svelte';
+  import Label from '$lib/form/Label.svelte';
+  import ArrowDown from '$lib/assets/images/global/ArrowDown.svg';
 
 	/**
 	 * @type {any}
@@ -14,9 +15,13 @@
 	];
 </script>
 
-<Label
-	>Interface Type
-	<Select class="mt-1" items={types} bind:value={selected} placeholder="Choose Interface Type" />
+<Label>Interface Type
+  <Select
+    {ArrowDown}
+    class="mt-1"
+    items={types}
+    bind:value={selected}
+    placeholder="Choose Interface Type" />
 </Label>
 
 <style>

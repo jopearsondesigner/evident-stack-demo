@@ -521,7 +521,6 @@ dependencies = [
  "serde",
  "serde-wasm-bindgen",
  "serde_json",
- "state-shared",
  "thiserror-impl",
  "tracing-attributes",
  "uuid",
@@ -530,36 +529,6 @@ dependencies = [
  "wasm-bindgen-test",
  "web-sys",
  "wee_alloc",
-]
-
-[[package]]
-name = "state-server"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "automerge",
- "collaboration",
- "console_error_panic_hook",
- "epoch",
- "js-sys",
- "state-shared",
- "uuid",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "wasm-bindgen-test",
- "web-sys",
- "wee_alloc",
-]
-
-[[package]]
-name = "state-shared"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "autosurgeon",
- "epoch",
- "event-models",
- "uuid",
 ]
 
 [[package]]

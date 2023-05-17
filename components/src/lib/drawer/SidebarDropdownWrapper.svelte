@@ -26,7 +26,7 @@
 		if (container.contains(e.target) == false) isHorizontalOpen = false;
 	}
 	export let isVerticalOpen = false;
-	const handleHorizontalDropdown = () => {
+	const handleHorizontalDropdown = (_: any) => {
 		isHorizontalOpen = !isHorizontalOpen;
 	};
 	const handleVerticalDropdown = () => {
@@ -47,8 +47,7 @@
 		<button
 			bind:this={container}
 			class={classNames(sidebarItemClass, sidebarBtnClass)}
-			on:click={() => handleHorizontalDropdown()}
-		>
+			on:click|preventDefault={handleHorizontalDropdown} >
 			<slot name="icon" />
 			<span class={classNames(headerTextClass, sidebarSpanClass)}>{label}</span>
 			{#if isHorizontalOpen}
@@ -81,11 +80,11 @@
 {:else}
 	<li class={classNames('sidebarDropdownWrapper')}>
 		<button
+      bind:this={container}
 			class={classNames(sidebarItemClass, sidebarBtnClass)}
 			on:click={() => handleVerticalDropdown()}
 			on:click={handleClick}
-			class:isVerticalOpen
-		>
+			class:isVerticalOpen >
 			{#if isVerticalOpen}
 				<slot name="icon-open" />
 			{:else}

@@ -71,7 +71,7 @@
       borderClasses[_color],
       inputPadding[_size],
       textSizes[_size],
-      group || 'rounded-lg',
+      group || 'rounded',
       group && 'first:rounded-l-lg last:rounded-r-lg',
       group && 'border-l-0 first:border-l last:border-r',
       $$props.class

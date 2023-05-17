@@ -1,12 +1,12 @@
 <script lang="ts">
   import classNames from 'classnames';
   export let asideClass =
-    'h-full bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-gray-brand-3 transition-width duration-200 ease-in';
+    'h-full flex-column bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-gray-brand-3 transition-width duration-200 ease-in';
   export let nameClass =
     'text-md font-bold text-body-light dark:text-body-dark text-center leading-[1.27] mx-4 mb-2';
   export let descClass =
     'font-medium text-default text-body dark:text-white leading-normal text-center mx-4 mt-2 max-h-16 overflow-auto';
-  export let divClass = 'border-b border-gray-primary py-4';
+  export let divClass = 'grow-0 border-b border-gray-primary py-4';
   export let style = '';
   let className = '';
   export { className as class };
@@ -16,7 +16,7 @@
     'This is a top-level description of a project that is created with a new event model.';
   let editable = false;
 
-  function handleDblClick(event) {
+  function handleDblClick(event: any) {
     editable = true; // or use  editable=!editable  to toggle
   }
 </script>
@@ -27,8 +27,7 @@
       class={nameClass}
       on:dblclick={handleDblClick}
       contenteditable="true"
-      bind:textContent={name}
-    >
+      bind:textContent={name}>
       {name}
     </h2>
     <p class={descClass} contenteditable="true" bind:textContent={description}>

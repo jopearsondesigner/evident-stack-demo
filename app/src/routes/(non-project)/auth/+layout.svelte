@@ -1,6 +1,5 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import "../../app.css";
   import type { LayoutData } from './$types'
 
   export let data: LayoutData

@@ -3,13 +3,7 @@ import { browser } from '$app/environment';
 import type { LayoutLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { model_by_id } from '$lib/state/dexie';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/supabase/database.types';
-
-const remote_model_by_id = async (supabase: SupabaseClient<Database>, id: string) => {
-  let result = await supabase.from("models").select().eq('id', id).limit(1);
-  return result.data?.at(0);
-}
+import { model_by_id as remote_model_by_id } from '$lib/supabase/database';
 
 export const load: LayoutLoad = async (event) => {
   let { session, supabase } = await event.parent()

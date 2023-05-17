@@ -99,6 +99,7 @@ export const connect = async (url: string, session: Session, statusCallback: (st
 
     await db.syncable.connect("evidentstack", url,
       {
+        user: session.user.id,
         local_patches_table: "model_patches",
         local_models_table: "models",
         remote_schema: "public",            // TODO: configurable?

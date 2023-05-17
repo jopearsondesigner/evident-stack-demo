@@ -400,11 +400,10 @@
 <h3>{mode}</h3>
 
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
-  <FlowCanvas {flows} />
   <div
-    class="p-3 relative grid justify-items-center items-center"
-    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
-  >
+    class="grid w-max p-3 relative justify-items-center items-center"
+    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));">
+    <FlowCanvas {flows} />
     <AudienceLane
       on:navigate_cursor={handleNavigateCursor}
       on:move_interface_placement={handleMoveInterfacePlacement}

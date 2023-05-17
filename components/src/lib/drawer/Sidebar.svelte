@@ -11,9 +11,8 @@
   let className = '';
   export { className as class };
   export let isClosed = true;
-  export let name = 'This is a Project Name!';
-  export let description =
-    'This is a top-level description of a project that is created with a new event model.';
+  export let name: string;
+  export let description: string;
   let editable = false;
 
   function handleDblClick(event: any) {

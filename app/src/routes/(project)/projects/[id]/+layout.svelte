@@ -45,7 +45,7 @@
 
   export let data: LayoutData;
 
-  $: ({ session } = data)
+  $: ({ session, grid } = data)
 
   let signOutLoading = false;
 
@@ -158,7 +158,9 @@
   <span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 mt-16"><ThemeSwitch /></span>
 
   <Drawer placement="left" hidden={false}>
-    <Sidebar class={leftNavOpen ? 'w-[417px]' : 'w-[240px]'}>
+    <Sidebar name={$grid?.name ?? "Project Name"}
+             description={$grid?.description ?? "Project Description"}
+             class={leftNavOpen ? 'w-[417px]' : 'w-[240px]'}>
       <Accordion class="grow-1 flex flex-col">
         <SidebarContainer
           src={DesignLogo}

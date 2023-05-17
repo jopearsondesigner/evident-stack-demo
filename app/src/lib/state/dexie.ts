@@ -31,7 +31,7 @@ class EventModelDatabase extends Dexie {
   constructor() {
     super("evidentstack");
     this.version(1).stores({
-      models: "&id, user, name",
+      models: "&id, user, name, [id+user]",
       model_patches: "$$id, model",
     });
   }

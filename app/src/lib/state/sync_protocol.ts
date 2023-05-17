@@ -147,7 +147,8 @@ export const SupabaseSync: ISyncProtocol = {
       .on('postgres_changes',
         {
           event: 'INSERT',
-          schema: options.remote_schema,
+          schema: options.remote_schema
+          // filter: `user=neq.${options.user}` // TODO: don't react to our own events, but breaks a user having multiple browsers open...
         },
         async payload => {
           if (payload.table == options.remote_patches_table) {

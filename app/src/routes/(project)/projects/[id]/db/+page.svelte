@@ -5,7 +5,7 @@
 
 <div class="h-screen flex justify-center items-center">
   <div>
-    <Player src="lottie/DatabaseAnimation.json" width="500" />
+    <Player src="/lottie/DatabaseAnimation.json" width="500" />
     <div class="flex justify-center mt-8">
       <Button
         input

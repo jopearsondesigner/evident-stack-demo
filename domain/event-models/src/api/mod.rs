@@ -3,7 +3,7 @@ use crate::api::events::EventModelEvent;
 use crate::json::import;
 use crate::{
     Command, Component, Entity, Event, EventModelDataTransfer, EventModelError, Interface, Lane,
-    LaneId, Name, Placement, PlacementPosition, ReadModel,
+    LaneId, Name, Placement, PlacementPosition, ReadModel, FlowArrow,
 };
 use crate::{EventModel, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
@@ -534,8 +534,38 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     EventModelCommand::EditPlacementSchema(_, _, _, _, _) => todo!(),
 
                     // Flows
-                    EventModelCommand::ConnectFlow(_, _, _, _, _) => {
-                        todo!()
+                    EventModelCommand::ConnectFlow(
+                        event_model_id,
+                        source_placement_id,
+                        source_anchor,
+                        target_placement_id,
+                        target_anchor,
+                    ) => {
+                        let source_placement = model.get_placement(&source_placement_id).ok_or_else(|| {
+                            EventModelError::ModificationError(format!(
+                                "No placement found with id {:?}",
+                                source_placement_id
+                            ))
+                        })?;
+
+                        let target_placement = model.get_placement(&target_placement_id).ok_or_else(|| {
+                            EventModelError::ModificationError(format!(
+                                "No placement found with id {:?}",
+                                source_placement_id
+                            ))
+                        })?;
+
+                        valid_flow(&source_placement, &target_placement)?;
+
+                        Ok(vec![EventModelEvent::FlowConnected(
+                            *event_model_id,
+                            FlowArrow::create(
+                                source_placement.id(),
+                                source_anchor.to_owned(),
+                                target_placement.id(),
+                                target_anchor.to_owned(),
+                            )?,
+                        )])
                     }
                     EventModelCommand::DisconnectFlow(_, _) => {
                         todo!()
@@ -731,5 +761,18 @@ fn valid_lane_index(
             }
         }
         _ => Ok(()),
+    }
+}
+
+fn valid_flow(source: &Placement, target: &Placement) -> Result<(), EventModelError> {
+    match (source, target) {
+        (Placement::Interface { .. }, Placement::Command { .. }) => Ok(()),
+        (Placement::Command { .. }, Placement::Event { .. }) => Ok(()),
+        (Placement::Event { .. }, Placement::ReadModel { .. }) => Ok(()),
+        (Placement::ReadModel { .. }, Placement::Interface { .. }) => Ok(()),
+        _ => Err(EventModelError::IllegalFlowArrow(format!(
+            "Cannot connect flows: {:?} -> {:?}",
+            source, target
+        ))),
     }
 }

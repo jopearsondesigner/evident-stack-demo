@@ -1,6 +1,7 @@
+
 import { default as init, EventModelStateManager, setPanicHook } from "state-client";
 import { derived, readable } from 'svelte/store';
-import type { Lane } from '$components/design/Grid';
+import type { Decider, LaneKind } from '$components/design/Grid';
 import { dev } from "$app/environment";
 
 const initialize_decider = async (id: string | undefined, user: string) => {
@@ -81,13 +82,13 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       rename_placement: async (placement: string, name: string) => {
         return await manager.rename_placement(id!, placement, name)
       },
-      rename_lane: async (kind: Lane, lane_id: string, name: string) => {
+      rename_lane: async (kind: LaneKind, lane_id: string, name: string) => {
         return await manager.rename_lane(id!, kind, lane_id, name)
       },
-      reorder_lane: async (kind: Lane, lane_id: string, index: number) => {
+      reorder_lane: async (kind: LaneKind, lane_id: string, index: number) => {
         return await manager.reorder_lane(id!, kind, lane_id, index)
       },
-      remove_lane: async (kind: Lane, lane_id: string) => {
+      remove_lane: async (kind: LaneKind, lane_id: string) => {
         return await manager.remove_lane(id!, kind, lane_id)
       },
       add_to_description: async (index: number, addition: string) => {
@@ -95,7 +96,10 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       },
       delete_from_description: async (index: number, count: number) => {
         return await manager.delete_from_description(id!, index, count)
-      }
+      },
+      connect_flow: async (source_placement_id_str: string, source_anchor_str: string | undefined, target_placement_id_str: string, target_anchor_str: string | undefined) => {
+        return await manager.connect_flow(id!, source_placement_id_str, source_anchor_str, target_placement_id_str, target_anchor_str);
+      },
     }
   };
 }

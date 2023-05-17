@@ -25,11 +25,12 @@ export type Decider = {
   move_event_placement: (placement_id: string, index: number, stream: string | undefined) => any;
   remove_placement: (placement: string) => any;
   rename_placement: (placement: string, name: string) => any;
-  rename_lane: (kind: Lane, lane_id: string, name: string) => any;
-  reorder_lane: (kind: Lane, lane_id: string, index: number) => any;
-  remove_lane: (kind: Lane, lane_id: string) => any;
+  rename_lane: (kind: LaneKind, lane_id: string, name: string) => any;
+  reorder_lane: (kind: LaneKind, lane_id: string, index: number) => any;
+  remove_lane: (kind: LaneKind, lane_id: string) => any;
   add_to_description: (index: number, addition: string) => any;
   delete_from_description: (index: number, count: number) => any;
+  connect_flow: (source_placement_id_str: string, source_anchor_str: string | undefined, target_placement_id_str: string, target_anchor_str: string | undefined) => any;
 };
 
 export const default_decider: Decider = {
@@ -51,7 +52,8 @@ export const default_decider: Decider = {
   reorder_lane: console.log,
   remove_lane: console.log,
   add_to_description: console.log,
-  delete_from_description: console.log
+  delete_from_description: console.log,
+  connect_flow: console.log
 };
 
 export type Flow = {
@@ -194,4 +196,5 @@ export const placementOrEmptyCellId = (
 
 export type GridMode = 'loading' | 'navigation' | 'editing' | 'disambiguating' | 'linking';
 export type CursorMode = 'editing' | 'navigation' | 'linking' | 'other';
-export type Lane = 'audience' | 'stream';
+export type LaneKind = 'audience' | 'stream';
+export type DropTargetStatus = 'good' | 'bad';

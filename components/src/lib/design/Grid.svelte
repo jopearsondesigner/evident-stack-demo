@@ -1,6 +1,20 @@
 <svelte:options immutable />
 
 <script lang="ts">
+  import {
+    type DraggingState,
+    DraggingStateKind,
+    type DragCommand,
+    DraggingCommandKind,
+    buildEvolveAndReact,
+    type LaneSource,
+    type PlacementSource,
+    type RowTarget,
+    type CellTarget,
+    type WithSourceEffect,
+    type FlowPortSource,
+    DEFAULT_LANE
+  } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
 
@@ -25,6 +39,7 @@
   import { onMount } from 'svelte';
   import { itemAtCursor } from './Grid';
   import TimelineDisambiguation from './grid/TimelineDisambiguation.svelte';
+  import type { DragEventHandler } from 'svelte/elements';
 
   export let decider: Decider = default_decider;
   export let column_count: number;
@@ -46,6 +61,82 @@
   // Disambiguation
 
   let disambiguation: Disambiguation = null;
+
+  // Drag Drop
+  let dragState: DraggingState = { kind: DraggingStateKind.NONE };
+
+  const evolveAndReactDraggingState = buildEvolveAndReact(decider);
+
+  const handleLaneDragStart = async (e: CustomEvent<LaneSource>) => {
+    const command: DragCommand = {
+      kind: DraggingCommandKind.LANE_DRAG_START,
+      value: e.detail
+    };
+
+    dragState = evolveAndReactDraggingState(dragState, command);
+  };
+
+  const handleLaneDragEnter = async (e: CustomEvent<RowTarget>) => {
+    const command: DragCommand = {
+      kind: DraggingCommandKind.LANE_DRAG_ENTER,
+      value: e.detail
+    };
+
+    dragState = evolveAndReactDraggingState(dragState, command);
+  };
+
+  const handleLaneDragDrop = async (e: CustomEvent) => {
+    const command: DragCommand = {
+      kind: DraggingCommandKind.LANE_DRAG_DROP
+    };
+
+    dragState = evolveAndReactDraggingState(dragState, command);
+  };
+
+  const handlePlacementDragStart = async (e: CustomEvent<PlacementSource & WithSourceEffect>) => {
+    const command: DragCommand = {
+      kind: DraggingCommandKind.PLACEMENT_DRAG_START,
+      value: e.detail
+    };
+
+    dragState = evolveAndReactDraggingState(dragState, command);
+  };
+
+  const handleFlowDragStart = async (e: CustomEvent<FlowPortSource>) => {
+    const command: DragCommand = {
+      kind: DraggingCommandKind.FLOW_PORT_DRAG_START,
+      value: e.detail
+    };
+
+    dragState = evolveAndReactDraggingState(dragState, command);
+  };
+
+  const handleCellDragEnter = async (e: CustomEvent<CellTarget>) => {
+    const command: DragCommand = {
+      kind: DraggingCommandKind.CELL_DRAG_ENTER,
+      value: e.detail
+    };
+
+    dragState = evolveAndReactDraggingState(dragState, command);
+  };
+
+  const handleCellDragDrop = async (e: CustomEvent) => {
+    const command: DragCommand = { kind: DraggingCommandKind.CELL_DRAG_DROP };
+
+    dragState = evolveAndReactDraggingState(dragState, command);
+  };
+
+  const handleOutOfBoundsDragEnter: DragEventHandler<EventTarget> = (_e) => {
+    console.info('DRAG OUT OF BOUNDS');
+    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER };
+    dragState = evolveAndReactDraggingState(dragState, command);
+  };
+
+  const handleOutOfBoundsDragEnd: DragEventHandler<EventTarget> = (_e) => {
+    console.info('DRAG DROP OUT OF BOUNDS END');
+    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END };
+    dragState = evolveAndReactDraggingState(dragState, command);
+  };
 
   // Command Dispatch
 
@@ -72,6 +163,7 @@
     disambiguation = e.detail;
   };
 
+  // Placement Events
   const handleMoveInterfacePlacement = async (e: CustomEvent) => {
     await decider.move_interface_placement(e.detail.id, e.detail.index, e.detail.audience);
   };
@@ -106,28 +198,32 @@
     mode = 'navigation';
   };
 
-  const handleRenameLane = async (e: CustomEvent) => {
-    console.warn('TODO: handleRenameLane');
-    console.warn(e.detail);
-  };
-
-  const handleReorderLane = async (e: CustomEvent) => {
-    console.warn('TODO: handleReorderLane');
-    console.warn(e.detail);
-    decider.reorder_lane(e.detail.kind, e.detail.lane_id, e.detail.index);
-  };
-
-  const handleRemoveLane = async (e: CustomEvent) => {
-    console.warn('TODO: handleRemoveLane');
-    console.warn(e.detail);
-  };
-
   // Rows
 
   const default_audience_row = 0;
   $: timeline_row = audiences.length + 1;
   $: default_stream_row = timeline_row + streams.length + 1;
   $: row_count = default_stream_row + 1;
+
+  // Lanes
+  $: default_stream_lane_index = streams.length;
+  $: default_audience_lane_index = audiences.length;
+  $: lane_drop_target =
+    dragState.kind === DraggingStateKind.LANE ? dragState.value.target : undefined;
+  $: audience_drop_target =
+    lane_drop_target?.rowKind == 'audience'
+      ? { index: lane_drop_target.laneIndex, targetStatus: lane_drop_target.targetStatus }
+      : undefined;
+  $: stream_drop_target =
+    lane_drop_target?.rowKind == 'stream'
+      ? { index: lane_drop_target.laneIndex, targetStatus: lane_drop_target.targetStatus }
+      : undefined;
+
+  $: timeline_drop_target =
+    lane_drop_target?.rowKind == 'timeline' ? lane_drop_target.targetStatus : undefined;
+
+  $: cell_drop_target =
+    dragState.kind === DraggingStateKind.PLACEMENT ? dragState.value.target : undefined;
 
   // Cursor
 
@@ -265,25 +361,41 @@
     mode = 'navigation';
   };
 
-  // Linking
-
-  // const linkingKeyboardHandler = createKeybindingsHandler({
-  // })
-
-  // TODO: wire up to decider
-  const handleConnectFlow = async (e: CustomEvent) => {
-    console.log('connect_flow:', e);
-  };
-
   // Keyboard
   const keyboardHandler: EventListener = (e) => {
     if (mode === 'navigation') {
       navigationKeyboardHandler(e);
     }
   };
+
+  const genDragDebugJson = (state: DraggingState): string => {
+    let kind = 'None';
+
+    switch (state.kind) {
+      case DraggingStateKind.LANE:
+        kind = 'LANE';
+        break;
+      case DraggingStateKind.PLACEMENT:
+        kind = 'PLACEMENT';
+        break;
+      case DraggingStateKind.FLOW:
+        kind = 'FLOW';
+        break;
+      default:
+        kind = 'None';
+    }
+
+    return JSON.stringify({ ...state, kind }, null, 2);
+  };
+
+  $: drag_json = genDragDebugJson(dragState);
 </script>
 
-<svelte:window on:keydown={keyboardHandler} />
+<svelte:window
+  on:keydown={keyboardHandler}
+  on:dragenter={handleOutOfBoundsDragEnter}
+  on:dragend={handleOutOfBoundsDragEnd}
+/>
 
 <h3>{mode}</h3>
 
@@ -297,20 +409,55 @@
       on:navigate_cursor={handleNavigateCursor}
       on:move_interface_placement={handleMoveInterfacePlacement}
       on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
-      on:connect_flow={handleConnectFlow}
+      on:lane_drag_drop={handleLaneDragDrop}
+      on:placement_drag_start={handlePlacementDragStart}
+      on:cell_drag_enter={handleCellDragEnter}
+      on:cell_drag_drop={handleCellDragDrop}
+      on:flow_drag_start={handleFlowDragStart}
+      targeted_cell={cell_drop_target &&
+      cell_drop_target.row.rowKind === 'audience' &&
+      cell_drop_target.row.audienceId == DEFAULT_LANE
+        ? {
+            column: cell_drop_target.column,
+            targetStatus: cell_drop_target.targetStatus
+          }
+        : undefined}
+      targeted_lane={audience_drop_target?.index === default_audience_lane_index
+        ? audience_drop_target.targetStatus
+        : undefined}
       row={default_audience_row}
-      lane_index={audiences.length}
       audience={{ placements: default_audience_placements }}
+      lane_index={default_audience_lane_index}
       {max_column}
     />
 
-    {#each audiences as audience, lane_index (audience.id)}
-      {@const row = lane_index + 1}
+    {#each audiences as audience, i (audience.id)}
+      {@const row = i + 1}
+      {@const lane_index = audiences.length - 1 - i}
+      {@const targeted_lane =
+        audience_drop_target?.index == lane_index ? audience_drop_target.targetStatus : undefined}
+      {@const targeted_cell =
+        cell_drop_target &&
+        cell_drop_target.row.rowKind === 'audience' &&
+        cell_drop_target.row.audienceId == audience.id
+          ? {
+              column: cell_drop_target.column,
+              targetStatus: cell_drop_target.targetStatus
+            }
+          : undefined}
       <AudienceLane
         on:navigate_cursor={handleNavigateCursor}
         on:move_interface_placement={handleMoveInterfacePlacement}
         on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
-        on:connect_flow={handleConnectFlow}
+        on:lane_drag_start={handleLaneDragStart}
+        on:lane_drag_enter={handleLaneDragEnter}
+        on:lane_drag_drop={handleLaneDragDrop}
+        on:placement_drag_start={handlePlacementDragStart}
+        on:cell_drag_enter={handleCellDragEnter}
+        on:cell_drag_drop={handleCellDragDrop}
+        on:flow_drag_start={handleFlowDragStart}
+        {targeted_cell}
+        {targeted_lane}
         {row}
         {audience}
         {max_column}
@@ -322,20 +469,45 @@
       on:navigate_cursor={handleNavigateCursor}
       on:move_timeline_placement={handleMoveTimelinePlacement}
       on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
-      on:connect_flow={handleConnectFlow}
+      on:placement_drag_start={handlePlacementDragStart}
+      on:cell_drag_enter={handleCellDragEnter}
+      on:cell_drag_drop={handleCellDragDrop}
+      on:flow_drag_start={handleFlowDragStart}
       row={timeline_row}
       placements={timeline_placements}
+      targeted_lane={timeline_drop_target}
+      targeted_cell={cell_drop_target && cell_drop_target.row.rowKind === 'timeline'
+        ? { column: cell_drop_target.column, targetStatus: cell_drop_target.targetStatus }
+        : undefined}
       {max_column}
     />
 
     {#each streams as stream, lane_index (stream.id)}
       {@const row = lane_index + timeline_row + 1}
+      {@const targeted_lane =
+        stream_drop_target?.index == lane_index ? stream_drop_target.targetStatus : undefined}
+      {@const targeted_cell =
+        cell_drop_target &&
+        cell_drop_target.row.rowKind === 'stream' &&
+        cell_drop_target.row.streamId == stream.id
+          ? {
+              column: cell_drop_target.column,
+              targetStatus: cell_drop_target.targetStatus
+            }
+          : undefined}
       <StreamLane
         on:navigate_cursor={handleNavigateCursor}
         on:move_event_placement={handleMoveEventPlacement}
         on:duplicate_event_placement={handleDuplicateEventPlacement}
-        on:connect_flow={handleConnectFlow}
-        on:reorder_lane={handleReorderLane}
+        on:lane_drag_start={handleLaneDragStart}
+        on:lane_drag_enter={handleLaneDragEnter}
+        on:lane_drag_drop={handleLaneDragDrop}
+        on:placement_drag_start={handlePlacementDragStart}
+        on:cell_drag_enter={handleCellDragEnter}
+        on:cell_drag_drop={handleCellDragDrop}
+        on:flow_drag_start={handleFlowDragStart}
+        {targeted_lane}
+        {targeted_cell}
         {row}
         {stream}
         {max_column}
@@ -346,8 +518,23 @@
       on:navigate_cursor={handleNavigateCursor}
       on:move_event_placement={handleMoveEventPlacement}
       on:duplicate_event_placement={handleDuplicateEventPlacement}
-      on:connect_flow={handleConnectFlow}
-      lane_index={streams.length}
+      on:lane_drag_drop={handleLaneDragDrop}
+      on:placement_drag_start={handlePlacementDragStart}
+      on:cell_drag_enter={handleCellDragEnter}
+      on:cell_drag_drop={handleCellDragDrop}
+      on:flow_drag_start={handleFlowDragStart}
+      targeted_cell={cell_drop_target &&
+      cell_drop_target.row.rowKind === 'stream' &&
+      cell_drop_target.row.streamId == DEFAULT_LANE
+        ? {
+            column: cell_drop_target.column,
+            targetStatus: cell_drop_target.targetStatus
+          }
+        : undefined}
+      targeted_lane={stream_drop_target?.index === default_stream_lane_index
+        ? stream_drop_target.targetStatus
+        : undefined}
+      lane_index={default_stream_lane_index}
       row={default_stream_row}
       stream={{ placements: default_stream_placements }}
       {max_column}
@@ -366,7 +553,6 @@
       on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
       on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
       on:duplicate_event_placement={handleDuplicateEventPlacement}
-      on:connect_flow={handleConnectFlow}
       row={cursor_row}
       column={cursor_column}
       item={cursor_item}

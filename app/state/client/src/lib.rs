@@ -12,7 +12,7 @@ use crate::indexed_db::{IndexedDbError, IndexedDbStateRepository};
 pub use crate::indexed_db::{Model, Patch};
 use automerge::ActorId;
 use event_models::api::commands::EventModelCommand;
-use event_models::EventModelError;
+use event_models::{EventModelError, Anchor};
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
 use js_sys::Uint8Array;
 use state_shared::strategies::{ReifyDecideSave, ReifyDecideSaveError, StateRepository};
@@ -459,6 +459,34 @@ impl EventModelStateManager {
             model_id, index, count,
         ))
         .await
+    }
+
+    pub async fn connect_flow(
+        &mut self,
+        model_id_str: String,
+        source_placement_id_str: String,
+        source_anchor_str: Option<String>,
+        target_placement_id_str: String,
+        target_anchor_str: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let source_placement_id = parse_uuid(source_placement_id_str)?;
+        let target_placement_id = parse_uuid(target_placement_id_str)?;
+        let source_anchor: Anchor = source_anchor_str
+            .try_into()
+            .map_err(|e| JsValue::from(format!("Anchor from string error {:?}", e)))?;
+
+        let target_anchor: Anchor = target_anchor_str
+            .try_into()
+            .map_err(|e| JsValue::from(format!("Anchor from string error {:?}", e)))?;
+
+        self.dispatch(EventModelCommand::ConnectFlow(
+            model_id,
+            source_placement_id,
+            source_anchor,
+            target_placement_id,
+            target_anchor
+        )).await
     }
 
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {

@@ -44,24 +44,13 @@
   import DropdownMenu from '$components/dropdown/DropdownMenu.svelte';
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
+  import { enhance } from '$app/forms';
 
-  // === Authentication Handling
+  // === Authentication
 
   export let data: LayoutData;
 
-  $: ({ supabase, session } = data)
-
-  onMount(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session_) => {
-      if (session_?.expires_at !== session?.expires_at) {
-        invalidate('supabase:auth');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  })
+  $: ({ session } = data)
 
   let signOutLoading = false;
 
@@ -72,7 +61,7 @@
     };
   }
 
-  // === End Authentication Handling
+  // === End Authentication
 
   let expanded = false;
   let designExpanded = false;
@@ -109,62 +98,63 @@
         on:click={() => handleDrawer()}
         on:click={() => (isClosed = true)}
         on:click={() => (isVerticalOpen = false)} />
-      <NavBrand src={Logo} height={28} logoClass="flex no-underline mx-3 cursor-default" />
-      <div class="h-9 pr-3 border-r border-gray-secondary dark:border-border-dark flex items-center">
-        <MaybeTooltip tip="Home" position="tooltip-bottom">
-          <IconButton href="/">
-            <Icon
-              name="home"
-              size={16}
-              iconColor="text-body-light dark:text-body-dark"
-              pathName={Home} />
-          </IconButton>
-        </MaybeTooltip>
-      </div>
+        <NavBrand src={Logo} height={28} logoClass="flex no-underline mx-3 cursor-default" />
+        <div class="h-9 pr-3 border-r border-gray-secondary dark:border-border-dark flex items-center">
+          <MaybeTooltip tip="Home" position="tooltip-bottom">
+            <IconButton href="/">
+              <Icon
+                name="home"
+                size={16}
+                iconColor="text-body-light dark:text-body-dark"
+                pathName={Home} />
+            </IconButton>
+          </MaybeTooltip>
+        </div>
     </NavToolbar>
     <NavToolbar
       navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark">
-      <!-- {#if data.session.user} -->
-      <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
-        <IconButton slot="button" margin="mx-2 mt-1">
-          <Icon
-            name="profile"
-            size={32}
-            viewBox="0 0 32 32"
-            class="vertical-middle"
-            iconColor=""
-            pathName={Profile}
-          />
-        </IconButton>
-        <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
-          <!-- fake email for testing -->
-          lutobor.kostalova66@centrum.cz</DropdownItem>
-        <DropdownItem href="/account">Account</DropdownItem>
-        <DropdownDivider />
-        <DropdownItem className="flex-1" on:click={handleSignOut}>Sign Out</DropdownItem>
-      </DropdownMenu>
+      {#if session?.user}
+        <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
+          <IconButton slot="button" margin="mx-2 mt-1">
+            <Icon
+              name="profile"
+              size={32}
+              viewBox="0 0 32 32"
+              class="vertical-middle"
+              iconColor=""
+              pathName={Profile} />
+          </IconButton>
+          <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
+            {session.user.email ?? "email@example.com"}
+          </DropdownItem>
+          <DropdownItem href="/account">Account</DropdownItem>
+          <DropdownDivider />
+          <DropdownItem className="flex-1">
+            <form method="POST" action="/auth/sign-out" use:enhance={handleSignOutSubmit}>
+              <button class="button inline" disabled={signOutLoading}>sign out</button>
+            </form>
+          </DropdownItem>
+        </DropdownMenu>
 
-      <MaybeTooltip tip="Docs" position="tooltip-bottom">
-        <IconButton
-          ><Icon
-            name="docs"
-            size={18}
-            iconColor="text-body-light dark:text-body-dark"
-            pathName={Docs}
-          />
-        </IconButton>
-      </MaybeTooltip>
-      <MaybeTooltip tip="Support" position="tooltip-bottom">
-        <IconButton
-          ><Icon
-            name="support"
-            size={18}
-            iconColor="text-body-light dark:text-body-dark"
-            pathName={Support}
-          />
-        </IconButton>
-      </MaybeTooltip>
-      <!-- {:else}
+        <MaybeTooltip tip="Docs" position="tooltip-bottom">
+          <IconButton>
+            <Icon
+              name="docs"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Docs} />
+          </IconButton>
+        </MaybeTooltip>
+        <MaybeTooltip tip="Support" position="tooltip-bottom">
+          <IconButton>
+            <Icon
+              name="support"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Support} />
+          </IconButton>
+        </MaybeTooltip>
+      {:else}
         <Button
           href="/auth/sign-in"
           gradient
@@ -172,9 +162,9 @@
           size="sm"
           on:click
           label="Sign In"
-        />
-      {/if} -->
-    </NavToolbar>
+          />
+        {/if}
+      </NavToolbar>
   </NavInner>
 </Navbar>
 
@@ -222,7 +212,7 @@
 </Drawer>
 
 <main
-  class="{grid ? 'relative' : 'absolute'} left-0 right-0 transition-all duration-[200ms] ml-0"
+  class="{grid ? 'relative' : 'absolute'} left-0 right-0 transition-all duration-[200ms] ml-0 pt-16"
   class:left-60={!hidden}
   class:ml-[177px]={!isClosed}
   class:ease-in={!isClosed} >

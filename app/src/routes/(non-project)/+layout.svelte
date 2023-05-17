@@ -23,24 +23,13 @@
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
   import { enhance } from '$app/forms';
+  import Button from '$components/Button.svelte';
 
-  // === Authentication Handling
+  // === Authentication
 
   export let data: LayoutData;
 
-  $: ({ supabase, session } = data)
-
-  onMount(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session_) => {
-      if (session_?.expires_at !== session?.expires_at) {
-        invalidate('supabase:auth');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  })
+  $: ({ session } = data)
 
   let signOutLoading = false;
 
@@ -51,8 +40,7 @@
     };
   }
 
-  // === End Authentication Handling
-
+  // === End Authentication
 </script>
 
 <Navbar website={false}>
@@ -73,7 +61,7 @@
     </NavToolbar>
     <NavToolbar
       navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark">
-      <!-- {#if data.session.user} -->
+      {#if session}
         <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
           <IconButton slot="button" margin="mx-2 mt-1">
             <Icon
@@ -86,7 +74,7 @@
               />
           </IconButton>
           <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
-            {session.user.email}
+            {session.user.email ?? "email@example.com"}
           </DropdownItem>
           <DropdownItem href="/account">Account</DropdownItem>
           <DropdownDivider />
@@ -117,7 +105,7 @@
                />
           </IconButton>
         </MaybeTooltip>
-      <!-- {:else}
+      {:else}
         <Button
           href="/auth/sign-in"
           gradient
@@ -126,7 +114,7 @@
           on:click
           label="Sign In"
           />
-        {/if} -->
+        {/if}
       </NavToolbar>
   </NavInner>
 </Navbar>

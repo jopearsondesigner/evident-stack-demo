@@ -3,7 +3,6 @@ extern crate event_models;
 pub mod grid;
 mod indexed_db;
 pub mod strategies;
-mod sync;
 
 use std::str::FromStr;
 

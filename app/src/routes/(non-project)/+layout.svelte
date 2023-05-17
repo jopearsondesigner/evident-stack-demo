@@ -1,8 +1,6 @@
 <script lang="ts">
   import '../../app.css';
   import type { LayoutData } from './$types';
-  import { onMount } from 'svelte';
-  import { invalidate } from '$app/navigation';
 
   import Navbar from '$components/navbar/Navbar.svelte';
   import NavInner from '$components/navbar/NavInner.svelte';
@@ -112,8 +110,7 @@
           color="brandStackPrimary"
           size="sm"
           on:click
-          label="Sign In"
-          />
+          label="Sign In" />
         {/if}
       </NavToolbar>
   </NavInner>

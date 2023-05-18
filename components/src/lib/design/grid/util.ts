@@ -238,7 +238,9 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                                 break;
                                             case "interface":
                                                 reactionDecider.move_interface_placement(placementId, column, laneId);
+                                                break;
                                         }
+                                    break;
                                     case "DUPLICATE":
                                         switch (placementKind) {
                                             case "command":
@@ -252,7 +254,9 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                                 break;
                                             case "interface":
                                                 reactionDecider.duplicate_interface_placement(placementId, column, laneId);
+                                                break;
                                         }
+                                    break;
                                 }
 
                             }

@@ -15,7 +15,7 @@
   export let from: FlowPort;
   export let color: string;
   export let strokeWidth: number;
-  export let dashness: boolean;
+  export let dashed: boolean;
   export let refreshTime: number;
   export let curveShapeFactor: number;
   export let boundingParent: SVGSVGElement;
@@ -65,7 +65,7 @@
       : undefined;
 
   $: pathId = makePathId(id);
-  $: dashArray = dashness ? 6 * strokeWidth : null;
+  $: dashArray = dashed ? 6 * strokeWidth : null;
 
   const updateLoop = setInterval(() => {
     const nextFrom = rectForPlacementId(from.placement_id);
@@ -90,33 +90,6 @@
       }
     }
   }, refreshTime);
-
-  // const pathGeometry = (toRect: MaybeRect, fromRect: MaybeRect): string | undefined => {
-  //   if (!toRect || !fromRect) {
-  //     return;
-  //   }
-
-  //   const pathHeadOffset = Math.abs(markerSize / 2);
-  //   const toAnchorPoint = anchorPoint(boundingParent, to.anchor, toRect, pathHeadOffset);
-  //   const fromAnchorPoint = anchorPoint(boundingParent, from.anchor, fromRect, 0, markerSize * 2);
-  //   const midPoint = findMidPoint(toAnchorPoint, fromAnchorPoint);
-  //   const fromBezPoint = bezierControlPoint(
-  //     fromAnchorPoint,
-  //     midPoint,
-  //     from.anchor,
-  //     curveShapeFactor
-  //   );
-  //   const toBezPoint = bezierControlPoint(toAnchorPoint, midPoint, to.anchor, curveShapeFactor);
-
-  //   if (!fromBezPoint || !toBezPoint) {
-  //     return;
-  //   }
-
-  //   return `M ${fromAnchorPoint.x} ${fromAnchorPoint.y}
-  //       C ${fromBezPoint.x} ${fromBezPoint.y},
-  //           ${toBezPoint.x} ${toBezPoint.y},
-  //           ${toAnchorPoint.x} ${toAnchorPoint.y}`;
-  // };
 
   onDestroy(() => {
     clearInterval(updateLoop);

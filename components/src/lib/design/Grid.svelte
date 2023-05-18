@@ -402,12 +402,11 @@
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <div
     class="grid w-max p-3 relative justify-items-center items-center"
-    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));">
+    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
+  >
     <FlowCanvas {flows} />
     <AudienceLane
       on:navigate_cursor={handleNavigateCursor}
-      on:move_interface_placement={handleMoveInterfacePlacement}
-      on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
       on:lane_drag_drop={handleLaneDragDrop}
       on:placement_drag_start={handlePlacementDragStart}
       on:cell_drag_enter={handleCellDragEnter}
@@ -446,8 +445,6 @@
           : undefined}
       <AudienceLane
         on:navigate_cursor={handleNavigateCursor}
-        on:move_interface_placement={handleMoveInterfacePlacement}
-        on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
         on:lane_drag_drop={handleLaneDragDrop}
@@ -496,8 +493,6 @@
           : undefined}
       <StreamLane
         on:navigate_cursor={handleNavigateCursor}
-        on:move_event_placement={handleMoveEventPlacement}
-        on:duplicate_event_placement={handleDuplicateEventPlacement}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
         on:lane_drag_drop={handleLaneDragDrop}
@@ -515,8 +510,6 @@
     {/each}
     <StreamLane
       on:navigate_cursor={handleNavigateCursor}
-      on:move_event_placement={handleMoveEventPlacement}
-      on:duplicate_event_placement={handleDuplicateEventPlacement}
       on:lane_drag_drop={handleLaneDragDrop}
       on:placement_drag_start={handlePlacementDragStart}
       on:cell_drag_enter={handleCellDragEnter}
@@ -549,9 +542,6 @@
       on:move_interface_placement={handleMoveInterfacePlacement}
       on:move_timeline_placement={handleMoveTimelinePlacement}
       on:move_event_placement={handleMoveEventPlacement}
-      on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
-      on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
-      on:duplicate_event_placement={handleDuplicateEventPlacement}
       row={cursor_row}
       column={cursor_column}
       item={cursor_item}

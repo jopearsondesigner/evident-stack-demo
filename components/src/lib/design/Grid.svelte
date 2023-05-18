@@ -13,7 +13,10 @@
     type CellTarget,
     type WithSourceEffect,
     type FlowPortSource,
-    DEFAULT_LANE
+    DEFAULT_LANE,
+
+    linkingFlowFromState
+
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -34,7 +37,10 @@
     type Disambiguation,
     type CursorMode,
     type GridMode,
-    type Flow
+    type Flow,
+
+    FlowAnchor
+
   } from './Grid';
   import { onMount } from 'svelte';
   import { itemAtCursor } from './Grid';
@@ -225,6 +231,8 @@
   $: cell_drop_target =
     dragState.kind === DraggingStateKind.PLACEMENT ? dragState.value.target : undefined;
 
+  // Flows
+  $: linkingFlow = linkingFlowFromState(dragState);
   // Cursor
 
   let cursor_row = 0;
@@ -367,28 +375,6 @@
       navigationKeyboardHandler(e);
     }
   };
-
-  const genDragDebugJson = (state: DraggingState): string => {
-    let kind = 'None';
-
-    switch (state.kind) {
-      case DraggingStateKind.LANE:
-        kind = 'LANE';
-        break;
-      case DraggingStateKind.PLACEMENT:
-        kind = 'PLACEMENT';
-        break;
-      case DraggingStateKind.FLOW:
-        kind = 'FLOW';
-        break;
-      default:
-        kind = 'None';
-    }
-
-    return JSON.stringify({ ...state, kind }, null, 2);
-  };
-
-  $: drag_json = genDragDebugJson(dragState);
 </script>
 
 <svelte:window
@@ -398,6 +384,7 @@
 />
 
 <h3>{mode}</h3>
+<h3>{JSON.stringify(linkingFlow)}</h3>
 
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <div

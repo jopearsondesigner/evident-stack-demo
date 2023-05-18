@@ -1,4 +1,4 @@
-import type { Decider, DropTargetStatus, LaneKind, PlacementType } from "../Grid";
+import { FlowAnchor, type Decider, type DropTargetStatus, type Flow, type FlowCursor, type FlowPort, type LaneKind, type PlacementType } from "../Grid";
 
 // Types
 export interface WithDropTargetStatus { targetStatus: DropTargetStatus}
@@ -21,7 +21,7 @@ export interface PlacementSource {
 
 export interface FlowPortSource {
     placement: PlacementSource,
-    position: string
+    position: FlowAnchor 
 }
 
 export type AudienceTarget = {
@@ -49,6 +49,11 @@ export interface CellTarget {
     placementKind?: PlacementType,
 }
 
+export interface CursorTarget {
+    x: number,
+    y: number
+}
+
 export enum DraggingStateKind {
     LANE,
     PLACEMENT,
@@ -68,7 +73,8 @@ export type DraggingState =
     | { kind: DraggingStateKind.FLOW,
         value: {
             source: FlowPortSource,
-            target?: CellTarget & WithDropTargetStatus
+            cursor?: CursorTarget,
+            target?: (CellTarget & WithDropTargetStatus)
         }}
     | { kind: DraggingStateKind.NONE };
 
@@ -264,7 +270,6 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             return { kind: DraggingStateKind.NONE };
                         }
                         case DraggingStateKind.FLOW: {
-
                             if (state.value.target && state.value.target.targetStatus === "good") {
                                 const { source, target } = state.value;
                                 if (target.placementId) {
@@ -400,3 +405,42 @@ const rowtargetToLaneId = (row: RowTarget): string | DefaultLane | undefined => 
 
 const laneIdFilterDefault = (laneId: string | DefaultLane | undefined): string | undefined =>
     (laneId === "DEFAULT_LANE") ? undefined : laneId;
+
+export const linkingFlowFromState = (state: DraggingState): Flow | void => {
+    if (state.kind !== DraggingStateKind.FLOW) {
+        return;
+    }
+
+    const { source, cursor, target } = state.value;
+
+    // Need at least one
+    if (!cursor && !target) {
+        return;
+    }
+
+    const from: FlowPort = {
+        placement_id: source.placement.placementId,
+        anchor: source.position,
+        kind: "FlowPort"
+    };
+
+    // Use placement if in proper cell - fallback to cursor position
+    const to: FlowPort | FlowCursor | undefined = target && target.placementId ?
+        {
+            placement_id: target.placementId,
+            anchor: FlowAnchor.Bottom,
+            kind: "FlowPort",
+        } :
+        cursor ? { x: cursor.x, y: cursor.y, kind: "FlowCursor" } : undefined;
+
+    if (!to) {
+        return;
+    }
+
+    return {
+        id: "linking",
+        to,
+        from,
+        dashed: true
+    }
+}

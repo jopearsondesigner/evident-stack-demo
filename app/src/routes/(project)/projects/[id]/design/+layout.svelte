@@ -647,7 +647,8 @@
     return {
       id,
       to: { placement_id: to.placement_id, anchor: to.anchor, kind: 'FlowPort' },
-      from: { placement_id: from.placement_id, anchor: from.anchor, kind: 'FlowPort' }
+      from: { placement_id: from.placement_id, anchor: from.anchor, kind: 'FlowPort' },
+      dashed: false,
     };
   })}
   column_count={$grid?.column_count || 0}

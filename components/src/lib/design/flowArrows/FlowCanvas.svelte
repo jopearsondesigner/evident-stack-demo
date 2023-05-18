@@ -6,7 +6,6 @@
   export let flows: Array<Flow> = [];
   export let color: string = '#657B83';
   export let strokeWidth: number = 1;
-  export let dashness: boolean = false;
   export let refreshTime: number = 16;
   export let curveShapeFactor: number = 0.1;
   export let markerSize: number = 8;
@@ -18,7 +17,6 @@
   $: pathConfig = {
     color,
     strokeWidth,
-    dashness,
     refreshTime,
     curveShapeFactor,
     markerSize,
@@ -38,7 +36,7 @@
   <defs>
     <FlowMarker {...markerConfig} />
   </defs>
-  {#each flows as { id, to, from }}
-    <FlowPath {...{ id, to, from, ...pathConfig }} />
+  {#each flows as { id, to, from, dashed }}
+    <FlowPath {...{ id, to, from, dashed, ...pathConfig }} />
   {/each}
 </svg>

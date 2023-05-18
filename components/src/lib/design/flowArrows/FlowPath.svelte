@@ -27,9 +27,6 @@
 
   let fromRect: MaybeRect = rectForPlacementId(from.placement_id);
 
-  console.warn("TO RAW: ->", to);
-  console.warn("TO, FROM -> ", toRect, fromRect);
-
   $: fromAnchorPoint = fromRect
     ? findAnchorPoint(boundingParent, from.anchor, fromRect, 0, markerSize * 2)
     : undefined;

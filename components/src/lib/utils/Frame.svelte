@@ -104,6 +104,7 @@
     navbarUl: 'border-gray-100 dark:border-gray-700',
     form: 'border-gray-300 dark:border-gray-700',
     primary: 'border-primary-500 dark:bg-primary-200 ',
+    brand: 'border-border-light dark:border-border-dark',
     none: ''
   };
 

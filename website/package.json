@@ -52,6 +52,7 @@
     "classnames": "^2.3.2",
     "components": "0.1.0",
     "svelte-layout-aware-transitions": "^0.0.5",
+    "svelte-meta-tags": "^2.7.2",
     "svelte-use-click-outside": "^1.0.0"
   }
 }

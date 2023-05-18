@@ -32,6 +32,8 @@
     "format": "prettier --plugin-search-dir . --write ."
   },
   "devDependencies": {
+    "@codemirror/lang-javascript": "^6.1.7",
+    "@codemirror/theme-one-dark": "^6.1.2",
     "@playwright/test": "^1.28.1",
     "@sagi.io/workers-jwt": "^0.0.23",
     "@supabase/auth-helpers-sveltekit": "^0.9.4",
@@ -46,9 +48,11 @@
     "autoprefixer": "^10.4.13",
     "base64-js": "^1.5.1",
     "classnames": "^2.3.2",
+    "codemirror": "^6.0.1",
     "concurrently": "^6.3.0",
     "daisyui": "^2.41.0",
     "dexie": "^3.2.3",
+    "dexie-observable": "^4.0.1-beta.13",
     "dexie-syncable": "^4.0.1-beta.13",
     "dompurify": "^2.4.3",
     "eslint": "^8.28.0",
@@ -62,6 +66,7 @@
     "svelte": "^3.57.0",
     "svelte-accessible-accordion": "^2.1.0",
     "svelte-check": "^2.9.2",
+    "svelte-codemirror-editor": "^1.1.0",
     "svelte-highlight": "^7.2.1",
     "svelte-layout-aware-transitions": "^0.0.5",
     "svelte-markdown": "^0.2.3",
@@ -73,11 +78,5 @@
     "vite-plugin-top-level-await": "^1.2.2",
     "vite-plugin-wasm": "^3.1.1",
     "vitest": "^0.25.3"
-  },
-  "dependencies": {
-    "@codemirror/lang-javascript": "^6.1.7",
-    "codemirror": "^6.0.1",
-    "@codemirror/theme-one-dark": "^6.1.2",
-    "svelte-codemirror-editor": "^1.1.0"
   }
 }

@@ -36,11 +36,11 @@
     <option disabled selected value="">{placeholder}</option>
   {/if}
 
-	{#each items as { value, name }}
-		<option {value}>{name}</option>
-	{:else}
-		<slot />
-	{/each}
+  {#each items as { value, name }}
+    <option {value}>{name}</option>
+  {:else}
+    <slot />
+  {/each}
 </select>
 
 <style>
@@ -48,6 +48,7 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    background-image: url('../assets/images/global/ArrowDown.svg');
     background-repeat: no-repeat;
     background-size: 16px;
     background-position: 98% center;

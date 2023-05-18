@@ -1,7 +1,6 @@
 [workspace]
 members = [
-  "app/state/",
-  "domain/collaboration",
+  "app/state",
   "domain/event-models",
   "domain/event-model-tests",
 ]

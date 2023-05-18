@@ -88,6 +88,7 @@ export enum DraggingCommandKind {
     FLOW_PORT_DRAG_START,
     OUT_OF_BOUNDS_DRAG_ENTER,
     OUT_OF_BOUNDS_DRAG_END,
+    CURSOR_MOVE,
 }
 
 export type DragCommand =
@@ -105,6 +106,8 @@ export type DragCommand =
         value: FlowPortSource }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END }
+    | { kind: DraggingCommandKind.CURSOR_MOVE,
+        value: CursorTarget }
 
 export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState, c: DragCommand) => DraggingState {
     return (state: DraggingState, command: DragCommand) => {
@@ -338,6 +341,28 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                         kind: DraggingStateKind.NONE
                     };
                 }
+                case DraggingCommandKind.CURSOR_MOVE: {
+                    console.info("CURSOR MOVE", command.value);
+                    switch (state.kind) {
+                        case DraggingStateKind.FLOW: {
+                            const { target } = state.value;
+
+                            if (target?.placementId && target.targetStatus === 'good') {
+                                return state;
+                            }
+
+                            return {
+                                ...state,
+                                value: {
+                                    ...state.value,
+                                    cursor: command.value
+                                }
+                            }
+                        }
+                        default:
+                            return state;
+                    }
+                }
             }
     }
 }
@@ -408,8 +433,11 @@ const laneIdFilterDefault = (laneId: string | DefaultLane | undefined): string |
 
 export const linkingFlowFromState = (state: DraggingState): Flow | void => {
     if (state.kind !== DraggingStateKind.FLOW) {
+        console.warn(" KIND IS NOT FLOW?");
         return;
     }
+
+    console.warn("Translate to Linking Grid State", state.value);
 
     const { source, cursor, target } = state.value;
 

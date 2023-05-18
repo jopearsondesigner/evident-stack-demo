@@ -378,7 +378,9 @@
 
   // Drag Test
   const handleDragOver = (e: DragEvent) => {
-    console.warn(e.clientX, e.clientY);
+    console.info('DRAG MOVE', e.clientX, e.clientY);
+    const command: DragCommand = { kind: DraggingCommandKind.CURSOR_MOVE, value: { x: e.clientX, y: e.clientY } };
+    dragState = evolveAndReactDraggingState(dragState, command);
   }
 </script>
 

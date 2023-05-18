@@ -60,6 +60,7 @@ export type Flow = {
   id: string;
   to: FlowPort | FlowCursor;
   from: FlowPort;
+  dashed: boolean,
 };
 
 export type FlowPort = {

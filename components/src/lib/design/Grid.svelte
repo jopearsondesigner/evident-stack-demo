@@ -376,11 +376,27 @@
     }
   };
 
+  let containerRef: HTMLDivElement;
+
   // Drag Test
   const handleDragOver = (e: DragEvent) => {
+    const clientRect = containerRef.getBoundingClientRect();
+    console.info("Drag Over");
+    const {
+      clientX,
+      clientY,
+      pageX,
+      pageY,
+    } = e;
+    console.info({
+      clientX,
+      clientY,
+      pageX,
+      pageY,
+    });
     const command: DragCommand = {
       kind: DraggingCommandKind.CURSOR_MOVE,
-      value: { x: e.clientX, y: e.clientY }
+      value: { x: e.clientX - clientRect.x, y: e.clientY - clientRect.y }
     };
 
     dragState = evolveAndReactDraggingState(dragState, command);
@@ -400,9 +416,10 @@
 
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <div
+    bind:this={containerRef}
+    on:dragover={handleDragOver}
     class="grid w-max p-3 relative justify-items-center items-center"
     style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
-    on:dragover={handleDragOver}
   >
     <FlowCanvas flows={allFlows} />
     <AudienceLane

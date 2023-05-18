@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createEventDispatcher, onMount } from 'svelte';
   import type { Flow } from '../Grid';
   import FlowMarker from './FlowMarker.svelte';
   import FlowPath from './FlowPath.svelte';
@@ -40,3 +41,4 @@
     <FlowPath {...{ id, to, from, dashed, ...pathConfig }} />
   {/each}
 </svg>
+

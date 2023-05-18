@@ -22,6 +22,7 @@ We use a Supabase container in the backend to serve as our database and realtime
 ```bash
 npx supabase start
 ```
+
 This will print out some environment variables to the console (if you ever need to reference them again you can see them with ```npx supabase status```).
 The following keys will be set as variables in your .env file in /app:
 

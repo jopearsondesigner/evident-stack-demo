@@ -16,6 +16,22 @@ npm install
 npm install -g esbuild <This globally installs the correct version of ESBuild for your environment mac vs linux without causing conflicts by directly installing in package.json>
 ```
 
+## Install Supabase
+
+We use a Supabase container in the backend to serve as our database and realtime channels
+```bash
+npx supabase start
+```
+
+This will print out some environment variables to the console (if you ever need to reference them again you can see them with ```npx supabase status```).
+The following keys will be set as variables in your .env file in /app:
+
+supabase         | .env
+-------------------------------------------
+API URL          | PUBLIC_SUPABASE_URL
+anon secret      | PUBLIC_SUPABASE_ANON_KEY
+service_role key | PUBLIC_SERVICE_KEY
+
 ## Running Storybook
 
 To begin interactive development on our [library of components](./src/lib/components/), start the Storybook server:

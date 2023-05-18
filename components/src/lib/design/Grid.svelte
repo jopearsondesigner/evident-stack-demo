@@ -381,19 +381,6 @@
   // Drag Test
   const handleDragOver = (e: DragEvent) => {
     const clientRect = containerRef.getBoundingClientRect();
-    console.info("Drag Over");
-    const {
-      clientX,
-      clientY,
-      pageX,
-      pageY,
-    } = e;
-    console.info({
-      clientX,
-      clientY,
-      pageX,
-      pageY,
-    });
     const command: DragCommand = {
       kind: DraggingCommandKind.CURSOR_MOVE,
       value: { x: e.clientX - clientRect.x, y: e.clientY - clientRect.y }

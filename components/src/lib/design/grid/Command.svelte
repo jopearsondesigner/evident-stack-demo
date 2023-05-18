@@ -1,5 +1,4 @@
 <script lang="ts">
-  import MaybeTooltip from '../../utils/MaybeTooltip.svelte';
   import markdown from '../../utils/markdown.js';
   import type { DragEventHandler } from 'svelte/elements';
   import { createEventDispatcher } from 'svelte';
@@ -13,51 +12,29 @@
 
   $: descriptionHTML = markdown(description);
 
+  const dispatch = createEventDispatcher();
+  const forward = (event: CustomEvent) => {
+    dispatch(event.type, event.detail);
+  }
+
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
+
     if (transfer) {
-      transfer.setData('timeline', id);
       if (e.shiftKey) {
         transfer.effectAllowed = 'copy';
+        dispatch('placement_drag_start', {
+          placementId: id,
+          placementKind: 'command',
+          sourceEffect: 'DUPLICATE'
+        });
       } else {
         transfer.effectAllowed = 'move';
-      }
-    }
-  };
-
-  // Linking
-  const dispatch = createEventDispatcher();
-  let drop_target = false;
-
-  const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    let transfer = e.dataTransfer;
-    if (transfer) {
-      if (
-        (transfer.effectAllowed == 'link' && transfer.types.includes('interface')) ||
-        transfer.types.includes('event')
-      ) {
-        e.preventDefault();
-        transfer.dropEffect = 'link';
-        drop_target = true;
-      }
-    }
-  };
-
-  const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
-    drop_target = false; // TODO: conditionally change style (cursor maybe?) while linking
-  };
-
-  const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
-    handleDragLeave(e);
-    let transfer = e.dataTransfer;
-    if (transfer) {
-      if (transfer.effectAllowed == 'link') {
-        let fromData = transfer.getData('interface') || transfer.getData('event');
-        if (fromData) {
-          let from = JSON.parse(fromData);
-          transfer.dropEffect = 'link';
-          dispatch('connect_flow', { from: from, to: id });
-        }
+        dispatch('placement_drag_start', {
+          placementId: id,
+          placementKind: 'command',
+          sourceEffect: 'MOVE'
+        });
       }
     }
   };
@@ -65,13 +42,10 @@
 
 <div
   class="relative group"
-  on:dragenter={handleDragEnter}
   on:dragover={(e) => e.preventDefault()}
-  on:dragleave={handleDragLeave}
-  on:drop={handleDragDrop}
 >
-  <FlowPort position="bottom" type="command" placement={id} {column} />
-  <FlowPort position="right" type="command" placement={id} {column} />
+  <FlowPort on:flow_drag_start={forward} position="bottom" type="command" placement={id} placement_kind="command" {column} />
+  <FlowPort on:flow_drag_start={forward} position="right" type="command" placement={id} placement_kind="command" {column} />
   <!-- TODO: tooltip interferes with link dragging -->
   <!-- <MaybeTooltip tip={descriptionHTML}> -->
   <div

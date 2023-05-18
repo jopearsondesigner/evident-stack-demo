@@ -25,6 +25,8 @@
   ];
 
   export let src: string;
+  export let width = 'auto';
+  export let height = 'auto';
 </script>
 
 {#if LottiePlayer}
@@ -36,8 +38,8 @@
     controls={false}
     renderer="svg"
     background="transparent"
-    height="auto"
-    width="auto"
+    {height}
+    {width}
     {controlsLayout}
   />
 {/if}

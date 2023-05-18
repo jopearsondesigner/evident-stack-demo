@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { placementOrEmptyCellId, type Stream } from '../Grid';
+  import { type DropTargetStatus, placementOrEmptyCellId, type Stream } from '../Grid';
   import EmptyCell from './EmptyCell.svelte';
   import Event from './Event.svelte';
   import { createEventDispatcher } from 'svelte';
   import Cell from './Cell.svelte';
   import type { DragEventHandler } from 'svelte/elements';
+  import { DEFAULT_LANE } from './util';
 
   const dispatch = createEventDispatcher();
 
@@ -21,47 +22,45 @@
 
   export let lane_index: number;
 
-  let drop_target: 'target' | 'bad-target' | 'none' = 'none';
+  export let targeted_lane: DropTargetStatus | undefined = undefined;
+
+  export let targeted_cell: { column: number; targetStatus: DropTargetStatus } | undefined =
+    undefined;
 
   $: stream.placements.length = max_column;
-  $: good_target = drop_target == 'target';
-  $: bad_target = drop_target == 'bad-target';
+  $: good_target = targeted_lane == 'good';
+  $: bad_target = targeted_lane == 'bad';
 
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     let transfer = e.dataTransfer;
-    console.warn('Stream Drag Start', e);
 
     if (transfer && stream.id) {
-      console.warn(`Setting transfer with stream ${stream.id}`);
       transfer.setData('lane', stream.id);
       transfer.effectAllowed = 'move';
+
+      dispatch('lane_drag_start', {
+        laneId: stream.id,
+        laneKind: 'stream'
+      });
     }
   };
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    let transfer = e.dataTransfer;
-    console.warn('Stream Drag Enter', e);
-    console.warn('TRANSFER DATA', transfer, transfer?.types);
-    if (transfer?.types.includes('lane')) {
-      console.warn('STREAM GOT LANE');
-      drop_target = 'target';
-    }
+    e.stopPropagation();
+
+    dispatch('lane_drag_enter', {
+      streamId: stream.id,
+      laneIndex: lane_index,
+      rowKind: 'stream'
+    });
   };
 
-  const handleDragLeave: DragEventHandler<HTMLDivElement> = (_e) => {
-    drop_target = 'none';
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn('Lane(Stream) Drop');
-    handleDragLeave(e);
-    let transfer = e.dataTransfer;
-    let id = transfer?.getData('lane');
-
-    if (transfer && id && transfer.effectAllowed == 'move') {
-      console.warn(`GOT A LANE DROP!!! ${id} => index: ${lane_index}`);
-      dispatch('reorder_lane', { kind: 'stream', lane_id: id, index: lane_index });
-    }
+    dispatch('lane_drag_drop');
   };
 </script>
 
@@ -72,7 +71,7 @@
     class="streamName laneName sticky left-3 z-30 justify-self-start self-end cursor-pointer prose text-body-light nndark:text-body-dark mb-3 cursor-move"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
   >
-    {stream.name + lane_index}
+    {stream.name}
   </h3>
 {:else}
   <!-- TODO: reduce the color to disabled text -->
@@ -80,7 +79,7 @@
     class="streamName sticky left-3 z-30 justify-self-start self-end prose text-body-light dark:text-body-dark mb-3 select-none"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
   >
-    Default Stream {lane_index}
+    Default Stream
   </h3>
 {/if}
 
@@ -99,7 +98,23 @@
 />
 
 {#each stream.placements as placement, column (placementOrEmptyCellId(placement, column, row))}
-  <Cell {row} {column} on:navigate_cursor={forward}>
+  {@const drop_target =
+    targeted_cell && targeted_cell.column === column ? targeted_cell.targetStatus : undefined}
+  <Cell
+    {column}
+    row={{
+      rowIndex: row,
+      streamId: stream.id || DEFAULT_LANE,
+      laneIndex: lane_index,
+      rowKind: 'stream'
+    }}
+    maybe_placement={placement?.id}
+    maybe_placement_kind="event"
+    target_status={drop_target}
+    on:navigate_cursor={forward}
+    on:cell_drag_enter={forward}
+    on:cell_drag_drop={forward}
+  >
     {#if placement?.id}
       <Event
         id={placement.id}
@@ -107,6 +122,8 @@
         {column}
         name={placement.name}
         description={placement.description}
+        on:placement_drag_start={forward}
+        on:flow_drag_start={forward}
         on:connect_flow={forward}
       />
     {:else}

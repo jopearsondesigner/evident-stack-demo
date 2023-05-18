@@ -6,8 +6,9 @@
   import { clickOutside } from '../utils/clickOutside';
   export let activateClickOutside: boolean = true;
   export let hidden: boolean = true;
-  export let divClass: string = 'z-40 top-0 fixed h-screen bg-white dark:bg-dark-2';
-  export let className: string = '';
+  export let divClass: string = 'z-40 top-0 fixed h-full bg-white dark:bg-dark-2';
+  let className: string = '';
+  export {className as class};
   export let leftOffset: string = 'left-0';
   export let rightOffset: string = 'right-0';
   export let placement: 'left' | 'right';
@@ -23,15 +24,11 @@
     duration: 200,
     easing: sineOut
   };
-  export let drawerRight = false;
+  export let drawerRight = placement == 'right';
 
   const placements = {
     left: leftOffset,
     right: rightOffset
-  };
-
-  let handleDrawer = () => {
-    hidden = !hidden;
   };
 
   export let backdropClasses = 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80';
@@ -42,24 +39,21 @@
     <div
       transition:fly={transitionParams}
       class={classNames(className, divClass)}
-      style="padding-top: {navbarHeight}px;"
-    >
+      style="padding-top: {navbarHeight}px;">
       <slot />
     </div>
   {:else if activateClickOutside}
     <div class={classNames('fixed inset-0 z-30', backdropClasses)} />
     <div
-      use:clickOutside={() => !hidden && handleDrawer()}
+      use:clickOutside={() => hidden = true}
       transition:fly={transitionParamsRight}
       class={classNames(className, divClass, placements[placement])}
-      style="padding-top: {navbarHeight}px;"
-    >
+      style="padding-top: {navbarHeight}px;" >
       <CloseButton
         {name}
         size={12}
         btnClass="float-right mt-2 mr-2"
-        on:click={() => (hidden = true)}
-      />
+        on:click={() => (hidden = true)} />
       <slot />
     </div>
   {/if}

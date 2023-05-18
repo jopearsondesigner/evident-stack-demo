@@ -2,7 +2,7 @@
   import Modal from '$lib/Modal.svelte';
   import Button from '$lib/Button.svelte';
   import Icon from '$lib/Icon.svelte';
-  import File from '$lib/icons/File.svelte';
+  import File from '$lib/icons/FileIcon.svelte';
   import Checkmark from '$lib/icons/Checkmark.svelte';
   import ProgressBar from '$lib/utils/ProgressBar.svelte';
 

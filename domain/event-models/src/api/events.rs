@@ -1,46 +1,58 @@
-use crate::types::flow::{FlowArrow, FlowId};
-use crate::types::interface::InterfaceConfig;
-use crate::types::placement::{Placement, PlacementId, PlacementPosition};
-use crate::types::{Component, ComponentId, Lane, LaneId};
-use crate::EventModelId;
+use crate::{
+    Component, ComponentId, EventModelId, FlowArrow, FlowId, InterfaceConfig, Lane, LaneId, Name,
+    Placement, PlacementId, PlacementPosition, TextEdit,
+};
 use epoch::decider::Event;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EventModelEvent {
-    Created(EventModelId, String),
-    Renamed(EventModelId, String),
+    Created(EventModelId, Name),
+    Renamed(EventModelId, Name),
+    DescriptionEdited(EventModelId, TextEdit),
+    SchemaEdited(EventModelId, TextEdit),
+    Deleted(EventModelId),
+
+    // TODO: remove these:
     DescriptionSet(EventModelId, String),
     AddedToDescription(EventModelId, usize, String),
     DeletedFromDescription(EventModelId, usize, usize),
     SchemaSet(EventModelId, String),
     AddedToSchema(EventModelId, usize, String),
     DeletedFromSchema(EventModelId, usize, usize),
-    Deleted(EventModelId),
+    // </TODO: remove these>
 
     // Lanes
     LaneAdded(EventModelId, Lane, usize),
-    LaneRenamed(EventModelId, LaneId, String),
+    LaneRenamed(EventModelId, LaneId, Name),
     LaneReordered(EventModelId, LaneId, usize),
     LaneRemoved(EventModelId, LaneId),
 
     // Grid
     ComponentDefined(EventModelId, Component),
     ComponentPlaced(EventModelId, Placement),
-    ComponentRenamed(EventModelId, ComponentId, String),
+    ComponentRenamed(EventModelId, ComponentId, Name),
     PlacementMoved(EventModelId, PlacementPosition),
     PlacementRemoved(EventModelId, PlacementId),
     ComponentRemoved(EventModelId, ComponentId),
     PlacementsShifted(EventModelId, usize, usize),
 
     // Component Details
+    ComponentDescriptionEdited(EventModelId, ComponentId, TextEdit),
+    ComponentSchemaEdited(EventModelId, ComponentId, TextEdit),
+    InterfaceConfigured(EventModelId, ComponentId, InterfaceConfig),
+
+    // TODO: remove these:
     ComponentDescriptionSet(EventModelId, ComponentId, String),
     AddedToComponentDescription(EventModelId, ComponentId, usize, String),
     DeletedFromComponentDescription(EventModelId, ComponentId, usize),
     ComponentSchemaSet(EventModelId, ComponentId, String),
     AddedToComponentSchema(EventModelId, ComponentId, usize, String),
     DeletedFromComponentSchema(EventModelId, ComponentId, usize),
-    InterfaceConfigured(EventModelId, InterfaceConfig),
+    // </TODO: remove these>
+
+    // Placement Details
+    PlacementSchemaEdited(EventModelId, TextEdit),
 
     // Flows
     FlowConnected(EventModelId, FlowArrow),

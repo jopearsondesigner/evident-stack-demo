@@ -1,9 +1,7 @@
-use std::{collections::HashMap, fmt::format};
+use std::collections::HashMap;
 
 use event_models::{
-    implementation::in_memory::InMemoryEventModel,
-    types::{Described, Entity, Named, Placement},
-    EventModelData, EventModelState,
+    Described, Entity, EventModel, EventModelData, EventModelState, Named, Placement,
 };
 use itertools::Itertools;
 use js_sys::Array;
@@ -60,48 +58,48 @@ impl InterfacePlacement {
 fn interface_placement(
     id: Uuid,
     index: usize,
-    interface: event_models::types::Interface,
+    interface: event_models::Interface,
 ) -> InterfacePlacement {
     let config = interface.config();
     match config {
-        event_models::types::InterfaceConfig::Blank => InterfacePlacement {
+        event_models::InterfaceConfig::Blank => InterfacePlacement {
             id,
             index,
-            interface: *interface.id(),
-            name: interface.name().to_owned(),
+            interface: interface.id(),
+            name: interface.name().into(),
             description: interface.description().to_owned(),
             kind: InterfaceType::Blank,
             url: None,
             width: None,
             height: None,
         },
-        event_models::types::InterfaceConfig::Figma { url, width, height } => InterfacePlacement {
+        event_models::InterfaceConfig::Figma { url, width, height } => InterfacePlacement {
             id,
             index,
-            interface: *interface.id(),
-            name: interface.name().to_owned(),
+            interface: interface.id(),
+            name: interface.name().into(),
             description: interface.description().to_owned(),
             kind: InterfaceType::Figma,
             url: Some(url.to_string()),
-            width: *width,
-            height: *height,
+            width,
+            height,
         },
-        event_models::types::InterfaceConfig::Image { url, width, height } => InterfacePlacement {
+        event_models::InterfaceConfig::Image { url, width, height } => InterfacePlacement {
             id,
             index,
-            interface: *interface.id(),
-            name: interface.name().to_owned(),
+            interface: interface.id(),
+            name: interface.name().into(),
             description: interface.description().to_owned(),
             kind: InterfaceType::Image,
             url: Some(url.to_string()),
-            width: *width,
-            height: *height,
+            width,
+            height,
         },
-        event_models::types::InterfaceConfig::Job => InterfacePlacement {
+        event_models::InterfaceConfig::Job => InterfacePlacement {
             id,
             index,
-            interface: *interface.id(),
-            name: interface.name().to_owned(),
+            interface: interface.id(),
+            name: interface.name().into(),
             description: interface.description().to_owned(),
             kind: InterfaceType::Blank,
             url: None,
@@ -177,27 +175,23 @@ impl TimelinePlacement {
     }
 }
 
-fn command_placement(id: Uuid, index: usize, c: event_models::types::Command) -> TimelinePlacement {
+fn command_placement(id: Uuid, index: usize, c: event_models::Command) -> TimelinePlacement {
     TimelinePlacement {
         id,
         index,
-        component: *c.id(),
-        name: c.name().to_owned(),
+        component: c.id(),
+        name: c.name().into(),
         description: c.description().to_owned(),
         kind: TimelinePlacementType::Command,
     }
 }
 
-fn read_model_placement(
-    id: Uuid,
-    index: usize,
-    r: event_models::types::ReadModel,
-) -> TimelinePlacement {
+fn read_model_placement(id: Uuid, index: usize, r: event_models::ReadModel) -> TimelinePlacement {
     TimelinePlacement {
         id,
         index,
-        component: *r.id(),
-        name: r.name().to_owned(),
+        component: r.id(),
+        name: r.name().into(),
         description: r.description().to_owned(),
         kind: TimelinePlacementType::ReadModel,
     }
@@ -229,12 +223,12 @@ impl EventPlacement {
     }
 }
 
-fn event_placement(id: Uuid, index: usize, e: event_models::types::Event) -> EventPlacement {
+fn event_placement(id: Uuid, index: usize, e: event_models::Event) -> EventPlacement {
     EventPlacement {
         id,
         index,
-        event: *e.id(),
-        name: e.name().to_owned(),
+        event: e.id(),
+        name: e.name().into(),
         description: e.description().to_owned(),
     }
 }
@@ -289,13 +283,13 @@ impl FlowArrow {
 }
 
 impl Entity for FlowArrow {
-    fn id(&self) -> &Uuid {
-        &self.id
+    fn id(&self) -> Uuid {
+        self.id.to_owned()
     }
 }
 
-impl From<event_models::types::FlowArrow> for FlowArrow {
-    fn from(value: event_models::types::FlowArrow) -> Self {
+impl From<event_models::FlowArrow> for FlowArrow {
+    fn from(value: event_models::FlowArrow) -> Self {
         Self {
             id: value.id().to_owned(),
             from: value.from().to_owned().into(),
@@ -320,8 +314,8 @@ impl FlowPort {
     }
 }
 
-impl From<event_models::types::flow::Port> for FlowPort {
-    fn from(value: event_models::types::flow::Port) -> Self {
+impl From<event_models::Port> for FlowPort {
+    fn from(value: event_models::Port) -> Self {
         Self {
             placement_id: value.placement_id().to_owned(),
             anchor: value.anchor().to_owned().into(),
@@ -340,14 +334,14 @@ pub enum FlowAnchor {
     Right,
 }
 
-impl From<event_models::types::flow::Anchor> for FlowAnchor {
-    fn from(value: event_models::types::flow::Anchor) -> Self {
+impl From<event_models::Anchor> for FlowAnchor {
+    fn from(value: event_models::Anchor) -> Self {
         match value {
-            event_models::types::flow::Anchor::None => Self::None,
-            event_models::types::flow::Anchor::Top => Self::Top,
-            event_models::types::flow::Anchor::Left => Self::Left,
-            event_models::types::flow::Anchor::Bottom => Self::Bottom,
-            event_models::types::flow::Anchor::Right => Self::Right,
+            event_models::Anchor::None => Self::None,
+            event_models::Anchor::Top => Self::Top,
+            event_models::Anchor::Left => Self::Left,
+            event_models::Anchor::Bottom => Self::Bottom,
+            event_models::Anchor::Right => Self::Right,
         }
     }
 }
@@ -463,10 +457,10 @@ impl EventModelGrid {
 
 const RIGHT_BUFFER: usize = 10;
 
-impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
-    fn from(state: EventModelState<InMemoryEventModel>) -> Self {
+impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGrid {
+    fn from(state: &EventModelState<T>) -> Self {
         match state {
-            EventModelState::BeforeCreation(_) => EventModelGrid {
+            EventModelState::BeforeCreation => EventModelGrid {
                 state: EventModelGridState::Unavailable,
                 id: Uuid::new_v4(),
                 name: Default::default(),
@@ -481,7 +475,7 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
             },
             EventModelState::Deleted(id) => EventModelGrid {
                 state: EventModelGridState::Unavailable,
-                id,
+                id: *id,
                 name: Default::default(),
                 description: Default::default(),
                 default_audience: Default::default(),
@@ -565,8 +559,8 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
 
                 EventModelGrid {
                     state: EventModelGridState::Available,
-                    id: *model.id(),
-                    name: model.name().to_string(),
+                    id: model.id(),
+                    name: model.name().into(),
                     description: model.description().to_string(),
                     default_audience: grouped_audiences.remove(&None).unwrap_or_default(),
                     audiences: model
@@ -576,10 +570,10 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                         .filter_map(|audience| {
                             let audience_id = audience.id();
                             grouped_audiences
-                                .remove(&Some(*audience_id))
+                                .remove(&Some(audience_id))
                                 .map(|placements| Audience {
                                     id: audience_id.to_owned(),
-                                    name: audience.name().to_string(),
+                                    name: audience.name().into(),
                                     placements,
                                     column_count,
                                 })
@@ -616,10 +610,10 @@ impl From<EventModelState<InMemoryEventModel>> for EventModelGrid {
                         .filter_map(|stream| {
                             let stream_id = stream.id();
                             grouped_streams
-                                .remove(&Some(*stream_id))
+                                .remove(&Some(stream_id))
                                 .map(|placements| Stream {
                                     id: stream_id.to_owned(),
-                                    name: stream.name().to_string(),
+                                    name: stream.name().into(),
                                     placements,
                                     column_count,
                                 })

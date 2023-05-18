@@ -12,7 +12,8 @@ Powered by:
 Before any of the command below will work, install the dependencies:
 
 ```bash
-yarn
+npm install
+npm install -g esbuild <This globally installs the correct version of ESBuild for your environment mac vs linux without causing conflicts by directly installing in package.json>
 ```
 
 ## Running Storybook
@@ -20,7 +21,7 @@ yarn
 To begin interactive development on our [library of components](./src/lib/components/), start the Storybook server:
 
 ```bash
-yarn storybook
+npm run storybook
 ```
 
 ## Running the App
@@ -28,9 +29,9 @@ yarn storybook
 To run the app based on the SvelteKit [routes](./src/routes/), start a development server:
 
 ```bash
-yarn dev
+npm run dev
 
-yarn dev -- --open
+npm run dev -- --open
 ```
 
 ## Building
@@ -38,9 +39,9 @@ yarn dev -- --open
 To create a production version of the app:
 
 ```bash
-yarn build
+npm run build
 ```
 
-You can preview the production build with `yarn preview`.
+You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.

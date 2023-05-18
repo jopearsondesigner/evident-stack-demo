@@ -20,6 +20,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.5",
+    "@codemirror/lang-javascript": "^6.1.7",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "@lottiefiles/svelte-lottie-player": "^0.3.0",
     "@playwright/test": "^1.28.1",
     "@storybook/addon-essentials": "next",
     "@storybook/addon-interactions": "next",
@@ -34,12 +37,11 @@
     "@sveltejs/kit": "^1.14.0",
     "@sveltejs/package": "^1.0.0",
     "@tailwindcss/typography": "^0.5.8",
-    "@types/codemirror": "^5.60.7",
     "@types/dompurify": "^2.4.0",
     "autoprefixer": "^10.4.13",
     "chromatic": "^6.13.1",
     "classnames": "^2.3.2",
-    "codemirror-svelte": "^1.2.1",
+    "codemirror": "^6.0.1",
     "daisyui": "^2.41.0",
     "dompurify": "^2.4.3",
     "eslint": "^8.28.0",
@@ -56,6 +58,8 @@
     "svelte": "^3.54.0",
     "svelte-accessible-accordion": "^2.1.0",
     "svelte-check": "^2.9.2",
+    "svelte-codemirror-editor": "^1.1.0",
+    "svelte-file-dropzone": "^2.0.1",
     "svelte-highlight": "^7.2.1",
     "svelte-layout-aware-transitions": "^0.0.5",
     "tailwindcss": "^3.3.0",
@@ -77,10 +81,5 @@
   "bugs": {
     "url": "https://github.com/evidentsystems/platform/issues"
   },
-  "homepage": "https://github.com/evidentsystems/platform#readme",
-  "dependencies": {
-    "@codemirror/lang-javascript": "^6.1.7",
-    "svelte-codemirror-editor": "^1.1.0",
-    "svelte-file-dropzone": "^2.0.1"
-  }
+  "homepage": "https://github.com/evidentsystems/platform#readme"
 }

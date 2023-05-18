@@ -2,9 +2,9 @@
   import classNames from 'classnames';
 
   export let linkClass: string =
-    'text-left block font-medium mx-1 text-default text-body dark:text-white hover:bg-focus/20 transition duration-200 ease-in cursor-default';
+  'text-left block font-medium mx-1 text-default text-body dark:text-white hover:bg-focus/20 transition duration-200 ease-in cursor-default';
   export let divClass: string =
-    'font-extrabold mx-1 text-default text-body dark:text-white transition duration-200 ease-in cursor-default';
+  'font-extrabold mx-1 text-default text-body dark:text-white transition duration-200 ease-in cursor-default';
   export let padding = 'py-2 px-4';
   export let textOnly: boolean = false;
   export let href: string | undefined = undefined;
@@ -12,21 +12,12 @@
   export let className: string = '';
 </script>
 
-{#if !textOnly}
+{#if textOnly}
   <svelte:element
     this={href ? 'a' : 'button'}
     {href}
     class={classNames(linkClass, padding, className)}
-    {...$$restProps}
-    on:click|preventDefault
-    on:change
-    on:keydown
-    on:keyup
-    on:focus
-    on:blur
-    on:mouseenter
-    on:mouseleave
-  >
+    {...$$restProps}>
     <slot />
   </svelte:element>
 {:else}

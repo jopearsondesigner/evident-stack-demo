@@ -1,36 +1,31 @@
 extern crate event_models;
 
 pub mod grid;
-mod repository;
+mod indexed_db;
+pub mod strategies;
 
 use std::str::FromStr;
 
+pub use crate::grid::EventModelGrid;
 use crate::grid::Lane;
-use crate::repository::LocalStorageStateRepository;
-use epoch::{repository::state::VersionedStateRepository, strategies::ReifyDecideSave};
+use crate::indexed_db::{IndexedDbError, IndexedDbStateRepository};
+pub use crate::indexed_db::{Model, Patch};
+use crate::strategies::{ReifyDecideSave, ReifyDecideSaveError, StateRepository};
+use automerge::ActorId;
+use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError};
 use event_models::api::commands::EventModelCommand;
-use event_models::{
-    implementation::in_memory::{InMemoryCreationDetails, InMemoryEventModel},
-    types::Entity,
-    EventModelId, EventModelState,
-};
-pub use grid::EventModelGrid;
-use js_sys::{Function, Uint8Array};
-use repository::HasKey;
+use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
+use event_models::{Anchor, EventModel, EventModelError};
+use js_sys::Uint8Array;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
+use web_sys::{console, window};
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
 
 #[wasm_bindgen(js_name = setPanicHook)]
 pub fn set_panic_hook() {
@@ -44,28 +39,52 @@ pub fn set_panic_hook() {
     console_error_panic_hook::set_once();
 }
 
-impl HasKey for EventModelState<InMemoryEventModel> {
-    fn get_key(&self) -> Option<String> {
+pub trait Reconcilable
+where
+    Self: Sized,
+{
+    fn reconcile(&self, doc: &mut impl Doc) -> Result<(), ReconcileError>;
+    fn hydrate(doc: &impl ReadDoc) -> Result<Self, HydrateError>;
+}
+
+pub trait HasKey {
+    fn get_key(&self) -> Option<Uuid>;
+}
+
+impl<E: EventModel> HasKey for EventModelState<E> {
+    fn get_key(&self) -> Option<Uuid> {
         match self {
-            EventModelState::BeforeCreation(_) => None,
-            EventModelState::EventModel(model) => Some(model.id().to_string()),
-            EventModelState::Deleted(id) => Some(id.to_string()),
+            EventModelState::BeforeCreation => None,
+            EventModelState::EventModel(model) => Some(model.id()),
+            EventModelState::Deleted(id) => Some(*id),
         }
     }
 }
 
-#[wasm_bindgen]
-#[derive(Debug)]
-pub struct EventModelStateManager {
-    repository: LocalStorageStateRepository<EventModelState<InMemoryEventModel>>,
-    // node: Node // TODO: convergent creation context details
-    store_setter: Option<js_sys::Function>,
+impl Reconcilable for EventModelState<AutomergeEventModel> {
+    fn reconcile(&self, doc: &mut impl Doc) -> Result<(), ReconcileError> {
+        if let EventModelState::EventModel(m) = self {
+            reconcile(doc, m)
+        } else {
+            Ok(())
+        }
+    }
+
+    fn hydrate(doc: &impl ReadDoc) -> Result<Self, HydrateError> {
+        let model = hydrate(doc)?;
+        Ok(EventModelState::EventModel(model))
+    }
 }
 
-pub struct EventModelDecider;
+#[wasm_bindgen]
+pub struct EventModelStateManager {
+    repository: IndexedDbStateRepository,
+}
+
+struct EventModelDecider;
 
 impl ReifyDecideSave for EventModelDecider {
-    type Decide = EventModelState<InMemoryEventModel>;
+    type Decide = EventModelState<AutomergeEventModel>;
 }
 
 fn parse_uuid(uuid_str: String) -> Result<Uuid, JsValue> {
@@ -73,43 +92,86 @@ fn parse_uuid(uuid_str: String) -> Result<Uuid, JsValue> {
         .map_err(|e| JsValue::from(format!("Error parsing Uuid from string: {:?}", e)))
 }
 
+const ACTOR_ID_STORAGE_KEY: &str = "";
+
+fn get_actor() -> ActorId {
+    match window() {
+        Some(win) => match win.session_storage() {
+            Ok(Some(storage)) => match storage.get_item(ACTOR_ID_STORAGE_KEY) {
+                Ok(Some(actor_id_str)) => match ActorId::from_str(&actor_id_str) {
+                    Ok(actor) => actor,
+                    Err(_) => {
+                        console::log_2(
+                            &"Invalid Actor ID string found in session storage: ".into(),
+                            &actor_id_str.into(),
+                        );
+                        let actor = ActorId::random();
+                        storage
+                            .set_item(ACTOR_ID_STORAGE_KEY, &actor.to_string())
+                            .expect("Session storage error");
+                        actor
+                    }
+                },
+                Ok(None) => {
+                    let actor = ActorId::random();
+                    storage
+                        .set_item(ACTOR_ID_STORAGE_KEY, &actor.to_string())
+                        .expect("Session storage error");
+                    actor
+                }
+                Err(_) => ActorId::random(),
+            },
+            _ => ActorId::random(),
+        },
+        None => ActorId::random(),
+    }
+}
+
 #[wasm_bindgen]
 impl EventModelStateManager {
-    // TODO: we'll need to store a reference to the Svelte store's
-    // setter here, for non-Command-driven state changes (e.g. background sync)
     #[wasm_bindgen(constructor)]
-    pub fn new(maybe_id_str: Option<String>) -> Result<EventModelStateManager, JsValue> {
+    pub async fn new(
+        maybe_id_str: Option<String>,
+        user: String,
+    ) -> Result<EventModelStateManager, JsValue> {
+        let actor = get_actor();
         if let Some(id_str) = maybe_id_str {
             let event_model_id: EventModelId =
                 Uuid::from_str(&id_str).map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
             Ok(EventModelStateManager {
-                repository: LocalStorageStateRepository::new(
-                    Some(event_model_id.to_string()),
-                    EventModelState::BeforeCreation(InMemoryCreationDetails),
-                ),
-                store_setter: None,
+                repository: IndexedDbStateRepository::new(Some(event_model_id), user, actor)
+                    .await
+                    .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?,
             })
         } else {
             Ok(EventModelStateManager {
-                repository: LocalStorageStateRepository::new(
-                    None,
-                    EventModelState::BeforeCreation(InMemoryCreationDetails),
-                ),
-                store_setter: None,
+                repository: IndexedDbStateRepository::new(None, user, actor)
+                    .await
+                    .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?,
             })
         }
     }
 
-    #[wasm_bindgen(setter)]
-    pub fn set_store_setter(&mut self, setter: Option<Function>) {
-        self.store_setter = setter
+    pub fn refresh(&mut self, bin: Uint8Array) -> Result<EventModelGrid, JsValue> {
+        if let Some(_model) = self.repository.key {
+            self.repository
+                .load_incremental(bin.to_vec())
+                .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
+            self.repository
+                .state()
+                .map(|ref state| state.into())
+                .map_err(|e| JsValue::from_str(&format!("{:?}", e)))
+        } else {
+            Err("Can't load data into a state manager with no model key!".into())
+        }
     }
 
-    pub async fn state(&self) -> Result<EventModelGrid, JsValue> {
-        match self.repository.reify().await {
-            Ok((state, _version)) => Ok(state.into()),
-            Err(err) => Err(JsValue::from_str(&format!("{:?}", err))),
-        }
+    pub async fn state(&mut self) -> Result<EventModelGrid, JsValue> {
+        self.repository
+            .reify()
+            .await
+            .map(|ref state| state.into())
+            .map_err(|err| JsValue::from_str(&format!("RepositoryError: {:?}", err)))
     }
 
     pub async fn create(&mut self, name: String) -> Result<EventModelGrid, JsValue> {
@@ -437,19 +499,42 @@ impl EventModelStateManager {
         .await
     }
 
+    pub async fn connect_flow(
+        &mut self,
+        model_id_str: String,
+        source_placement_id_str: String,
+        source_anchor_str: Option<String>,
+        target_placement_id_str: String,
+        target_anchor_str: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let source_placement_id = parse_uuid(source_placement_id_str)?;
+        let target_placement_id = parse_uuid(target_placement_id_str)?;
+        let source_anchor: Anchor = source_anchor_str
+            .try_into()
+            .map_err(|e| JsValue::from(format!("Anchor from string error {:?}", e)))?;
+
+        let target_anchor: Anchor = target_anchor_str
+            .try_into()
+            .map_err(|e| JsValue::from(format!("Anchor from string error {:?}", e)))?;
+
+        self.dispatch(EventModelCommand::ConnectFlow(
+            model_id,
+            source_placement_id,
+            source_anchor,
+            target_placement_id,
+            target_anchor,
+        ))
+        .await
+    }
+
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {
-        let result =
-            EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command, None)
-                .await;
-        match result {
-            Ok(state) => {
-                if let Some(setter) = &self.store_setter {
-                    let this = JsValue::null();
-                    let grid: EventModelGrid = state.clone().into();
-                    let _ = setter.call1(&this, &JsValue::from(grid));
-                }
-                Ok(state.into())
-            }
+        let result: Result<
+            EventModelState<AutomergeEventModel>,
+            ReifyDecideSaveError<EventModelError, IndexedDbError>,
+        > = EventModelDecider::execute_reify_decide(&mut self.repository, &(), &command).await;
+        match &result {
+            Ok(state) => Ok(state.into()),
             Err(err) => Err(JsValue::from(format!(
                 "Error dispatching command {:?}: {:?}",
                 command, err

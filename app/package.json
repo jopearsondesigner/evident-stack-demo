@@ -72,7 +72,6 @@
     "vite": "^4.3.0",
     "vite-plugin-top-level-await": "^1.2.2",
     "vite-plugin-wasm": "^3.1.1",
-    "@esbuild/linux-x64": "^0.17.18",
     "vitest": "^0.25.3"
   },
   "dependencies": {

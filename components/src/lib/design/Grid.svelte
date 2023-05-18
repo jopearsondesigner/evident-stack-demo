@@ -375,6 +375,11 @@
       navigationKeyboardHandler(e);
     }
   };
+
+  // Drag Test
+  const handleDragOver = (e: DragEvent) => {
+    console.warn(e.clientX, e.clientY);
+  }
 </script>
 
 <svelte:window
@@ -390,6 +395,7 @@
   <div
     class="grid w-max p-3 relative justify-items-center items-center"
     style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
+    on:dragover={handleDragOver}
   >
     <FlowCanvas {flows} />
     <AudienceLane

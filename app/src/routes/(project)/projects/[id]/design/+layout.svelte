@@ -4,27 +4,16 @@
   import Modal from '$components/Modal.svelte';
   import Button from '$components/Button.svelte';
   import Icon from '$components/Icon.svelte';
-  import IconButton from '$components/IconButton.svelte';
   import ProgressBar from '$components/utils/ProgressBar.svelte';
   import Warning from '$components/icons/Warning.svelte';
   import FileIcon from '$components/icons/FileIcon.svelte';
   import Checkmark from '$components/icons/Checkmark.svelte';
   import Grid from '$components/design/Grid.svelte';
+  import ImageUpload from '$components/ImageUpload.svelte';
 
   import CodeMirror from 'svelte-codemirror-editor';
   import { javascript } from '@codemirror/lang-javascript';
   import { oneDark } from '@codemirror/theme-one-dark';
-  let valueComponent = '';
-  let valuePlacement = '';
-
-  const handleEditDescription = async (e: SubmitEvent) => {
-    const formData = new FormData(e.target as HTMLFormElement);
-    let name = formData.get('name')?.toString();
-    if (name) {
-      console.log('TODO: create model');
-    }
-  };
-
   import Drawer from '$components/drawer/Drawer.svelte';
   import Form from '$components/form/Form.svelte';
   import Textarea from '$components/form/Textarea.svelte';
@@ -36,6 +25,7 @@
   import CommandIcon from '$components/icons/CommandIcon.svelte';
   import ReadModelIcon from '$components/icons/ReadModelIcon.svelte';
   import InterfaceIcon from '$components/icons/InterfaceIcon.svelte';
+  import Download from '$components/icons/Download.svelte';
   import InterfaceBlank from '$components/assets/images/product/global/InterfaceBlank.svg';
   import InterfaceJob from '$components/assets/images/product/global/InterfaceJob.svg';
   import ImgPlaceholder from '$components/assets/images/product/global/ImagePlaceholder.svg';
@@ -118,6 +108,17 @@
   function handleDblClick() {
     editable = !editable;
   }
+
+  let valueComponent = '';
+  let valuePlacement = '';
+
+  const handleEditDescription = async (e: SubmitEvent) => {
+    const formData = new FormData(e.target as HTMLFormElement);
+    let name = formData.get('name')?.toString();
+    if (name) {
+      console.log('TODO: create model');
+    }
+  };
 
   let imgUpload: string | undefined | null, fileinput: HTMLInputElement;
 
@@ -318,14 +319,7 @@
             incididunt ut labore et dolore magna aliqua.
           </p>
           <Form formClass="p-3 w-full">
-            <Select
-              {ArrowDown}
-              size="sm"
-              margin="my-6"
-              items={types}
-              placeholder="Choose Interface Type"
-              bind:value
-              />
+            <Select class="mt-2" placeholder="Choose Interface Type" items={types} bind:value={selected} />
             {#if figma}
               <Input class="my-6" size="sm" placeholder="Figma URL" />
             {/if}
@@ -342,57 +336,21 @@
                 height="100%"
                 src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FkJQbEXGjeuvLde5DGLjUuP%2FAutonomous-Two-sided-Marketplace%3Fnode-id%3D0%253A1%26t%3DCHFyL6I3kTDpsftc-1"
                 allowfullscreen
-                />
-              {:else if blank}
-                <div class="h-full flex justify-center items-center">
-                  <img src={InterfaceBlank} height="142" width="auto" alt="Blank Interface" />
-                </div>
-              {:else if image}
-                <div class="h-full flex flex-col justify-center items-center">
-                  {#if imgUpload}
-                    <img class="imgUpload" src={imgUpload} alt="d" />
-                  {:else}
-                    <img class="imgUpload opacity-20" src={ImgPlaceholder} alt="placehoder" />
-                  {/if}
-                  <IconButton
-                    size={50}
-                    on:click={() => {
-                    fileinput.click();
-                    }}
-                    class=""
-                    >
-                    <Icon
-                      name="image-upload"
-                      class="cursor-pointer"
-                      size={40}
-                      iconColor="text-body dark:text-body-dark"
-                      pathName={ImgPlaceholder}
-                      viewBox="0 0 20 20"
-                      />
-                  </IconButton>
-                  <div
-                    class="chan text-center relative"
-                    on:click={() => {
-                    fileinput.click();
-                    }}
-                    on:keydown
-                    >
-                    Choose Image
-                  </div>
-                  <input
-                    style="display:none"
-                    type="file"
-                    accept=".jpg, .jpeg, .png"
-                    on:change={(e) => onFileSelected(e)}
-                  bind:this={fileinput}
-                  />
-                </div>
-              {:else if job}
-                <div class="h-full flex justify-center items-center">
-                  <img src={InterfaceJob} height="142" width="auto" alt="Blank Interface" />
-                </div>
-              {/if}
-            </div>
+              />
+            {:else if blank}
+              <div class="h-full flex justify-center items-center">
+                <img src={InterfaceBlank} height="142" width="auto" alt="Blank Interface" />
+              </div>
+            {:else if image}
+              <div class="h-full flex flex-col justify-center items-center">
+                <ImageUpload />
+              </div>
+            {:else if job}
+              <div class="h-full flex justify-center items-center">
+                <img src={InterfaceJob} height="142" width="auto" alt="Blank Interface" />
+              </div>
+            {/if}
+          </div>
           <div class="grid grid-cols-2 justify-items-stretch">
             <div class="mt-6 col-span-1 place-self-center justify-self-start">
               <!-- <Button

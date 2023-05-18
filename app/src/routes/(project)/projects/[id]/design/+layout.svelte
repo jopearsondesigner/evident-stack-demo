@@ -66,7 +66,7 @@
   let job: boolean = false;
   let selected: string = '';
   let ImgUrl: string =
-      'https://cdn.dribbble.com/users/4838879/screenshots/15120947/media/92b243f9e1089780124a08943ed44f92.jpg';
+    'https://cdn.dribbble.com/users/4838879/screenshots/15120947/media/92b243f9e1089780124a08943ed44f92.jpg';
 
   export let value: string | number;
 
@@ -79,7 +79,7 @@
 
   let iconShadow = 'shadow-[0_2.5px_4px_-2px_rgba(0,0,0,0.82)]';
   let code: string =
-      '"domain" {\n' + '\tfoo: string, \n' + '\tbar: string, \n' + '\tbaz: int\n' + '}';
+    '"domain" {\n' + '\tfoo: string, \n' + '\tbar: string, \n' + '\tbaz: int\n' + '}';
   let event: boolean = true;
   let command: boolean = false;
   let readModel: boolean = false;
@@ -148,7 +148,7 @@
       accept="application/json"
       on:change={handleImportModel}
       bind:this={input}
-      />
+    />
     <label class="label" for="offset">
       <span class="label-text">Offset</span>
     </label>
@@ -160,7 +160,7 @@
 <button
   class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
   on:click={() => (deleteModal = true)}>Delete This Modal</button
-                                                           >
+>
 
 <div class="text-center z-[31] absolute inset-x-0 pt-4 mt-8">
   <!--For testing-->
@@ -171,14 +171,15 @@
     on:click={() => (hiddenRight = false)}
     class=""
     label="Show Sidebar"
-    />
-    <br />
-    <button on:click={() => (hiddenRight = true)} class="mt-4">Close</button>
+  />
+  <br />
+  <button on:click={() => (hiddenRight = true)} class="mt-4">Close</button>
 </div>
 
 <Drawer placement="right" className="" bind:hidden={hiddenRight} drawerRight>
   <aside
-    class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3">
+    class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
+  >
     {#if placementDetails}
       <span class="w-full">
         <h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
@@ -194,7 +195,8 @@
                   class={iconShadow}
                   iconColor=""
                   pathName={EventIcon}
-                  viewBox="0 0 48 48" />
+                  viewBox="0 0 48 48"
+                />
               {:else if command}
                 <Icon
                   name="command-icon"
@@ -287,7 +289,7 @@
         </h3>
         <div
           class="w-full h-full flex flex-col items-stretch mb-6 p-6 border rounded border-border-light dark:border-border-dark"
-          >
+        >
           <div class="inline-flex">
             <Icon
               name="event-icon"
@@ -296,14 +298,14 @@
               iconColor=""
               pathName={InterfaceIcon}
               viewBox="0 0 48 48"
-              />
+            />
             <h2
               class="ml-3 self-end text-xl font-bold text-body-light dark:text-body-dark"
               on:dblclick={handleDblClick}
               on:blur={handleDblClick}
               on:keydown={handleKeydown}
               contenteditable={editable}
-              >
+            >
               Interface Name
             </h2>
           </div>
@@ -313,7 +315,7 @@
             on:blur={handleDblClick}
             on:keydown={handleKeydown}
             contenteditable={editable}
-            >
+          >
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
             incididunt ut labore et dolore magna aliqua.
           </p>
@@ -325,7 +327,7 @@
               items={types}
               placeholder="Choose Interface Type"
               bind:value
-              />
+            />
             {#if figma}
               <Input class="my-6" size="sm" placeholder="Figma URL" />
             {/if}
@@ -342,57 +344,57 @@
                 height="100%"
                 src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FkJQbEXGjeuvLde5DGLjUuP%2FAutonomous-Two-sided-Marketplace%3Fnode-id%3D0%253A1%26t%3DCHFyL6I3kTDpsftc-1"
                 allowfullscreen
-                />
-              {:else if blank}
-                <div class="h-full flex justify-center items-center">
-                  <img src={InterfaceBlank} height="142" width="auto" alt="Blank Interface" />
-                </div>
-              {:else if image}
-                <div class="h-full flex flex-col justify-center items-center">
-                  {#if imgUpload}
-                    <img class="imgUpload" src={imgUpload} alt="d" />
-                  {:else}
-                    <img class="imgUpload opacity-20" src={ImgPlaceholder} alt="placehoder" />
-                  {/if}
-                  <IconButton
-                    size={50}
-                    on:click={() => {
+              />
+            {:else if blank}
+              <div class="h-full flex justify-center items-center">
+                <img src={InterfaceBlank} height="142" width="auto" alt="Blank Interface" />
+              </div>
+            {:else if image}
+              <div class="h-full flex flex-col justify-center items-center">
+                {#if imgUpload}
+                  <img class="imgUpload" src={imgUpload} alt="d" />
+                {:else}
+                  <img class="imgUpload opacity-20" src={ImgPlaceholder} alt="placehoder" />
+                {/if}
+                <IconButton
+                  size={50}
+                  on:click={() => {
                     fileinput.click();
-                    }}
-                    class=""
-                    >
-                    <Icon
-                      name="image-upload"
-                      class="cursor-pointer"
-                      size={40}
-                      iconColor="text-body dark:text-body-dark"
-                      pathName={ImgPlaceholder}
-                      viewBox="0 0 20 20"
-                      />
-                  </IconButton>
-                  <div
-                    class="chan text-center relative"
-                    on:click={() => {
-                    fileinput.click();
-                    }}
-                    on:keydown
-                    >
-                    Choose Image
-                  </div>
-                  <input
-                    style="display:none"
-                    type="file"
-                    accept=".jpg, .jpeg, .png"
-                    on:change={(e) => onFileSelected(e)}
-                  bind:this={fileinput}
+                  }}
+                  class=""
+                >
+                  <Icon
+                    name="image-upload"
+                    class="cursor-pointer"
+                    size={40}
+                    iconColor="text-body dark:text-body-dark"
+                    pathName={ImgPlaceholder}
+                    viewBox="0 0 20 20"
                   />
+                </IconButton>
+                <div
+                  class="chan text-center relative"
+                  on:click={() => {
+                    fileinput.click();
+                  }}
+                  on:keydown
+                >
+                  Choose Image
                 </div>
-              {:else if job}
-                <div class="h-full flex justify-center items-center">
-                  <img src={InterfaceJob} height="142" width="auto" alt="Blank Interface" />
-                </div>
-              {/if}
-            </div>
+                <input
+                  style="display:none"
+                  type="file"
+                  accept=".jpg, .jpeg, .png"
+                  on:change={(e) => onFileSelected(e)}
+                  bind:this={fileinput}
+                />
+              </div>
+            {:else if job}
+              <div class="h-full flex justify-center items-center">
+                <img src={InterfaceJob} height="142" width="auto" alt="Blank Interface" />
+              </div>
+            {/if}
+          </div>
           <div class="grid grid-cols-2 justify-items-stretch">
             <div class="mt-6 col-span-1 place-self-center justify-self-start">
               <!-- <Button
@@ -419,14 +421,14 @@
               <button
                 class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
                 on:click={() => (hiddenRight = true)}>cancel</button
-                                                              >
+              >
               <Button color="default" size="sm" label="Save" on:click class="" />
             </div>
           </div>
-      </div></span
-              >
-            {/if}
-          </aside>
+        </div></span
+      >
+    {/if}
+  </aside>
 </Drawer>
 
 <div class="text-center z-[31] absolute inset-x-0 pt-4 mt-8">
@@ -438,15 +440,15 @@
     on:click={() => (hiddenRight = false)}
     class=""
     label="Show Sidebar"
-    />
-    <br />
-    <button on:click={() => (hiddenRight = true)} class="mt-4">Close</button>
+  />
+  <br />
+  <button on:click={() => (hiddenRight = true)} class="mt-4">Close</button>
 </div>
 
 <Drawer placement="right" className="mt-4" bind:hidden={hiddenRight} drawerRight>
   <aside
     class="w-[480px] h-full flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
-    >
+  >
     {#if placementDetails}
       <span class="w-full">
         <h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
@@ -471,7 +473,7 @@
           </p>
           <div class="py-3">
             <Label color="default"
-                   ><span class="text-body dark:text-white">Component Schema</span>
+              ><span class="text-body dark:text-white">Component Schema</span>
               <Textarea
                 placeholder=""
                 value={code}
@@ -480,12 +482,12 @@
                 class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
                 style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
                 disabled
-                />
+              />
             </Label>
           </div>
           <div class="py-3">
             <Label color="default"
-                   ><span class="text-body dark:text-white">Placement Schema</span>
+              ><span class="text-body dark:text-white">Placement Schema</span>
               <Textarea
                 placeholder=""
                 value={code}
@@ -494,14 +496,14 @@
                 class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
                 style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
                 disabled
-                />
+              />
             </Label>
           </div>
           <div class="mt-6 mx-3 space-x-3 flex justify-end">
             <button
               class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
               on:click={() => (hiddenRight = true)}>cancel</button
-                                                            >
+            >
             <Button color="default" size="sm" label="Edit" on:click class="" />
           </div>
         </div>
@@ -512,7 +514,8 @@
           Interface Details
         </h3>
         <div
-          class="w-full h-full flex flex-col items-stretch mb-6 p-6 border rounded border-border-light dark:border-border-dark">
+          class="w-full h-full flex flex-col items-stretch mb-6 p-6 border rounded border-border-light dark:border-border-dark"
+        >
           <div class="inline-flex">
             <Icon
               name="event-icon"
@@ -537,7 +540,8 @@
               margin="my-6"
               items={types}
               bind:value={selected}
-              placeholder="Choose Interface Type" />
+              placeholder="Choose Interface Type"
+            />
             {#if figma}
               <Input class="my-6" size="sm" placeholder="Figma URL" />
             {/if}
@@ -550,18 +554,21 @@
                 width="100%"
                 height="100%"
                 src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FkJQbEXGjeuvLde5DGLjUuP%2FAutonomous-Two-sided-Marketplace%3Fnode-id%3D0%253A1%26t%3DCHFyL6I3kTDpsftc-1"
-                allowfullscreen />
+                allowfullscreen
+              />
             </div>
           {/if}
           <div class="py-3">
             <div class="mt-6 mx-3 space-x-3 flex justify-end">
               <button
                 class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-                on:click={() => (hiddenRight = true)}>cancel</button>
+                on:click={() => (hiddenRight = true)}>cancel</button
+              >
               <Button color="default" size="sm" label="Save" on:click class="" />
             </div>
           </div>
-        </div></span>
+        </div></span
+      >
     {/if}
   </aside>
 </Drawer>
@@ -570,8 +577,8 @@
   <div class="text-center w-full inline-flex justify-center items-center p px-6">
     <Icon name="warning" pathName={Warning} class="mr-1" />
     <span class="whitespace-nowrap text-sm text-body"
-          >Are you sure you want to delete this Event Modal?</span
-                                                              >
+      >Are you sure you want to delete this Event Modal?</span
+    >
   </div>
   <div class="my-3 text-center w-full inline-flex justify-center items-center p px-6">
     {#if done}
@@ -582,17 +589,17 @@
         size={12}
         pathName={Checkmark}
         viewBox="0 0 48 48"
-        />
-      {:else}
-        <Icon
-          name="checkmark"
-          iconColor="text-gray-primary"
-          class="mr-1"
-          size={12}
-          pathName={Checkmark}
-          />
-        {/if}
-        <span class="text-default text-body dark:text-white">{event_model_id}</span>
+      />
+    {:else}
+      <Icon
+        name="checkmark"
+        iconColor="text-gray-primary"
+        class="mr-1"
+        size={12}
+        pathName={Checkmark}
+      />
+    {/if}
+    <span class="text-default text-body dark:text-white">{event_model_id}</span>
   </div>
   <div slot="footer" class="mx-3 flex items-end space-x-3">
     <Button color="default" size="sm" on:click={hide} class="" label="Cancel" />
@@ -615,16 +622,16 @@
         class="mr-1"
         size={12}
         pathName={Checkmark}
-        />
-      {/if}
-      <span class="text-default text-body dark:text-white">{event_model_id}</span>
+      />
+    {/if}
+    <span class="text-default text-body dark:text-white">{event_model_id}</span>
   </div>
   <div slot="footer" class="mx-3 flex items-end space-x-3">
     <button
       class="text-sm text-focus hover:text-[#054FDE] transition duration-200 ease-in underline"
       on:click={hide}
       on:click={() => (input.value = '')}>Cancel</button
-                                                  >
+    >
     <Button input boundTo="submit-form" tabindex={0} color="default" size="sm" label="Done" />
   </div>
 </Modal>
@@ -636,9 +643,15 @@
   timeline_placements={$grid?.timeline}
   streams={$grid?.streams}
   default_stream_placements={$grid?.default_stream}
-  flows={$grid?.flows}
+  flows={$grid?.flows.map(({ id, to, from }) => {
+    return {
+      id,
+      to: { placement_id: to.placement_id, anchor: to.anchor, kind: 'FlowPort' },
+      from: { placement_id: from.placement_id, anchor: from.anchor, kind: 'FlowPort' }
+    };
+  })}
   column_count={$grid?.column_count || 0}
-  />
+/>
 
 <slot />
 

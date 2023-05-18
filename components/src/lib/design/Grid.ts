@@ -58,14 +58,21 @@ export const default_decider: Decider = {
 
 export type Flow = {
   id: string;
-  to: FlowPort;
+  to: FlowPort | FlowCursor;
   from: FlowPort;
 };
 
 export type FlowPort = {
-  placement_id: string;
-  anchor: FlowAnchor;
+  placement_id: string,
+  anchor: FlowAnchor,
+  kind: "FlowPort",
 };
+
+export type FlowCursor = {
+  x: number,
+  y: number,
+  kind: "FlowCursor",
+}
 
 export enum FlowAnchor {
   None,

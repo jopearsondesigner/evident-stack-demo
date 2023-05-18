@@ -29,7 +29,7 @@
   import ForegroundImage from '$components/assets/images/homepage/hero/heroLaptop.svg';
   export let heroFlexboxClass = 'flex justify-center';
   export let gradientDividerClass =
-  'h-[64px] bg-gradient-to-t from-gradient to-transparency opacity-20';
+    'h-[64px] bg-gradient-to-t from-gradient to-transparency opacity-20';
   import Container from '$components/Container.svelte';
   import SectionLabel from '$components/typography/SectionLabel.svelte';
   import Section from '$components/Section.svelte';
@@ -72,6 +72,11 @@
   import Submit from '$components/form/Submit.svelte';
   import EarlyAccessSignupForm from '$lib/EarlyAccessSignupForm.svelte';
 
+  import { MetaTags } from 'svelte-meta-tags';
+  let title = 'Evident Stack';
+  let description =
+    'Each layer in the Stack can be used individually, but work best together since each layer builds upon the one before it.';
+
   $: Modal_id = 'modal-editing-window'; // TODO: derive this from model ID?
 
   let contactModal = false;
@@ -81,6 +86,34 @@
   };
 </script>
 
+<MetaTags
+  {title}
+  {description}
+  openGraph={{
+    type: 'website',
+    url: `https://evidentstack.com/`,
+    title: `Evident Stack`,
+    description: `${description}`,
+    images: [
+      {
+        url: 'https://evidentstack.com//social/OGEvidentStack.jpg',
+        width: 1200,
+        height: 630,
+        alt: `${title}`
+      }
+    ],
+    site_name: 'Flowbite-Svelte'
+  }}
+  twitter={{
+    handle: '@shinokada',
+    cardType: 'summary_large_image',
+    title: `${title}`,
+    description: `${description}`,
+    image: 'https://evidentstack.com//social/OGEvidentStack.jpg',
+    imageAlt: `${title}`
+  }}
+/>
+
 {#if browser}
   <Carousel
     bind:this={carousel}
@@ -88,19 +121,20 @@
     autoplayDuration={10000}
     let:showPrevPage
     let:showNextPage
-    >
+  >
     <div
       slot="prev"
       on:click={showPrevPage}
+      on:keydown
       class="absolute h-full left-0 z-20 flex items-center justify-center custom-arrow custom-arrow-prev"
-      >
+    >
       <Icon
         name="arrow-left"
         class="inline-flex ml-1 stroke-1"
         iconColor="fill-current text-gray-brand-4"
         size={40}
         pathName={ArrowLeft}
-        />
+      />
     </div>
     <div class="bg-white dark:bg-dark-1 z-10 grid">
       <Hero>
@@ -108,31 +142,31 @@
           <HeroGrid>
             <HeroFlexbox
               class={classNames(
-              'lg:mt-[56px] md:mt-[136px] relative z-10 lg:px-0 px-4',
-              heroFlexboxClass
+                'lg:mt-[56px] md:mt-[136px] relative z-10 lg:px-0 px-4',
+                heroFlexboxClass
               )}
-              >
+            >
               <HeroCopy
                 heroCopyClass="lg:mt-[11px] md:mt-[-140px] sm:mt-[-10px] mt-8 mt-[0px] lg:ml-16"
-                >
+              >
                 <span slot="hero-header"
-                      ><TextBrand
-                         textBrand="text-transparent bg-clip-text bg-gradient-to-b from-stack-brand-700 via-stack-brand-500 to-stack-brand-300"
-                         >Evident Stack</TextBrand
-                                         > helps software teams to design, implement, and operate event-driven apps and services</span
-                                                                                                                                  >
+                  ><TextBrand
+                    textBrand="text-transparent bg-clip-text bg-gradient-to-b from-stack-brand-700 via-stack-brand-500 to-stack-brand-300"
+                    >Evident Stack</TextBrand
+                  > helps software teams to design, implement, and operate event-driven apps and services</span
+                >
                 <span slot="hero-copy"
-                      >Each layer in the Stack can be used individually, but work best together since
-                  each layer builds upon the one before it</span
-                                                            >
+                  >Each layer in the Stack can be used individually, but work best together since
+                  each layer builds upon the one before it.</span
+                >
               </HeroCopy>
             </HeroFlexbox>
             <HeroFlexbox
               class={classNames('flex-row lg:order-last order-first mx-auto', heroFlexboxClass)}
-              >
+            >
               <div
                 class="xl:max-w-[500px] lg:max-w-[400px] md:max-w-[400px] sm:max-w-[400px] max-w-[250px] w-auto flex justify-center items-center"
-                >
+              >
                 <Player src="lottie/teamCollaborationHero.json" />
               </div>
             </HeroFlexbox>
@@ -146,7 +180,7 @@
         <Navbar
           navbarWebClass="absolute bg-transparent shadow-none w-full max-h-12 px-3 py-1.5 text-body z-10"
           {website}
-          >
+        >
           <NavWrapper>
             <NabBrand href="/" src={Logo} height={32} class="flex lg:my-4" logoClass="ml-8" />
           </NavWrapper>
@@ -155,14 +189,14 @@
           <HeroGrid>
             <HeroFlexbox
               class={classNames('lg:mt-[56px] relative z-10 lg:px-0 px-4', heroFlexboxClass)}
-              >
+            >
               <HeroCopy
                 heroCopyClass="lg:mt-[11px] md:-mt-8 sm:-mt-8 xl:pr-4 mt-8 sm:mt-[-130px] mt-[0px] mb-16 lg:ml-16"
-                >
+              >
                 <span slot="hero-header" class=""
-                      ><TextBrand>Evident Design</TextBrand> helps teams to collaboratively design event-based
+                  ><TextBrand>Evident Design</TextBrand> helps teams to collaboratively design event-based
                   information systems using Event Modeling</span
-                                                            >
+                >
 
                 <Button
                   slot="hero-cta"
@@ -172,7 +206,7 @@
                   label="Sign Up for Early Access"
                   class="flex items-center"
                   on:click={() => (contactModal = true)}
-                  >
+                >
                   <Icon
                     name="arrow-right"
                     slot="icon"
@@ -180,29 +214,29 @@
                     iconColor="fill-current text-white"
                     size={12}
                     pathName={ArrowRight}
-                    />
+                  />
                 </Button>
               </HeroCopy>
             </HeroFlexbox>
             <HeroFlexbox
               class={classNames('flex-row lg:order-last order-first mx-auto', heroFlexboxClass)}
-              >
+            >
               <HeroImage
                 imgSize="xl:w-[897px] lg:w-[640px] md:w-[540px] sm:w-[540px] sm:mt-0 mt-[16px]"
-                >
+              >
                 <div
                   class="h-full w-auto table overflow-auto md:-mt-[0] bg-no-repeat bg-center bg-cover"
                   style="background-image: url({BackgroundImage})"
-                  >
+                >
                   <img
                     src={ForegroundImage}
                     alt="Laptop with oNote screenshot"
                     width="100%"
                     height="100%"
                     class="table-row"
-                    />
-              </div></HeroImage
-                      >
+                  />
+                </div></HeroImage
+              >
             </HeroFlexbox>
           </HeroGrid>
         </HeroContainer>
@@ -212,15 +246,16 @@
     <div
       slot="next"
       on:click={showNextPage}
+      on:keydown
       class="absolute h-full right-0 flex items-center justify-center custom-arrow custom-arrow-next"
-      >
+    >
       <Icon
         name="arrow-right"
         class="inline-flex ml-1 stroke-1"
         iconColor="fill-current text-gray-brand-4"
         size={40}
         pathName={ArrowRight}
-        />
+      />
     </div>
   </Carousel>
 {/if}
@@ -244,13 +279,13 @@
             class="w-[640px] block dark:hidden"
             width="auto"
             alt="Poor software quality"
-            />
+          />
           <img
             src={PoorSoftwareQualityDark}
             class="w-[640px] hidden dark:block"
             width="auto"
             alt="Poor software quality"
-            />
+          />
         </Column>
         <Column class={classNames('order-first lg:pr-12 lg:-mt-4 px-4')}>
           <Section name="benefit">
@@ -259,7 +294,7 @@
               color="text-stack-brand-800 dark:text-stack-brand-300"
               class="mb-4 lg:pl-4 lg:text-left text-center"
               customSize="text-[1.5rem]"
-              >
+            >
               Poor software design costs a lot
             </SectionHeader>
             <SectionCopy class="lg:pl-4 lg:text-left text-center mb-4">
@@ -278,8 +313,8 @@
             </SectionCopy>
             <SectionCopy class="lg:pl-4 lg:text-left text-center mb-4">
               Source: <A href="https://www.it-cisq.org/cisq-files/pdf/CPSQ-2020-report.pdf"
-                         >The Cost of Poor Software Quality in the US: A 2020 Report</A
-                                                                                      >
+                >The Cost of Poor Software Quality in the US: A 2020 Report</A
+              >
             </SectionCopy>
           </Section>
         </Column>
@@ -287,7 +322,7 @@
       <Row
         class="grid lg:mt-8 mt-0 pt-0"
         customCols="xl:grid-cols-4 lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-2"
-        >
+      >
         <Column class="flex-col lg:order-last order-first mx-auto">
           <Section name="info" divClass="mb-8 flex items-center justify-center">
             <img
@@ -295,13 +330,13 @@
               class="lg:w-[165px] sm:w-[133px] w-[110px] block dark:hidden"
               width="auto"
               alt="75%"
-              />
+            />
             <img
               src={SeventyFiveDark}
               class="lg:w-[165px] sm:w-[133px] w-[110px] hidden dark:block"
               width="auto"
               alt="75%"
-              />
+            />
           </Section>
           <Section name="info" divClass="xl:py-4 pt-0 pb-4">
             <SectionCopy class="text-center px-12" textSize="text-[1.125rem]">
@@ -316,13 +351,13 @@
               class="lg:w-[165px] sm:w-[133px] w-[110px] block dark:hidden"
               width="auto"
               alt="78%"
-              />
+            />
             <img
               src={SeventyEightDark}
               class="lg:w-[165px] sm:w-[133px] w-[110px] hidden dark:block"
               width="auto"
               alt="78%"
-              />
+            />
           </Section>
           <Section name="info" divClass="xl:py-4 pt-0 pb-4">
             <SectionCopy class="text-center px-12" textSize="text-[1.125rem]">
@@ -338,13 +373,13 @@
               class="lg:w-[165px] sm:w-[133px] w-[110px] block dark:hidden"
               width="auto"
               alt="80%"
-              />
+            />
             <img
               src={EightyDark}
               class="lg:w-[165px] sm:w-[133px] w-[110px] hidden dark:block"
               width="auto"
               alt="80%"
-              />
+            />
           </Section>
           <Section name="info" divClass="xl:py-4 pt-0 pb-4">
             <SectionCopy class="text-center px-12" textSize="text-[1.125rem]">
@@ -359,13 +394,13 @@
               class="lg:w-[165px] sm:w-[133px] w-[110px] block dark:hidden"
               width="auto"
               alt="55%"
-              />
+            />
             <img
               src={FifyFiveDark}
               class="lg:w-[165px] sm:w-[133px] w-[110px] hidden dark:block"
               width="auto"
               alt="55%"
-              />
+            />
           </Section>
           <Section name="info" divClass="xl:py-4 pt-0 pb-4">
             <SectionCopy class="text-center px-12" textSize="text-[1.125rem]">
@@ -380,12 +415,12 @@
   <Container>
     <SectionLabel
       class="text-gray-primary dark:text-gray-brand-2 opacity-100 dark:opacity-60 font-bold lg:py-16 py-4 ml-4 text-left"
-      >
+    >
       Getting Started
     </SectionLabel>
     <Row
       class="bg-white dark:bg-dark-1 lg:p-16 p-0 sm:p-8 mx-4 grid gap-4 lg:grid-cols-3 grid-col-1 bg-no-repeat lg:bg-[url('$components/assets/images/homepage/GettingStarted-BottomLeft.svg'),_url('$components/assets/images/homepage/GettingStarted-TopLeft.svg'),_url('$components/assets/images/homepage/GettingStarted-Bottom.svg'),_url('$components/assets/images/homepage/GettingStarted-Center.svg'),__url('$components/assets/images/homepage/GettingStarted-TopRight.svg')] lg:bg-[position:left_bottom,_left_-18px_top,_left_-90px_bottom_0px,_center_right_460px,_top_right] lg:bg-[length:140px_346px,_380px_192px,_500px_216px,_500px_182px,_160px_411px]"
-      >
+    >
       <div class="lg:col-span-1">
         <Column class={classNames('h-full', flexClass)}>
           <Section name="benefit">
@@ -394,7 +429,7 @@
               color="text-stack-brand-800 dark:text-stack-brand-300"
               class="mb-4 lg:pl-4 lg:text-left text-center"
               customSize="text-[1.875rem]"
-              >
+            >
               Design right from the start
             </SectionHeader>
           </Section>
@@ -403,21 +438,21 @@
       <div class="lg:col-span-1">
         <div
           class="p-4 sm:p-12 h-full bg-white bg-opacity-[72%] dark:bg-dark-1 dark:bg-opacity-[72%] rounded-md border border-border-light dark:border-border-dark"
-          >
+        >
           <Icon
             name="heart"
             class="lg:m-4 mx-auto my-0"
             iconColor="text-red"
             size={28}
             pathName={Heart}
-            />
+          />
           <Section name="benefit" divClass="">
             <SectionHeader
               tag="h4"
               color="text-stack-brand-800 dark:text-stack-brand-300"
               classes="min-h-[60px] mb-4 lg:pl-4 lg:text-left text-center"
               customSize="text-[1.5rem]"
-              >
+            >
               Join the Evident Design community
             </SectionHeader>
             <SectionCopy classes="min-h-[112px] lg:pl-4 lg:text-left text-center">
@@ -426,12 +461,12 @@
             <SectionCopy classes="lg:text-left text-center pl-4">
               <A href="/use-cases">
                 Go to Use Cases<Icon
-                                 name="arrow-right"
-                                 size={12}
-                                 iconColor="fill-current"
-                                 class="stroke-2 ml-1"
-                                 pathName={ArrowRight}
-                                 />
+                  name="arrow-right"
+                  size={12}
+                  iconColor="fill-current"
+                  class="stroke-2 ml-1"
+                  pathName={ArrowRight}
+                />
               </A>
             </SectionCopy>
           </Section>
@@ -440,21 +475,21 @@
       <div class="lg:col-span-1">
         <div
           class="p-4 sm:p-12 h-full bg-white bg-opacity-[72%] dark:bg-dark-1 dark:bg-opacity-[72%] rounded-md border border-border-light dark:border-border-dark"
-          >
+        >
           <Icon
             name="docs"
             class="lg:m-4 mx-auto my-0"
             iconColor="fill-current text-body-light dark:text-white"
             size={28}
             pathName={Docs}
-            />
+          />
           <Section name="benefit" divClass="">
             <SectionHeader
               tag="h4"
               color="text-stack-brand-800 dark:text-stack-brand-300"
               classes="min-h-[60px] mb-4 lg:pl-4 lg:text-left text-center"
               customSize="text-[1.5rem]"
-              >
+            >
               Read the docs
             </SectionHeader>
             <SectionCopy classes="min-h-[112px] lg:pl-4 lg:text-left text-center">
@@ -463,12 +498,12 @@
             <SectionCopy classes="flex lg:text-left text-center pl-4">
               <A href="/docs">
                 Go to Docs<Icon
-                            name="arrow-right"
-                            size={12}
-                            iconColor="fill-current"
-                            class="stroke-2 ml-1"
-                            pathName={ArrowRight}
-                            />
+                  name="arrow-right"
+                  size={12}
+                  iconColor="fill-current"
+                  class="stroke-2 ml-1"
+                  pathName={ArrowRight}
+                />
               </A>
             </SectionCopy>
           </Section>

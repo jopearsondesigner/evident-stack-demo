@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { DragEventHandler } from 'svelte/elements';
-  import type { PlacementType } from '../Grid';
+  import { FlowAnchor, type PlacementType } from '../Grid';
   import { createEventDispatcher } from 'svelte';
 
   type Position = 'top' | 'bottom' | 'right';
@@ -11,6 +11,17 @@
   export let column: number;
 
   const dispatch = createEventDispatcher();
+
+  const positionToFlowAnchor = (p: Position): FlowAnchor => {
+    switch (p) {
+      case "bottom":
+        return FlowAnchor.Bottom;
+      case "right":
+        return FlowAnchor.Right;
+      case "top":
+        return FlowAnchor.Top;
+    }
+  }
 
   const classesByPosition = (position: Position) => {
     if (position == 'top') {
@@ -29,7 +40,7 @@
   // Drag/drop
   const handleDragStart: DragEventHandler<HTMLDivElement> = (e) => {
     dispatch("flow_drag_start", {
-      position,
+      position: positionToFlowAnchor(position),
       placement: {
         placementId: placement,
         placementKind: placement_kind

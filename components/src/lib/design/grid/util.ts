@@ -342,7 +342,6 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                     };
                 }
                 case DraggingCommandKind.CURSOR_MOVE: {
-                    console.info("CURSOR MOVE", command.value);
                     switch (state.kind) {
                         case DraggingStateKind.FLOW: {
                             const { target } = state.value;
@@ -433,11 +432,8 @@ const laneIdFilterDefault = (laneId: string | DefaultLane | undefined): string |
 
 export const linkingFlowFromState = (state: DraggingState): Flow | void => {
     if (state.kind !== DraggingStateKind.FLOW) {
-        console.warn(" KIND IS NOT FLOW?");
         return;
     }
-
-    console.warn("Translate to Linking Grid State", state.value);
 
     const { source, cursor, target } = state.value;
 
@@ -469,6 +465,6 @@ export const linkingFlowFromState = (state: DraggingState): Flow | void => {
         id: "linking",
         to,
         from,
-        dashed: true
+        dashed: false
     }
 }

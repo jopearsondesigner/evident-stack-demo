@@ -45,8 +45,6 @@ export const findBezierControlPoint = (origin: Point, mid: Point, anchor: FlowAn
       return { ...origin, x: mid.x - curveShapeFactor * (mid.x / 4) };
     case FlowAnchor.Right:
       return { ...origin, x: mid.x + curveShapeFactor * (mid.x / 4) };
-    default:
-      return null;
   }
 };
 

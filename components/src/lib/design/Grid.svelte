@@ -378,10 +378,15 @@
 
   // Drag Test
   const handleDragOver = (e: DragEvent) => {
-    console.info('DRAG MOVE', e.clientX, e.clientY);
-    const command: DragCommand = { kind: DraggingCommandKind.CURSOR_MOVE, value: { x: e.clientX, y: e.clientY } };
+    const command: DragCommand = {
+      kind: DraggingCommandKind.CURSOR_MOVE,
+      value: { x: e.clientX, y: e.clientY }
+    };
+
     dragState = evolveAndReactDraggingState(dragState, command);
   }
+
+  $: allFlows = linkingFlow ? flows.concat(linkingFlow) : flows;
 </script>
 
 <svelte:window
@@ -399,7 +404,7 @@
     style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
     on:dragover={handleDragOver}
   >
-    <FlowCanvas {flows} />
+    <FlowCanvas flows={allFlows} />
     <AudienceLane
       on:navigate_cursor={handleNavigateCursor}
       on:lane_drag_drop={handleLaneDragDrop}

@@ -47,9 +47,9 @@ dependencies = [
 
 [[package]]
 name = "autosurgeon"
-version = "0.6.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d3cfc060887c4e5e75a8b5937f6fdd64e3060d464d501776c464efdb1b94e790"
+checksum = "a86eb8a5e7b27d18e72182cf27b2355279888d86bfb68537a57eddc7a56a7627"
 dependencies = [
  "automerge",
  "autosurgeon-derive",

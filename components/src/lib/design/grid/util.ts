@@ -1,4 +1,5 @@
 import { FlowAnchor, type Decider, type DropTargetStatus, type Flow, type FlowCursor, type FlowPort, type LaneKind, type LinkingFlowColor, type PlacementType } from "../Grid";
+import FlowPort from "./FlowPort.svelte";
 
 // Types
 export interface WithDropTargetStatus { targetStatus: DropTargetStatus}
@@ -281,7 +282,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                             case ["interface", "command"]:
                                                 return ["Bottom", "Top"]
                                             case ["command", "event"]:
-                                                return ["Top", "Bottom"]
+                                                return ["Bottom", "Top"]
                                             case ["event", "readModel"]:
                                                 return ["Top", "Bottom"]
                                             case ["readModel", "interface"]:
@@ -413,6 +414,24 @@ function flowTargetStatus({ placement: { placementKind, placementId } }: FlowPor
     }
 }
 
+const flowTargetDefaultPort = (source: PlacementType, target: PlacementType): FlowAnchor => {
+    if (source === "interface" && target === "command") {
+        return FlowAnchor.Top;
+    }
+    else if ( source  === "command" && target === "event") {
+        return FlowAnchor.Top;
+    }
+    else if (source === "event" && target === "readModel") {
+        return FlowAnchor.Bottom;
+    }
+    else if (source === "readModel" && target === "interface") {
+        return FlowAnchor.Bottom;
+    }
+    else {
+        return FlowAnchor.Bottom;
+    }
+}
+
 const rowtargetToLaneId = (row: RowTarget): string | DefaultLane | undefined => {
     switch (row.rowKind) {
         case "audience": {
@@ -449,10 +468,10 @@ export const linkingFlowFromState = (state: DraggingState): Flow | void => {
     };
 
     // Use placement if in proper cell - fallback to cursor position
-    const to: FlowPort | FlowCursor | undefined = target && target.placementId ?
+    const to: FlowPort | FlowCursor | undefined = target && target.placementId && target.placementKind ?
         {
             placement_id: target.placementId,
-            anchor: FlowAnchor.Bottom,
+            anchor: flowTargetDefaultPort(source.placement.placementKind, target.placementKind),
             kind: "FlowPort",
         } :
         cursor ? { x: cursor.x, y: cursor.y, kind: "FlowCursor" } : undefined;

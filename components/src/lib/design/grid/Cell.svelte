@@ -30,7 +30,7 @@
       column,
       row,
       placementId: maybe_placement,
-      placementKind: maybe_placement_kind,
+      placementKind: maybe_placement_kind
     });
   };
 
@@ -39,7 +39,6 @@
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn('Cell Drag Drop');
     dispatch('cell_drag_drop');
   };
 </script>

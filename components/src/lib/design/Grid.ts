@@ -58,14 +58,24 @@ export const default_decider: Decider = {
 
 export type Flow = {
   id: string;
-  to: FlowPort;
+  to: FlowPort | FlowCursor;
   from: FlowPort;
+  dashed?: boolean,
+  color?: string,
+  strokeWidth?: number,
 };
 
 export type FlowPort = {
-  placement_id: string;
-  anchor: FlowAnchor;
+  placement_id: string,
+  anchor: FlowAnchor,
+  kind: "FlowPort",
 };
+
+export type FlowCursor = {
+  x: number,
+  y: number,
+  kind: "FlowCursor",
+}
 
 export enum FlowAnchor {
   None,
@@ -198,3 +208,4 @@ export type GridMode = 'loading' | 'navigation' | 'editing' | 'disambiguating' |
 export type CursorMode = 'editing' | 'navigation' | 'linking' | 'other';
 export type LaneKind = 'audience' | 'stream';
 export type DropTargetStatus = 'good' | 'bad';
+export type LinkingFlowColor = "red" | "green" | "black";

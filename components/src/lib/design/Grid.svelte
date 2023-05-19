@@ -13,7 +13,8 @@
     type CellTarget,
     type WithSourceEffect,
     type FlowPortSource,
-    DEFAULT_LANE
+    DEFAULT_LANE,
+    linkingFlowFromState
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -225,6 +226,8 @@
   $: cell_drop_target =
     dragState.kind === DraggingStateKind.PLACEMENT ? dragState.value.target : undefined;
 
+  // Flows
+  $: linkingFlow = linkingFlowFromState(dragState);
   // Cursor
 
   let cursor_row = 0;
@@ -368,27 +371,20 @@
     }
   };
 
-  const genDragDebugJson = (state: DraggingState): string => {
-    let kind = 'None';
+  let containerRef: HTMLDivElement;
 
-    switch (state.kind) {
-      case DraggingStateKind.LANE:
-        kind = 'LANE';
-        break;
-      case DraggingStateKind.PLACEMENT:
-        kind = 'PLACEMENT';
-        break;
-      case DraggingStateKind.FLOW:
-        kind = 'FLOW';
-        break;
-      default:
-        kind = 'None';
-    }
+  // Drag Test
+  const handleDragOver = (e: DragEvent) => {
+    const clientRect = containerRef.getBoundingClientRect();
+    const command: DragCommand = {
+      kind: DraggingCommandKind.CURSOR_MOVE,
+      value: { x: e.clientX - clientRect.x, y: e.clientY - clientRect.y }
+    };
 
-    return JSON.stringify({ ...state, kind }, null, 2);
+    dragState = evolveAndReactDraggingState(dragState, command);
   };
 
-  $: drag_json = genDragDebugJson(dragState);
+  $: allFlows = linkingFlow ? flows.concat(linkingFlow) : flows;
 </script>
 
 <svelte:window
@@ -398,16 +394,16 @@
 />
 
 <h3>{mode}</h3>
-
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <div
+    bind:this={containerRef}
+    on:dragover={handleDragOver}
     class="grid w-max p-3 relative justify-items-center items-center"
-    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));">
-    <FlowCanvas {flows} />
+    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
+  >
+    <FlowCanvas flows={allFlows} />
     <AudienceLane
       on:navigate_cursor={handleNavigateCursor}
-      on:move_interface_placement={handleMoveInterfacePlacement}
-      on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
       on:lane_drag_drop={handleLaneDragDrop}
       on:placement_drag_start={handlePlacementDragStart}
       on:cell_drag_enter={handleCellDragEnter}
@@ -446,8 +442,6 @@
           : undefined}
       <AudienceLane
         on:navigate_cursor={handleNavigateCursor}
-        on:move_interface_placement={handleMoveInterfacePlacement}
-        on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
         on:lane_drag_drop={handleLaneDragDrop}
@@ -496,8 +490,6 @@
           : undefined}
       <StreamLane
         on:navigate_cursor={handleNavigateCursor}
-        on:move_event_placement={handleMoveEventPlacement}
-        on:duplicate_event_placement={handleDuplicateEventPlacement}
         on:lane_drag_start={handleLaneDragStart}
         on:lane_drag_enter={handleLaneDragEnter}
         on:lane_drag_drop={handleLaneDragDrop}
@@ -515,8 +507,6 @@
     {/each}
     <StreamLane
       on:navigate_cursor={handleNavigateCursor}
-      on:move_event_placement={handleMoveEventPlacement}
-      on:duplicate_event_placement={handleDuplicateEventPlacement}
       on:lane_drag_drop={handleLaneDragDrop}
       on:placement_drag_start={handlePlacementDragStart}
       on:cell_drag_enter={handleCellDragEnter}
@@ -549,9 +539,6 @@
       on:move_interface_placement={handleMoveInterfacePlacement}
       on:move_timeline_placement={handleMoveTimelinePlacement}
       on:move_event_placement={handleMoveEventPlacement}
-      on:duplicate_interface_placement={handleDuplicateInterfacePlacement}
-      on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
-      on:duplicate_event_placement={handleDuplicateEventPlacement}
       row={cursor_row}
       column={cursor_column}
       item={cursor_item}

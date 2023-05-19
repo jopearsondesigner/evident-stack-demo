@@ -1,22 +1,7 @@
 import { FlowAnchor } from "../Grid";
 import type { Point } from "./types";
 
-export const bezierControlPoint = (origin: Point, mid: Point, anchor: FlowAnchor, curveShapeFactor: number): Point | null => {
-  switch (anchor) {
-    case FlowAnchor.Top:
-      return { ...origin, y: mid.y - curveShapeFactor * (mid.y / 4) };
-    case FlowAnchor.Bottom:
-      return { ...origin, y: mid.y + curveShapeFactor * (mid.y / 4) };
-    case FlowAnchor.Left:
-      return { ...origin, x: mid.x - curveShapeFactor * (mid.x / 4) };
-    case FlowAnchor.Right:
-      return { ...origin, x: mid.x + curveShapeFactor * (mid.x / 4) };
-    default:
-      return null;
-  }
-};
-
-export const anchorPoint = (boundingParent: SVGSVGElement, anchor: FlowAnchor, target: DOMRect, pathHeadOffset: number = 0, offsetMarker: number = 0): Point => {
+export const findAnchorPoint = (boundingParent: SVGSVGElement, anchor: FlowAnchor, target: DOMRect, pathHeadOffset: number = 0, offsetMarker: number = 0): Point => {
     let x = target.left;
     let y = target.top;
 
@@ -50,8 +35,37 @@ export const findMidPoint = (to: Point, from: Point): Point => {
     }
 }
 
+export const findBezierControlPoint = (origin: Point, mid: Point, anchor: FlowAnchor, curveShapeFactor: number): Point | null => {
+  switch (anchor) {
+    case FlowAnchor.Top:
+      return { ...origin, y: mid.y - curveShapeFactor * (mid.y / 4) };
+    case FlowAnchor.Bottom:
+      return { ...origin, y: mid.y + curveShapeFactor * (mid.y / 4) };
+    case FlowAnchor.Left:
+      return { ...origin, x: mid.x - curveShapeFactor * (mid.x / 4) };
+    case FlowAnchor.Right:
+      return { ...origin, x: mid.x + curveShapeFactor * (mid.x / 4) };
+  }
+};
+
 export const pointFromRect = ({ x, y }: DOMRect): Point => ({
     x, y
 })
 
 export const makePathId = (id: string): string => `flow-path-${id}`
+
+export const rectForPlacementId = (id: string): DOMRect | undefined => {
+  const element = document.getElementById(id);
+  if (element) {
+    return element.getBoundingClientRect();
+  }
+};
+
+export const rectsUpdated = (current: DOMRect, next: DOMRect): boolean => {
+  return (
+    current.x !== next.x ||
+    current.y !== next.y ||
+    current.width !== next.width ||
+    current.height !== next.height
+  );
+};

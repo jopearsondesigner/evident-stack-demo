@@ -1,4 +1,5 @@
-import type { Decider, DropTargetStatus, LaneKind, PlacementType } from "../Grid";
+import { FlowAnchor, type Decider, type DropTargetStatus, type Flow, type FlowCursor, type FlowPort, type LaneKind, type LinkingFlowColor, type PlacementType } from "../Grid";
+import FlowPort from "./FlowPort.svelte";
 
 // Types
 export interface WithDropTargetStatus { targetStatus: DropTargetStatus}
@@ -21,7 +22,7 @@ export interface PlacementSource {
 
 export interface FlowPortSource {
     placement: PlacementSource,
-    position: string
+    position: FlowAnchor 
 }
 
 export type AudienceTarget = {
@@ -49,6 +50,11 @@ export interface CellTarget {
     placementKind?: PlacementType,
 }
 
+export interface CursorTarget {
+    x: number,
+    y: number
+}
+
 export enum DraggingStateKind {
     LANE,
     PLACEMENT,
@@ -68,7 +74,8 @@ export type DraggingState =
     | { kind: DraggingStateKind.FLOW,
         value: {
             source: FlowPortSource,
-            target?: CellTarget & WithDropTargetStatus
+            cursor?: CursorTarget,
+            target?: (CellTarget & WithDropTargetStatus)
         }}
     | { kind: DraggingStateKind.NONE };
 
@@ -82,6 +89,7 @@ export enum DraggingCommandKind {
     FLOW_PORT_DRAG_START,
     OUT_OF_BOUNDS_DRAG_ENTER,
     OUT_OF_BOUNDS_DRAG_END,
+    CURSOR_MOVE,
 }
 
 export type DragCommand =
@@ -99,6 +107,8 @@ export type DragCommand =
         value: FlowPortSource }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER }
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END }
+    | { kind: DraggingCommandKind.CURSOR_MOVE,
+        value: CursorTarget }
 
 export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState, c: DragCommand) => DraggingState {
     return (state: DraggingState, command: DragCommand) => {
@@ -238,7 +248,9 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                                 break;
                                             case "interface":
                                                 reactionDecider.move_interface_placement(placementId, column, laneId);
+                                                break;
                                         }
+                                    break;
                                     case "DUPLICATE":
                                         switch (placementKind) {
                                             case "command":
@@ -252,7 +264,9 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                                 break;
                                             case "interface":
                                                 reactionDecider.duplicate_interface_placement(placementId, column, laneId);
+                                                break;
                                         }
+                                    break;
                                 }
 
                             }
@@ -260,7 +274,6 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             return { kind: DraggingStateKind.NONE };
                         }
                         case DraggingStateKind.FLOW: {
-
                             if (state.value.target && state.value.target.targetStatus === "good") {
                                 const { source, target } = state.value;
                                 if (target.placementId) {
@@ -269,7 +282,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                             case ["interface", "command"]:
                                                 return ["Bottom", "Top"]
                                             case ["command", "event"]:
-                                                return ["Top", "Bottom"]
+                                                return ["Bottom", "Top"]
                                             case ["event", "readModel"]:
                                                 return ["Top", "Bottom"]
                                             case ["readModel", "interface"]:
@@ -329,6 +342,27 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                         kind: DraggingStateKind.NONE
                     };
                 }
+                case DraggingCommandKind.CURSOR_MOVE: {
+                    switch (state.kind) {
+                        case DraggingStateKind.FLOW: {
+                            const { target } = state.value;
+
+                            if (target?.placementId && target.targetStatus === 'good') {
+                                return state;
+                            }
+
+                            return {
+                                ...state,
+                                value: {
+                                    ...state.value,
+                                    cursor: command.value
+                                }
+                            }
+                        }
+                        default:
+                            return state;
+                    }
+                }
             }
     }
 }
@@ -380,6 +414,24 @@ function flowTargetStatus({ placement: { placementKind, placementId } }: FlowPor
     }
 }
 
+const flowTargetDefaultPort = (source: PlacementType, target: PlacementType): FlowAnchor => {
+    if (source === "interface" && target === "command") {
+        return FlowAnchor.Top;
+    }
+    else if ( source  === "command" && target === "event") {
+        return FlowAnchor.Top;
+    }
+    else if (source === "event" && target === "readModel") {
+        return FlowAnchor.Bottom;
+    }
+    else if (source === "readModel" && target === "interface") {
+        return FlowAnchor.Bottom;
+    }
+    else {
+        return FlowAnchor.Bottom;
+    }
+}
+
 const rowtargetToLaneId = (row: RowTarget): string | DefaultLane | undefined => {
     switch (row.rowKind) {
         case "audience": {
@@ -396,3 +448,61 @@ const rowtargetToLaneId = (row: RowTarget): string | DefaultLane | undefined => 
 
 const laneIdFilterDefault = (laneId: string | DefaultLane | undefined): string | undefined =>
     (laneId === "DEFAULT_LANE") ? undefined : laneId;
+
+export const linkingFlowFromState = (state: DraggingState): Flow | void => {
+    if (state.kind !== DraggingStateKind.FLOW) {
+        return;
+    }
+
+    const { source, cursor, target } = state.value;
+
+    // Need at least one
+    if (!cursor && !target) {
+        return;
+    }
+
+    const from: FlowPort = {
+        placement_id: source.placement.placementId,
+        anchor: source.position,
+        kind: "FlowPort"
+    };
+
+    // Use placement if in proper cell - fallback to cursor position
+    const to: FlowPort | FlowCursor | undefined = target && target.placementId && target.placementKind ?
+        {
+            placement_id: target.placementId,
+            anchor: flowTargetDefaultPort(source.placement.placementKind, target.placementKind),
+            kind: "FlowPort",
+        } :
+        cursor ? { x: cursor.x, y: cursor.y, kind: "FlowCursor" } : undefined;
+
+    if (!to) {
+        return;
+    }
+
+    return {
+        id: "linking",
+        to,
+        from,
+        dashed: true,
+        color: linkingFlowColor(state),
+        strokeWidth: 2,
+    }
+}
+
+const linkingFlowColor = (state: DraggingState): LinkingFlowColor => {
+    if (state.kind === DraggingStateKind.FLOW) {
+        const { target } = state.value;
+
+        if (target && target.placementId) {
+            switch (target.targetStatus) {
+                case "bad":
+                    return "red";
+                case "good":
+                    return "green";
+            }
+        }
+    }
+
+    return "black";
+}

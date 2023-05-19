@@ -4,9 +4,8 @@
   import FlowPath from './FlowPath.svelte';
 
   export let flows: Array<Flow> = [];
-  export let color: string = '#657B83';
+  export let baseColor: string = '#657B83';
   export let strokeWidth: number = 1;
-  export let dashness: boolean = false;
   export let refreshTime: number = 16;
   export let curveShapeFactor: number = 0.1;
   export let markerSize: number = 8;
@@ -16,15 +15,14 @@
   let containerRef: SVGSVGElement;
 
   $: pathConfig = {
-    color,
+    color: baseColor,
     strokeWidth,
-    dashness,
     refreshTime,
     curveShapeFactor,
     markerSize,
     boundingParent: containerRef
   };
-  $: markerConfig = { color, markerSize };
+  $: markerConfig = { color: baseColor, markerSize };
 </script>
 
 <svg
@@ -38,7 +36,17 @@
   <defs>
     <FlowMarker {...markerConfig} />
   </defs>
-  {#each flows as { id, to, from }}
-    <FlowPath {...{ id, to, from, ...pathConfig }} />
+  {#each flows as { id, to, from, dashed, color, strokeWidth }}
+    <FlowPath
+      {...{
+        id,
+        to,
+        from,
+        dashed,
+        ...pathConfig,
+        color: color || pathConfig.color,
+        strokeWidth: strokeWidth || pathConfig.strokeWidth
+      }}
+    />
   {/each}
 </svg>

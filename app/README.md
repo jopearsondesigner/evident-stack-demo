@@ -32,6 +32,11 @@ API URL          | PUBLIC_SUPABASE_URL
 anon secret      | PUBLIC_SUPABASE_ANON_KEY
 service_role key | PUBLIC_SERVICE_KEY
 
+### Accessing authentication emails when running local
+
+Visit the local [InBucket](http://localhost:54324) service to get all
+email sent by the local service.
+
 ## Running Storybook
 
 To begin interactive development on our [library of components](./src/lib/components/), start the Storybook server:

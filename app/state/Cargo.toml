@@ -20,8 +20,6 @@ base64 = { workspace = true }
 epoch = { workspace = true }
 getrandom = { version = "0.2", features = ["js"] }
 itertools = { workspace = true }
-thiserror-impl = { workspace = true }
-tracing-attributes = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 serde-wasm-bindgen = "0.4"

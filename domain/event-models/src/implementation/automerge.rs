@@ -560,14 +560,20 @@ pub struct AutomergeEventModel {
     name: AutoName,
     description: Text,
     schema: Text,
-    interfaces: HashMap<String, AutoInterface>,
-    commands: HashMap<String, AutoCommand>,
-    events: HashMap<String, AutoEvent>,
-    read_models: HashMap<String, AutoReadModel>,
+    #[autosurgeon(with = "autosurgeon::map_with_parseable_keys")]
+    interfaces: HashMap<Uuid, AutoInterface>,
+    #[autosurgeon(with = "autosurgeon::map_with_parseable_keys")]
+    commands: HashMap<Uuid, AutoCommand>,
+    #[autosurgeon(with = "autosurgeon::map_with_parseable_keys")]
+    events: HashMap<Uuid, AutoEvent>,
+    #[autosurgeon(with = "autosurgeon::map_with_parseable_keys")]
+    read_models: HashMap<Uuid, AutoReadModel>,
     audiences: Vec<AutoAudience>,
     streams: Vec<AutoStream>,
-    placements: HashMap<String, AutoPlacement>,
-    flows: HashMap<String, AutoFlowArrow>,
+    #[autosurgeon(with = "autosurgeon::map_with_parseable_keys")]
+    placements: HashMap<Uuid, AutoPlacement>,
+    #[autosurgeon(with = "autosurgeon::map_with_parseable_keys")]
+    flows: HashMap<Uuid, AutoFlowArrow>,
 }
 
 impl AutomergeEventModel {
@@ -590,21 +596,18 @@ impl AutomergeEventModel {
 
     fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<AutoComponentMut> {
         match id {
-            ComponentId::InterfaceComponentId(id) => self
-                .interfaces
-                .get_mut(&id.to_string())
-                .map(AutoComponentMut::Interface),
-            ComponentId::CommandComponentId(id) => self
-                .commands
-                .get_mut(&id.to_string())
-                .map(AutoComponentMut::Command),
-            ComponentId::EventComponentId(id) => self
-                .events
-                .get_mut(&id.to_string())
-                .map(AutoComponentMut::Event),
+            ComponentId::InterfaceComponentId(id) => {
+                self.interfaces.get_mut(id).map(AutoComponentMut::Interface)
+            }
+            ComponentId::CommandComponentId(id) => {
+                self.commands.get_mut(id).map(AutoComponentMut::Command)
+            }
+            ComponentId::EventComponentId(id) => {
+                self.events.get_mut(id).map(AutoComponentMut::Event)
+            }
             ComponentId::ReadModelComponentId(id) => self
                 .read_models
-                .get_mut(&id.to_string())
+                .get_mut(id)
                 .map(AutoComponentMut::ReadModel),
         }
     }
@@ -638,7 +641,7 @@ impl HasSchema for AutomergeEventModel {
 impl EventModel for AutomergeEventModel {
     fn create(initial: &EventModelState<Self>, id: &EventModelId, name: &Name) -> Self {
         match initial {
-            EventModelState::BeforeCreation => AutomergeEventModel::new(id, name.into()),
+            EventModelState::BeforeCreation => AutomergeEventModel::new(id, name),
             _ => panic!("Illegal state when creating Automerge Event Model!"),
         }
     }
@@ -684,7 +687,7 @@ impl EventModelData for AutomergeEventModel {
     }
 
     fn get_placement(&self, id: &PlacementId) -> Option<Placement> {
-        self.placements.get(&id.to_string()).map(|p| p.into())
+        self.placements.get(id).map(|p| p.into())
     }
 }
 
@@ -704,16 +707,16 @@ impl ModifiableEventModel for AutomergeEventModel {
     fn component_defined(&mut self, component: &Component) {
         match component {
             Component::Interface(i) => {
-                self.interfaces.insert(i.id().to_string(), i.into());
+                self.interfaces.insert(i.id(), i.into());
             }
             Component::Command(c) => {
-                self.commands.insert(c.id().to_string(), c.into());
+                self.commands.insert(c.id(), c.into());
             }
             Component::Event(e) => {
-                self.events.insert(e.id().to_string(), e.into());
+                self.events.insert(e.id(), e.into());
             }
             Component::ReadModel(r) => {
-                self.read_models.insert(r.id().to_string(), r.into());
+                self.read_models.insert(r.id(), r.into());
             }
         }
     }
@@ -733,16 +736,16 @@ impl ModifiableEventModel for AutomergeEventModel {
     fn component_removed(&mut self, component_id: &ComponentId) {
         match component_id {
             ComponentId::InterfaceComponentId(id) => {
-                self.interfaces.remove(&id.to_string());
+                self.interfaces.remove(id);
             }
             ComponentId::CommandComponentId(id) => {
-                self.commands.remove(&id.to_string());
+                self.commands.remove(id);
             }
             ComponentId::EventComponentId(id) => {
-                self.events.remove(&id.to_string());
+                self.events.remove(id);
             }
             ComponentId::ReadModelComponentId(id) => {
-                self.read_models.remove(&id.to_string());
+                self.read_models.remove(id);
             }
         }
     }
@@ -798,19 +801,18 @@ impl ModifiableEventModel for AutomergeEventModel {
     }
 
     fn component_placed(&mut self, placement: &Placement) {
-        self.placements
-            .insert(placement.id().to_string(), placement.into());
+        self.placements.insert(placement.id(), placement.into());
     }
 
     fn placement_moved(&mut self, position: &PlacementPosition) {
-        if let Some(ref mut placement) = self.placements.get_mut(&position.id().to_string()) {
+        if let Some(ref mut placement) = self.placements.get_mut(&position.id()) {
             let PlacementPosition(_, index, lane) = position;
             placement.relocate(index.to_owned(), lane.to_owned());
         };
     }
 
     fn placement_removed(&mut self, placement_id: &PlacementId) {
-        self.placements.remove(&placement_id.to_string());
+        self.placements.remove(placement_id);
     }
 
     fn placements_shifted(&mut self, offset: usize, width: usize) {
@@ -828,7 +830,7 @@ impl ModifiableEventModel for AutomergeEventModel {
         del: usize,
         addition: &str,
     ) {
-        match self.placements.get_mut(&placement_id.to_string()) {
+        match self.placements.get_mut(placement_id) {
             Some(AutoPlacement::Interface { .. }) => (),
             Some(AutoPlacement::Command { schema, .. }) => {
                 schema.splice(index, del, addition);
@@ -915,11 +917,10 @@ impl ModifiableEventModel for AutomergeEventModel {
     }
 
     fn plus_flow(&mut self, flow_arrow: &FlowArrow) {
-        self.flows
-            .insert(flow_arrow.id().to_string(), flow_arrow.into());
+        self.flows.insert(flow_arrow.id(), flow_arrow.into());
     }
 
     fn minus_flow(&mut self, flow_id: &FlowId) {
-        self.flows.remove(&flow_id.to_string());
+        self.flows.remove(flow_id);
     }
 }

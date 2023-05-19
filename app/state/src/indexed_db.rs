@@ -104,19 +104,22 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
                     EventModelState::BeforeCreation => (),
                     EventModelState::Deleted(_) => (),
                     EventModelState::EventModel(m) => {
-                        let model = Model {
-                            id: id.to_string(),
-                            user: self.user.to_owned(),
-                            name: m.name().into(),
-                            description: m.description().to_owned(),
-                        };
-                        let patch = Patch {
-                            model: id.to_string(),
-                            data: self.save_incremental(),
-                        };
-                        save(model, patch)
-                            .await
-                            .map_err(|e| IndexedDbError::PatchSave(format!("{:?}", e)))?;
+                        let data = self.save_incremental();
+                        if !data.is_empty() {
+                            let model = Model {
+                                id: id.to_string(),
+                                user: self.user.to_owned(),
+                                name: m.name().into(),
+                                description: m.description().to_owned(),
+                            };
+                            let patch = Patch {
+                                model: id.to_string(),
+                                data,
+                            };
+                            save(model, patch)
+                                .await
+                                .map_err(|e| IndexedDbError::PatchSave(format!("{:?}", e)))?;
+                        }
                     }
                 }
 

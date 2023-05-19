@@ -29,7 +29,7 @@ const authentication = (async ({ event, resolve }) => {
 
 const authorization = (async ({ event, resolve }) => {
   if (!event.url.pathname.startsWith('/auth')) {
-    if (!event.locals.getSession()) {
+    if (!(await event.locals.getSession())) {
       throw redirect(303, '/auth/sign-in')
     }
   }

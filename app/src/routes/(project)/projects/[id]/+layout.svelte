@@ -160,7 +160,7 @@
   <Drawer placement="left" hidden={false}>
     <Sidebar name={$grid?.name ?? "Project Name"}
              description={$grid?.description ?? "Project Description"}
-             class={leftNavOpen ? 'w-[417px]' : 'w-[240px]'}>
+             class={leftNavOpen ? 'w-[417px]' : 'w-[160px]'}>
       <Accordion class="grow-1 flex flex-col">
         <SidebarContainer
           src={DesignLogo}
@@ -262,7 +262,7 @@
 
   <main
     class="relative left-0 right-0 transition-all duration-[200ms] pt-16"
-    class:ml-[240px]={!leftNavOpen}
+    class:ml-[160px]={!leftNavOpen}
     class:ml-[417px]={leftNavOpen}
     class:ease-in={leftNavOpen} >
     <slot />

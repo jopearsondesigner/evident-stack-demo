@@ -535,7 +535,7 @@
   <div class="text-center w-full inline-flex justify-center items-center p px-6">
     <Icon name="warning" pathName={Warning} class="mr-1" />
     <span class="whitespace-nowrap text-sm text-body"
-      >Are you sure you want to delete this Event Modal?</span
+      >Are you sure you want to delete this Event Model?</span
     >
   </div>
   <div class="my-3 text-center w-full inline-flex justify-center items-center p px-6">

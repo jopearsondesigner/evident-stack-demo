@@ -15,7 +15,7 @@
   export let from: FlowPort;
   export let color: string;
   export let strokeWidth: number;
-  export let dashed: boolean;
+  export let dashed: boolean | undefined;
   export let refreshTime: number;
   export let curveShapeFactor: number;
   export let boundingParent: SVGSVGElement;

@@ -1,4 +1,4 @@
-import { FlowAnchor, type Decider, type DropTargetStatus, type Flow, type FlowCursor, type FlowPort, type LaneKind, type PlacementType } from "../Grid";
+import { FlowAnchor, type Decider, type DropTargetStatus, type Flow, type FlowCursor, type FlowPort, type LaneKind, type LinkingFlowColor, type PlacementType } from "../Grid";
 
 // Types
 export interface WithDropTargetStatus { targetStatus: DropTargetStatus}
@@ -465,6 +465,25 @@ export const linkingFlowFromState = (state: DraggingState): Flow | void => {
         id: "linking",
         to,
         from,
-        dashed: false
+        dashed: true,
+        color: linkingFlowColor(state),
+        strokeWidth: 2,
     }
+}
+
+const linkingFlowColor = (state: DraggingState): LinkingFlowColor => {
+    if (state.kind === DraggingStateKind.FLOW) {
+        const { target } = state.value;
+
+        if (target && target.placementId) {
+            switch (target.targetStatus) {
+                case "bad":
+                    return "red";
+                case "good":
+                    return "green";
+            }
+        }
+    }
+
+    return "black";
 }

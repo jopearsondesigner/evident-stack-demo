@@ -601,14 +601,7 @@
   timeline_placements={$grid?.timeline}
   streams={$grid?.streams}
   default_stream_placements={$grid?.default_stream}
-  flows={$grid?.flows.map(({ id, to, from }) => {
-    return {
-      id,
-      to: { placement_id: to.placement_id, anchor: to.anchor, kind: 'FlowPort' },
-      from: { placement_id: from.placement_id, anchor: from.anchor, kind: 'FlowPort' },
-      dashed: false,
-    };
-  })}
+  flows={$grid?.flows}
   column_count={$grid?.column_count || 0}
 />
 

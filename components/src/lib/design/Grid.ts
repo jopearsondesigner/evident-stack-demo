@@ -60,7 +60,9 @@ export type Flow = {
   id: string;
   to: FlowPort | FlowCursor;
   from: FlowPort;
-  dashed: boolean,
+  dashed?: boolean,
+  color?: string,
+  strokeWidth?: number,
 };
 
 export type FlowPort = {
@@ -206,3 +208,4 @@ export type GridMode = 'loading' | 'navigation' | 'editing' | 'disambiguating' |
 export type CursorMode = 'editing' | 'navigation' | 'linking' | 'other';
 export type LaneKind = 'audience' | 'stream';
 export type DropTargetStatus = 'good' | 'bad';
+export type LinkingFlowColor = "red" | "green" | "black";

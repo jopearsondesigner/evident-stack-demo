@@ -14,9 +14,7 @@
     type WithSourceEffect,
     type FlowPortSource,
     DEFAULT_LANE,
-
     linkingFlowFromState
-
   } from './grid/util';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
@@ -37,10 +35,7 @@
     type Disambiguation,
     type CursorMode,
     type GridMode,
-    type Flow,
-
-    FlowAnchor
-
+    type Flow
   } from './Grid';
   import { onMount } from 'svelte';
   import { itemAtCursor } from './Grid';
@@ -387,7 +382,7 @@
     };
 
     dragState = evolveAndReactDraggingState(dragState, command);
-  }
+  };
 
   $: allFlows = linkingFlow ? flows.concat(linkingFlow) : flows;
 </script>
@@ -399,8 +394,6 @@
 />
 
 <h3>{mode}</h3>
-<h3>{JSON.stringify(linkingFlow)}</h3>
-
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <div
     bind:this={containerRef}

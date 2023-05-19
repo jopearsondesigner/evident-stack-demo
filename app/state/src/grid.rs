@@ -304,6 +304,8 @@ pub struct FlowPort {
     placement_id: Uuid,
     #[wasm_bindgen(getter_with_clone)]
     pub anchor: FlowAnchor,
+    #[wasm_bindgen(getter_with_clone)]
+    pub kind: String
 }
 
 #[wasm_bindgen]
@@ -319,6 +321,7 @@ impl From<event_models::Port> for FlowPort {
         Self {
             placement_id: value.placement_id().to_owned(),
             anchor: value.anchor().to_owned().into(),
+            kind: "FlowPort".to_string()
         }
     }
 }

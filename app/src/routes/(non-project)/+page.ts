@@ -4,7 +4,7 @@ import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async (event) => {
-  let { session, supabase } = await event.parent()
+  let { session } = await event.parent()
   if (browser) {
     if (session) {
       const projects = await models_for_user(session.user.id);
@@ -12,8 +12,8 @@ export const load: PageLoad = async (event) => {
     }
     throw error(404, "not found")
   } else {
-    const _projects = await supabase.from("models").select();
     // TODO: map `_projects` from remote into Model[]
+    // const projects = await supabase.from("models").select();
     return { projects:  []}
   }
 }

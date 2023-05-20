@@ -46,6 +46,7 @@ export const findBezierControlPoint = (origin: Point, mid: Point, anchor: FlowAn
     case FlowAnchor.Right:
       return { ...origin, x: mid.x + curveShapeFactor * (mid.x / 4) };
   }
+  return null;
 };
 
 export const pointFromRect = ({ x, y }: DOMRect): Point => ({

@@ -4,7 +4,6 @@
   import { onMount } from "svelte";
   import type { LayoutData } from "./$types";
 
-
   // === Authentication Handling
 
   export let data: LayoutData;

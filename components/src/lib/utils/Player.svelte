@@ -1,7 +1,9 @@
-<script lang="ts">
+<script>
+// @ts-nocheck
+
   import { onMount } from 'svelte';
 
-  let LottiePlayer: any;
+  let LottiePlayer;
 
   onMount(async () => {
     const module = await import('@lottiefiles/svelte-lottie-player');
@@ -24,7 +26,7 @@
     'controls'
   ];
 
-  export let src: string;
+  export let src;
   export let width = 'auto';
   export let height = 'auto';
 </script>

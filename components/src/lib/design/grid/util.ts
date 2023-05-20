@@ -21,7 +21,7 @@ export interface PlacementSource {
 
 export interface FlowPortSource {
     placement: PlacementSource,
-    position: FlowAnchor 
+    position: FlowAnchor
 }
 
 export type AudienceTarget = {

@@ -539,6 +539,10 @@
       on:move_interface_placement={handleMoveInterfacePlacement}
       on:move_timeline_placement={handleMoveTimelinePlacement}
       on:move_event_placement={handleMoveEventPlacement}
+      on:placement_drag_start={handlePlacementDragStart}
+      on:cell_drag_enter={handleCellDragEnter}
+      on:cell_drag_drop={handleCellDragDrop}
+      on:flow_drag_start={handleFlowDragStart}
       row={cursor_row}
       column={cursor_column}
       item={cursor_item}

@@ -7,6 +7,7 @@
   import Event from './Event.svelte';
   import ReadModel from './ReadModel.svelte';
   import EmptyCell from './EmptyCell.svelte';
+  import type { DragEventHandler } from 'svelte/elements';
 
   export let row: number;
   export let column: number;
@@ -15,6 +16,8 @@
 
   $: gridRow = row + 1;
   $: gridColumn = column + 1;
+  $: maybePlacement = item.placement?.id
+  $: maybePlacementKind = item.type;
 
   // Input Focus on Edit
 
@@ -47,6 +50,7 @@
   const dispatch = createEventDispatcher();
 
   const forward = (event: CustomEvent) => {
+    console.warn("CURSOR FORWARDING (type, detail", event.type, event.detail);
     dispatch(event.type, event.detail);
   };
 
@@ -113,12 +117,38 @@
       navigationKeyboardHandler(e);
     }
   };
+
+  const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
+    console.warn("CURSOR -> cell_drag_enter");
+    e.stopPropagation();
+    dispatch('cell_drag_enter', {
+      column,
+      row,
+      placementId: maybePlacement,
+      placementKind: maybePlacementKind
+    });
+  };
+
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+  };
+
+  const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
+    console.warn("CURSOR -> cell_drag_drop");
+    dispatch('cell_drag_drop');
+  };
 </script>
 
 <svelte:window on:keydown={keyboardHandler} />
 
 {#if mode === 'editing'}
   <div
+    on:dragenter={handleDragEnter}
+    on:dragover={(e) => {
+      e.preventDefault();
+    }}
+    on:dragleave={handleDragLeave}
+    on:drop={handleDragDrop}
     bind:this={element}
     class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300 bg-gray-canvas dark:bg-dark-1"
     style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
@@ -138,6 +168,12 @@
   </div>
 {:else}
   <div
+    on:dragenter={handleDragEnter}
+    on:dragover={(e) => {
+      e.preventDefault();
+    }}
+    on:dragleave={handleDragLeave}
+    on:drop={handleDragDrop}
     bind:this={element}
     on:click={beginEditing}
     class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300"
@@ -151,6 +187,8 @@
           {column}
           name={item.placement.name}
           description={item.placement.description}
+          on:placement_drag_start={forward}
+          on:flow_drag_start={forward}
           on:connect_flow={forward}
         />
       {:else if item.type == 'timeline'}
@@ -161,6 +199,8 @@
             {column}
             name={item.placement.name}
             description={item.placement.description}
+            on:placement_drag_start={forward}
+            on:flow_drag_start={forward}
             on:connect_flow={forward}
           />
         {:else if item.placement.kind == 'readModel'}
@@ -170,6 +210,8 @@
             {column}
             name={item.placement.name}
             description={item.placement.description}
+            on:placement_drag_start={forward}
+            on:flow_drag_start={forward}
             on:connect_flow={forward}
           />
         {/if}
@@ -180,6 +222,8 @@
           {column}
           name={item.placement.name}
           description={item.placement.description}
+          on:placement_drag_start={forward}
+          on:flow_drag_start={forward}
           on:connect_flow={forward}
         />
       {/if}

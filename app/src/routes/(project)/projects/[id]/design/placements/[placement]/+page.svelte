@@ -20,6 +20,7 @@
   import type { PageData } from "./$types";
   import ImageUpload from "$components/ImageUpload.svelte";
   import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
 
   export let data: PageData;
 
@@ -57,7 +58,7 @@
   };
 
   const handleClose = () => {
-    goto('../..')
+    goto(`/projects/${$page.params.id}/design`, { noScroll: true })
   }
 
   let editable = false;
@@ -81,7 +82,7 @@
   }
 </style>
 
-<Drawer placement="right" class="" drawerRight>
+<Drawer placement="right" class="" drawerRight hidden={false} on:close={handleClose}>
   <aside
     class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3">
     {#if placementDetails}

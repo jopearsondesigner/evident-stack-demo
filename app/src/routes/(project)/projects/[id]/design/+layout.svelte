@@ -15,8 +15,8 @@
   }
 
   const handleNavigateToImportJson = (e: CustomEvent) => {
-    debug("handling navigateToPlacementDetails", e, `/projects/${$page.params.id}/design/placements/import?column=${e.detail.column}`);
-    goto(`/projects/${$page.params.id}/design/placements/import?column=${e.detail.column}`, {noScroll: true})
+    debug("handling navigateToPlacementDetails", e, `/projects/${$page.params.id}/design/import?column=${e.detail.column}`);
+    goto(`/projects/${$page.params.id}/design/import?column=${e.detail.column}`, {noScroll: true})
   }
 </script>
 

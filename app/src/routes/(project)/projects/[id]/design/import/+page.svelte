@@ -13,7 +13,11 @@
   const { decider } = data;
 
   let offset: number;
-  $: offset = parseIntOr($page.url.searchParams.get('offset'), 0);
+  $: offset = parseIntOr($page.url.searchParams.get('column'), 0);
+
+  const handleClose = async () => {
+    await goto(`/projects/${$page.params.id}/design`, { noScroll: true });
+  }
 
   const handleImportJson = async (e: SubmitEvent) => {
     const formData = new FormData(e.target as HTMLFormElement);
@@ -24,7 +28,7 @@
   };
 </script>
 
-<Modal open={true} size="xs" autoclose title="Import JSON File">
+<Modal open={true} size="xs" autoclose title="Import JSON File" on:close={handleClose}>
   <div class="text-center w-full inline-flex justify-center items-center p px-6">
     <Icon name="file" pathName={FileIcon} class="mr-1" />
     <form id="importModel" on:submit|preventDefault={handleImportJson}>
@@ -47,7 +51,7 @@
   <div slot="footer" class="mx-3 flex items-end space-x-3">
     <button
       class="text-sm text-focus hover:text-[#054FDE] transition duration-200 ease-in underline"
-      on:click|preventDefault={() => goto('..')}>Cancel</button>
+      on:click|preventDefault={handleClose}>Cancel</button>
     <Button input boundTo="submit-form" tabindex={0} color="default" size="sm" label="Done" />
   </div>
 </Modal>

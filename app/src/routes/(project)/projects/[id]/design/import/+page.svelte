@@ -25,25 +25,21 @@
     let buffer = await json.arrayBuffer();
     let bytes = new Uint8Array(buffer);
     await decider?.import_json(bytes, offset);
+    handleClose();
   };
 </script>
 
 <Modal open={true} size="xs" autoclose title="Import JSON File" on:close={handleClose}>
   <div class="text-center w-full inline-flex justify-center items-center p px-6">
-    <Icon name="file" pathName={FileIcon} class="mr-1" />
     <form id="importModel" on:submit|preventDefault={handleImportJson}>
-      <div class="w-full max-w-xs mt-16">
+      <div class="w-full max-w-xs">
         <label class="label" for="json">
-          <span class="label-text">Event Model JSON File</span>
+          <input
+            type="file"
+            name="json"
+            accept="application/json" />
+          <Icon name="file" pathName={FileIcon} />
         </label>
-        <input
-          type="file"
-          name="json"
-          accept="application/json" />
-        <label class="label" for="offset">
-          <span class="label-text">Offset</span>
-        </label>
-        <input type="number" name="offset" class="input input-bordered w-full max-w-xs" />
       </div>
       <input type="submit" id="submit-form" class="hidden" />
     </form>

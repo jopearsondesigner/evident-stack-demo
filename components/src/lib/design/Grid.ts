@@ -91,6 +91,7 @@ export type Audience = {
   placements: Array<InterfacePlacement>;
 };
 
+// TODO: Add stream and audice id where applicable - write method for rowTarget from
 export type InterfacePlacement = {
   id: string;
   interface: string;
@@ -114,6 +115,7 @@ export type EventPlacement = {
   name: string;
   description: string;
 };
+// End TODO
 
 export type Stream = {
   id?: string;

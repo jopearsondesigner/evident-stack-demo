@@ -119,7 +119,12 @@
   };
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn("CURSOR -> cell_drag_enter");
+    console.warn("CURSOR -> cell_drag_enter", {
+      column,
+      row,
+      placementId: maybePlacement,
+      placementKind: maybePlacementKind
+    });
     e.stopPropagation();
     dispatch('cell_drag_enter', {
       column,

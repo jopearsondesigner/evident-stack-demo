@@ -1,5 +1,4 @@
 import { FlowAnchor, type Decider, type DropTargetStatus, type Flow, type FlowCursor, type FlowPort, type LaneKind, type LinkingFlowColor, type PlacementType } from "../Grid";
-import FlowPort from "./FlowPort.svelte";
 
 // Types
 export interface WithDropTargetStatus { targetStatus: DropTargetStatus}
@@ -46,6 +45,7 @@ export type RowTarget = | AudienceTarget | StreamTarget | TimelineTarget;
 export interface CellTarget {
     column: number,
     row: RowTarget,
+    // Todo: Nest both placementId and placementKind under one optional - we either have both or neither
     placementId?: string,
     placementKind?: PlacementType,
 }
@@ -276,27 +276,14 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                         case DraggingStateKind.FLOW: {
                             if (state.value.target && state.value.target.targetStatus === "good") {
                                 const { source, target } = state.value;
-                                if (target.placementId) {
-                                    const [sourceAnchor, targetAnchor] = (() => {
-                                        switch ([source.placement.placementKind, target.placementKind]) {
-                                            case ["interface", "command"]:
-                                                return ["Bottom", "Top"]
-                                            case ["command", "event"]:
-                                                return ["Bottom", "Top"]
-                                            case ["event", "readModel"]:
-                                                return ["Top", "Bottom"]
-                                            case ["readModel", "interface"]:
-                                                return ["Top", "Bottom"]
-                                            default: 
-                                                return ["Top", "Bottom"]
-                                        }
-                                    })();
+                                if (target.placementId && target.placementKind) {
+                                    const [sourceAnchor, targetAnchor] = defaultFlowAnchorsByPlacementType(source.placement.placementKind, target.placementKind)
 
                                     reactionDecider.connect_flow(
                                         source.placement.placementId,
-                                        sourceAnchor,
+                                        flowAnchorToString(sourceAnchor),
                                         target.placementId,
-                                        targetAnchor,
+                                        flowAnchorToString(targetAnchor),
                                     )
                                 }
                             }
@@ -427,8 +414,56 @@ const flowTargetDefaultPort = (source: PlacementType, target: PlacementType): Fl
     else if (source === "readModel" && target === "interface") {
         return FlowAnchor.Bottom;
     }
-    else {
+    // START IMPOSSIBLE LINKS THAT STILL NEED TO BE DISPLAYED ON A 'bad' TARGET
+    else if (source === "command" && target === "readModel") {
+        return FlowAnchor.Left;
+    }
+    else if (source === "readModel" && target === "command") {
+        return FlowAnchor.Left;
+    }
+    else if (source === "readModel" && target === "readModel") {
+        return FlowAnchor.Left;
+    }
+    else if (source === "command" && target === "command") {
+        return FlowAnchor.Left;
+    }
+    else if (source === "readModel" && target === "event") {
+        return FlowAnchor.Top;
+    }
+    else if (source === "command" && target ==="interface") {
         return FlowAnchor.Bottom;
+    // END IMPOSSIBLE
+    } else {
+        return FlowAnchor.Bottom;
+    }
+}
+
+const defaultFlowAnchorsByPlacementType = (source: PlacementType, target: PlacementType): [FlowAnchor, FlowAnchor] => {
+    if (source === "interface" && target === "command") {
+        return [FlowAnchor.Bottom, FlowAnchor.Top];
+    } else if (source === "command" && target === "event") {
+        return [FlowAnchor.Bottom, FlowAnchor.Top];
+    } else if (source === "event" && target === "readModel") {
+        return [FlowAnchor.Top, FlowAnchor.Bottom];
+    } else if (source === "readModel" && target === "interface") {
+        return [FlowAnchor.Top, FlowAnchor.Bottom];
+    } else {
+        return [FlowAnchor.Top, FlowAnchor.Bottom];
+    }
+}
+
+const flowAnchorToString = (anchor: FlowAnchor): string => {
+    switch (anchor) {
+        case FlowAnchor.Top:
+            return "Top";
+        case FlowAnchor.Bottom:
+            return "Bottom";
+        case FlowAnchor.Left:
+            return "Left";
+        case FlowAnchor.Right:
+            return "Right";
+        case FlowAnchor.None:
+            return "None";
     }
 }
 

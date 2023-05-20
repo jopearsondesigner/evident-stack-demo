@@ -19,6 +19,7 @@
 
   import type { PageData } from "./$types";
   import ImageUpload from "$components/ImageUpload.svelte";
+  import { goto } from "$app/navigation";
 
   export let data: PageData;
 
@@ -44,7 +45,6 @@
   let event: boolean = true;
   let command: boolean = false;
   let readModel: boolean = false;
-  let hiddenRight: boolean = true;
   let placementDetails: boolean = true;
   let interfaceDetails: boolean = false;
 
@@ -55,6 +55,10 @@
       console.log('TODO: create model');
     }
   };
+
+  const handleClose = () => {
+    goto('../..')
+  }
 
   let editable = false;
   function handleKeydown() {}
@@ -77,7 +81,7 @@
   }
 </style>
 
-<Drawer placement="right" class="" bind:hidden={hiddenRight} drawerRight>
+<Drawer placement="right" class="" drawerRight>
   <aside
     class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3">
     {#if placementDetails}
@@ -172,7 +176,7 @@
           <div class="mt-6 mx-3 space-x-3 flex justify-end">
             <button
               class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-              on:click={() => (hiddenRight = true)}>
+              on:click|preventDefault={handleClose}>
               cancel
             </button>
             <Button color="default" size="sm" label="Save" on:click class="" />
@@ -269,7 +273,7 @@
             <div class="mt-6 space-x-3 col-span-1 place-self-center justify-self-end">
               <button
                 class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-                on:click={() => (hiddenRight = true)}>
+                on:click|preventDefault={handleClose}>
                 cancel
               </button>
               <Button color="default" size="sm" label="Save" on:click class="" />

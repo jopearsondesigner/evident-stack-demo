@@ -13,7 +13,11 @@
   export let permanent = false;
   export let backdropClasses = 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80';
   const dispatch = createEventDispatcher();
-  $: dispatch(open ? 'open' : 'hide');
+
+  const handleClose = (e: { target?: any; preventDefault?: any }) => {
+    e.preventDefault();
+    dispatch('close')
+  };
 
   function prepareFocus(node: HTMLElement) {
     const walker = document.createTreeWalker(node, NodeFilter.SHOW_ELEMENT);
@@ -64,12 +68,9 @@
   };
   const onAutoClose = (e: { target: any }) => {
     const target = e.target;
-    if (autoclose && target?.tagName === 'BUTTON') hide(e);
+    if (autoclose && target?.tagName === 'BUTTON') handleClose(e);
   };
-  const hide = (e: { target?: any; preventDefault?: any }) => {
-    e.preventDefault();
-    open = false;
-  };
+
   let frameClass: string;
   $: frameClass = classNames(
     'relative flex flex-col mx-auto border border-border-light dark:border-border-dark',
@@ -86,7 +87,7 @@
     return x || y || e.preventDefault();
   }
   function handleKeys(e: { key?: any; target?: any; preventDefault?: any }) {
-    if (e.key === 'Escape' && !permanent) return hide(e);
+    if (e.key === 'Escape' && !permanent) return handleClose(e);
   }
 </script>
 
@@ -106,8 +107,7 @@
     )}
     tabindex="-1"
     aria-modal="true"
-    role="dialog"
-  >
+    role="dialog">
     <div class="flex relative {sizes[size]} w-full max-h-full">
       <!-- Modal content -->
       <Frame shadow {...$$restProps} class={frameClass}>
@@ -115,8 +115,7 @@
         {#if $$slots.header || title}
           <Frame
             color={$$restProps.color}
-            class="flex justify-between items-center p-3 border-b border-border-gray-secondary dark:border-border-dark"
-          >
+            class="flex justify-between items-center p-3 border-b border-border-gray-secondary dark:border-border-dark">
             <slot name="header">
               <h3
                 class="text-default w-full text-center font-extrabold {$$restProps.color}
@@ -126,15 +125,14 @@
                 {title}
               </h3>
             </slot>
-            {#if !permanent}<CloseButton name="Close modal" size={12} on:click={hide} />{/if}
+            {#if !permanent}<CloseButton name="Close modal" size={12} on:click={handleClose} />{/if}
           </Frame>
         {:else if !permanent}
           <CloseButton
             name="Close modal"
             size={12}
             btnClass="absolute top-3 right-2.5"
-            on:click={hide}
-          />
+            on:click={handleClose} />
         {/if}
         <!-- Modal body -->
         <div

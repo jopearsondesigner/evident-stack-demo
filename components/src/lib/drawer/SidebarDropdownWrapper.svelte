@@ -2,7 +2,6 @@
 	import classNames from 'classnames';
 	import { slide } from 'svelte/transition';
 	import { sineIn } from 'svelte/easing';
-	import { slideRight } from 'svelte-layout-aware-transitions';
 	import Icon from '../Icon.svelte';
 	import OpenRight from '../icons/OpenRight.svelte';
 	import OpenDown from '../icons/OpenDown.svelte';
@@ -68,10 +67,7 @@
 		</button>
 		<div class={classNames(horizontalWrapperClass)}>
 			{#if isHorizontalOpen}
-				<ul
-					class={classNames(horizontalULClass)}
-					transition:slideRight={{ x: 240, duration: 200, easing: sineIn }}
-				>
+				<ul class={classNames(horizontalULClass)}>
 					<slot />
 				</ul>
 			{/if}

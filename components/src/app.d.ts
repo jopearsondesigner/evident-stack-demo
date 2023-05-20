@@ -9,7 +9,6 @@ declare namespace App {
   // interface PageData {}
   // interface Platform {}
 }
-declare module 'svelte-layout-aware-transitions';
 
 interface HTMLOrSVGElement {
   autofocus: boolean;

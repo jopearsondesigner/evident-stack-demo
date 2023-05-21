@@ -8,6 +8,8 @@ use js_sys::Array;
 use uuid::Uuid;
 use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
 
+use crate::parse_uuid;
+
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct EmptyCell;
@@ -305,7 +307,7 @@ pub struct FlowPort {
     #[wasm_bindgen(getter_with_clone)]
     pub anchor: FlowAnchor,
     #[wasm_bindgen(getter_with_clone)]
-    pub kind: String
+    pub kind: String,
 }
 
 #[wasm_bindgen]
@@ -321,7 +323,7 @@ impl From<event_models::Port> for FlowPort {
         Self {
             placement_id: value.placement_id().to_owned(),
             anchor: value.anchor().to_owned().into(),
-            kind: "FlowPort".to_string()
+            kind: "FlowPort".to_string(),
         }
     }
 }
@@ -376,6 +378,22 @@ pub enum EventModelGridState {
     Unavailable,
 }
 
+#[derive(Debug, Clone)]
+pub enum GridPlacement {
+    Interface(InterfacePlacement),
+    Timeline(TimelinePlacement),
+    Event(EventPlacement),
+}
+
+#[wasm_bindgen(getter_with_clone)]
+#[derive(Debug, Clone)]
+pub struct GridPlacementMetadata {
+    #[wasm_bindgen(readonly)]
+    pub name: String,
+    #[wasm_bindgen(readonly)]
+    pub description: String,
+}
+
 #[wasm_bindgen(getter_with_clone)]
 #[derive(Debug, Clone)]
 pub struct EventModelGrid {
@@ -395,12 +413,40 @@ pub struct EventModelGrid {
     streams: Vec<Stream>,
     default_stream: HashMap<usize, EventPlacement>,
     flows: Vec<FlowArrow>,
+
+    placements: HashMap<Uuid, GridPlacement>,
 }
 
 #[wasm_bindgen]
 impl EventModelGrid {
     pub fn id(&self) -> String {
         self.id.to_string()
+    }
+
+    pub fn placement_metadata_by_id(
+        &self,
+        maybe_placement_id: &str,
+    ) -> Option<GridPlacementMetadata> {
+        return if let Ok(placement_id) = parse_uuid(maybe_placement_id.to_string()) {
+            self.placements
+                .get(&placement_id)
+                .map(|placement| match placement {
+                    GridPlacement::Interface(p) => GridPlacementMetadata {
+                        name: p.name.to_owned(),
+                        description: p.description.to_owned(),
+                    },
+                    GridPlacement::Timeline(p) => GridPlacementMetadata {
+                        name: p.name.to_owned(),
+                        description: p.description.to_owned(),
+                    },
+                    GridPlacement::Event(p) => GridPlacementMetadata {
+                        name: p.name.to_owned(),
+                        description: p.description.to_owned(),
+                    },
+                })
+        } else {
+            None
+        };
     }
 
     #[wasm_bindgen(getter)]
@@ -475,6 +521,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 default_stream: Default::default(),
                 flows: Default::default(),
                 column_count: 0,
+                placements: Default::default(),
             },
             EventModelState::Deleted(id) => EventModelGrid {
                 state: EventModelGridState::Unavailable,
@@ -488,6 +535,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 default_stream: Default::default(),
                 flows: Default::default(),
                 column_count: 0,
+                placements: Default::default(),
             },
             EventModelState::EventModel(model) => {
                 let column_count: usize = *model
@@ -497,10 +545,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                     .max()
                     .unwrap_or(&0)
                     + RIGHT_BUFFER;
-                let mut grouped_audiences: HashMap<
-                    Option<Uuid>,
-                    HashMap<usize, InterfacePlacement>,
-                > = model
+                let interface_placements: HashMap<Uuid, (Option<Uuid>, InterfacePlacement)> = model
                     .placements()
                     .iter()
                     .filter_map(|(_, g)| match g {
@@ -511,54 +556,111 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                             interface,
                         } => model.interfaces().get(interface).map(|i| {
                             (
-                                audience,
-                                index,
-                                interface_placement(*id, *index, i.to_owned()),
+                                *id,
+                                (*audience, interface_placement(*id, *index, i.to_owned())),
                             )
                         }),
                         _ => None,
                     })
-                    .into_group_map_by(|(audience, _, _)| *audience)
+                    .collect();
+                let mut grouped_audiences: HashMap<
+                    Option<Uuid>,
+                    HashMap<usize, InterfacePlacement>,
+                > = interface_placements
+                    .clone()
+                    .into_iter()
+                    .into_group_map_by(|(_, (audience, _))| *audience)
                     .into_iter()
                     .map(|(audience, tuples)| {
                         (
-                            *audience,
+                            audience,
                             tuples
                                 .into_iter()
-                                .map(|(_, index, placement)| (*index, placement))
+                                .map(|(_, (_, placement))| (placement.index, placement))
                                 .collect::<HashMap<usize, InterfacePlacement>>(),
                         )
                     })
                     .collect();
 
+                let timeline_placements: HashMap<Uuid, TimelinePlacement> = model
+                    .placements()
+                    .iter()
+                    .filter_map(|(_, g)| match g {
+                        Placement::Command {
+                            index,
+                            id,
+                            command,
+                            schema: _,
+                        } => model
+                            .commands()
+                            .get(command)
+                            .map(|c| (*id, command_placement(*id, *index, c.to_owned()))),
+                        Placement::ReadModel {
+                            id,
+                            index,
+                            read_model,
+                            schema: _,
+                        } => model
+                            .read_models()
+                            .get(read_model)
+                            .map(|r| (*id, read_model_placement(*id, *index, r.to_owned()))),
+                        _ => None,
+                    })
+                    .collect();
+
+                let event_placements: HashMap<Uuid, (Option<Uuid>, EventPlacement)> = model
+                    .placements()
+                    .iter()
+                    .filter_map(|(_, g)| match g {
+                        Placement::Event {
+                            index,
+                            stream,
+                            id,
+                            event,
+                            schema: _,
+                        } => model
+                            .events()
+                            .get(event)
+                            .map(|e| (*id, (*stream, event_placement(*id, *index, e.to_owned())))),
+                        _ => None,
+                    })
+                    .collect();
                 let mut grouped_streams: HashMap<Option<Uuid>, HashMap<usize, EventPlacement>> =
-                    model
-                        .placements()
-                        .iter()
-                        .filter_map(|(_, g)| match g {
-                            Placement::Event {
-                                index,
-                                stream,
-                                id,
-                                event,
-                                schema: _,
-                            } => model.events().get(event).map(|e| {
-                                (stream, index, event_placement(*id, *index, e.to_owned()))
-                            }),
-                            _ => None,
-                        })
-                        .into_group_map_by(|(stream, _, _)| *stream)
+                    event_placements
+                        .clone()
+                        .into_iter()
+                        .into_group_map_by(|(_, (stream, _))| *stream)
                         .into_iter()
                         .map(|(stream, tuples)| {
                             (
-                                *stream,
+                                stream,
                                 tuples
                                     .into_iter()
-                                    .map(|(_, index, placement)| (*index, placement))
+                                    .map(|(_, (_, placement))| (placement.index, placement))
                                     .collect::<HashMap<usize, EventPlacement>>(),
                             )
                         })
                         .collect();
+
+                let mut placements: HashMap<Uuid, GridPlacement> = HashMap::new();
+
+                placements.extend(
+                    interface_placements
+                        .into_iter()
+                        .map(|(id, (_, p))| (id, GridPlacement::Interface(p))),
+                );
+
+                placements.extend(
+                    timeline_placements
+                        .clone()
+                        .into_iter()
+                        .map(|(id, p)| (id, GridPlacement::Timeline(p))),
+                );
+                placements.extend(
+                    event_placements
+                        .into_iter()
+                        .map(|(id, (_, p))| (id, GridPlacement::Event(p))),
+                );
 
                 EventModelGrid {
                     state: EventModelGridState::Available,
@@ -582,30 +684,9 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                                 })
                         })
                         .collect(),
-                    timeline: model
-                        .placements()
-                        .iter()
-                        .filter_map(|(_, g)| match g {
-                            Placement::Command {
-                                index,
-                                id,
-                                command,
-                                schema: _,
-                            } => model
-                                .commands()
-                                .get(command)
-                                .map(|c| (*index, command_placement(*id, *index, c.to_owned()))),
-                            Placement::ReadModel {
-                                id,
-                                index,
-                                read_model,
-                                schema: _,
-                            } => model
-                                .read_models()
-                                .get(read_model)
-                                .map(|r| (*index, read_model_placement(*id, *index, r.to_owned()))),
-                            _ => None,
-                        })
+                    timeline: timeline_placements
+                        .into_values()
+                        .map(|p| (p.index, p))
                         .collect(),
                     streams: model
                         .streams()
@@ -625,6 +706,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                     default_stream: grouped_streams.remove(&None).unwrap_or_default(),
                     flows: model.flows().values().cloned().map(Into::into).collect(),
                     column_count,
+                    placements,
                 }
             }
         }

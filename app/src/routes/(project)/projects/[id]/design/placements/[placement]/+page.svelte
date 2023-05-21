@@ -1,33 +1,35 @@
 <script lang="ts">
-  import Drawer from "$components/drawer/Drawer.svelte";
-  import Icon from "$components/Icon.svelte";
+  import Drawer from '$components/drawer/Drawer.svelte';
+  import Icon from '$components/Icon.svelte';
   import EventIcon from '$components/icons/EventIcon.svelte';
   import CommandIcon from '$components/icons/CommandIcon.svelte';
   import ReadModelIcon from '$components/icons/ReadModelIcon.svelte';
   import InterfaceIcon from '$components/icons/InterfaceIcon.svelte';
   import InterfaceBlank from '$components/assets/images/product/design/InterfaceBlank.svg';
   import InterfaceJob from '$components/assets/images/product/design/InterfaceJob.svg';
-  import Button from "$components/Button.svelte";
-  import Form from "$components/form/Form.svelte";
-  import Select from "$components/form/Select.svelte";
-  import Input from "$components/form/Input.svelte";
+  import Button from '$components/Button.svelte';
+  import Form from '$components/form/Form.svelte';
+  import Select from '$components/form/Select.svelte';
+  import Input from '$components/form/Input.svelte';
   import Label from '$components/form/Label.svelte';
+  import ImageUpload from '$components/ImageUpload.svelte';
 
   import CodeMirror from 'svelte-codemirror-editor';
   import { javascript } from '@codemirror/lang-javascript';
   import { oneDark } from '@codemirror/theme-one-dark';
 
-  import type { PageData } from "./$types";
-  import ImageUpload from "$components/ImageUpload.svelte";
-  import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
+  import type { PageData } from './$types';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
 
   export let data: PageData;
 
   const { grid } = data;
 
-  $: name = $grid?.name;
-  $: description = $grid?.description;
+  $: placement = $grid?.placement_metadata_by_id($page.params.placement);
+
+  $: name = placement?.name;
+  $: description = placement?.description;
 
   let blank: boolean = false;
   let figma: boolean = false;

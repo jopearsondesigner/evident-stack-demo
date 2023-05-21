@@ -2,7 +2,7 @@
   import classNames from 'classnames';
   import { onMount, setContext, createEventDispatcher } from 'svelte';
   import { fade } from 'svelte/transition';
-  import { key } from '$lib/context/contextMenu.js';
+  import { key } from './contextMenu';
 
   export let divClass: string =
     'absolute grid overflow-hidden whitespace-nowrap z-40 transform w-auto rounded-lg shadow-xl border border-light dark:border-border-dark bg-white dark:bg-dark-2 py-3';

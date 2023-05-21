@@ -16,6 +16,10 @@
     DEFAULT_LANE,
     linkingFlowFromState
   } from './grid/util';
+
+  import ContextMenu from '../context/ContextMenu.svelte'
+  import ContextMenuItem from '../context/ContextMenuItem.svelte';
+  import ContextMenuDivider from '../context/ContextMenuDivider.svelte';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
 

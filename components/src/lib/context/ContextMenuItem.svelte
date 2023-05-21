@@ -1,6 +1,6 @@
 <script>
   import { onMount, getContext } from 'svelte';
-  import { key } from '$lib/context/contextMenu.js';
+  import { key } from './contextMenu.js';
 
   let liClass = 'px-1';
   export let childClass =

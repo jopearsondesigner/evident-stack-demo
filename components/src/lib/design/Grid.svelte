@@ -394,7 +394,6 @@
 />
 
 <h3>{mode}</h3>
-<h3>{ JSON.stringify(dragState) }</h3>
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <div
     bind:this={containerRef}

@@ -3,6 +3,7 @@ import { FlowAnchor, type Decider, type DropTargetStatus, type Flow, type FlowCu
 // Types
 export interface WithDropTargetStatus { targetStatus: DropTargetStatus}
 export interface WithSourceEffect { sourceEffect: SourceEffect }
+export interface WithRowIndex { rowIndex: number }
 
 export const DEFAULT_LANE = "DEFAULT_LANE";
 export type DefaultLane = "DEFAULT_LANE";
@@ -44,7 +45,7 @@ export type RowTarget = | AudienceTarget | StreamTarget | TimelineTarget;
 
 export interface CellTarget {
     column: number,
-    row: RowTarget,
+    row: RowTarget & WithRowIndex,
     // Todo: Nest both placementId and placementKind under one optional - we either have both or neither
     placementId?: string,
     placementKind?: PlacementType,

@@ -91,7 +91,6 @@ export type Audience = {
   placements: Array<InterfacePlacement>;
 };
 
-// TODO: Add stream and audice id where applicable - write method for rowTarget from
 export type InterfacePlacement = {
   id: string;
   interface: string;
@@ -115,7 +114,6 @@ export type EventPlacement = {
   name: string;
   description: string;
 };
-// End TODO
 
 export type Stream = {
   id?: string;
@@ -126,14 +124,15 @@ export type Stream = {
 export type PlacementType = 'interface' | 'command' | 'event' | 'readModel';
 export type CellType = 'interface' | 'timeline' | 'event';
 
-export type InterfacePlacementCell = { type: 'interface'; placement: InterfacePlacement };
-export type TimelinePlacementCell = { type: 'timeline'; placement: TimelinePlacement };
-export type EventPlacementCell = { type: 'event'; placement: EventPlacement };
+export type InterfacePlacementCell = { type: 'interface'; placement: InterfacePlacement, audience?: string, lane_index: number };
+export type TimelinePlacementCell = { type: 'timeline'; placement: TimelinePlacement, lane_index: undefined };
+export type EventPlacementCell = { type: 'event'; placement: EventPlacement, stream?: string, lane_index: number };
 export type EmptyCell = {
   type: CellType;
   placement?: undefined;
   audience?: string;
   stream?: string;
+  lane_index?: number;
 };
 
 export type ItemAtCursor =
@@ -157,40 +156,45 @@ export const itemAtCursor = (
 ): ItemAtCursor => {
   if (row === 0) {
     let placement = default_audience[column];
+    let lane_index = audiences.length;
     if (placementIsEmptyCell(placement)) {
-      return { type: 'interface' };
+      return { type: 'interface', lane_index: lane_index };
     } else {
-      return { type: 'interface', placement };
+      return { type: 'interface', placement, lane_index };
     }
   } else if (row - 1 < audiences.length) {
+    let lane_index = audiences.length - row;
     let audience = audiences[row - 1];
     let placement = audience?.placements[column];
     if (placementIsEmptyCell(placement)) {
-      return { type: 'interface', audience: audience?.id };
+      return { type: 'interface', audience: audience?.id, lane_index };
     } else {
-      return { type: 'interface', placement };
+      return { type: 'interface', placement, audience: audience?.id, lane_index };
     }
   } else if (row === audiences.length + 1) {
     let placement = timeline[column];
+    let lane_index = undefined;
     if (placementIsEmptyCell(placement)) {
-      return { type: 'timeline' };
+      return { type: 'timeline', lane_index };
     } else {
-      return { type: 'timeline', placement };
+      return { type: 'timeline', placement, lane_index };
     }
   } else if (row - 1 - audiences.length - 1 < streams.length) {
-    let stream = streams[row - 1 - audiences.length - 1];
+    let lane_index = row - 1 - audiences.length - 1;
+    let stream = streams[lane_index];
     let placement = stream?.placements[column];
     if (placementIsEmptyCell(placement)) {
-      return { type: 'event', stream: stream?.id };
+      return { type: 'event', stream: stream?.id, lane_index };
     } else {
-      return { type: 'event', placement };
+      return { type: 'event', placement, stream: stream?.id, lane_index };
     }
   } else if (row === 1 + audiences.length + 1 + streams.length) {
+    let lane_index = streams.length;
     let placement = default_stream[column];
     if (placementIsEmptyCell(placement)) {
-      return { type: 'event' };
+      return { type: 'event', lane_index };
     } else {
-      return { type: 'event', placement };
+      return { type: 'event', placement, lane_index };
     }
   }
   throw new Error('No valid item at cursor!');

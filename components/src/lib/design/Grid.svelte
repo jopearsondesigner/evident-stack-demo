@@ -548,6 +548,11 @@
       column={cursor_column}
       item={cursor_item}
       mode={cursor_mode}
+      target_status={
+        (cell_drop_target?.column && cell_drop_target.column === cursor_column) &&
+        (cell_drop_target?.row && cell_drop_target.row.rowIndex == cursor_row) ?
+          cell_drop_target?.targetStatus : undefined
+      }
     />
     {#if mode === 'disambiguating' && disambiguation}
       <TimelineDisambiguation

@@ -2,11 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import type { DragEventHandler, MouseEventHandler } from 'svelte/elements';
   import type { DropTargetStatus, PlacementType } from '../Grid';
-  import type { RowTarget } from './util';
-
-  interface WithRowIndex {
-    rowIndex: number;
-  }
+  import type { RowTarget, WithRowIndex } from './util';
 
   export let column: number;
   export let row: RowTarget & WithRowIndex;

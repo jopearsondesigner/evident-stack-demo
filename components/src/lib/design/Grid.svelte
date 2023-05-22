@@ -2,10 +2,10 @@
 
 <script lang="ts">
   import {
-    type DraggingState,
-    DraggingStateKind,
-    type DragCommand,
-    DraggingCommandKind,
+    type GridState,
+    GridStateKind,
+    type GridCommand,
+    GridCommandKind,
     buildEvolveAndReact,
     type LaneSource,
     type PlacementSource,
@@ -75,13 +75,13 @@
   let disambiguation: Disambiguation = null;
 
   // Drag Drop
-  let dragState: DraggingState = { kind: DraggingStateKind.NONE };
+  let dragState: GridState = { kind: GridStateKind.NONE };
 
   const evolveAndReactDraggingState = buildEvolveAndReact(decider);
 
   const handleLaneDragStart = async (e: CustomEvent<LaneSource>) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.LANE_DRAG_START,
+    const command: GridCommand = {
+      kind: GridCommandKind.LANE_DRAG_START,
       value: e.detail
     };
 
@@ -89,8 +89,8 @@
   };
 
   const handleLaneDragEnter = async (e: CustomEvent<RowTarget>) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.LANE_DRAG_ENTER,
+    const command: GridCommand = {
+      kind: GridCommandKind.LANE_DRAG_ENTER,
       value: e.detail
     };
 
@@ -98,16 +98,16 @@
   };
 
   const handleLaneDragDrop = async (e: CustomEvent) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.LANE_DRAG_DROP
+    const command: GridCommand = {
+      kind: GridCommandKind.LANE_DRAG_DROP
     };
 
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handlePlacementDragStart = async (e: CustomEvent<PlacementSource & WithSourceEffect>) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.PLACEMENT_DRAG_START,
+    const command: GridCommand = {
+      kind: GridCommandKind.PLACEMENT_DRAG_START,
       value: e.detail
     };
 
@@ -115,8 +115,8 @@
   };
 
   const handleFlowDragStart = async (e: CustomEvent<FlowPortSource>) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.FLOW_PORT_DRAG_START,
+    const command: GridCommand = {
+      kind: GridCommandKind.FLOW_PORT_DRAG_START,
       value: e.detail
     };
 
@@ -124,8 +124,8 @@
   };
 
   const handleCellDragEnter = async (e: CustomEvent<CellTarget>) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.CELL_DRAG_ENTER,
+    const command: GridCommand = {
+      kind: GridCommandKind.CELL_DRAG_ENTER,
       value: e.detail
     };
 
@@ -133,36 +133,36 @@
   };
 
   const handleCellDragDrop = async (e: CustomEvent) => {
-    const command: DragCommand = { kind: DraggingCommandKind.CELL_DRAG_DROP };
+    const command: GridCommand = { kind: GridCommandKind.CELL_DRAG_DROP };
 
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handleOutOfBoundsDragEnter: DragEventHandler<EventTarget> = (_e) => {
     console.info('DRAG OUT OF BOUNDS');
-    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER };
+    const command: GridCommand = { kind: GridCommandKind.OUT_OF_BOUNDS_DRAG_ENTER };
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handleOutOfBoundsDragEnd: DragEventHandler<EventTarget> = (_e) => {
     console.info('DRAG DROP OUT OF BOUNDS END');
-    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END };
+    const command: GridCommand = { kind: GridCommandKind.OUT_OF_BOUNDS_DRAG_END };
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   // Context Menu
   const handleOpenContextMenu = async (e: CustomEvent<CellTarget & CursorTarget>) => {
-    const command: DragCommand = { kind: DraggingCommandKind.OPEN_CONTEXT_MENU, value: e.detail };
+    const command: GridCommand = { kind: GridCommandKind.OPEN_CONTEXT_MENU, value: e.detail };
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
   const handleCloseContextMenu = async (e: CustomEvent) => {
-    const command: DragCommand = { kind: DraggingCommandKind.CLOSE_CONTEXT_MENU };
+    const command: GridCommand = { kind: GridCommandKind.CLOSE_CONTEXT_MENU };
     dragState = evolveAndReactDraggingState(dragState, command);
   };
 
-  const stateToContextMenu = (state: DraggingState) => {
-    if (state.kind !== DraggingStateKind.CONTEXT) {
+  const stateToContextMenu = (state: GridState) => {
+    if (state.kind !== GridStateKind.CONTEXT) {
       return undefined;
     }
 
@@ -191,6 +191,8 @@
   };
 
   $: contextMenu = stateToContextMenu(dragState);
+
+  const dispatchContextCommand = () => {}
 
   // Command Dispatch
 
@@ -263,7 +265,7 @@
   $: default_stream_lane_index = streams.length;
   $: default_audience_lane_index = audiences.length;
   $: lane_drop_target =
-    dragState.kind === DraggingStateKind.LANE ? dragState.value.target : undefined;
+    dragState.kind === GridStateKind.LANE ? dragState.value.target : undefined;
   $: audience_drop_target =
     lane_drop_target?.rowKind == 'audience'
       ? { index: lane_drop_target.laneIndex, targetStatus: lane_drop_target.targetStatus }
@@ -277,7 +279,7 @@
     lane_drop_target?.rowKind == 'timeline' ? lane_drop_target.targetStatus : undefined;
 
   $: cell_drop_target =
-    dragState.kind === DraggingStateKind.PLACEMENT ? dragState.value.target : undefined;
+    dragState.kind === GridStateKind.PLACEMENT ? dragState.value.target : undefined;
 
   // Flows
   $: linkingFlow = linkingFlowFromState(dragState);
@@ -444,8 +446,8 @@
   // Drag Test
   const handleDragOver = (e: DragEvent) => {
     const clientRect = containerRef.getBoundingClientRect();
-    const command: DragCommand = {
-      kind: DraggingCommandKind.CURSOR_MOVE,
+    const command: GridCommand = {
+      kind: GridCommandKind.CURSOR_MOVE,
       value: { x: e.clientX - clientRect.x, y: e.clientY - clientRect.y }
     };
 

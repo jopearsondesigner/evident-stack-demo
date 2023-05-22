@@ -161,13 +161,14 @@
     }
 
     const clientRect = containerRef.getBoundingClientRect();
-    const { x, y, placementKind, row } = state.source;
+    const { x, y, placementId, placementKind, row } = state.source;
     const { rowKind } = row;
 
     return {
       x: x - clientRect.x,
       y: y - clientRect.y,
       rowKind,
+      placementId,
       placementKind,
       defaultLane:
         rowKind === 'audience'
@@ -435,6 +436,7 @@
 />
 
 <h3>{mode}</h3>
+<h3>{ JSON.stringify(contextMenu) }</h3>
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <div
     bind:this={containerRef}
@@ -450,11 +452,35 @@
         on:click={handleCloseContextMenu}
         on:clickoutside={handleCloseContextMenu}
       >
-        <ContextMenuItem>Add Event</ContextMenuItem>
+        {#if !contextMenu.placementId}
+          {#if contextMenu.rowKind === "stream"}
+            <ContextMenuItem>Add Event</ContextMenuItem>
+          {:else if contextMenu.rowKind === "audience"}
+            <ContextMenuItem>Add Interface</ContextMenuItem>
+          {:else if contextMenu.rowKind === "timeline"}
+            <ContextMenuItem>Add Read Model</ContextMenuItem>
+            <ContextMenuItem>Add Command</ContextMenuItem>
+          {/if}
+        {:else}
+          {#if contextMenu.placementKind === "event"}
+            <ContextMenuItem>Delete Event</ContextMenuItem>
+          {:else if contextMenu.placementKind === "interface"}
+            <ContextMenuItem>Delete Interface</ContextMenuItem>
+          {:else if contextMenu.placementKind === "readModel"}
+            <ContextMenuItem>Delete Read Model</ContextMenuItem>
+          {:else if contextMenu.placementKind === "command"}
+            <ContextMenuItem>Delete Command</ContextMenuItem>
+          {/if}
+        {/if}
         <ContextMenuDivider />
         <ContextMenuItem>Insert Column Left</ContextMenuItem>
         <ContextMenuItem>Insert Column Right</ContextMenuItem>
-        <ContextMenuItem>Insert Lane Above</ContextMenuItem>
+        {#if contextMenu.rowKind !== "audience" || !contextMenu.defaultLane}
+          <ContextMenuItem>Insert Lane Above</ContextMenuItem>
+        {/if}
+        {#if contextMenu.rowKind !== "stream" || !contextMenu.defaultLane}
+          <ContextMenuItem>Insert Lane Below</ContextMenuItem>
+        {/if}
         <ContextMenuDivider />
         <ContextMenuItem>Import Event Model JSON</ContextMenuItem>
       </ContextMenu>

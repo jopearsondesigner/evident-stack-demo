@@ -55,14 +55,9 @@ jobs:
       - name: Install playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Test
-        run: npm -w app run check && npm -w app run test
-        env:
-          PUBLIC_SUPABASE_URL: https://aqoqvlrxdcdiqwjxkrlr.supabase.co
-          PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxb3F2bHJ4ZGNkaXF3anhrcmxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ3MTU4ODgsImV4cCI6MjAwMDI5MTg4OH0.Ys85T5JxY4AZyeH_oylJNs8fqnwvBDve-CQkYkE2YUA
-
-      - name: Build
-        run: npm -w app run build
+      - name: Build and Test
+        run: npm run check && npm run build && npm run test
+        working-directory: app
         env:
           PUBLIC_SUPABASE_URL: https://aqoqvlrxdcdiqwjxkrlr.supabase.co
           PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxb3F2bHJ4ZGNkaXF3anhrcmxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ3MTU4ODgsImV4cCI6MjAwMDI5MTg4OH0.Ys85T5JxY4AZyeH_oylJNs8fqnwvBDve-CQkYkE2YUA

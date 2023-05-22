@@ -41,10 +41,32 @@
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
     dispatch('cell_drag_drop');
   };
+
+  const handleRightClick: MouseEventHandler<HTMLDivElement> = (e) => {
+
+    console.warn("Cell Right Click", {
+      x: e.clientX,
+      y: e.clientY,
+      column,
+      row,
+      placementId: maybe_placement,
+      placementKind: maybe_placement_kind
+    });
+
+    dispatch('open_context_menu', {
+      x: e.clientX,
+      y: e.clientY,
+      column,
+      row,
+      placementId: maybe_placement,
+      placementKind: maybe_placement_kind
+    });
+  }
 </script>
 
 <div
   on:click|preventDefault|stopPropagation={handleClick}
+  on:contextmenu|preventDefault={handleRightClick}
   on:dragenter={handleDragEnter}
   on:dragover={(e) => {
     e.preventDefault();

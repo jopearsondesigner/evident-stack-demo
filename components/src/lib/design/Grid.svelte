@@ -14,10 +14,11 @@
     type WithSourceEffect,
     type FlowPortSource,
     DEFAULT_LANE,
-    linkingFlowFromState
+    linkingFlowFromState,
+    type CursorTarget
   } from './grid/util';
 
-  import ContextMenu from '../context/ContextMenu.svelte'
+  import ContextMenu from '../context/ContextMenu.svelte';
   import ContextMenuItem from '../context/ContextMenuItem.svelte';
   import ContextMenuDivider from '../context/ContextMenuDivider.svelte';
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
@@ -142,6 +143,42 @@
     const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END };
     dragState = evolveAndReactDraggingState(dragState, command);
   };
+
+  // Context Menu
+  const handleOpenContextMenu = async (e: CustomEvent<CellTarget & CursorTarget>) => {
+    const command: DragCommand = { kind: DraggingCommandKind.OPEN_CONTEXT_MENU, value: e.detail };
+    dragState = evolveAndReactDraggingState(dragState, command);
+  };
+
+  const handleCloseContextMenu = async (e: CustomEvent) => {
+    const command: DragCommand = { kind: DraggingCommandKind.CLOSE_CONTEXT_MENU };
+    dragState = evolveAndReactDraggingState(dragState, command);
+  };
+
+  const stateToContextMenu = (state: DraggingState) => {
+    if (state.kind !== DraggingStateKind.CONTEXT) {
+      return undefined;
+    }
+
+    const clientRect = containerRef.getBoundingClientRect();
+    const { x, y, placementKind, row } = state.source;
+    const { rowKind } = row;
+
+    return {
+      x: x - clientRect.x,
+      y: y - clientRect.y,
+      rowKind,
+      placementKind,
+      defaultLane:
+        rowKind === 'audience'
+          ? row.audienceId === DEFAULT_LANE
+          : rowKind === 'stream'
+          ? row.streamId === DEFAULT_LANE
+          : false
+    };
+  };
+
+  $: contextMenu = stateToContextMenu(dragState);
 
   // Command Dispatch
 
@@ -406,6 +443,22 @@
     style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
   >
     <FlowCanvas flows={allFlows} />
+    {#if contextMenu}
+      <ContextMenu
+        x={contextMenu.x}
+        y={contextMenu.y}
+        on:click={handleCloseContextMenu}
+        on:clickoutside={handleCloseContextMenu}
+      >
+        <ContextMenuItem>Add Event</ContextMenuItem>
+        <ContextMenuDivider />
+        <ContextMenuItem>Insert Column Left</ContextMenuItem>
+        <ContextMenuItem>Insert Column Right</ContextMenuItem>
+        <ContextMenuItem>Insert Lane Above</ContextMenuItem>
+        <ContextMenuDivider />
+        <ContextMenuItem>Import Event Model JSON</ContextMenuItem>
+      </ContextMenu>
+    {/if}
     <AudienceLane
       on:navigate_cursor={handleNavigateCursor}
       on:lane_drag_drop={handleLaneDragDrop}
@@ -413,6 +466,7 @@
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
+      on:open_context_menu={handleOpenContextMenu}
       targeted_cell={cell_drop_target &&
       cell_drop_target.row.rowKind === 'audience' &&
       cell_drop_target.row.audienceId == DEFAULT_LANE
@@ -453,6 +507,7 @@
         on:cell_drag_enter={handleCellDragEnter}
         on:cell_drag_drop={handleCellDragDrop}
         on:flow_drag_start={handleFlowDragStart}
+        on:open_context_menu={handleOpenContextMenu}
         {targeted_cell}
         {targeted_lane}
         {row}
@@ -470,6 +525,7 @@
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
+      on:open_context_menu={handleOpenContextMenu}
       row={timeline_row}
       placements={timeline_placements}
       targeted_lane={timeline_drop_target}
@@ -501,6 +557,7 @@
         on:cell_drag_enter={handleCellDragEnter}
         on:cell_drag_drop={handleCellDragDrop}
         on:flow_drag_start={handleFlowDragStart}
+        on:open_context_menu={handleOpenContextMenu}
         {targeted_lane}
         {targeted_cell}
         {row}
@@ -516,6 +573,7 @@
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
+      on:open_context_menu={handleOpenContextMenu}
       targeted_cell={cell_drop_target &&
       cell_drop_target.row.rowKind === 'stream' &&
       cell_drop_target.row.streamId == DEFAULT_LANE
@@ -547,6 +605,7 @@
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
+      on:open_context_menu={handleOpenContextMenu}
       row={cursor_row}
       column={cursor_column}
       item={cursor_item}

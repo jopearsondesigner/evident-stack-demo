@@ -59,6 +59,7 @@ export enum DraggingStateKind {
     LANE,
     PLACEMENT,
     FLOW,
+    CONTEXT,
     NONE
 }
 
@@ -77,6 +78,9 @@ export type DraggingState =
             cursor?: CursorTarget,
             target?: (CellTarget & WithDropTargetStatus)
         }}
+    | { kind: DraggingStateKind.CONTEXT
+        source: CellTarget & CursorTarget
+     }
     | { kind: DraggingStateKind.NONE };
 
 export enum DraggingCommandKind {
@@ -90,6 +94,8 @@ export enum DraggingCommandKind {
     OUT_OF_BOUNDS_DRAG_ENTER,
     OUT_OF_BOUNDS_DRAG_END,
     CURSOR_MOVE,
+    OPEN_CONTEXT_MENU,
+    CLOSE_CONTEXT_MENU
 }
 
 export type DragCommand =
@@ -109,6 +115,9 @@ export type DragCommand =
     | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END }
     | { kind: DraggingCommandKind.CURSOR_MOVE,
         value: CursorTarget }
+    | { kind: DraggingCommandKind.OPEN_CONTEXT_MENU,
+        value: CellTarget & CursorTarget }
+    | { kind: DraggingCommandKind.CLOSE_CONTEXT_MENU }
 
 export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState, c: DragCommand) => DraggingState {
     return (state: DraggingState, command: DragCommand) => {
@@ -350,6 +359,13 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             return state;
                     }
                 }
+                case DraggingCommandKind.OPEN_CONTEXT_MENU:
+                    return {
+                        kind: DraggingStateKind.CONTEXT,
+                        source: command.value
+                    };
+                case DraggingCommandKind.CLOSE_CONTEXT_MENU:
+                    return { kind: DraggingStateKind.NONE };
             }
     }
 }

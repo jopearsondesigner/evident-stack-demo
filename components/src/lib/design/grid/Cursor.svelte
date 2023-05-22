@@ -7,7 +7,7 @@
   import Event from './Event.svelte';
   import ReadModel from './ReadModel.svelte';
   import EmptyCell from './EmptyCell.svelte';
-  import type { DragEventHandler } from 'svelte/elements';
+  import type { DragEventHandler, MouseEventHandler } from 'svelte/elements';
 
   export let row: number;
   export let column: number;
@@ -137,6 +137,27 @@
     console.warn("CURSOR -> cell_drag_drop");
     dispatch('cell_drag_drop');
   };
+
+  const handleRightClick: MouseEventHandler<HTMLDivElement> = (e) => {
+
+    console.warn("Cell Right Click", {
+      x: e.clientX,
+      y: e.clientY,
+      column,
+      row,
+      placementId: maybePlacement,
+      placementKind: maybePlacementKind
+    });
+
+    dispatch('open_context_menu', {
+      x: e.clientX,
+      y: e.clientY,
+      column,
+      row,
+      placementId: maybePlacement,
+      placementKind: maybePlacementKind
+    });
+  }
 </script>
 
 <svelte:window on:keydown={keyboardHandler} />
@@ -168,6 +189,7 @@
   </div>
 {:else}
   <div
+    on:contextmenu|preventDefault={handleRightClick}
     on:dragenter={handleDragEnter}
     on:dragover={(e) => {
       e.preventDefault();

@@ -58,6 +58,7 @@
     on:navigate_cursor={forward}
     on:cell_drag_enter={forward}
     on:cell_drag_drop={forward}
+    on:open_context_menu={forward}
   >
     {#if placement && placement.kind === 'command'}
       <Command

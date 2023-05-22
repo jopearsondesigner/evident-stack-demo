@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createKeybindingsHandler } from '../../vendor/tinykeys/tinykeys';
   import { tick, createEventDispatcher } from 'svelte';
-  import type { CursorMode, ItemAtCursor } from '../Grid';
+  import type { CursorMode, DropTargetStatus, ItemAtCursor } from '../Grid';
   import Interface from './Interface.svelte';
   import Command from './Command.svelte';
   import Event from './Event.svelte';
@@ -13,11 +13,30 @@
   export let column: number;
   export let mode: CursorMode;
   export let item: ItemAtCursor;
+  export let target_status: DropTargetStatus | undefined;
 
   $: gridRow = row + 1;
   $: gridColumn = column + 1;
-  $: maybePlacement = item.placement?.id
-  $: maybePlacementKind = item.type;
+  $: maybePlacement = item.placement?.id;
+  $: maybePlacementKind = item.placement?.id
+    ? item.type === 'timeline'
+      ? 'timeline'
+      : item.type === 'event'
+      ? 'event'
+      : item.type === 'interface'
+      ? item.placement?.kind
+      : undefined
+    : undefined;
+  $: rowTarget = {
+    rowIndex: gridRow - 1,
+    audienceId: item.type === 'interface' ? item.audience : undefined,
+    streamId: item.type === 'event' ? item.stream : undefined,
+    laneIndex: item.lane_index,
+    rowKind: item.type === 'event' ? 'stream' : item.type === 'interface' ? 'audience' : 'timeline'
+  };
+
+  $: good_target = target_status == 'good';
+  $: bad_target = target_status == 'bad';
 
   // Input Focus on Edit
 
@@ -50,7 +69,6 @@
   const dispatch = createEventDispatcher();
 
   const forward = (event: CustomEvent) => {
-    console.warn("CURSOR FORWARDING (type, detail", event.type, event.detail);
     dispatch(event.type, event.detail);
   };
 
@@ -119,11 +137,10 @@
   };
 
   const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn("CURSOR -> cell_drag_enter");
     e.stopPropagation();
     dispatch('cell_drag_enter', {
       column,
-      row,
+      row: rowTarget,
       placementId: maybePlacement,
       placementKind: maybePlacementKind
     });
@@ -134,7 +151,6 @@
   };
 
   const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
-    console.warn("CURSOR -> cell_drag_drop");
     dispatch('cell_drag_drop');
   };
 
@@ -198,6 +214,8 @@
     on:drop={handleDragDrop}
     bind:this={element}
     on:click={beginEditing}
+    class:bg-emerald-200={good_target}
+    class:bg-rose-400={bad_target}
     class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300"
     style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
   >

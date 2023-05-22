@@ -170,18 +170,23 @@
     const { x, y, placementId, placementKind, row } = state.source;
     const { rowKind } = row;
 
-    return {
-      x: x - clientRect.x,
-      y: y - clientRect.y,
-      rowKind,
-      placementId,
-      placementKind,
-      defaultLane:
-        rowKind === 'audience'
+    const defaultLane = 
+      rowKind === 'audience'
           ? row.audienceId === DEFAULT_LANE
           : rowKind === 'stream'
           ? row.streamId === DEFAULT_LANE
           : false
+
+    // Offset so that default stream's context menu doesn't overflow
+    const yOffset = defaultLane && rowKind === "stream" ? 150 : 0;
+
+    return {
+      x: x - clientRect.x,
+      y: y - clientRect.y - yOffset,
+      rowKind,
+      placementId,
+      placementKind,
+      defaultLane
     };
   };
 
@@ -367,18 +372,17 @@
     cursor_row = default_stream_row;
   };
 
-
   const placementDetailsAtCursor = (event: KeyboardEvent) => {
     event.preventDefault();
     if (cursor_item.placement) {
-      dispatch('navigateToPlacementDetails', {placement: cursor_item.placement.id});
+      dispatch('navigateToPlacementDetails', { placement: cursor_item.placement.id });
     }
-  }
+  };
 
   const importAtCursor = (event: KeyboardEvent) => {
     event.preventDefault();
-    dispatch('navigateToImportJson', {column: cursor_column});
-  }
+    dispatch('navigateToImportJson', { column: cursor_column });
+  };
 
   const navigationKeys: KeyBindingMap = {
     ArrowUp: navUp,
@@ -458,7 +462,6 @@
 />
 
 <h3>{mode}</h3>
-<h3>{ JSON.stringify(contextMenu) }</h3>
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <div
     bind:this={containerRef}
@@ -475,32 +478,30 @@
         on:clickoutside={handleCloseContextMenu}
       >
         {#if !contextMenu.placementId}
-          {#if contextMenu.rowKind === "stream"}
+          {#if contextMenu.rowKind === 'stream'}
             <ContextMenuItem>Add Event</ContextMenuItem>
-          {:else if contextMenu.rowKind === "audience"}
+          {:else if contextMenu.rowKind === 'audience'}
             <ContextMenuItem>Add Interface</ContextMenuItem>
-          {:else if contextMenu.rowKind === "timeline"}
+          {:else if contextMenu.rowKind === 'timeline'}
             <ContextMenuItem>Add Read Model</ContextMenuItem>
             <ContextMenuItem>Add Command</ContextMenuItem>
           {/if}
-        {:else}
-          {#if contextMenu.placementKind === "event"}
-            <ContextMenuItem>Delete Event</ContextMenuItem>
-          {:else if contextMenu.placementKind === "interface"}
-            <ContextMenuItem>Delete Interface</ContextMenuItem>
-          {:else if contextMenu.placementKind === "readModel"}
-            <ContextMenuItem>Delete Read Model</ContextMenuItem>
-          {:else if contextMenu.placementKind === "command"}
-            <ContextMenuItem>Delete Command</ContextMenuItem>
-          {/if}
+        {:else if contextMenu.placementKind === 'event'}
+          <ContextMenuItem>Delete Event</ContextMenuItem>
+        {:else if contextMenu.placementKind === 'interface'}
+          <ContextMenuItem>Delete Interface</ContextMenuItem>
+        {:else if contextMenu.placementKind === 'readModel'}
+          <ContextMenuItem>Delete Read Model</ContextMenuItem>
+        {:else if contextMenu.placementKind === 'command'}
+          <ContextMenuItem>Delete Command</ContextMenuItem>
         {/if}
         <ContextMenuDivider />
         <ContextMenuItem>Insert Column Left</ContextMenuItem>
         <ContextMenuItem>Insert Column Right</ContextMenuItem>
-        {#if contextMenu.rowKind !== "audience" || !contextMenu.defaultLane}
+        {#if contextMenu.rowKind !== 'audience' || !contextMenu.defaultLane}
           <ContextMenuItem>Insert Lane Above</ContextMenuItem>
         {/if}
-        {#if contextMenu.rowKind !== "stream" || !contextMenu.defaultLane}
+        {#if contextMenu.rowKind !== 'stream' || !contextMenu.defaultLane}
           <ContextMenuItem>Insert Lane Below</ContextMenuItem>
         {/if}
         <ContextMenuDivider />
@@ -658,11 +659,12 @@
       column={cursor_column}
       item={cursor_item}
       mode={cursor_mode}
-      target_status={
-        (cell_drop_target?.column && cell_drop_target.column === cursor_column) &&
-        (cell_drop_target?.row && cell_drop_target.row.rowIndex == cursor_row) ?
-          cell_drop_target?.targetStatus : undefined
-      }
+      target_status={cell_drop_target?.column &&
+      cell_drop_target.column === cursor_column &&
+      cell_drop_target?.row &&
+      cell_drop_target.row.rowIndex == cursor_row
+        ? cell_drop_target?.targetStatus
+        : undefined}
     />
     {#if mode === 'disambiguating' && disambiguation}
       <TimelineDisambiguation

@@ -19,11 +19,11 @@
   $: gridColumn = column + 1;
   $: maybePlacement = item.placement?.id;
   $: maybePlacementKind = item.placement?.id
-    ? item.type === 'timeline'
-      ? 'timeline'
+    ? item.type === 'interface'
+      ? 'interface'
       : item.type === 'event'
       ? 'event'
-      : item.type === 'interface'
+      : item.type === 'timeline'
       ? item.placement?.kind
       : undefined
     : undefined;
@@ -155,21 +155,11 @@
   };
 
   const handleRightClick: MouseEventHandler<HTMLDivElement> = (e) => {
-
-    console.warn("Cell Right Click", {
-      x: e.clientX,
-      y: e.clientY,
-      column,
-      row,
-      placementId: maybePlacement,
-      placementKind: maybePlacementKind
-    });
-
     dispatch('open_context_menu', {
       x: e.clientX,
       y: e.clientY,
       column,
-      row,
+      row: rowTarget,
       placementId: maybePlacement,
       placementKind: maybePlacementKind
     });

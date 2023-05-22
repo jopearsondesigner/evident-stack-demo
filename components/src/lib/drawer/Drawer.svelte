@@ -4,6 +4,8 @@
   import { fly } from 'svelte/transition';
   import { sineOut } from 'svelte/easing';
   import { clickOutside } from '../utils/clickOutside';
+  import { createEventDispatcher } from 'svelte';
+  import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
   export let activateClickOutside: boolean = true;
   export let hidden: boolean = true;
   export let divClass: string = 'z-40 top-0 fixed h-full bg-white dark:bg-dark-2';
@@ -32,7 +34,21 @@
   };
 
   export let backdropClasses = 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80';
+
+  const dispatch = createEventDispatcher()
+
+  export const handleClose = () => {
+    dispatch('close')
+  }
+
+  const drawerKeys: KeyBindingMap = {
+    Escape: handleClose
+  };
+
+  const keyboardHandler: EventListener = createKeybindingsHandler(drawerKeys);
 </script>
+
+<svelte:window on:keydown={keyboardHandler} />
 
 {#if !hidden}
   {#if !drawerRight}
@@ -45,7 +61,7 @@
   {:else if activateClickOutside}
     <div class={classNames('fixed inset-0 z-30', backdropClasses)} />
     <div
-      use:clickOutside={() => hidden = true}
+      use:clickOutside={handleClose}
       transition:fly={transitionParamsRight}
       class={classNames(className, divClass, placements[placement])}
       style="padding-top: {navbarHeight}px;" >
@@ -53,7 +69,7 @@
         {name}
         size={12}
         btnClass="float-right mt-2 mr-2"
-        on:click={() => (hidden = true)} />
+        on:click={handleClose} />
       <slot />
     </div>
   {/if}

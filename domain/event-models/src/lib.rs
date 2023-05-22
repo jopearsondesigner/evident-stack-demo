@@ -116,7 +116,7 @@ pub trait ModifiableEventModel: EventModel {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum FieldError {
-    FlowAnchorString(Option<String>)
+    FlowAnchorString(Option<String>),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -568,7 +568,7 @@ pub enum PlacementKind {
     Interface,
     Command,
     Event,
-    ReadModel
+    ReadModel,
 }
 
 impl Placement {
@@ -646,7 +646,7 @@ impl TryFrom<Option<String>> for Anchor {
                 "Bottom" => Ok(Anchor::Bottom),
                 "Left" => Ok(Anchor::Left),
                 "Right" => Ok(Anchor::Right),
-                _ => Err(FieldError::FlowAnchorString(value))
+                _ => Err(FieldError::FlowAnchorString(value)),
             },
             None => Ok(Anchor::default()),
         }

@@ -9,6 +9,16 @@ const config = {
       allow: ["./state/pkg"]
     }
   },
+  worker: {
+    format: 'iife', // the default, but making explicit here for wide browser support (esp. Firefox)
+    plugins: [sveltekit(), topLevelAwait()],
+    rollupOptions: {
+      output: {
+        // Required to support the 'iife' output format
+        inlineDynamicImports: true
+      }
+    }
+  },
   plugins: [sveltekit(), wasm(), topLevelAwait()],
   test: {
     include: ['src/**/*.{test,spec}.{js,ts}']

@@ -2,8 +2,8 @@ use crate::api::commands::EventModelCommand;
 use crate::api::events::EventModelEvent;
 use crate::json::import;
 use crate::{
-    Command, Component, Entity, Event, EventModelDataTransfer, EventModelError, Interface, Lane,
-    LaneId, Name, Placement, PlacementPosition, ReadModel, FlowArrow,
+    Command, Component, Entity, Event, EventModelDataTransfer, EventModelError, FlowArrow,
+    Interface, Lane, LaneId, Name, Placement, PlacementPosition, ReadModel,
 };
 use crate::{EventModel, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
@@ -541,19 +541,21 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         target_placement_id,
                         target_anchor,
                     ) => {
-                        let source_placement = model.get_placement(&source_placement_id).ok_or_else(|| {
-                            EventModelError::ModificationError(format!(
-                                "No placement found with id {:?}",
-                                source_placement_id
-                            ))
-                        })?;
+                        let source_placement =
+                            model.get_placement(&source_placement_id).ok_or_else(|| {
+                                EventModelError::ModificationError(format!(
+                                    "No placement found with id {:?}",
+                                    source_placement_id
+                                ))
+                            })?;
 
-                        let target_placement = model.get_placement(&target_placement_id).ok_or_else(|| {
-                            EventModelError::ModificationError(format!(
-                                "No placement found with id {:?}",
-                                source_placement_id
-                            ))
-                        })?;
+                        let target_placement =
+                            model.get_placement(&target_placement_id).ok_or_else(|| {
+                                EventModelError::ModificationError(format!(
+                                    "No placement found with id {:?}",
+                                    source_placement_id
+                                ))
+                            })?;
 
                         valid_flow(&source_placement, &target_placement)?;
 

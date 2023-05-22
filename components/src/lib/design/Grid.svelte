@@ -42,10 +42,16 @@
     type GridMode,
     type Flow
   } from './Grid';
-  import { onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { itemAtCursor } from './Grid';
   import TimelineDisambiguation from './grid/TimelineDisambiguation.svelte';
   import type { DragEventHandler } from 'svelte/elements';
+
+  // Event dispatch
+
+  const dispatch = createEventDispatcher();
+
+  // Grid Element State
 
   export let decider: Decider = default_decider;
   export let column_count: number;
@@ -361,6 +367,19 @@
     cursor_row = default_stream_row;
   };
 
+
+  const placementDetailsAtCursor = (event: KeyboardEvent) => {
+    event.preventDefault();
+    if (cursor_item.placement) {
+      dispatch('navigateToPlacementDetails', {placement: cursor_item.placement.id});
+    }
+  }
+
+  const importAtCursor = (event: KeyboardEvent) => {
+    event.preventDefault();
+    dispatch('navigateToImportJson', {column: cursor_column});
+  }
+
   const navigationKeys: KeyBindingMap = {
     ArrowUp: navUp,
     k: navUp,
@@ -394,7 +413,10 @@
     Enter: (event) => {
       event.preventDefault();
       mode = 'editing';
-    }
+    },
+
+    'Shift+Enter': placementDetailsAtCursor,
+    'Control+i': importAtCursor
   };
 
   const navigationKeyboardHandler = createKeybindingsHandler(navigationKeys);

@@ -24,7 +24,7 @@
   import SidebarContainer from '$components/drawer/SidebarContainer.svelte';
   import SidebarGroup from '$components/drawer/SidebarGroup.svelte';
   import SidebarDropdownWrapper from '$components/drawer/SidebarDropdownWrapper.svelte';
-  import { Accordion, AccordionItem } from 'svelte-accessible-accordion';
+  import { Accordion } from 'svelte-accessible-accordion';
   import SidebarDropdownItem from '$components/drawer/SidebarDropdownItem.svelte';
   import SidebarItem from '$components/drawer/SidebarItem.svelte';
   import Textarea from '$components/form/Textarea.svelte';
@@ -41,11 +41,27 @@
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
   import { enhance } from '$app/forms';
 
-  // === Authentication
+  import type { Readable } from 'svelte/store';
+  import { onMount } from 'svelte';
+  import { loadSyncWorker } from '$lib/state/sync';
+  // import Download from '$components/icons/Download.svelte';
+  // import ImagePlacholder from '$components/icons/ImagePlacholder.svelte';
 
   export let data: LayoutData;
 
-  $: ({ session, grid } = data)
+  const { grid, session } = data;
+
+  // ==== Model Sync State
+
+  let sync_status: Readable<number>;
+
+  onMount(async () => {
+    sync_status = await loadSyncWorker(session!);
+  });
+
+  // ==== end Model Sync State
+
+  // === Authentication
 
   let signOutLoading = false;
 
@@ -62,13 +78,13 @@
 
   $: expandedLeftNavItem = $page.data.product;
 
-  let leftNavOpen = true;
-
   $: designExpanded = expandedLeftNavItem == 'design';
   $: dataExpanded = expandedLeftNavItem == 'data';
   $: domainFunctionsExpanded = expandedLeftNavItem == 'domain-functions';
   $: deployExpanded = expandedLeftNavItem == 'deploy';
   $: dbExpanded = expandedLeftNavItem == 'db';
+
+  let leftNavOpen = false;
 
   const toggleLeftNav = () => {
     leftNavOpen = !leftNavOpen;
@@ -160,7 +176,8 @@
   <Drawer placement="left" hidden={false}>
     <Sidebar name={$grid?.name ?? "Project Name"}
              description={$grid?.description ?? "Project Description"}
-             class={leftNavOpen ? 'w-[417px]' : 'w-[240px]'}>
+             sync_status={$sync_status}
+             class={leftNavOpen ? 'w-[417px]' : 'w-[160px]'}>
       <Accordion class="grow-1 flex flex-col">
         <SidebarContainer
           src={DesignLogo}
@@ -205,7 +222,7 @@
             </SidebarDropdownWrapper>
             <SidebarItem blank>
               <Button
-                label="Export"
+                label="Export JSON"
                 gradient
                 color="ghost"
                 size="sm"
@@ -262,7 +279,7 @@
 
   <main
     class="relative left-0 right-0 transition-all duration-[200ms] pt-16"
-    class:ml-[240px]={!leftNavOpen}
+    class:ml-[160px]={!leftNavOpen}
     class:ml-[417px]={leftNavOpen}
     class:ease-in={leftNavOpen} >
     <slot />

@@ -98,6 +98,7 @@
     class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3">
     {#if placementDetails}
       <span class="w-full">
+        <h1>Name: {name} description: {description}</h1>
         <h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
           Placement Details
         </h3>

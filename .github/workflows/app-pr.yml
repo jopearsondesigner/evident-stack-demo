@@ -1,5 +1,5 @@
 ---
-name: Stage App on Pull Request
+name: Preview App on Pull Request
 run-name: App Pull Request Staged by ${{ github.actor }}
 on:
   pull_request:

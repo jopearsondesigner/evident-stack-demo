@@ -21,12 +21,21 @@
   import type { PageData } from './$types';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
+  import type { GridPlacementMetadata } from 'state-client';
 
   export let data: PageData;
 
   const { grid } = data;
 
-  $: placement = $grid?.placement_metadata_by_id($page.params.placement);
+  const lookupPlacement = (placement_id: string | null | undefined): GridPlacementMetadata | undefined => {
+    if ($grid && placement_id) {
+      return $grid.placement_metadata_by_id(placement_id);
+    } else {
+      return undefined;
+    }
+  };
+
+  $: placement = lookupPlacement($page.params.placement);
 
   $: name = placement?.name;
   $: description = placement?.description;

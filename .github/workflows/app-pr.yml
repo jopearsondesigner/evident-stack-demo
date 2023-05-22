@@ -28,8 +28,11 @@ jobs:
           version: latest
 
       - run: supabase db start
+        working-directory: app
       - run: supabase db lint
+        working-directory: app
       - run: supabase test db
+        working-directory: app
 
       - name: Verify generated types are checked in
         run: |

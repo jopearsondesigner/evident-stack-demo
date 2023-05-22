@@ -1,4 +1,4 @@
---
+---
 name: Publish App to Staging
 run-name: Staging App publish by ${{ github.actor }}
 on:

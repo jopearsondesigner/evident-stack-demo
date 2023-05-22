@@ -1,20 +1,42 @@
 <script lang="ts">
   import { createKeybindingsHandler } from '../../vendor/tinykeys/tinykeys';
   import { tick, createEventDispatcher } from 'svelte';
-  import type { CursorMode, ItemAtCursor } from '../Grid';
+  import type { CursorMode, DropTargetStatus, ItemAtCursor } from '../Grid';
   import Interface from './Interface.svelte';
   import Command from './Command.svelte';
   import Event from './Event.svelte';
   import ReadModel from './ReadModel.svelte';
   import EmptyCell from './EmptyCell.svelte';
+  import type { DragEventHandler } from 'svelte/elements';
 
   export let row: number;
   export let column: number;
   export let mode: CursorMode;
   export let item: ItemAtCursor;
+  export let target_status: DropTargetStatus | undefined;
 
   $: gridRow = row + 1;
   $: gridColumn = column + 1;
+  $: maybePlacement = item.placement?.id;
+  $: maybePlacementKind = item.placement?.id
+    ? item.type === 'timeline'
+      ? 'timeline'
+      : item.type === 'event'
+      ? 'event'
+      : item.type === 'interface'
+      ? item.placement?.kind
+      : undefined
+    : undefined;
+  $: rowTarget = {
+    rowIndex: gridRow - 1,
+    audienceId: item.type === 'interface' ? item.audience : undefined,
+    streamId: item.type === 'event' ? item.stream : undefined,
+    laneIndex: item.lane_index,
+    rowKind: item.type === 'event' ? 'stream' : item.type === 'interface' ? 'audience' : 'timeline'
+  };
+
+  $: good_target = target_status == 'good';
+  $: bad_target = target_status == 'bad';
 
   // Input Focus on Edit
 
@@ -113,12 +135,36 @@
       navigationKeyboardHandler(e);
     }
   };
+
+  const handleDragEnter: DragEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    dispatch('cell_drag_enter', {
+      column,
+      row: rowTarget,
+      placementId: maybePlacement,
+      placementKind: maybePlacementKind
+    });
+  };
+
+  const handleDragLeave: DragEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+  };
+
+  const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
+    dispatch('cell_drag_drop');
+  };
 </script>
 
 <svelte:window on:keydown={keyboardHandler} />
 
 {#if mode === 'editing'}
   <div
+    on:dragenter={handleDragEnter}
+    on:dragover={(e) => {
+      e.preventDefault();
+    }}
+    on:dragleave={handleDragLeave}
+    on:drop={handleDragDrop}
     bind:this={element}
     class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300 bg-gray-canvas dark:bg-dark-1"
     style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
@@ -138,8 +184,16 @@
   </div>
 {:else}
   <div
+    on:dragenter={handleDragEnter}
+    on:dragover={(e) => {
+      e.preventDefault();
+    }}
+    on:dragleave={handleDragLeave}
+    on:drop={handleDragDrop}
     bind:this={element}
     on:click={beginEditing}
+    class:bg-emerald-200={good_target}
+    class:bg-rose-400={bad_target}
     class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300"
     style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
   >
@@ -151,6 +205,8 @@
           {column}
           name={item.placement.name}
           description={item.placement.description}
+          on:placement_drag_start={forward}
+          on:flow_drag_start={forward}
           on:connect_flow={forward}
         />
       {:else if item.type == 'timeline'}
@@ -161,6 +217,8 @@
             {column}
             name={item.placement.name}
             description={item.placement.description}
+            on:placement_drag_start={forward}
+            on:flow_drag_start={forward}
             on:connect_flow={forward}
           />
         {:else if item.placement.kind == 'readModel'}
@@ -170,6 +228,8 @@
             {column}
             name={item.placement.name}
             description={item.placement.description}
+            on:placement_drag_start={forward}
+            on:flow_drag_start={forward}
             on:connect_flow={forward}
           />
         {/if}
@@ -180,6 +240,8 @@
           {column}
           name={item.placement.name}
           description={item.placement.description}
+          on:placement_drag_start={forward}
+          on:flow_drag_start={forward}
           on:connect_flow={forward}
         />
       {/if}

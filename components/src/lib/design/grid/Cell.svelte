@@ -65,7 +65,7 @@
 </script>
 
 <div
-  on:click|preventDefault|stopPropagation={handleClick}
+  on:click|preventDefault={handleClick}
   on:contextmenu|preventDefault={handleRightClick}
   on:dragenter={handleDragEnter}
   on:dragover={(e) => {

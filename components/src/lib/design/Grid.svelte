@@ -170,15 +170,15 @@
     const { x, y, placementId, placementKind, row } = state.source;
     const { rowKind } = row;
 
-    const defaultLane = 
+    const defaultLane =
       rowKind === 'audience'
-          ? row.audienceId === DEFAULT_LANE
-          : rowKind === 'stream'
-          ? row.streamId === DEFAULT_LANE
-          : false
+        ? row.audienceId === DEFAULT_LANE
+        : rowKind === 'stream'
+        ? row.streamId === DEFAULT_LANE
+        : false;
 
     // Offset so that default stream's context menu doesn't overflow
-    const yOffset = defaultLane && rowKind === "stream" ? 150 : 0;
+    const yOffset = defaultLane && rowKind === 'stream' ? 150 : 0;
 
     return {
       x: x - clientRect.x,
@@ -192,7 +192,7 @@
 
   $: contextMenu = stateToContextMenu(dragState);
 
-  const dispatchContextCommand = () => {}
+  const dispatchContextCommand = () => {};
 
   // Command Dispatch
 
@@ -264,8 +264,7 @@
   // Lanes
   $: default_stream_lane_index = streams.length;
   $: default_audience_lane_index = audiences.length;
-  $: lane_drop_target =
-    dragState.kind === GridStateKind.LANE ? dragState.value.target : undefined;
+  $: lane_drop_target = dragState.kind === GridStateKind.LANE ? dragState.value.target : undefined;
   $: audience_drop_target =
     lane_drop_target?.rowKind == 'audience'
       ? { index: lane_drop_target.laneIndex, targetStatus: lane_drop_target.targetStatus }

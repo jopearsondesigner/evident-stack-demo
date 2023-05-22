@@ -31,8 +31,9 @@ jobs:
         working-directory: app
       - run: supabase db lint
         working-directory: app
-      - run: supabase test db
-        working-directory: app
+      # TODO: add some tests to supabase/tests
+      # - run: supabase test db
+      #   working-directory: app
 
       - name: Verify generated types are checked in
         run: |

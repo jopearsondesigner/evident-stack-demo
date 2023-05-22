@@ -93,7 +93,7 @@ export const save = async (model: Model, patch: Patch) => {
   });
 }
 
-export const connect = async (url: string, session: Session, statusCallback: (status: string) => void) => {
+export const connect = async (url: string, session: Session, statusCallback: (status: number) => void) => {
   if (browser) {
     init_supabase(session);
 
@@ -111,7 +111,7 @@ export const connect = async (url: string, session: Session, statusCallback: (st
     db.syncable.on('statusChanged', function (newStatus, url_) {
       console.log("Dexie DB status changing to:", newStatus, Dexie.Syncable.StatusTexts[newStatus]);
       if (url_ == url) {
-        statusCallback(Dexie.Syncable.StatusTexts[newStatus]);
+        statusCallback(newStatus);
       }
     });
   };

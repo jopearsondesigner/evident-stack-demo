@@ -1,5 +1,6 @@
 <script lang="ts">
   import classNames from 'classnames';
+
   export let asideClass =
     'h-full flex-column bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-gray-brand-3 transition-width duration-200 ease-in';
   export let nameClass =
@@ -13,6 +14,9 @@
   export let isClosed = true;
   export let name: string;
   export let description: string;
+  // TODO: sync status indicator, per Dexie SyncStatus
+  export let sync_status: number;
+
   let editable = false;
 
   function handleDblClick(event: any) {

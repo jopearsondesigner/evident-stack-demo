@@ -1,16 +1,10 @@
 <script lang="ts">
   import classNames from 'classnames';
   export let href: string | undefined = undefined;
-  export let name = '';
   export let iconBtnClass =
-    'block rounded-full border-none p-0 inline-flex items-center justify-center bg-gray-brand-1/0 dark:bg-white/0 hover:bg-gray-brand-1/[.09] dark:hover:bg-white/[.09] transition duration-200 ease-in cursor-default';
+  'block rounded-full border-none p-0 inline-flex items-center justify-center bg-gray-brand-1/0 dark:bg-white/0 hover:bg-gray-brand-1/[.09] dark:hover:bg-white/[.09] transition duration-200 ease-in cursor-default';
   export let size = 36;
   export let margin = '';
-
-  let hidden = false;
-  const handleClick = () => {
-    hidden = !hidden;
-  };
 </script>
 
 <svelte:element
@@ -18,9 +12,6 @@
   {href}
   {...$$restProps}
   class={classNames(iconBtnClass, margin)}
-  style="width: {size}px; height: {size}px;"
-  on:click
-  on:keydown
->
+  style="width: {size}px; height: {size}px;">
   <slot />
 </svelte:element>

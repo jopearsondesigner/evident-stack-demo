@@ -29,15 +29,13 @@
     on:click={() => {
       fileinput.click();
     }}
-    on:keydown
-  >
+    on:keydown >
     <Icon
       name="image-upload-icon"
       size={40}
       iconColor="text-body-light dark:text-body-dark"
       pathName={ImageUploadIcon}
-      viewBox="0 0 20 20"
-    />
+      viewBox="0 0 20 20" />
   </IconButton>
 </div>
 <div
@@ -45,8 +43,7 @@
   on:click={() => {
     fileinput.click();
   }}
-  on:keydown
->
+  on:keydown>
   Choose Image
 </div>
 <input
@@ -54,5 +51,4 @@
   type="file"
   accept=".jpg, .jpeg, .png"
   on:change={(e) => onFileSelected(e)}
-  bind:this={fileinput}
-/>
+  bind:this={fileinput} />

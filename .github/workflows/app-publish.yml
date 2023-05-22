@@ -23,6 +23,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - run: supabase link --project-ref $PROJECT_ID
+        working-directory: app
+        env:
+          PROJECT_ID: aqoqvlrxdcdiqwjxkrlr
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - run: supabase db push
+        working-directory: app
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -41,26 +58,14 @@ jobs:
       - name: Test
         run: npm -w app run check && npm -w app run test
         env:
-          PUBLIC_FIREBASE_API_KEY: AIzaSyBYZKqBSRqPopB-ODLvAAUbtb95CVUw3R8
-          PUBLIC_FIREBASE_AUTH_DOMAIN: evidentstack.firebaseapp.com
-          PUBLIC_FIREBASE_PROJECT_ID: evidentstack
-          PUBLIC_FIREBASE_STORAGE_BUCKET: evidentstack.appspot.com
-          PUBLIC_FIREBASE_MESSAGE_SENDER_ID: 477374372516
-          PUBLIC_FIREBASE_APP_ID: "1:477374372516:web:7d3e296ec79b12d2696431"
-          FIREBASE_ADMIN_CLIENT_EMAIL: ${{secrets.FIREBASE_ADMIN_CLIENT_EMAIL}}
-          FIREBASE_ADMIN_PRIVATE_KEY: ${{secrets.FIREBASE_ADMIN_PRIVATE_KEY}}
+          PUBLIC_SUPABASE_URL: https://aqoqvlrxdcdiqwjxkrlr.supabase.co
+          PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxb3F2bHJ4ZGNkaXF3anhrcmxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ3MTU4ODgsImV4cCI6MjAwMDI5MTg4OH0.Ys85T5JxY4AZyeH_oylJNs8fqnwvBDve-CQkYkE2YUA
 
       - name: Build
         run: npm -w app run build
         env:
-          PUBLIC_FIREBASE_API_KEY: AIzaSyBYZKqBSRqPopB-ODLvAAUbtb95CVUw3R8
-          PUBLIC_FIREBASE_AUTH_DOMAIN: evidentstack.firebaseapp.com
-          PUBLIC_FIREBASE_PROJECT_ID: evidentstack
-          PUBLIC_FIREBASE_STORAGE_BUCKET: evidentstack.appspot.com
-          PUBLIC_FIREBASE_MESSAGE_SENDER_ID: 477374372516
-          PUBLIC_FIREBASE_APP_ID: "1:477374372516:web:7d3e296ec79b12d2696431"
-          FIREBASE_ADMIN_CLIENT_EMAIL: ${{secrets.FIREBASE_ADMIN_CLIENT_EMAIL}}
-          FIREBASE_ADMIN_PRIVATE_KEY: ${{secrets.FIREBASE_ADMIN_PRIVATE_KEY}}
+          PUBLIC_SUPABASE_URL: https://aqoqvlrxdcdiqwjxkrlr.supabase.co
+          PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxb3F2bHJ4ZGNkaXF3anhrcmxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ3MTU4ODgsImV4cCI6MjAwMDI5MTg4OH0.Ys85T5JxY4AZyeH_oylJNs8fqnwvBDve-CQkYkE2YUA
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1

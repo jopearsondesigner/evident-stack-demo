@@ -1,15 +1,12 @@
-import { browser } from "$app/environment";
 import { init_supabase } from "$lib/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { Dexie, liveQuery, type Observable } from "dexie";
 import { readable } from "svelte/store";
+import 'dexie-observable';
+import 'dexie-syncable';
+import { SupabaseSync } from "./sync_protocol";
 
-if (browser) {
-  await import('dexie-observable');
-  await import('dexie-syncable');
-  const { SupabaseSync } = await import("./sync_protocol");
-  Dexie.Syncable.registerSyncProtocol("evidentstack", SupabaseSync)
-}
+Dexie.Syncable.registerSyncProtocol("evidentstack", SupabaseSync)
 
 type Model = {
   id: string,
@@ -94,25 +91,23 @@ export const save = async (model: Model, patch: Patch) => {
 }
 
 export const connect = async (url: string, session: Session, statusCallback: (status: number) => void) => {
-  if (browser) {
-    init_supabase(session);
+  init_supabase(session);
 
-    await db.syncable.connect("evidentstack", url,
-      {
-        user: session.user.id,
-        local_patches_table: "model_patches",
-        local_models_table: "models",
-        remote_schema: "public",            // TODO: configurable?
-        remote_events_table: "model_events", // TODO: configurable?
-        remote_patches_table: "model_patches" // TODO: configurable?
-      }
-    );
+  await db.syncable.connect("evidentstack", url,
+    {
+      user: session.user.id,
+      local_patches_table: "model_patches",
+      local_models_table: "models",
+      remote_schema: "public",            // TODO: configurable?
+      remote_events_table: "model_events", // TODO: configurable?
+      remote_patches_table: "model_patches" // TODO: configurable?
+    }
+  );
 
-    db.syncable.on('statusChanged', function (newStatus, url_) {
-      console.log("Dexie DB status changing to:", newStatus, Dexie.Syncable.StatusTexts[newStatus]);
-      if (url_ == url) {
-        statusCallback(newStatus);
-      }
-    });
-  };
+  db.syncable.on('statusChanged', function (newStatus, url_) {
+    console.log("Dexie DB status changing to:", newStatus, Dexie.Syncable.StatusTexts[newStatus]);
+    if (url_ == url) {
+      statusCallback(newStatus);
+    }
+  });
 }

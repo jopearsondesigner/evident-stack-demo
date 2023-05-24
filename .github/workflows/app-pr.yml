@@ -62,22 +62,8 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Test
-        run: npm -w app run check && npm -w app run test
+        run: npm run check && npm run build && npm run test
+        working-directory: app
         env:
           PUBLIC_SUPABASE_URL: https://bwirgqezwmsxvwrndsvb.supabase.co
           PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3aXJncWV6d21zeHZ3cm5kc3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODI3MjAzNzIsImV4cCI6MTk5ODI5NjM3Mn0.398C54bSSBqAajSrXSxI6c7JgEN_CN7NNQCWi9X54uc
-
-      - name: Build
-        run: npm -w app run build
-        env:
-          PUBLIC_SUPABASE_URL: https://bwirgqezwmsxvwrndsvb.supabase.co
-          PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3aXJncWV6d21zeHZ3cm5kc3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODI3MjAzNzIsImV4cCI6MTk5ODI5NjM3Mn0.398C54bSSBqAajSrXSxI6c7JgEN_CN7NNQCWi9X54uc
-
-      - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_PAGES_API_KEY }}
-          accountId: 24a2b0f48cf4f2d0cd375521394e63bd
-          projectName: evidentstack-app
-          directory: app/.svelte-kit/cloudflare
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

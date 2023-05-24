@@ -1,11 +1,11 @@
 import { browser } from "$app/environment";
-import { models_for_user } from "$lib/state/dexie";
 import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async (event) => {
   let { session } = await event.parent()
   if (browser) {
+    const { models_for_user } = await import("$lib/state/dexie");
     if (session) {
       const projects = await models_for_user(session.user.id);
       return { projects }

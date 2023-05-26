@@ -1,6 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
+  import { ContextMenuCommand, ContextMenuCommandKind } from './grid/util.ts';
   import {
     type GridState,
     GridStateKind,
@@ -15,7 +16,8 @@
     type FlowPortSource,
     DEFAULT_LANE,
     linkingFlowFromState,
-    type CursorTarget
+    type CursorTarget,
+    type ContextMenuCommand
   } from './grid/util';
 
   import ContextMenu from '../context/ContextMenu.svelte';
@@ -75,7 +77,7 @@
   let disambiguation: Disambiguation = null;
 
   // Drag Drop
-  let dragState: GridState = { kind: GridStateKind.NONE };
+  let gridState: GridState = { kind: GridStateKind.NONE };
 
   const evolveAndReactDraggingState = buildEvolveAndReact(decider);
 
@@ -85,7 +87,7 @@
       value: e.detail
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleLaneDragEnter = async (e: CustomEvent<RowTarget>) => {
@@ -94,7 +96,7 @@
       value: e.detail
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleLaneDragDrop = async (e: CustomEvent) => {
@@ -102,7 +104,7 @@
       kind: GridCommandKind.LANE_DRAG_DROP
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handlePlacementDragStart = async (e: CustomEvent<PlacementSource & WithSourceEffect>) => {
@@ -111,7 +113,7 @@
       value: e.detail
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleFlowDragStart = async (e: CustomEvent<FlowPortSource>) => {
@@ -120,7 +122,7 @@
       value: e.detail
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleCellDragEnter = async (e: CustomEvent<CellTarget>) => {
@@ -129,36 +131,41 @@
       value: e.detail
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleCellDragDrop = async (e: CustomEvent) => {
     const command: GridCommand = { kind: GridCommandKind.CELL_DRAG_DROP };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleOutOfBoundsDragEnter: DragEventHandler<EventTarget> = (_e) => {
     console.info('DRAG OUT OF BOUNDS');
     const command: GridCommand = { kind: GridCommandKind.OUT_OF_BOUNDS_DRAG_ENTER };
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleOutOfBoundsDragEnd: DragEventHandler<EventTarget> = (_e) => {
     console.info('DRAG DROP OUT OF BOUNDS END');
     const command: GridCommand = { kind: GridCommandKind.OUT_OF_BOUNDS_DRAG_END };
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   // Context Menu
   const handleOpenContextMenu = async (e: CustomEvent<CellTarget & CursorTarget>) => {
     const command: GridCommand = { kind: GridCommandKind.OPEN_CONTEXT_MENU, value: e.detail };
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleCloseContextMenu = async (e: CustomEvent) => {
     const command: GridCommand = { kind: GridCommandKind.CLOSE_CONTEXT_MENU };
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
+  };
+
+  const handleContextMenuCommand = async (cmd: ContextMenuCommand) => {
+    const command: GridCommand = { kind: GridCommandKind.CONTEXT_COMMAND, value: cmd };
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const stateToContextMenu = (state: GridState) => {
@@ -190,7 +197,7 @@
     };
   };
 
-  $: contextMenu = stateToContextMenu(dragState);
+  $: contextMenu = stateToContextMenu(gridState);
 
   const dispatchContextCommand = () => {};
 
@@ -264,7 +271,7 @@
   // Lanes
   $: default_stream_lane_index = streams.length;
   $: default_audience_lane_index = audiences.length;
-  $: lane_drop_target = dragState.kind === GridStateKind.LANE ? dragState.value.target : undefined;
+  $: lane_drop_target = gridState.kind === GridStateKind.LANE ? gridState.value.target : undefined;
   $: audience_drop_target =
     lane_drop_target?.rowKind == 'audience'
       ? { index: lane_drop_target.laneIndex, targetStatus: lane_drop_target.targetStatus }
@@ -278,10 +285,10 @@
     lane_drop_target?.rowKind == 'timeline' ? lane_drop_target.targetStatus : undefined;
 
   $: cell_drop_target =
-    dragState.kind === GridStateKind.PLACEMENT ? dragState.value.target : undefined;
+    gridState.kind === GridStateKind.PLACEMENT ? gridState.value.target : undefined;
 
   // Flows
-  $: linkingFlow = linkingFlowFromState(dragState);
+  $: linkingFlow = linkingFlowFromState(gridState);
   // Cursor
 
   let cursor_row = 0;
@@ -450,7 +457,7 @@
       value: { x: e.clientX - clientRect.x, y: e.clientY - clientRect.y }
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   $: allFlows = linkingFlow ? flows.concat(linkingFlow) : flows;
@@ -488,22 +495,46 @@
             <ContextMenuItem>Add Command</ContextMenuItem>
           {/if}
         {:else if contextMenu.placementKind === 'event'}
-          <ContextMenuItem>Delete Event</ContextMenuItem>
+          <ContextMenuItem
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
+          >
+            Delete Event
+          </ContextMenuItem>
         {:else if contextMenu.placementKind === 'interface'}
-          <ContextMenuItem>Delete Interface</ContextMenuItem>
+          <ContextMenuItem
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
+          >
+            Delete Interface</ContextMenuItem
+          >
         {:else if contextMenu.placementKind === 'readModel'}
-          <ContextMenuItem>Delete Read Model</ContextMenuItem>
+          <ContextMenuItem
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
+          >
+            Delete Read Model</ContextMenuItem
+          >
         {:else if contextMenu.placementKind === 'command'}
-          <ContextMenuItem>Delete Command</ContextMenuItem>
+          <ContextMenuItem
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
+          >
+            Delete Command</ContextMenuItem
+          >
         {/if}
         <ContextMenuDivider />
         <ContextMenuItem>Insert Column Left</ContextMenuItem>
         <ContextMenuItem>Insert Column Right</ContextMenuItem>
         {#if contextMenu.rowKind !== 'audience' || !contextMenu.defaultLane}
-          <ContextMenuItem>Insert Lane Above</ContextMenuItem>
+          <ContextMenuItem
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneAbove)}
+          >
+            Insert Lane Above</ContextMenuItem
+          >
         {/if}
         {#if contextMenu.rowKind !== 'stream' || !contextMenu.defaultLane}
-          <ContextMenuItem>Insert Lane Below</ContextMenuItem>
+          <ContextMenuItem
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneBelow)}
+          >
+            Insert Lane Below</ContextMenuItem
+          >
         {/if}
         <ContextMenuDivider />
         <ContextMenuItem>Import Event Model JSON</ContextMenuItem>

@@ -472,6 +472,28 @@ impl EventModelStateManager {
             }
         }
     }
+    
+    pub async fn add_lane(
+        &mut self,
+        model_id_str: String,
+        kind: String,
+        index: usize,
+        name: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let lane_type = Lane::try_from(kind.as_str())?;
+        
+        match lane_type {
+            Lane::Audience => {
+                self.dispatch(EventModelCommand::AddAudience(model_id, index, name))
+                    .await
+            }
+            Lane::Stream => {
+                self.dispatch(EventModelCommand::AddStream(model_id, index, name))
+                    .await
+            }
+        }
+    }
 
     pub async fn add_to_description(
         &mut self,

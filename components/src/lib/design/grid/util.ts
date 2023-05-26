@@ -127,14 +127,17 @@ export enum ContextMenuCommandKind {
     InsertColumnLeft,
     InsertColumnRight,
     InsertLaneAbove,
-    InsertLaneBelow
+    InsertLaneBelow,
+    DeletePlacement
 }
 
-export type ContextMenuCommand =
-    | { kind: ContextMenuCommandKind.InsertColumnLeft }
-    | { kind: ContextMenuCommandKind.InsertColumnRight }
-    | { kind: ContextMenuCommandKind.InsertLaneAbove }
-    | { kind: ContextMenuCommandKind.InsertLaneBelow }
+export enum ContextMenuCommand {
+    InsertColumnLeft,
+    InsertColumnRight,
+    InsertLaneAbove,
+    InsertLaneBelow,
+    DeletePlacement
+}
 
 
 export function buildEvolveAndReact(reactionDecider: Decider): (s: GridState, c: GridCommand) => GridState {
@@ -385,8 +388,37 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: GridState, c:
                 case GridCommandKind.CLOSE_CONTEXT_MENU:
                     return { kind: GridStateKind.NONE };
                 case GridCommandKind.CONTEXT_COMMAND:
-                    return state;
+                    switch (state.kind) {
+                        case GridStateKind.CONTEXT:
+                            contextMenuReact(state.source, command.value, reactionDecider)
+                        default:
+                            return state;
+                    }
             }
+    }
+}
+
+async function contextMenuReact(state: CellTarget & CursorTarget, command: ContextMenuCommand, reactionDecider: Decider) {
+    switch (command) {
+        case ContextMenuCommand.DeletePlacement:
+            if (state.placementId) {
+                await reactionDecider.remove_placement(state.placementId)
+            }
+            break;
+        case ContextMenuCommand.InsertColumnLeft:
+            break;
+        case ContextMenuCommand.InsertColumnRight:
+            break;
+        case ContextMenuCommand.InsertLaneAbove:
+            if (state.row) {
+                await reactionDecider.add_lane(state.row.rowKind, state.row.rowIndex -1, "Placeholder Above") // TODO: two state insert lane with name menu
+            }
+            break;
+        case ContextMenuCommand.InsertLaneBelow:
+            if (state.row) {
+                await reactionDecider.add_lane(state.row.rowKind, state.row.rowIndex +1, "Placeholder Below") // TODO: two state insert lane with name menu
+            }
+            break;
     }
 }
 

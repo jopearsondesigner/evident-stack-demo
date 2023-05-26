@@ -28,6 +28,7 @@ export type Decider = {
   rename_lane: (kind: LaneKind, lane_id: string, name: string) => any;
   reorder_lane: (kind: LaneKind, lane_id: string, index: number) => any;
   remove_lane: (kind: LaneKind, lane_id: string) => any;
+  add_lane: (kind: string, index: number, name: string) => any
   add_to_description: (index: number, addition: string) => any;
   delete_from_description: (index: number, count: number) => any;
   connect_flow: (source_placement_id_str: string, source_anchor_str: string | undefined, target_placement_id_str: string, target_anchor_str: string | undefined) => any;
@@ -51,6 +52,7 @@ export const default_decider: Decider = {
   rename_lane: console.log,
   reorder_lane: console.log,
   remove_lane: console.log,
+  add_lane: console.log,
   add_to_description: console.log,
   delete_from_description: console.log,
   connect_flow: console.log

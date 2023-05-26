@@ -90,6 +90,9 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       remove_lane: async (kind: LaneKind, lane_id: string) => {
         return await manager.remove_lane(id!, kind, lane_id)
       },
+      add_lane: async (kind: string, index: number, name: string) => {
+        return manager.add_lane(id!, kind, index, name)
+      },
       add_to_description: async (index: number, addition: string) => {
         return await manager.add_to_description(id!, index, addition)
       },

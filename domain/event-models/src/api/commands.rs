@@ -1,5 +1,5 @@
 use crate::{
-    Anchor, AudienceId, ComponentId, EventModelId, FlowId, InterfaceConfig, PlacementId, StreamId,
+    Anchor, AudienceId, ComponentId, EventModelId, FlowId, InterfaceConfig, PlacementId, StreamId, ColumnShift,
 };
 use serde::{Deserialize, Serialize};
 
@@ -44,6 +44,7 @@ pub enum EventModelCommand {
     MoveTimelinePlacement(EventModelId, PlacementId, usize),
     MoveEventPlacement(EventModelId, PlacementId, usize, Option<StreamId>),
     RemovePlacement(EventModelId, PlacementId),
+    ShiftPlacements(EventModelId, usize, ColumnShift),
 
     // Clipboard
     DuplicateInterfacePlacement(EventModelId, PlacementId, usize, Option<AudienceId>),

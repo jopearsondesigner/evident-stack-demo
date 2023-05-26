@@ -766,3 +766,21 @@ impl Entity for FlowArrow {
         self.id
     }
 }
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ColumnShift {
+    Left(usize),
+    Right(usize),
+}
+
+impl TryFrom <(&str, usize)> for ColumnShift {
+    type Error = ();
+
+    fn try_from((dir, size): (&str, usize)) -> Result<Self, Self::Error> {
+        match dir {
+            "LEFT" => Ok(Self::Left(size)),
+            "RIGHT" => Ok(Self::Right(size)),
+            _ => Err(())
+        }
+    }
+}

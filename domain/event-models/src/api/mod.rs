@@ -170,7 +170,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     }
 
                     // Lanes
-                    EventModelCommand::AddAudience(_, _, _) => {
+                    EventModelCommand::AddAudience(_, _, _) => {  // TODO: #40 impl
                         todo!()
                     }
                     EventModelCommand::RenameAudience(model_id, audience_id, name) => {
@@ -197,7 +197,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
 
                         Ok(vec![EventModelEvent::LaneRemoved(*model_id, lane_id)])
                     }
-                    EventModelCommand::AddStream(_, _, _) => {
+                    EventModelCommand::AddStream(_, _, _) => { // TODO: #40 impl
                         todo!()
                     }
                     EventModelCommand::RenameStream(model_id, stream_id, name) => {
@@ -403,6 +403,9 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             *placement_id,
                         )])
                     }
+                    // EventModelCommand::ShiftColumn(_model_id, _index, _shift) => { // TODO: #40 impl
+                    //     todo!()
+                    // }
                     EventModelCommand::DuplicateInterfacePlacement(
                         model_id,
                         placement_id,

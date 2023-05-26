@@ -15,7 +15,7 @@ use automerge::ActorId;
 use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError};
 use event_models::api::commands::EventModelCommand;
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
-use event_models::{Anchor, EventModel, EventModelError};
+use event_models::{Anchor, ColumnShift, EventModel, EventModelError};
 use js_sys::Uint8Array;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
@@ -305,6 +305,21 @@ impl EventModelStateManager {
         .await
     }
 
+    pub async fn insert_column(
+        &mut self,
+        model_id_str: String,
+        index: usize,
+        direction: string,
+        count: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let column_shift = ColumnShift::try_from((direction, index))
+            .map_err(|_| JsValue(format!("{:?} is an invalid column shift direction", direction)))?;
+
+
+        self.dispatch(EventModelCommand::ShiftPlacements(model_id, index, column_shift))
+    }
+
     pub async fn import(
         &mut self,
         model_id_str: String,
@@ -472,7 +487,7 @@ impl EventModelStateManager {
             }
         }
     }
-    
+
     pub async fn add_lane(
         &mut self,
         model_id_str: String,
@@ -482,7 +497,7 @@ impl EventModelStateManager {
     ) -> Result<EventModelGrid, JsValue> {
         let model_id = parse_uuid(model_id_str)?;
         let lane_type = Lane::try_from(kind.as_str())?;
-        
+
         match lane_type {
             Lane::Audience => {
                 self.dispatch(EventModelCommand::AddAudience(model_id, index, name))

@@ -1,5 +1,3 @@
-<svelte:options immutable />
-
 <script lang="ts">
   import { ContextMenuCommand, ContextMenuCommandKind } from './grid/util.ts';
   import {

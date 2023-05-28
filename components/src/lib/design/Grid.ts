@@ -141,8 +141,8 @@ export type ItemAtCursor =
   | EventPlacementCell
   | EmptyCell;
 
-export const placementIsEmptyCell = (placement: object) => {
-  return placement == undefined || placement.constructor.name == 'EmptyCell';
+const placementIsEmptyCell = (placement: any | undefined) => {
+  return placement == undefined || !(placement?.placement);
 };
 
 export const itemAtCursor = (

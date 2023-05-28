@@ -1,14 +1,11 @@
 import { default as init, EventModelStateManager, setPanicHook } from "state-client";
 import { derived, readable } from 'svelte/store';
 import type { LaneKind } from '$components/design/Grid';
-import { dev } from "$app/environment";
 
 const initialize_decider = async (id: string | undefined, user: string) => {
   // Initialize Wasm decider
   await init();
-  if (dev) {
-    setPanicHook();
-  }
+  setPanicHook();
 
   let manager = await new EventModelStateManager(id, user);
 

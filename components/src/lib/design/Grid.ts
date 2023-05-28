@@ -142,7 +142,7 @@ export type ItemAtCursor =
   | EmptyCell;
 
 const placementIsEmptyCell = (placement: any | undefined) => {
-  return placement == undefined || !(placement?.placement);
+  return placement == undefined || !(placement?.id);
 };
 
 export const itemAtCursor = (

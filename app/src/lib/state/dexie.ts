@@ -49,7 +49,7 @@ const concatBuffers = (buf1: Uint8Array, buf2: Uint8Array) => {
   return ret;
 };
 
-const patchesObservable = (model: string): Observable<Patch[]> => {
+const patchesLiveQuery = (model: string): Observable<Patch[]> => {
   return liveQuery(() => db.model_patches.where({ model }).toArray())
 }
 
@@ -57,7 +57,7 @@ export const documentBinaryStore = (model: string) => {
   return readable(
     new Uint8Array(),
     setter => {
-      let subscription = patchesObservable(model).subscribe(patches => {
+      let subscription = patchesLiveQuery(model).subscribe(patches => {
         let data = patches.reduce(
           (acc: Uint8Array, patch: Patch) => concatBuffers(acc, patch.data),
           new Uint8Array()

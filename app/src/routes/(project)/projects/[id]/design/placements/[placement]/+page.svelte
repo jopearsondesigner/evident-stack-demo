@@ -19,23 +19,12 @@
   import { oneDark } from '@codemirror/theme-one-dark';
 
   import type { PageData } from './$types';
-  import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
-  import type { GridPlacementMetadata } from 'state-client';
 
   export let data: PageData;
 
-  const { grid } = data;
+  const { grid, handle_close, placement_id } = data;
 
-  const lookupPlacement = (placement_id: string | null | undefined): GridPlacementMetadata | undefined => {
-    if ($grid && placement_id) {
-      return $grid.placement_metadata_by_id(placement_id);
-    } else {
-      return undefined;
-    }
-  };
-
-  $: placement = lookupPlacement($page.params.placement);
+  $: placement = $grid?.placement_metadata_by_id(placement_id);
 
   $: name = placement?.name;
   $: description = placement?.description;
@@ -68,10 +57,6 @@
     }
   };
 
-  const handleClose = () => {
-    goto(`/projects/${$page.params.id}/design`, { noScroll: true })
-  }
-
   let editable = false;
   function handleKeydown() {}
   function handleDblClick() {
@@ -93,7 +78,7 @@
   }
 </style>
 
-<Drawer placement="right" class="" drawerRight hidden={false} on:close={handleClose}>
+<Drawer placement="right" class="" drawerRight hidden={false} on:close={handle_close}>
   <aside
     class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3">
     {#if placementDetails}
@@ -189,7 +174,7 @@
           <div class="mt-6 mx-3 space-x-3 flex justify-end">
             <button
               class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-              on:click|preventDefault={handleClose}>
+              on:click|preventDefault={handle_close}>
               cancel
             </button>
             <Button color="default" size="sm" label="Save" on:click class="" />
@@ -286,7 +271,7 @@
             <div class="mt-6 space-x-3 col-span-1 place-self-center justify-self-end">
               <button
                 class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-                on:click|preventDefault={handleClose}>
+                on:click|preventDefault={handle_close}>
                 cancel
               </button>
               <Button color="default" size="sm" label="Save" on:click class="" />

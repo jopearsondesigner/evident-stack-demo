@@ -24,8 +24,7 @@
 
   const { grid, handle_close, placement_id } = data;
 
-  $: placement = $grid?.placement_metadata_by_id(placement_id);
-
+  $: placement = $grid?.placement_by_id(placement_id);
   $: name = placement?.name;
   $: description = placement?.description;
 

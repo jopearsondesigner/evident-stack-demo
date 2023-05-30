@@ -413,16 +413,35 @@ async function contextMenuReact(state: CellTarget & CursorTarget, command: Conte
             break;
         case ContextMenuCommand.InsertLaneAbove:
             if (state.row) {
-                const rowKind = state.row.rowKind === "timeline" ? "audience" : state.row.rowKind;
-                await reactionDecider.add_lane(rowKind, state.row.rowIndex, "Placeholder Below"); // TODO: two state insert lane with name menu
+                switch (state.row.rowKind) {
+                    case "audience":
+                        await reactionDecider.add_lane("audience", state.row.laneIndex +1, "Placeholder Above")
+                        break;
+                    case "stream":
+                        await reactionDecider.add_lane("stream", state.row.laneIndex, "Placeholder Above")
+                        break;
+                    case "timeline":
+                        await reactionDecider.add_lane("audience", 0, "Placeholder Above")
+                        break;
+                }
             }
            
             break;
         case ContextMenuCommand.InsertLaneBelow:
             if (state.row) {
-                const rowKind = state.row.rowKind === "timeline" ? "stream" : state.row.rowKind;
-                await reactionDecider.add_lane(rowKind, state.row.rowIndex, "Placeholder Below"); // TODO: two state insert lane with name menu
+                switch (state.row.rowKind) {
+                    case "audience":
+                        await reactionDecider.add_lane("audience", state.row.laneIndex, "Placeholder Below")
+                        break;
+                    case "stream":
+                        await reactionDecider.add_lane("stream", state.row.laneIndex - 1, "Placeholder Below")
+                        break;
+                    case "timeline":
+                        await reactionDecider.add_lane("stream", 0, "Placeholder Below")
+                        break;
+                }
             }
+            
             break;
     }
 }

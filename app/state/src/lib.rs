@@ -16,7 +16,7 @@ use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError
 use event_models::api::commands::EventModelCommand;
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
 use event_models::{Anchor, ColumnShift, EventModel, EventModelError};
-use js_sys::Uint8Array;
+use js_sys::{Uint8Array, Array};
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 use web_sys::{console, window};
@@ -507,8 +507,26 @@ impl EventModelStateManager {
 
         match lane_type {
             Lane::Audience => {
-                self.dispatch(EventModelCommand::AddAudience(model_id, index, name))
-                    .await
+                let cmd = EventModelCommand::AddAudience(model_id, index, name);
+
+                console::log_2(
+                    &"Add Lane Command".into(),
+                    &format!("{:?}", cmd).as_str().into()
+                );
+
+                let res = self.dispatch(cmd)
+                    .await;
+                
+                if let Ok(inner) = &res {
+                    console::log_2(
+                        &"Add Lane Command Res".into(),
+                        &inner.audiences()
+                    );
+                } else {
+                    console::log_1(&"failed".into())
+                }
+                
+                res
             }
             Lane::Stream => {
                 self.dispatch(EventModelCommand::AddStream(model_id, index, name))

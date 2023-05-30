@@ -70,7 +70,7 @@
     class="audienceName sticky left-3 z-30 justify-self-start self-start cursor-pointer prose text-body-light dark:text-body-dark mt-3 select-none cursor-move"
     style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
   >
-    {audience.name}
+    {audience.name + lane_index}
   </h3>
 {:else}
   <!-- TODO: reduce the color to disabled text -->

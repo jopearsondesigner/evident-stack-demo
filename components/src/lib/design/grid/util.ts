@@ -406,8 +406,12 @@ async function contextMenuReact(state: CellTarget & CursorTarget, command: Conte
             }
             break;
         case ContextMenuCommand.InsertColumnLeft:
+            console.warn("ContextMenuCommand.InsertColumnLeft");
+            await reactionDecider.insert_columns(state.column, "LEFT", 1);
             break;
         case ContextMenuCommand.InsertColumnRight:
+            console.warn("ContextMenuCommand.InsertColumnRight");
+            await reactionDecider.insert_columns(state.column, "RIGHT", 1);
             break;
         case ContextMenuCommand.InsertLaneAbove:
             if (state.row) {

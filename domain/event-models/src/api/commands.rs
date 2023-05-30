@@ -44,7 +44,7 @@ pub enum EventModelCommand {
     MoveTimelinePlacement(EventModelId, PlacementId, usize),
     MoveEventPlacement(EventModelId, PlacementId, usize, Option<StreamId>),
     RemovePlacement(EventModelId, PlacementId),
-    ShiftPlacements(EventModelId, usize, ColumnShift),
+    ShiftPlacements(EventModelId, ColumnShift),
 
     // Clipboard
     DuplicateInterfacePlacement(EventModelId, PlacementId, usize, Option<AudienceId>),

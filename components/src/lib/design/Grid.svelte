@@ -516,12 +516,20 @@
           <ContextMenuItem
             on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
           >
-            Delete Command</ContextMenuItem
-          >
+            Delete Command
+          </ContextMenuItem>
         {/if}
         <ContextMenuDivider />
-        <ContextMenuItem>Insert Column Left</ContextMenuItem>
-        <ContextMenuItem>Insert Column Right</ContextMenuItem>
+        <ContextMenuItem
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnLeft)}
+        >
+            Insert Column Left
+        </ContextMenuItem>
+        <ContextMenuItem
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnRight)}
+        >
+            Insert Column Right 
+        </ContextMenuItem>
         {#if contextMenu.rowKind !== 'audience' || !contextMenu.defaultLane}
           <ContextMenuItem
             on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneAbove)}

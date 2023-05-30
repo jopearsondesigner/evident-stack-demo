@@ -305,19 +305,26 @@ impl EventModelStateManager {
         .await
     }
 
-    pub async fn insert_column(
+    pub async fn insert_columns(
         &mut self,
         model_id_str: String,
         index: usize,
-        direction: string,
+        direction: String,
         count: usize,
     ) -> Result<EventModelGrid, JsValue> {
         let model_id = parse_uuid(model_id_str)?;
-        let column_shift = ColumnShift::try_from((direction, index))
-            .map_err(|_| JsValue(format!("{:?} is an invalid column shift direction", direction)))?;
+        let column_shift = ColumnShift::try_from((direction.as_str(), index, count)).map_err(|_| {
+            JsValue::from(format!(
+                "{:?} is an invalid column shift direction",
+                direction
+            ))
+        })?;
 
-
-        self.dispatch(EventModelCommand::ShiftPlacements(model_id, index, column_shift))
+        self.dispatch(EventModelCommand::ShiftPlacements(
+            model_id,
+            column_shift,
+        ))
+        .await
     }
 
     pub async fn import(

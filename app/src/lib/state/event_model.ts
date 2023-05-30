@@ -93,6 +93,9 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       add_lane: async (kind: string, index: number, name: string) => {
         return manager.add_lane(id!, kind, index, name)
       },
+      insert_columns: async (index: number, direction: string, count: number) => {
+        return manager.insert_columns(id!, index, direction, count);
+      },
       add_to_description: async (index: number, addition: string) => {
         return await manager.add_to_description(id!, index, addition)
       },

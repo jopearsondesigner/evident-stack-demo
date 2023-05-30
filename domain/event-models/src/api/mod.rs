@@ -3,7 +3,7 @@ use crate::api::events::EventModelEvent;
 use crate::json::import;
 use crate::{
     Command, Component, Entity, Event, EventModelDataTransfer, EventModelError, FlowArrow,
-    Interface, Lane, LaneId, Name, Placement, PlacementPosition, ReadModel,
+    Interface, Lane, LaneId, Name, Placement, PlacementPosition, ReadModel, ColumnShift,
 };
 use crate::{EventModel, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
@@ -170,7 +170,8 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     }
 
                     // Lanes
-                    EventModelCommand::AddAudience(_, _, _) => {  // TODO: #40 impl
+                    EventModelCommand::AddAudience(_, _, _) => {
+                        // TODO: #40 impl
                         todo!()
                     }
                     EventModelCommand::RenameAudience(model_id, audience_id, name) => {
@@ -197,7 +198,8 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
 
                         Ok(vec![EventModelEvent::LaneRemoved(*model_id, lane_id)])
                     }
-                    EventModelCommand::AddStream(_, _, _) => { // TODO: #40 impl
+                    EventModelCommand::AddStream(_, _, _) => {
+                        // TODO: #40 impl
                         todo!()
                     }
                     EventModelCommand::RenameStream(model_id, stream_id, name) => {
@@ -403,9 +405,22 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             *placement_id,
                         )])
                     }
-                    // EventModelCommand::ShiftColumn(_model_id, _index, _shift) => { // TODO: #40 impl
-                    //     todo!()
-                    // }
+                    EventModelCommand::ShiftPlacements(model_id, shift) => match shift {
+                        ColumnShift::Left { index, count } => {
+                            Ok(vec![EventModelEvent::PlacementsShifted(
+                                *model_id,
+                                *index,
+                                *count,
+                            )])
+                        }
+                        ColumnShift::Right { index, count } => {
+                            Ok(vec![EventModelEvent::PlacementsShifted(
+                                *model_id,
+                                index + 1,
+                                *count,
+                            )])
+                        }
+                    },
                     EventModelCommand::DuplicateInterfacePlacement(
                         model_id,
                         placement_id,

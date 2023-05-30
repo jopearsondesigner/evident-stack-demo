@@ -3,7 +3,7 @@ use crate::api::events::EventModelEvent;
 use crate::json::import;
 use crate::{
     Command, Component, Entity, Event, EventModelDataTransfer, EventModelError, FlowArrow,
-    Interface, Lane, LaneId, Name, Placement, PlacementPosition, ReadModel, ColumnShift,
+    Interface, Lane, LaneId, Name, Placement, PlacementPosition, ReadModel, ColumnShift, Audience, AudienceId, StreamId, Stream,
 };
 use crate::{EventModel, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
@@ -170,9 +170,17 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     }
 
                     // Lanes
-                    EventModelCommand::AddAudience(_, _, _) => {
-                        // TODO: #40 impl
-                        todo!()
+                    EventModelCommand::AddAudience(model_id, index, name) => {
+                        Ok(vec![EventModelEvent::LaneAdded(
+                            *model_id,
+                            Lane::Audience(
+                                Audience::create(
+                                    AudienceId::new_v4(),
+                                    name.to_owned()
+                                )?
+                            ),
+                            *index
+                        )])
                     }
                     EventModelCommand::RenameAudience(model_id, audience_id, name) => {
                         let valid_name = Name::create(name)?;
@@ -198,9 +206,17 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
 
                         Ok(vec![EventModelEvent::LaneRemoved(*model_id, lane_id)])
                     }
-                    EventModelCommand::AddStream(_, _, _) => {
-                        // TODO: #40 impl
-                        todo!()
+                    EventModelCommand::AddStream(model_id, index, name) => {
+                        Ok(vec![EventModelEvent::LaneAdded(
+                            *model_id,
+                            Lane::Stream(
+                                Stream::create(
+                                    StreamId::new_v4(),
+                                    name.to_owned()
+                                )?
+                            ),
+                            *index
+                        )])
                     }
                     EventModelCommand::RenameStream(model_id, stream_id, name) => {
                         let lane_id = LaneId::Stream(*stream_id);

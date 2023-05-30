@@ -406,21 +406,22 @@ async function contextMenuReact(state: CellTarget & CursorTarget, command: Conte
             }
             break;
         case ContextMenuCommand.InsertColumnLeft:
-            console.warn("ContextMenuCommand.InsertColumnLeft");
             await reactionDecider.insert_columns(state.column, "LEFT", 1);
             break;
         case ContextMenuCommand.InsertColumnRight:
-            console.warn("ContextMenuCommand.InsertColumnRight");
             await reactionDecider.insert_columns(state.column, "RIGHT", 1);
             break;
         case ContextMenuCommand.InsertLaneAbove:
             if (state.row) {
-                await reactionDecider.add_lane(state.row.rowKind, state.row.rowIndex -1, "Placeholder Above") // TODO: two state insert lane with name menu
+                const rowKind = state.row.rowKind === "timeline" ? "audience" : state.row.rowKind;
+                await reactionDecider.add_lane(rowKind, state.row.rowIndex, "Placeholder Below"); // TODO: two state insert lane with name menu
             }
+           
             break;
         case ContextMenuCommand.InsertLaneBelow:
             if (state.row) {
-                await reactionDecider.add_lane(state.row.rowKind, state.row.rowIndex +1, "Placeholder Below") // TODO: two state insert lane with name menu
+                const rowKind = state.row.rowKind === "timeline" ? "stream" : state.row.rowKind;
+                await reactionDecider.add_lane(rowKind, state.row.rowIndex, "Placeholder Below"); // TODO: two state insert lane with name menu
             }
             break;
     }

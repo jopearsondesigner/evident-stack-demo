@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { ContextMenuCommand, ContextMenuCommandKind } from './grid/util.ts';
   import {
     type GridState,
     GridStateKind,
@@ -16,18 +15,18 @@
     linkingFlowFromState,
     type CursorTarget,
     type ContextMenuCommand
-  } from './grid/util';
+  } from '$components/design/grid/util';
 
-  import ContextMenu from '../context/ContextMenu.svelte';
-  import ContextMenuItem from '../context/ContextMenuItem.svelte';
-  import ContextMenuDivider from '../context/ContextMenuDivider.svelte';
-  import FlowCanvas from './flowArrows/FlowCanvas.svelte';
-  import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
+  import FlowCanvas from '$components/design/flowArrows/FlowCanvas.svelte';
+  import ContextMenu from '$components/context/ContextMenu.svelte';
+  import ContextMenuItem from '$components/context/ContextMenuItem.svelte';
+  import ContextMenuDivider from '$components/context/ContextMenuDivider.svelte';
+  import { createKeybindingsHandler, type KeyBindingMap } from '$components/vendor/tinykeys/tinykeys';
 
-  import Cursor from './grid/Cursor.svelte';
-  import AudienceLane from './grid/Audience.svelte';
-  import Timeline from './grid/Timeline.svelte';
-  import StreamLane from './grid/Stream.svelte';
+  import Cursor from '$components/design/grid/Cursor.svelte';
+  import AudienceLane from '$components/design/grid/Audience.svelte';
+  import Timeline from '$components/design/grid/Timeline.svelte';
+  import StreamLane from '$components/design/grid/Stream.svelte';
 
   import {
     type Decider,
@@ -41,11 +40,11 @@
     type CursorMode,
     type GridMode,
     type Flow
-  } from './Grid';
+  } from '$components/design/Grid';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { itemAtCursor } from './Grid';
-  import TimelineDisambiguation from './grid/TimelineDisambiguation.svelte';
+  import TimelineDisambiguation from '$components/design/grid/TimelineDisambiguation.svelte';
   import type { DragEventHandler } from 'svelte/elements';
+  import type { EventModelGrid } from 'state-client';
 
   // Event dispatch
 
@@ -53,14 +52,8 @@
 
   // Grid Element State
 
-  export let decider: Decider = default_decider;
-  export let column_count: number;
-  export let default_audience_placements: Array<InterfacePlacement> = new Array(0);
-  export let audiences: Array<Audience> = new Array(0);
-  export let timeline_placements: Array<TimelinePlacement> = new Array(0);
-  export let streams: Array<Stream> = new Array(0);
-  export let default_stream_placements: Array<EventPlacement> = new Array(0);
-  export let flows: Array<Flow> = [];
+  export let decider: Decider;
+  export let grid: EventModelGrid | undefined | null;
 
   // Grid Mode
 
@@ -132,7 +125,7 @@
     gridState = evolveAndReactDraggingState(gridState, command);
   };
 
-  const handleCellDragDrop = async (e: CustomEvent) => {
+  const handleCellDragDrop = async (_e: CustomEvent) => {
     const command: GridCommand = { kind: GridCommandKind.CELL_DRAG_DROP };
 
     gridState = evolveAndReactDraggingState(gridState, command);
@@ -156,7 +149,7 @@
     gridState = evolveAndReactDraggingState(gridState, command);
   };
 
-  const handleCloseContextMenu = async (e: CustomEvent) => {
+  const handleCloseContextMenu = async (_e: CustomEvent) => {
     const command: GridCommand = { kind: GridCommandKind.CLOSE_CONTEXT_MENU };
     gridState = evolveAndReactDraggingState(gridState, command);
   };
@@ -262,13 +255,8 @@
   // Rows
 
   const default_audience_row = 0;
-  $: timeline_row = audiences.length + 1;
-  $: default_stream_row = timeline_row + streams.length + 1;
-  $: row_count = default_stream_row + 1;
 
   // Lanes
-  $: default_stream_lane_index = streams.length;
-  $: default_audience_lane_index = audiences.length;
   $: lane_drop_target = gridState.kind === GridStateKind.LANE ? gridState.value.target : undefined;
   $: audience_drop_target =
     lane_drop_target?.rowKind == 'audience'
@@ -287,21 +275,17 @@
 
   // Flows
   $: linkingFlow = linkingFlowFromState(gridState);
+
   // Cursor
 
   let cursor_row = 0;
   onMount(() => {
-    cursor_row = timeline_row;
+    cursor_row = grid?.timeline ?? 0;
   });
   let cursor_column = 0;
-  $: cursor_item = itemAtCursor(
+  $: cursor_item = grid?.cell_by_row_col(
     cursor_row,
     cursor_column,
-    default_audience_placements,
-    audiences,
-    timeline_placements,
-    streams,
-    default_stream_placements
   );
 
   const gridModeToCursorMode = (mode: GridMode): CursorMode => {

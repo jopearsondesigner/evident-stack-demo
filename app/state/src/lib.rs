@@ -7,7 +7,6 @@ pub mod strategies;
 use std::str::FromStr;
 
 pub use crate::grid::EventModelGrid;
-use crate::grid::Lane;
 use crate::indexed_db::{IndexedDbError, IndexedDbStateRepository};
 pub use crate::indexed_db::{Model, Patch};
 use crate::strategies::{ReifyDecideSave, ReifyDecideSaveError, StateRepository};
@@ -73,6 +72,26 @@ impl Reconcilable for EventModelState<AutomergeEventModel> {
     fn hydrate(doc: &impl ReadDoc) -> Result<Self, HydrateError> {
         let model = hydrate(doc)?;
         Ok(EventModelState::EventModel(model))
+    }
+}
+
+pub enum Lane {
+    Audience,
+    Stream,
+}
+
+impl TryFrom<&str> for Lane {
+    type Error = JsValue;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value {
+            "audience" => Ok(Self::Audience),
+            "stream" => Ok(Self::Stream),
+            &_ => Err(JsValue::from(format!(
+                "Value {:?} is not a lane type",
+                value
+            ))),
+        }
     }
 }
 
@@ -313,18 +332,16 @@ impl EventModelStateManager {
         count: usize,
     ) -> Result<EventModelGrid, JsValue> {
         let model_id = parse_uuid(model_id_str)?;
-        let column_shift = ColumnShift::try_from((direction.as_str(), index, count)).map_err(|_| {
-            JsValue::from(format!(
-                "{:?} is an invalid column shift direction",
-                direction
-            ))
-        })?;
+        let column_shift =
+            ColumnShift::try_from((direction.as_str(), index, count)).map_err(|_| {
+                JsValue::from(format!(
+                    "{:?} is an invalid column shift direction",
+                    direction
+                ))
+            })?;
 
-        self.dispatch(EventModelCommand::ShiftPlacements(
-            model_id,
-            column_shift,
-        ))
-        .await
+        self.dispatch(EventModelCommand::ShiftPlacements(model_id, column_shift))
+            .await
     }
 
     pub async fn import(

@@ -280,7 +280,7 @@
 
   let cursor_row = 0;
   onMount(() => {
-    cursor_row = grid?.timeline ?? 0;
+    cursor_row = grid?.timeline.row ?? 0;
   });
   let cursor_column = 0;
   $: cursor_item = grid?.cell_by_row_col(

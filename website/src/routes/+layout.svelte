@@ -15,7 +15,6 @@
   import NavLi from '$components/navbar/NavLi.svelte';
   import Button from '$components/Button.svelte';
   import Icon from '$components/Icon.svelte';
-  import Modal from '$components/Modal.svelte';
   import ArrowRight from '$components/icons/ArrowRight.svelte';
   import Footer from '$components/footer/Footer.svelte';
   import FooterBrand from '$components/footer/FooterBrand.svelte';
@@ -44,26 +43,6 @@
     !hidden && bgColor,
     !hidden && bgOpacity
   );
-
-  import Form from '$components/form/Form.svelte';
-  import Input from '$components/form/Input.svelte';
-  import Textarea from '$components/form/Textarea.svelte';
-  import A from '$components/typography/A.svelte';
-  import Submit from '$components/form/Submit.svelte';
-  import EarlyAccessSignupForm from '$lib/EarlyAccessSignupForm.svelte';
-
-  $: Modal_id = 'modal-editing-window'; // TODO: derive this from model ID?
-
-  let contactModal = false;
-  export let open = false;
-  const hide = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    open = false;
-  };
-
-  const handleContactModel = async () => {
-    console.log('TODO: submit form');
-  };
 </script>
 
 <Navbar website={true}>
@@ -94,15 +73,15 @@
           </DropdownMenu>
         </NavUl>
         <NavUl class={classNames('lg:mr-12', ulClass)}>
-          <!-- <NavLi href="https://app.onote.com/">Log In</NavLi> -->
+          <NavLi href="https://app.evidentstack.com/">Log In</NavLi>
           <NavLi>
             <Button
               gradient
               color="brandStackPrimary"
               class="flex items-center"
               size="sm"
-              on:click={() => (contactModal = true)}
-              label="Sign Up for Early Access"
+              href="https://app.evidentstack.com/auth/sign-in"
+              label="Sign Up"
             >
               <Icon
                 name="arrow-right"
@@ -147,15 +126,15 @@
             </DropdownMenuMobile>
           </NavUl>
           <NavUl mobileNavUl="p-3 border-t border-border-light dark:border-border-dark" hidden>
-            <!-- <NavLi href="https://app.onote.com/" class="p-0" hidden footer>Log In</NavLi> -->
+            <NavLi href="https://app.evidentstack.com/" class="p-0" hidden footer>Log In</NavLi>
             <NavLi hidden footer>
               <Button
                 gradient
                 color="brandStackPrimary"
                 class="flex items-center"
                 size="sm"
-                on:click={() => (contactModal = true)}
-                label="Sign Up for Early Access"
+                href="https://app.evidentstack.com/auth/sign-in"
+                label="Sign Up"
               >
                 <Icon
                   name="arrow-right"
@@ -226,10 +205,3 @@
     </Container>
   </Footer>
 </div>
-
-<Modal bind:open={contactModal} size="xs" autoclose title="Contact Form" color="brand">
-  <div class="text-center w-full inline-flex justify-center items-center p px-6">
-    <EarlyAccessSignupForm />
-  </div>
-  <!-- <div slot="footer" class="mx-3 flex items-end space-x-3" /> -->
-</Modal>

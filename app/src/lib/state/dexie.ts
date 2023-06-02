@@ -1,12 +1,9 @@
+import { browser } from "$app/environment";
 import { init_supabase } from "$lib/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { Dexie, liveQuery, type Observable } from "dexie";
 import { readable } from "svelte/store";
-import 'dexie-observable';
-import 'dexie-syncable';
 import { SupabaseSync } from "./sync_protocol";
-
-Dexie.Syncable.registerSyncProtocol("evidentstack", SupabaseSync)
 
 type Model = {
   id: string,
@@ -34,13 +31,25 @@ class EventModelDatabase extends Dexie {
   }
 }
 
-export const db = new EventModelDatabase();
+const buildDatabase = async () => {
+  if (browser) {
+    await import('dexie-observable');
+    await import('dexie-syncable');
+    Dexie.Syncable.registerSyncProtocol("evidentstack", SupabaseSync)
+  }
 
-// TODO: more gracefully handle upgrades blocked by other open tabs/windows
-db.on("blocked", () => {
-  alert("Database upgrading was blocked by another window. " +
-    "Please close down any other tabs or windows that has this page open");
-});
+  const db = new EventModelDatabase();
+
+  // TODO: more gracefully handle upgrades blocked by other open tabs/windows
+  db.on("blocked", () => {
+    alert("Database upgrading was blocked by another window. " +
+      "Please close down any other tabs or windows that has this page open");
+  });
+
+  return db;
+};
+
+export const db = await buildDatabase();
 
 const concatBuffers = (buf1: Uint8Array, buf2: Uint8Array) => {
   let ret = new Uint8Array(buf1.length + buf2.length);

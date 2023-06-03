@@ -34,7 +34,7 @@
     e.stopPropagation();
   };
 
-  const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
+  const handleDragDrop: DragEventHandler<HTMLDivElement> = (_e) => {
     dispatch('cell_drag_drop');
   };
 
@@ -63,8 +63,7 @@
   class="cell z-20 flex place-self-center align-items-center hover:bg-focus/[.18] transition duration-200 ease-in border-2 border-transparent"
   class:bg-emerald-200={good_target}
   class:bg-rose-400={bad_target}
-  style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
->
+  style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};">
   <slot />
 </div>
 

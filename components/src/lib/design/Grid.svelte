@@ -17,10 +17,10 @@
   } from './grid/util';
 
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
-  import ContextMenu from '$components/context/ContextMenu.svelte';
-  import ContextMenuItem from '$components/context/ContextMenuItem.svelte';
-  import ContextMenuDivider from '$components/context/ContextMenuDivider.svelte';
-  import { createKeybindingsHandler, type KeyBindingMap } from '$components/vendor/tinykeys/tinykeys';
+  import ContextMenu from '../context/ContextMenu.svelte';
+  import ContextMenuItem from '../context/ContextMenuItem.svelte';
+  import ContextMenuDivider from '../context/ContextMenuDivider.svelte';
+  import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
 
   import Cursor from './grid/Cursor.svelte';
   import AudienceLane from './grid/Audience.svelte';
@@ -30,7 +30,7 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import TimelineDisambiguation from './grid/TimelineDisambiguation.svelte';
   import type { DragEventHandler } from 'svelte/elements';
-  import type { CursorMode, Decider, Disambiguation, Grid, GridMode } from './Grid';
+  import type { CursorMode, Decider, Disambiguation, EventModelGrid, GridMode } from './Grid';
 
   // Event dispatch
 
@@ -39,7 +39,7 @@
   // Grid Element State
 
   export let decider: Decider;
-  export let grid: Grid; // Read Model
+  export let grid: EventModelGrid; // Read Model
 
   // Grid Mode
 
@@ -239,8 +239,8 @@
   };
 
   // Lanes
-  $: default_audience_lane_index = grid ? grid.timeline.row - 1 : 0;
-  $: default_stream_lane_index = grid ? grid.timeline.row + 1 : 0;
+  $: default_audience_lane_index = grid.default_audience.row + 1;
+  $: default_stream_lane_index = grid.default_stream.row - 1;
   $: lane_drop_target = gridState.kind === GridStateKind.LANE ? gridState.value.target : undefined;
   $: audience_drop_target =
     lane_drop_target?.rowKind == 'audience'
@@ -264,11 +264,11 @@
 
   let cursor_row = 0;
   onMount(() => {
-    cursor_row = grid?.timeline.row ?? 0;
+    cursor_row = grid.timeline.row ?? 0;
   });
   let cursor_column = 0;
 
-  $: cursor_cell = grid?.cell_by_row_col(
+  $: cursor_cell = grid.cell_by_row_col(
     cursor_row,
     cursor_column,
   );
@@ -291,7 +291,7 @@
 
   // Columns
 
-  $: max_column = Math.max(grid?.column_count ?? 0, cursor_column + 10);
+  $: max_column = Math.max(grid.column_count, cursor_column + 10);
 
   // Navigation
 
@@ -313,7 +313,7 @@
 
   const navDown = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = Math.min(cursor_row + 1, grid?.default_stream.row ?? 0);
+    cursor_row = Math.min(cursor_row + 1, grid.default_stream.row);
   };
 
   const navLeft = (event: KeyboardEvent) => {
@@ -323,7 +323,7 @@
 
   const navHome = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = grid?.timeline.row ?? 0;
+    cursor_row = grid.timeline.row;
     cursor_column = 0;
   };
 
@@ -339,12 +339,12 @@
 
   const navTop = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = grid?.default_audience.row ?? 0;
+    cursor_row = grid.default_audience.row;
   };
 
   const navBottom = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = grid?.default_stream.row ?? 0;
+    cursor_row = grid.default_stream.row;
   };
 
   const placementDetailsAtCursor = (event: KeyboardEvent) => {
@@ -427,7 +427,7 @@
     gridState = evolveAndReactDraggingState(gridState, command);
   };
 
-  $: allFlows = linkingFlow ? grid?.flows.concat(linkingFlow) : grid?.flows;
+  $: allFlows = linkingFlow ? grid.flows.concat(linkingFlow) : grid.flows;
 </script>
 
 <svelte:window
@@ -435,13 +435,12 @@
   on:dragenter={handleOutOfBoundsDragEnter}
   on:dragend={handleOutOfBoundsDragEnd} />
 
-<h3>{mode}</h3>
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
   <div
     bind:this={containerRef}
     on:dragover={handleDragOver}
     class="grid w-max p-3 relative justify-items-center items-center"
-    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({grid?.row_count}, minmax(108px, min-content));">
+    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({grid.row_count}, minmax(108px, min-content));">
     <FlowCanvas flows={allFlows} />
     {#if contextMenu}
       <ContextMenu
@@ -522,15 +521,12 @@
       targeted_lane={audience_drop_target?.index === default_audience_lane_index
         ? audience_drop_target.targetStatus
         : undefined}
-      row={grid?.default_audience.row ?? 0}
-      audience={grid?.default_audience}
-      lane_index={default_audience_lane_index}
+      audience={grid.default_audience}
       {max_column} />
 
-    {#each grid ? grid.audiences : [] as audience, i (audience.id)}
-      {@const row = i + 1}
+    {#each grid.audiences as audience (audience.id)}
       {@const targeted_lane =
-        audience_drop_target?.index == audience.lane_index ? audience_drop_target?.targetStatus : undefined}
+        audience_drop_target?.index == audience.row ? audience_drop_target?.targetStatus : undefined}
       {@const targeted_cell =
         cell_drop_target &&
         cell_drop_target.row.rowKind === 'audience' &&
@@ -552,10 +548,8 @@
         on:open_context_menu={handleOpenContextMenu}
         {targeted_cell}
         {targeted_lane}
-        {row}
         {audience}
-        {max_column}
-        lane_index={audience.lane_index} />
+        {max_column} />
     {/each}
 
     <Timeline
@@ -567,18 +561,16 @@
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
       on:open_context_menu={handleOpenContextMenu}
-      row={grid?.timeline.row ?? 0}
-      cells={grid?.timeline.cells}
+      timeline={grid.timeline}
       targeted_lane={timeline_drop_target}
       targeted_cell={cell_drop_target && cell_drop_target.row.rowKind === 'timeline'
         ? { column: cell_drop_target.column, targetStatus: cell_drop_target.targetStatus }
         : undefined}
       {max_column} />
 
-    {#each grid ? grid.streams : [] as stream, lane_index (stream.id)}
-      {@const row = lane_index + timeline_row + 1}
+    {#each grid.streams as stream (stream.id)}
       {@const targeted_lane =
-        stream_drop_target?.index == lane_index ? stream_drop_target.targetStatus : undefined}
+        stream_drop_target?.index == stream.index ? stream_drop_target?.targetStatus : undefined}
       {@const targeted_cell =
         cell_drop_target &&
         cell_drop_target.row.rowKind === 'stream' &&
@@ -600,10 +592,8 @@
         on:open_context_menu={handleOpenContextMenu}
         {targeted_lane}
         {targeted_cell}
-        {row}
         {stream}
-        {max_column}
-        {lane_index} />
+        {max_column} />
     {/each}
     <StreamLane
       on:navigate_cursor={handleNavigateCursor}
@@ -624,36 +614,36 @@
       targeted_lane={stream_drop_target?.index === default_stream_lane_index
         ? stream_drop_target.targetStatus
         : undefined}
-      lane_index={default_stream_lane_index}
-      row={default_stream_row}
-      stream={{ placements: default_stream_placements }}
+      stream={grid.default_stream}
       {max_column} />
-    <Cursor
-      on:begin_editing={handleBeginEditing}
-      on:cancel_editing={handleCancelEditing}
-      on:define_and_place_interface={handleDefineAndPlaceInterface}
-      on:define_and_place_event={handleDefineAndPlaceEvent}
-      on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
-      on:remove_placement={handleRemovePlacement}
-      on:rename_placement={handleRenamePlacement}
-      on:move_interface_placement={handleMoveInterfacePlacement}
-      on:move_timeline_placement={handleMoveTimelinePlacement}
-      on:move_event_placement={handleMoveEventPlacement}
-      on:placement_drag_start={handlePlacementDragStart}
-      on:cell_drag_enter={handleCellDragEnter}
-      on:cell_drag_drop={handleCellDragDrop}
-      on:flow_drag_start={handleFlowDragStart}
-      on:open_context_menu={handleOpenContextMenu}
-      row={cursor_row}
-      column={cursor_column}
-      cell={cursor_cell}
-      mode={cursor_mode}
-      target_status={cell_drop_target?.column &&
-      cell_drop_target.column === cursor_column &&
-      cell_drop_target?.row &&
-      cell_drop_target.row.rowIndex == cursor_row
-        ? cell_drop_target?.targetStatus
+    {#if cursor_cell}
+      <Cursor
+        on:begin_editing={handleBeginEditing}
+        on:cancel_editing={handleCancelEditing}
+        on:define_and_place_interface={handleDefineAndPlaceInterface}
+        on:define_and_place_event={handleDefineAndPlaceEvent}
+        on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
+        on:remove_placement={handleRemovePlacement}
+        on:rename_placement={handleRenamePlacement}
+        on:move_interface_placement={handleMoveInterfacePlacement}
+        on:move_timeline_placement={handleMoveTimelinePlacement}
+        on:move_event_placement={handleMoveEventPlacement}
+        on:placement_drag_start={handlePlacementDragStart}
+        on:cell_drag_enter={handleCellDragEnter}
+        on:cell_drag_drop={handleCellDragDrop}
+        on:flow_drag_start={handleFlowDragStart}
+        on:open_context_menu={handleOpenContextMenu}
+        row={cursor_row}
+        column={cursor_column}
+        cell={cursor_cell}
+        mode={cursor_mode}
+        target_status={cell_drop_target?.column &&
+        cell_drop_target.column === cursor_column &&
+        cell_drop_target?.row &&
+        cell_drop_target.row.rowIndex == cursor_row
+          ? cell_drop_target?.targetStatus
         : undefined} />
+    {/if}
     {#if mode === 'disambiguating' && disambiguation}
       <TimelineDisambiguation
         name={disambiguation.name}

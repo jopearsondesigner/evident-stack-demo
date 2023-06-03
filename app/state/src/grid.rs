@@ -297,6 +297,8 @@ pub struct GridLane {
     #[wasm_bindgen(getter_with_clone, readonly)]
     pub kind: GridLaneType,
     #[wasm_bindgen(getter_with_clone, readonly)]
+    pub index: Option<usize>,
+    #[wasm_bindgen(getter_with_clone, readonly)]
     pub row: usize,
     #[wasm_bindgen(getter_with_clone, readonly)]
     pub name: String,
@@ -357,37 +359,9 @@ pub struct EventModelGrid {
 
 #[wasm_bindgen]
 impl EventModelGrid {
+    #[wasm_bindgen(getter)]
     pub fn id(&self) -> String {
         self.id.to_string()
-    }
-
-    pub fn placement_by_id(&self, maybe_placement_id: &str) -> Option<GridPlacement> {
-        if let Ok(placement_id) = parse_uuid(maybe_placement_id.to_string()) {
-            self.placements.get(&placement_id).cloned()
-        } else {
-            None
-        }
-    }
-
-    pub fn cell_by_row_col(&self, row: usize, col: usize) -> Option<Cell> {
-        let default_audience_index: usize = self.default_audience.row;
-        let timeline_index = self.timeline.row;
-        let default_stream_index = self.default_stream.row;
-
-        match row {
-            x if x == default_audience_index => self.default_audience.cells.get(col).cloned(),
-            x if x > default_audience_index && x < timeline_index => self
-                .audiences
-                .get(x)
-                .and_then(|a| a.cells.get(col))
-                .cloned(),
-            x if x == timeline_index => self.timeline.cells.get(col).cloned(),
-            x if x > default_stream_index && x < default_stream_index => {
-                self.streams.get(x).and_then(|a| a.cells.get(col)).cloned()
-            }
-            x if x == default_stream_index => self.default_stream.cells.get(col).cloned(),
-            _ => None,
-        }
     }
 
     #[wasm_bindgen(getter)]
@@ -403,6 +377,42 @@ impl EventModelGrid {
     #[wasm_bindgen(getter)]
     pub fn flows(&self) -> Array {
         self.flows.iter().cloned().map(JsValue::from).collect()
+    }
+
+    pub fn placement_by_id(&self, maybe_placement_id: &str) -> Option<GridPlacement> {
+        if let Ok(placement_id) = parse_uuid(maybe_placement_id.to_string()) {
+            self.placements.get(&placement_id).cloned()
+        } else {
+            None
+        }
+    }
+
+    pub fn cell_by_row_col(&self, row: usize, col: usize) -> Option<Cell> {
+        let default_audience_index: usize = self.default_audience.row;
+        let timeline_index = self.timeline.row;
+        let default_stream_index = self.default_stream.row;
+
+        if row == default_audience_index {
+            self.default_audience.cells.get(col).cloned()
+        } else if row < timeline_index {
+            let lane_index = row - 1;
+            self.audiences
+                .get(lane_index)
+                .and_then(|a| a.cells.get(col))
+                .cloned()
+        } else if row == timeline_index {
+            self.timeline.cells.get(col).cloned()
+        } else if row < default_stream_index {
+            let lane_index = row - timeline_index - 1;
+            self.streams
+                .get(lane_index)
+                .and_then(|s| s.cells.get(col))
+                .cloned()
+        } else if row == default_stream_index {
+            self.default_stream.cells.get(col).cloned()
+        } else {
+            None
+        }
     }
 }
 
@@ -421,6 +431,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 default_audience: GridLane {
                     id: None,
                     kind: GridLaneType::DefaultAudience,
+                    index: None,
                     row: 0,
                     name: DEFAULT_AUDIENCE_NAME.to_string(),
                     cells: Default::default(),
@@ -429,6 +440,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 timeline: GridLane {
                     id: None,
                     kind: GridLaneType::Timeline,
+                    index: None,
                     row: 1,
                     name: TIMELINE_NAME.to_string(),
                     cells: Default::default(),
@@ -437,6 +449,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 default_stream: GridLane {
                     id: None,
                     kind: GridLaneType::DefaultStream,
+                    index: None,
                     row: 2,
                     name: DEFAULT_STREAM_NAME.to_string(),
                     cells: Default::default(),
@@ -454,6 +467,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 default_audience: GridLane {
                     id: None,
                     kind: GridLaneType::DefaultAudience,
+                    index: None,
                     row: 0,
                     name: DEFAULT_AUDIENCE_NAME.to_string(),
                     cells: Default::default(),
@@ -462,6 +476,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 timeline: GridLane {
                     id: None,
                     kind: GridLaneType::Timeline,
+                    index: None,
                     row: 1,
                     name: TIMELINE_NAME.to_string(),
                     cells: Default::default(),
@@ -470,6 +485,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 default_stream: GridLane {
                     id: None,
                     kind: GridLaneType::DefaultStream,
+                    index: None,
                     row: 2,
                     name: DEFAULT_STREAM_NAME.to_string(),
                     cells: Default::default(),
@@ -491,9 +507,10 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 let mut default_audience = GridLane {
                     id: None,
                     kind: GridLaneType::DefaultAudience,
-                    cells: Vec::with_capacity(column_count),
+                    index: None,
                     row,
                     name: DEFAULT_AUDIENCE_NAME.to_string(),
+                    cells: Vec::with_capacity(column_count),
                 };
                 for column in 0..column_count {
                     default_audience.cells.push(Cell {
@@ -508,7 +525,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 row += 1;
 
                 let mut audiences: HashMap<Uuid, GridLane> = HashMap::new();
-                for audience in model.audiences() {
+                for (index, audience) in model.audiences().iter().enumerate() {
                     let mut cells = Vec::with_capacity(column_count);
                     let audience_id = audience.id();
                     for column in 0..column_count {
@@ -526,6 +543,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                         GridLane {
                             id: Some(audience_id.to_owned()),
                             kind: GridLaneType::Audience,
+                            index: Some(index),
                             row,
                             name: audience.name().into(),
                             cells,
@@ -537,9 +555,10 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 let mut timeline = GridLane {
                     id: None,
                     kind: GridLaneType::Timeline,
-                    cells: Vec::with_capacity(column_count),
+                    index: None,
                     row,
                     name: TIMELINE_NAME.to_string(),
+                    cells: Vec::with_capacity(column_count),
                 };
                 for column in 0..column_count {
                     timeline.cells.push(Cell {
@@ -554,7 +573,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 row += 1;
 
                 let mut streams: HashMap<Uuid, GridLane> = HashMap::new();
-                for stream in model.streams() {
+                for (index, stream) in model.streams().iter().enumerate() {
                     let mut cells = Vec::with_capacity(column_count);
                     let stream_id = stream.id();
                     for column in 0..column_count {
@@ -572,6 +591,7 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                         GridLane {
                             id: Some(stream_id.to_owned()),
                             kind: GridLaneType::Stream,
+                            index: Some(index),
                             row,
                             name: stream.name().into(),
                             cells,
@@ -583,9 +603,10 @@ impl<T: EventModel + EventModelData> From<&EventModelState<T>> for EventModelGri
                 let mut default_stream = GridLane {
                     id: None,
                     kind: GridLaneType::DefaultStream,
-                    cells: Vec::with_capacity(column_count),
+                    index: None,
                     row,
                     name: DEFAULT_STREAM_NAME.to_string(),
+                    cells: Vec::with_capacity(column_count),
                 };
                 for column in 0..column_count {
                     default_stream.cells.push(Cell {

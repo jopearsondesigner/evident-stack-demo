@@ -124,12 +124,13 @@ export type LaneType = 'default_audience' | 'audience' | 'timeline' | 'stream' |
 export type Lane = {
   kind: LaneType,
   id?: string
+  index?: number,
   row: number,
   name: string,
   cells: Cell[],
 }
 
-export type Grid = {
+export type EventModelGrid = {
   id: string,
   name: string,
   description: string,
@@ -142,16 +143,14 @@ export type Grid = {
   default_stream: Lane,
 
   flows: Flow[],
+
+  cell_by_row_col: (row: number, col: number) => Cell | undefined
 }
 
 export type Disambiguation = { name: string; index: number; top: number; left: number } | null;
 
-export const placementOrEmptyCellId = (
-  placement: { id: string } | null | undefined,
-  col: number,
-  row: number
-): string => {
-  return (placement && placement.id) || `empty-${col}-${row}`;
+export const cellId = (col: number, row: number): string => {
+  return `cell-${col}-${row}`;
 };
 
 export type ReorderableLaneType = 'audience' | 'stream';

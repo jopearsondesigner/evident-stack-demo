@@ -113,8 +113,7 @@
                       class={iconShadow}
                       iconColor=""
                       pathName={ReadModelIcon}
-                      viewBox="0 0 48 48"
-                      />
+                      viewBox="0 0 48 48" />
                     {/if}
                   </div>
             <h2

@@ -22,9 +22,10 @@
 
 <slot />
 
-<Grid
-  {decider}
-  grid={$grid}
-  on:navigateToPlacementDetails={handleNavigateToPlacementDetails}
-  on:navigateToImportJson={handleNavigateToImportJson}
-  />
+{#if decider && $grid}
+  <Grid
+    {decider}
+    grid={$grid}
+    on:navigateToPlacementDetails={handleNavigateToPlacementDetails}
+    on:navigateToImportJson={handleNavigateToImportJson} />
+  {/if}

@@ -69,7 +69,7 @@ module.exports = {
           light: '#FDC7A0',
           dark: '#FB8C3A'
         },
-        readModel: {
+        read_model: {
           DEFAULT: '#79D04E',
           light: '#A4DF86',
           dark: '#5FB831'

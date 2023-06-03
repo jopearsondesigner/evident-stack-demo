@@ -15,7 +15,7 @@ use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError
 use event_models::api::commands::EventModelCommand;
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
 use event_models::{Anchor, ColumnShift, EventModel, EventModelError};
-use js_sys::{Uint8Array, Array};
+use js_sys::Uint8Array;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 use web_sys::{console, window};

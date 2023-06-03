@@ -27,13 +27,13 @@ export interface FlowPortSource {
 
 export type AudienceTarget = {
     audienceId: string | DefaultLane,
-    laneIndex: number,
+    laneIndex?: number,
     rowKind: "audience"
 };
 
 export type StreamTarget = {
     streamId: string | DefaultLane,
-    laneIndex: number,
+    laneIndex?: number,
     rowKind: "stream"
 };
 
@@ -181,7 +181,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: GridState, c:
                                 const { source, target } = state.value;
                                 const { laneId, laneKind: laneType } = source;
                                 const { laneIndex } = target;
-                                reactionDecider.reorder_lane(laneType, laneId, laneIndex);
+                                reactionDecider.reorder_lane(laneType, laneId, laneIndex!);
                             }
                         default:
                     }
@@ -252,7 +252,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: GridState, c:
                                 const { laneId, laneKind: laneType } = source;
                                 const { laneIndex } = target;
 
-                                reactionDecider.reorder_lane(laneType, laneId, laneIndex);
+                                reactionDecider.reorder_lane(laneType, laneId, laneIndex!);
                             }
                             return { kind: GridStateKind.NONE }
                         }
@@ -415,10 +415,10 @@ async function contextMenuReact(state: CellTarget & CursorTarget, command: Conte
             if (state.row) {
                 switch (state.row.rowKind) {
                     case "audience":
-                        await reactionDecider.add_lane("audience", state.row.laneIndex +1, "Placeholder Above")
+                        await reactionDecider.add_lane("audience", state.row.laneIndex! + 1, "Placeholder Above")
                         break;
                     case "stream":
-                        await reactionDecider.add_lane("stream", state.row.laneIndex, "Placeholder Above")
+                        await reactionDecider.add_lane("stream", state.row.laneIndex!, "Placeholder Above")
                         break;
                     case "timeline":
                         await reactionDecider.add_lane("audience", 0, "Placeholder Above")
@@ -431,17 +431,16 @@ async function contextMenuReact(state: CellTarget & CursorTarget, command: Conte
             if (state.row) {
                 switch (state.row.rowKind) {
                     case "audience":
-                        await reactionDecider.add_lane("audience", state.row.laneIndex, "Placeholder Below")
+                        await reactionDecider.add_lane("audience", state.row.laneIndex!, "Placeholder Below")
                         break;
                     case "stream":
-                        await reactionDecider.add_lane("stream", state.row.laneIndex - 1, "Placeholder Below")
+                        await reactionDecider.add_lane("stream", state.row.laneIndex! - 1, "Placeholder Below")
                         break;
                     case "timeline":
                         await reactionDecider.add_lane("stream", 0, "Placeholder Below")
                         break;
                 }
             }
-            
             break;
     }
 }

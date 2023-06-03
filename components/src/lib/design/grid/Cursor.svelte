@@ -31,7 +31,6 @@
     rowIndex: gridRow - 1,
     audienceId: cell.audience,
     streamId: cell.stream,
-    laneIndex: cell.row,
     rowKind: cell.kind
   };
 

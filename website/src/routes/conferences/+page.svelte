@@ -112,7 +112,7 @@
                 size="sm"
                 label="Get Started"
                 class="flex items-center"
-                href="/contact"
+                href="https://app.evidentstack.com/auth/sign-in"
               >
                 <Icon
                   name="arrow-right"

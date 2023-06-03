@@ -1,6 +1,5 @@
 <script lang="ts">
   import classNames from 'classnames';
-  // import { LottiePlayer } from '@lottiefiles/svelte-lottie-player';
   import Player from '$components/utils/Player.svelte';
 
   import Carousel from 'svelte-carousel';
@@ -21,11 +20,6 @@
   import TextBrand from '$components/utils/TextBrand.svelte';
   import Button from '$components/Button.svelte';
   import BackgroundImage from '$components/assets/images/homepage/hero/heroBgO.svg';
-  import GettingStartedBottomLeft from '$components/assets/images/homepage/GettingStarted-BottomLeft.svg';
-  import GettingStartedTopLeft from '$components/assets/images/homepage/GettingStarted-TopLeft.svg';
-  import GettingStartedBottom from '$components/assets/images/homepage/GettingStarted-Bottom.svg';
-  import GettingStartedCenter from '$components/assets/images/homepage/GettingStarted-Center.svg';
-  import GettingStartedTopRight from '$components/assets/images/homepage/GettingStarted-TopRight.svg';
   import ForegroundImage from '$components/assets/images/homepage/hero/heroLaptop.svg';
   export let heroFlexboxClass = 'flex justify-center';
   export let gradientDividerClass =
@@ -53,7 +47,6 @@
   import EightyDark from '$components/assets/images/homepage/infoEightyDark.svg';
   import FifyFiveDark from '$components/assets/images/homepage/infoFiftyFiveDark.svg';
   import GradientDivider from '$components/utils/GradientDivider.svelte';
-  import FifteenOBg from '$components/assets/images/homepage/fifteen-o-bg.svg';
   import Heart from '$components/icons/Heart.svelte';
   import Docs from '$components/icons/Docs.svelte';
   import Icon from '$components/Icon.svelte';
@@ -65,25 +58,10 @@
   import NabBrand from '$components/navbar/NavBrand.svelte';
   let website: boolean = true;
 
-  import Modal from '$components/Modal.svelte';
-  import Form from '$components/form/Form.svelte';
-  import Input from '$components/form/Input.svelte';
-  import Textarea from '$components/form/Textarea.svelte';
-  import Submit from '$components/form/Submit.svelte';
-  import EarlyAccessSignupForm from '$lib/EarlyAccessSignupForm.svelte';
-
   import { MetaTags } from 'svelte-meta-tags';
   let title = 'Evident Stack';
   let description =
     'Each layer in the Stack can be used individually, but work best together since each layer builds upon the one before it.';
-
-  $: Modal_id = 'modal-editing-window'; // TODO: derive this from model ID?
-
-  let contactModal = false;
-
-  const handleContactModel = async () => {
-    console.log('TODO: submit form');
-  };
 </script>
 
 <MetaTags
@@ -202,10 +180,10 @@
                   slot="hero-cta"
                   gradient
                   color="brandDesignPrimary"
-                  size="sm"
-                  label="Sign Up for Early Access"
+                  size="md"
+                  label="Get Started"
                   class="flex items-center"
-                  on:click={() => (contactModal = true)}
+                  href="https://app.evidentstack.com/auth/sign-in"
                 >
                   <Icon
                     name="arrow-right"
@@ -512,10 +490,3 @@
     </Row>
   </Container>
 </main>
-
-<Modal bind:open={contactModal} size="xs" autoclose title="Early Access" color="brand">
-  <div class="text-center w-full inline-flex justify-center items-center p px-6">
-    <EarlyAccessSignupForm />
-  </div>
-  <!-- <div slot="footer" class="mx-3 flex items-end space-x-3" /> -->
-</Modal>

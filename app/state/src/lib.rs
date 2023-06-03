@@ -173,8 +173,17 @@ impl EventModelStateManager {
 
     pub fn refresh(&mut self, bin: Uint8Array) -> Result<EventModelGrid, JsValue> {
         if let Some(_model) = self.repository.key {
+            // Save any local unsaved changes
+            let local_changes = self.repository.save_incremental();
+            // Load from caller arg
             self.repository
                 .load_incremental(bin.to_vec())
+                .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
+            // Reset save_incremental state to prevent large, redundant patches after refresh
+            self.repository.save_incremental();
+            // Load local unsaved changes to they appear in next incremental save
+            self.repository
+                .load_incremental(local_changes)
                 .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
             self.repository
                 .state()
@@ -528,21 +537,17 @@ impl EventModelStateManager {
 
                 console::log_2(
                     &"Add Lane Command".into(),
-                    &format!("{:?}", cmd).as_str().into()
+                    &format!("{:?}", cmd).as_str().into(),
                 );
 
-                let res = self.dispatch(cmd)
-                    .await;
-                
+                let res = self.dispatch(cmd).await;
+
                 if let Ok(inner) = &res {
-                    console::log_2(
-                        &"Add Lane Command Res".into(),
-                        &inner.audiences()
-                    );
+                    console::log_2(&"Add Lane Command Res".into(), &inner.audiences());
                 } else {
                     console::log_1(&"failed".into())
                 }
-                
+
                 res
             }
             Lane::Stream => {

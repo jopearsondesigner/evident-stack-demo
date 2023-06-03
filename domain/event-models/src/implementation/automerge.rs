@@ -37,16 +37,8 @@ impl From<&AutoName> for Name {
 #[derive(Reconcile, Hydrate, Debug, Clone)]
 enum AutoInterfaceConfig {
     Blank,
-    Figma {
-        url: String,
-        width: Option<u32>,
-        height: Option<u32>,
-    },
-    Image {
-        url: String,
-        width: Option<u32>,
-        height: Option<u32>,
-    },
+    Figma { url: String },
+    Image { url: String },
     Job,
 }
 
@@ -54,15 +46,11 @@ impl From<&AutoInterfaceConfig> for InterfaceConfig {
     fn from(interface_config: &AutoInterfaceConfig) -> Self {
         match interface_config {
             AutoInterfaceConfig::Blank => InterfaceConfig::Blank,
-            AutoInterfaceConfig::Figma { url, width, height } => InterfaceConfig::Figma {
+            AutoInterfaceConfig::Figma { url } => InterfaceConfig::Figma {
                 url: Url::from_str(url).unwrap(),
-                width: width.map(|w| w as usize),
-                height: height.map(|h| h as usize),
             },
-            AutoInterfaceConfig::Image { url, width, height } => InterfaceConfig::Image {
+            AutoInterfaceConfig::Image { url } => InterfaceConfig::Image {
                 url: Url::from_str(url).unwrap(),
-                width: width.map(|w| w as usize),
-                height: height.map(|h| h as usize),
             },
             AutoInterfaceConfig::Job => InterfaceConfig::Job,
         }
@@ -73,15 +61,11 @@ impl From<&InterfaceConfig> for AutoInterfaceConfig {
     fn from(interface_config: &InterfaceConfig) -> Self {
         match interface_config {
             InterfaceConfig::Blank => AutoInterfaceConfig::Blank,
-            InterfaceConfig::Figma { url, width, height } => AutoInterfaceConfig::Figma {
+            InterfaceConfig::Figma { url } => AutoInterfaceConfig::Figma {
                 url: url.to_string(),
-                width: width.map(|w| w as u32),
-                height: height.map(|h| h as u32),
             },
-            InterfaceConfig::Image { url, width, height } => AutoInterfaceConfig::Image {
+            InterfaceConfig::Image { url } => AutoInterfaceConfig::Image {
                 url: url.to_string(),
-                width: width.map(|w| w as u32),
-                height: height.map(|h| h as u32),
             },
             InterfaceConfig::Job => AutoInterfaceConfig::Job,
         }

@@ -258,13 +258,9 @@ pub enum InterfaceConfig {
     Blank,
     Figma {
         url: Url,
-        width: Option<usize>,
-        height: Option<usize>,
     },
     Image {
         url: Url,
-        width: Option<usize>,
-        height: Option<usize>,
     },
     Job,
 }
@@ -769,24 +765,18 @@ impl Entity for FlowArrow {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ColumnShift {
-    Left{
-        index: usize,
-        count: usize,
-    },
-    Right{
-        index: usize,
-        count: usize,
-    },
+    Left { index: usize, count: usize },
+    Right { index: usize, count: usize },
 }
 
-impl TryFrom <(&str, usize, usize)> for ColumnShift {
+impl TryFrom<(&str, usize, usize)> for ColumnShift {
     type Error = ();
 
     fn try_from((dir, index, count): (&str, usize, usize)) -> Result<Self, Self::Error> {
         match dir {
-            "LEFT" => Ok(Self::Left{ index, count }),
-            "RIGHT" => Ok(Self::Right{ index, count }),
-            _ => Err(())
+            "LEFT" => Ok(Self::Left { index, count }),
+            "RIGHT" => Ok(Self::Right { index, count }),
+            _ => Err(()),
         }
     }
 }

@@ -30,10 +30,6 @@ pub struct InterfaceConfig {
     pub kind: InterfaceType,
     #[wasm_bindgen(readonly)]
     pub url: Option<String>,
-    #[wasm_bindgen(readonly)]
-    pub width: Option<usize>,
-    #[wasm_bindgen(readonly)]
-    pub height: Option<usize>,
 }
 
 #[wasm_bindgen]
@@ -138,26 +134,18 @@ fn interface_placement(
         event_models::InterfaceConfig::Blank => InterfaceConfig {
             kind: InterfaceType::Blank,
             url: None,
-            width: None,
-            height: None,
         },
-        event_models::InterfaceConfig::Figma { url, width, height } => InterfaceConfig {
+        event_models::InterfaceConfig::Figma { url } => InterfaceConfig {
             kind: InterfaceType::Figma,
             url: Some(url.to_string()),
-            width,
-            height,
         },
-        event_models::InterfaceConfig::Image { url, width, height } => InterfaceConfig {
+        event_models::InterfaceConfig::Image { url } => InterfaceConfig {
             kind: InterfaceType::Image,
             url: Some(url.to_string()),
-            width,
-            height,
         },
         event_models::InterfaceConfig::Job => InterfaceConfig {
             kind: InterfaceType::Blank,
             url: None,
-            width: None,
-            height: None,
         },
     };
     GridPlacement {

@@ -54,10 +54,6 @@ pub enum Interface {
         description: Option<String>,
         #[serde(rename = "interface.type.figma/url")]
         url: Url,
-        #[serde(rename = "interface/width")]
-        width: Option<usize>,
-        #[serde(rename = "interface/height")]
-        height: Option<usize>,
     },
     #[serde(rename = "interface.type/image")]
     Image {
@@ -69,10 +65,6 @@ pub enum Interface {
         description: Option<String>,
         #[serde(rename = "interface.type.image/url")]
         url: Url,
-        #[serde(rename = "interface/width")]
-        width: Option<usize>,
-        #[serde(rename = "interface/height")]
-        height: Option<usize>,
     },
     #[serde(rename = "interface.type/job")]
     Job {
@@ -110,26 +102,22 @@ impl TryFrom<Interface> for crate::Interface {
                 name,
                 description,
                 url,
-                width,
-                height,
             } => crate::Interface::create(
                 id,
                 name,
                 as_string(description),
-                InterfaceConfig::Figma { url, width, height },
+                InterfaceConfig::Figma { url },
             ),
             Interface::Image {
                 id,
                 name,
                 description,
                 url,
-                width,
-                height,
             } => crate::Interface::create(
                 id,
                 name,
                 as_string(description),
-                InterfaceConfig::Image { url, width, height },
+                InterfaceConfig::Image { url },
             ),
             Interface::Job {
                 id,

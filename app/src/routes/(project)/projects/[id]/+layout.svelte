@@ -118,10 +118,10 @@
         navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark">
         {#if session?.user}
           <DropdownMenu product={true} name="profile" marginTop="mt-9">
-            <IconButton slot="button" margin="mx-2 mt-1">
+            <IconButton slot="button" margin="mx-2">
               <Icon
                 name="profile"
-                size={32}
+                size={28}
                 viewBox="0 0 32 32"
                 class="vertical-middle"
                 iconColor=""

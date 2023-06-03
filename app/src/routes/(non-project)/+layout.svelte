@@ -60,15 +60,14 @@
       navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark">
       {#if session}
         <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
-          <IconButton slot="button" margin="mx-2 mt-1">
+          <IconButton slot="button" margin="mx-2">
             <Icon
               name="profile"
-              size={32}
+              size={28}
               viewBox="0 0 32 32"
               class="vertical-middle"
               iconColor=""
-              pathName={Profile}
-              />
+              pathName={Profile} />
           </IconButton>
           <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
             {session.user.email ?? "email@example.com"}
@@ -83,23 +82,21 @@
         </DropdownMenu>
 
         <MaybeTooltip tip="Docs" position="tooltip-bottom">
-          <IconButton
-            ><Icon
-               name="docs"
-               size={18}
-               iconColor="text-body-light dark:text-body-dark"
-               pathName={Docs}
-               />
+          <IconButton>
+            <Icon
+              name="docs"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Docs} />
           </IconButton>
         </MaybeTooltip>
         <MaybeTooltip tip="Support" position="tooltip-bottom">
-          <IconButton
-            ><Icon
-               name="support"
-               size={18}
-               iconColor="text-body-light dark:text-body-dark"
-               pathName={Support}
-               />
+          <IconButton>
+            <Icon
+              name="support"
+              size={18}
+              iconColor="text-body-light dark:text-body-dark"
+              pathName={Support} />
           </IconButton>
         </MaybeTooltip>
       {:else}

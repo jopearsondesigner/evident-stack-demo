@@ -406,22 +406,42 @@ async function contextMenuReact(state: CellTarget & CursorTarget, command: Conte
             }
             break;
         case ContextMenuCommand.InsertColumnLeft:
-            console.warn("ContextMenuCommand.InsertColumnLeft");
             await reactionDecider.insert_columns(state.column, "LEFT", 1);
             break;
         case ContextMenuCommand.InsertColumnRight:
-            console.warn("ContextMenuCommand.InsertColumnRight");
             await reactionDecider.insert_columns(state.column, "RIGHT", 1);
             break;
         case ContextMenuCommand.InsertLaneAbove:
             if (state.row) {
-                await reactionDecider.add_lane(state.row.rowKind, state.row.rowIndex -1, "Placeholder Above") // TODO: two state insert lane with name menu
+                switch (state.row.rowKind) {
+                    case "audience":
+                        await reactionDecider.add_lane("audience", state.row.laneIndex +1, "Placeholder Above")
+                        break;
+                    case "stream":
+                        await reactionDecider.add_lane("stream", state.row.laneIndex, "Placeholder Above")
+                        break;
+                    case "timeline":
+                        await reactionDecider.add_lane("audience", 0, "Placeholder Above")
+                        break;
+                }
             }
+           
             break;
         case ContextMenuCommand.InsertLaneBelow:
             if (state.row) {
-                await reactionDecider.add_lane(state.row.rowKind, state.row.rowIndex +1, "Placeholder Below") // TODO: two state insert lane with name menu
+                switch (state.row.rowKind) {
+                    case "audience":
+                        await reactionDecider.add_lane("audience", state.row.laneIndex, "Placeholder Below")
+                        break;
+                    case "stream":
+                        await reactionDecider.add_lane("stream", state.row.laneIndex - 1, "Placeholder Below")
+                        break;
+                    case "timeline":
+                        await reactionDecider.add_lane("stream", 0, "Placeholder Below")
+                        break;
+                }
             }
+            
             break;
     }
 }

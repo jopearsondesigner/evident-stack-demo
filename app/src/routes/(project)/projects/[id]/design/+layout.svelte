@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-  import Grid from '$lib/components/design/Grid.svelte';
+  import Grid from '$components/design/Grid.svelte';
   import type { LayoutData } from './$types';
   import { debug } from '$lib/util';
 

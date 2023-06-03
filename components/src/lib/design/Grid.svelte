@@ -14,23 +14,23 @@
     DEFAULT_LANE,
     linkingFlowFromState,
     type CursorTarget, ContextMenuCommand
-  } from '$components/design/grid/util';
+  } from './grid/util';
 
-  import FlowCanvas from '$components/design/flowArrows/FlowCanvas.svelte';
+  import FlowCanvas from './flowArrows/FlowCanvas.svelte';
   import ContextMenu from '$components/context/ContextMenu.svelte';
   import ContextMenuItem from '$components/context/ContextMenuItem.svelte';
   import ContextMenuDivider from '$components/context/ContextMenuDivider.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '$components/vendor/tinykeys/tinykeys';
 
-  import Cursor from '$components/design/grid/Cursor.svelte';
-  import AudienceLane from '$components/design/grid/Audience.svelte';
-  import Timeline from '$components/design/grid/Timeline.svelte';
-  import StreamLane from '$components/design/grid/Stream.svelte';
+  import Cursor from './grid/Cursor.svelte';
+  import AudienceLane from './grid/Audience.svelte';
+  import Timeline from './grid/Timeline.svelte';
+  import StreamLane from './grid/Stream.svelte';
 
   import { createEventDispatcher, onMount } from 'svelte';
-  import TimelineDisambiguation from '$components/design/grid/TimelineDisambiguation.svelte';
+  import TimelineDisambiguation from './grid/TimelineDisambiguation.svelte';
   import type { DragEventHandler } from 'svelte/elements';
-  import type { CursorMode, Decider, Disambiguation, Grid, GridMode } from '$components/design/Grid';
+  import type { CursorMode, Decider, Disambiguation, Grid, GridMode } from './Grid';
 
   // Event dispatch
 

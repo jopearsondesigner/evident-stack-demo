@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createKeybindingsHandler } from '../../vendor/tinykeys/tinykeys';
   import { tick, createEventDispatcher } from 'svelte';
-  import type { CursorMode, DropTargetStatus, ItemAtCursor } from '../Grid';
+  import type { CursorMode, DropTargetStatus, Cell } from '../Grid';
   import Interface from './Interface.svelte';
   import Command from './Command.svelte';
   import Event from './Event.svelte';
@@ -12,27 +12,27 @@
   export let row: number;
   export let column: number;
   export let mode: CursorMode;
-  export let item: ItemAtCursor;
+  export let cell: Cell;
   export let target_status: DropTargetStatus | undefined;
 
   $: gridRow = row + 1;
   $: gridColumn = column + 1;
-  $: maybePlacement = item.placement?.id;
-  $: maybePlacementKind = item.placement?.id
-    ? item.type === 'interface'
+  $: maybePlacement = cell.placement?.id;
+  $: maybePlacementKind = cell.placement?.id
+    ? cell.kind === 'interface'
       ? 'interface'
-      : item.type === 'event'
+      : cell.kind === 'event'
       ? 'event'
-      : item.type === 'timeline'
-      ? item.placement?.kind
+      : cell.kind === 'timeline'
+      ? cell.placement?.kind
       : undefined
     : undefined;
   $: rowTarget = {
     rowIndex: gridRow - 1,
-    audienceId: item.type === 'interface' ? item.audience : undefined,
-    streamId: item.type === 'event' ? item.stream : undefined,
-    laneIndex: item.lane_index,
-    rowKind: item.type === 'event' ? 'stream' : item.type === 'interface' ? 'audience' : 'timeline'
+    audienceId: cell.audience,
+    streamId: cell.stream,
+    laneIndex: cell.row,
+    rowKind: cell.kind
   };
 
   $: good_target = target_status == 'good';
@@ -87,32 +87,32 @@
     let data = new FormData(form);
     let name = data.get('name')?.toString();
     if (name) {
-      if (item.placement) {
-        if (item.placement.name != name) {
-          dispatch('rename_placement', { name, placement: item.placement.id });
+      if (cell.placement) {
+        if (cell.placement.name != name) {
+          dispatch('rename_placement', { name, placement: cell.placement.id });
         } else {
           cancelEditing(e);
         }
-      } else if (item.type === 'interface') {
-        dispatch('define_and_place_interface', { name, index: column, ...item });
-      } else if (item.type === 'timeline') {
+      } else if (cell.kind === 'interface') {
+        dispatch('define_and_place_interface', { name, index: column, ...cell });
+      } else if (cell.kind === 'timeline') {
         let rect = form.getBoundingClientRect();
         dispatch('disambiguate_timeline_definition_and_placement', {
           name,
           left: rect.left,
           top: rect.top,
           index: column,
-          ...item
+          ...cell
         });
-      } else if (item.type === 'event') {
-        dispatch('define_and_place_event', { name, index: column, ...item });
+      } else if (cell.kind === 'event') {
+        dispatch('define_and_place_event', { name, index: column, ...cell });
       }
     }
   };
 
   const removePlacement: EventListener = (event) => {
     event.preventDefault();
-    let placement = item.placement?.id;
+    let placement = cell.placement?.id;
     if (placement) {
       dispatch('remove_placement', { placement });
     }
@@ -150,7 +150,7 @@
     e.stopPropagation();
   };
 
-  const handleDragDrop: DragEventHandler<HTMLDivElement> = (e) => {
+  const handleDragDrop: DragEventHandler<HTMLDivElement> = (_e) => {
     dispatch('cell_drag_drop');
   };
 
@@ -188,7 +188,7 @@
         name="name"
         class="text-sm text-body dark:text-body-dark m-1 focus:border focus:ring-focus focus:border-focus focus-visible:border-0 focus-visible:outline-0 focus-visible:ring-focus focus-visible:ring-2 bg-transparent"
         type="text"
-        value={item.placement?.name || ''}
+        value={cell.placement?.name || ''}
         bind:this={input}
       />
     </form>
@@ -207,68 +207,62 @@
     class:bg-emerald-200={good_target}
     class:bg-rose-400={bad_target}
     class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300"
-    style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
-  >
-    {#if item.placement}
-      {#if item.type == 'interface'}
+    style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};" >
+    {#if cell.placement}
+      {#if cell.kind == 'interface'}
         <Interface
-          id={item.placement.id}
-          interface_id={item.placement.interface}
+          id={cell.placement.id}
+          interface_id={cell.placement.component_id}
           {column}
-          name={item.placement.name}
-          description={item.placement.description}
+          name={cell.placement.name}
+          description={cell.placement.description}
           on:placement_drag_start={forward}
           on:flow_drag_start={forward}
-          on:connect_flow={forward}
-        />
-      {:else if item.type == 'timeline'}
-        {#if item.placement.kind == 'command'}
+          on:connect_flow={forward} />
+      {:else if cell.kind == 'timeline'}
+        {#if cell.placement.kind == 'command'}
           <Command
-            id={item.placement.id}
-            command={item.placement.component}
+            id={cell.placement.id}
+            command={cell.placement.component_id}
             {column}
-            name={item.placement.name}
-            description={item.placement.description}
+            name={cell.placement.name}
+            description={cell.placement.description}
             on:placement_drag_start={forward}
             on:flow_drag_start={forward}
-            on:connect_flow={forward}
-          />
-        {:else if item.placement.kind == 'readModel'}
+            on:connect_flow={forward} />
+        {:else if cell.placement.kind == 'read_model'}
           <ReadModel
-            id={item.placement.id}
-            readModel={item.placement.component}
+            id={cell.placement.id}
+            read_model={cell.placement.component_id}
             {column}
-            name={item.placement.name}
-            description={item.placement.description}
+            name={cell.placement.name}
+            description={cell.placement.description}
             on:placement_drag_start={forward}
             on:flow_drag_start={forward}
-            on:connect_flow={forward}
-          />
+            on:connect_flow={forward} />
         {/if}
-      {:else if item.type == 'event'}
+      {:else if cell.kind == 'event'}
         <Event
-          id={item.placement.id}
-          event={item.placement.event}
+          id={cell.placement.id}
+          event={cell.placement.component_id}
           {column}
-          name={item.placement.name}
-          description={item.placement.description}
+          name={cell.placement.name}
+          description={cell.placement.description}
           on:placement_drag_start={forward}
           on:flow_drag_start={forward}
-          on:connect_flow={forward}
-        />
+          on:connect_flow={forward} />
       {/if}
     {:else}
       <EmptyCell
         {column}
-        kind={item.type}
-        lane={item.audience || item.stream}
+        kind={cell.kind}
+        lane={cell.audience || cell.stream}
         on:move_interface_placement={forward}
         on:move_timeline_placement={forward}
         on:move_event_placement={forward}
         on:duplicate_interface_placement={forward}
         on:duplicate_timeline_placement={forward}
-        on:duplicate_event_placement={forward}
-      />
+        on:duplicate_event_placement={forward} />
     {/if}
   </div>
 {/if}

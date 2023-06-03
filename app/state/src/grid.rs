@@ -17,10 +17,10 @@ const DEFAULT_STREAM_NAME: &str = "Default Stream";
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub enum InterfaceType {
-    Blank,
-    Figma,
-    Image,
-    Job,
+    Blank = "blank",
+    Figma = "figma",
+    Image = "image",
+    Job = "job",
 }
 
 #[wasm_bindgen(getter_with_clone)]
@@ -42,7 +42,7 @@ pub enum GridPlacementType {
     Interface = "interface",
     Command = "command",
     Event = "event",
-    ReadModel = "readModel",
+    ReadModel = "read_model",
 }
 
 #[wasm_bindgen(getter_with_clone)]
@@ -123,8 +123,9 @@ impl Cell {
         self.placements.is_empty()
     }
 
-    pub fn topmost_placement(&self) -> Option<GridPlacement> {
-        self.placements.values().last().cloned()
+    #[wasm_bindgen(getter)]
+    pub fn placement(&self) -> Option<GridPlacement> {
+        self.placements.values().next().cloned()
     }
 }
 
@@ -294,11 +295,11 @@ impl From<event_models::Anchor> for FlowAnchor {
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub enum GridLaneType {
-    DefaultAudience,
-    Audience,
-    Timeline,
-    Stream,
-    DefaultStream,
+    DefaultAudience = "default_audience",
+    Audience = "audience",
+    Timeline = "timeline",
+    Stream = "stream",
+    DefaultStream = "default_stream",
 }
 
 #[wasm_bindgen]
@@ -333,8 +334,8 @@ impl GridLane {
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub enum EventModelGridState {
-    Available,
-    Unavailable,
+    Available = "available",
+    Unavailable = "unavailable",
 }
 
 #[wasm_bindgen(getter_with_clone)]
@@ -353,11 +354,14 @@ pub struct EventModelGrid {
     #[wasm_bindgen(readonly)]
     pub row_count: usize,
 
-    default_audience: GridLane,
+    #[wasm_bindgen(readonly)]
+    pub default_audience: GridLane,
     audiences: Vec<GridLane>,
-    timeline: GridLane,
+    #[wasm_bindgen(readonly)]
+    pub timeline: GridLane,
     streams: Vec<GridLane>,
-    default_stream: GridLane,
+    #[wasm_bindgen(readonly)]
+    pub default_stream: GridLane,
 
     flows: Vec<FlowArrow>,
     placements: HashMap<Uuid, GridPlacement>,
@@ -399,40 +403,13 @@ impl EventModelGrid {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn default_audience(&self) -> Array {
-        self.default_audience
-            .cells
-            .iter()
-            .map(|c| JsValue::from(c.to_owned()))
-            .collect()
-    }
-
-    #[wasm_bindgen(getter)]
     pub fn audiences(&self) -> Array {
         self.audiences.iter().cloned().map(JsValue::from).collect()
     }
 
     #[wasm_bindgen(getter)]
-    pub fn timeline(&self) -> Array {
-        self.timeline
-            .cells
-            .iter()
-            .map(|c| JsValue::from(c.to_owned()))
-            .collect()
-    }
-
-    #[wasm_bindgen(getter)]
     pub fn streams(&self) -> Array {
         self.streams.iter().cloned().map(JsValue::from).collect()
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn default_stream(&self) -> Array {
-        self.default_stream
-            .cells
-            .iter()
-            .map(|c| JsValue::from(c.to_owned()))
-            .collect()
     }
 
     #[wasm_bindgen(getter)]

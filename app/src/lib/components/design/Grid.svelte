@@ -13,8 +13,7 @@
     type FlowPortSource,
     DEFAULT_LANE,
     linkingFlowFromState,
-    type CursorTarget,
-    type ContextMenuCommand
+    type CursorTarget, ContextMenuCommand
   } from '$components/design/grid/util';
 
   import FlowCanvas from '$components/design/flowArrows/FlowCanvas.svelte';
@@ -28,23 +27,10 @@
   import Timeline from '$components/design/grid/Timeline.svelte';
   import StreamLane from '$components/design/grid/Stream.svelte';
 
-  import {
-    type Decider,
-    type Audience,
-    type EventPlacement,
-    type InterfacePlacement,
-    type Stream,
-    type TimelinePlacement,
-    default_decider,
-    type Disambiguation,
-    type CursorMode,
-    type GridMode,
-    type Flow
-  } from '$components/design/Grid';
   import { createEventDispatcher, onMount } from 'svelte';
   import TimelineDisambiguation from '$components/design/grid/TimelineDisambiguation.svelte';
   import type { DragEventHandler } from 'svelte/elements';
-  import type { EventModelGrid } from 'state-client';
+  import type { CursorMode, Decider, Disambiguation, Grid, GridMode } from '$components/design/Grid';
 
   // Event dispatch
 
@@ -53,7 +39,7 @@
   // Grid Element State
 
   export let decider: Decider;
-  export let grid: EventModelGrid | undefined | null;
+  export let grid: Grid; // Read Model
 
   // Grid Mode
 
@@ -90,7 +76,7 @@
     gridState = evolveAndReactDraggingState(gridState, command);
   };
 
-  const handleLaneDragDrop = async (e: CustomEvent) => {
+  const handleLaneDragDrop = async (_e: CustomEvent) => {
     const command: GridCommand = {
       kind: GridCommandKind.LANE_DRAG_DROP
     };
@@ -252,11 +238,9 @@
     mode = 'navigation';
   };
 
-  // Rows
-
-  const default_audience_row = 0;
-
   // Lanes
+  $: default_audience_lane_index = grid ? grid.timeline.row - 1 : 0;
+  $: default_stream_lane_index = grid ? grid.timeline.row + 1 : 0;
   $: lane_drop_target = gridState.kind === GridStateKind.LANE ? gridState.value.target : undefined;
   $: audience_drop_target =
     lane_drop_target?.rowKind == 'audience'
@@ -283,7 +267,8 @@
     cursor_row = grid?.timeline.row ?? 0;
   });
   let cursor_column = 0;
-  $: cursor_item = grid?.cell_by_row_col(
+
+  $: cursor_cell = grid?.cell_by_row_col(
     cursor_row,
     cursor_column,
   );
@@ -306,7 +291,7 @@
 
   // Columns
 
-  $: max_column = Math.max(column_count, cursor_column + 10);
+  $: max_column = Math.max(grid?.column_count ?? 0, cursor_column + 10);
 
   // Navigation
 
@@ -328,7 +313,7 @@
 
   const navDown = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = Math.min(cursor_row + 1, default_stream_row);
+    cursor_row = Math.min(cursor_row + 1, grid?.default_stream.row ?? 0);
   };
 
   const navLeft = (event: KeyboardEvent) => {
@@ -338,7 +323,7 @@
 
   const navHome = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = timeline_row;
+    cursor_row = grid?.timeline.row ?? 0;
     cursor_column = 0;
   };
 
@@ -354,18 +339,18 @@
 
   const navTop = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = default_audience_row;
+    cursor_row = grid?.default_audience.row ?? 0;
   };
 
   const navBottom = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = default_stream_row;
+    cursor_row = grid?.default_stream.row ?? 0;
   };
 
   const placementDetailsAtCursor = (event: KeyboardEvent) => {
     event.preventDefault();
-    if (cursor_item.placement) {
-      dispatch('navigateToPlacementDetails', { placement: cursor_item.placement.id });
+    if (cursor_cell?.placement) {
+      dispatch('navigateToPlacementDetails', { placement: cursor_cell.placement.id });
     }
   };
 
@@ -442,14 +427,13 @@
     gridState = evolveAndReactDraggingState(gridState, command);
   };
 
-  $: allFlows = linkingFlow ? flows.concat(linkingFlow) : flows;
+  $: allFlows = linkingFlow ? grid?.flows.concat(linkingFlow) : grid?.flows;
 </script>
 
 <svelte:window
   on:keydown={keyboardHandler}
   on:dragenter={handleOutOfBoundsDragEnter}
-  on:dragend={handleOutOfBoundsDragEnd}
-/>
+  on:dragend={handleOutOfBoundsDragEnd} />
 
 <h3>{mode}</h3>
 <div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
@@ -457,16 +441,14 @@
     bind:this={containerRef}
     on:dragover={handleDragOver}
     class="grid w-max p-3 relative justify-items-center items-center"
-    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
-  >
+    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({grid?.row_count}, minmax(108px, min-content));">
     <FlowCanvas flows={allFlows} />
     {#if contextMenu}
       <ContextMenu
         x={contextMenu.x}
         y={contextMenu.y}
         on:click={handleCloseContextMenu}
-        on:clickoutside={handleCloseContextMenu}
-      >
+        on:clickoutside={handleCloseContextMenu}>
         {#if !contextMenu.placementId}
           {#if contextMenu.rowKind === 'stream'}
             <ContextMenuItem>Add Event</ContextMenuItem>
@@ -478,53 +460,44 @@
           {/if}
         {:else if contextMenu.placementKind === 'event'}
           <ContextMenuItem
-            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
-          >
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
             Delete Event
           </ContextMenuItem>
         {:else if contextMenu.placementKind === 'interface'}
           <ContextMenuItem
-            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
-          >
-            Delete Interface</ContextMenuItem
-          >
-        {:else if contextMenu.placementKind === 'readModel'}
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
+            Delete Interface
+          </ContextMenuItem>
+        {:else if contextMenu.placementKind === 'read_model'}
           <ContextMenuItem
-            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
-          >
-            Delete Read Model</ContextMenuItem
-          >
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
+            Delete Read Model</ContextMenuItem>
         {:else if contextMenu.placementKind === 'command'}
           <ContextMenuItem
-            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
-          >
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
             Delete Command
           </ContextMenuItem>
         {/if}
         <ContextMenuDivider />
         <ContextMenuItem
-          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnLeft)}
-        >
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnLeft)} >
             Insert Column Left
         </ContextMenuItem>
         <ContextMenuItem
-          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnRight)}
-        >
-            Insert Column Right 
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnRight)} >
+            Insert Column Right
         </ContextMenuItem>
         {#if contextMenu.rowKind !== 'audience' || !contextMenu.defaultLane}
           <ContextMenuItem
-            on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneAbove)}
-          >
-            Insert Lane Above</ContextMenuItem
-          >
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneAbove)}>
+            Insert Lane Above
+          </ContextMenuItem>
         {/if}
         {#if contextMenu.rowKind !== 'stream' || !contextMenu.defaultLane}
           <ContextMenuItem
-            on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneBelow)}
-          >
-            Insert Lane Below</ContextMenuItem
-          >
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneBelow)} >
+            Insert Lane Below
+          </ContextMenuItem>
         {/if}
         <ContextMenuDivider />
         <ContextMenuItem>Import Event Model JSON</ContextMenuItem>
@@ -549,17 +522,15 @@
       targeted_lane={audience_drop_target?.index === default_audience_lane_index
         ? audience_drop_target.targetStatus
         : undefined}
-      row={default_audience_row}
-      audience={{ placements: default_audience_placements }}
+      row={grid?.default_audience.row ?? 0}
+      audience={grid?.default_audience}
       lane_index={default_audience_lane_index}
-      {max_column}
-    />
+      {max_column} />
 
-    {#each audiences as audience, i (audience.id)}
+    {#each grid ? grid.audiences : [] as audience, i (audience.id)}
       {@const row = i + 1}
-      {@const lane_index = audiences.length - 1 - i}
       {@const targeted_lane =
-        audience_drop_target?.index == lane_index ? audience_drop_target.targetStatus : undefined}
+        audience_drop_target?.index == audience.lane_index ? audience_drop_target?.targetStatus : undefined}
       {@const targeted_cell =
         cell_drop_target &&
         cell_drop_target.row.rowKind === 'audience' &&
@@ -584,8 +555,7 @@
         {row}
         {audience}
         {max_column}
-        {lane_index}
-      />
+        lane_index={audience.lane_index} />
     {/each}
 
     <Timeline
@@ -597,16 +567,15 @@
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
       on:open_context_menu={handleOpenContextMenu}
-      row={timeline_row}
-      placements={timeline_placements}
+      row={grid?.timeline.row ?? 0}
+      cells={grid?.timeline.cells}
       targeted_lane={timeline_drop_target}
       targeted_cell={cell_drop_target && cell_drop_target.row.rowKind === 'timeline'
         ? { column: cell_drop_target.column, targetStatus: cell_drop_target.targetStatus }
         : undefined}
-      {max_column}
-    />
+      {max_column} />
 
-    {#each streams as stream, lane_index (stream.id)}
+    {#each grid ? grid.streams : [] as stream, lane_index (stream.id)}
       {@const row = lane_index + timeline_row + 1}
       {@const targeted_lane =
         stream_drop_target?.index == lane_index ? stream_drop_target.targetStatus : undefined}
@@ -634,8 +603,7 @@
         {row}
         {stream}
         {max_column}
-        {lane_index}
-      />
+        {lane_index} />
     {/each}
     <StreamLane
       on:navigate_cursor={handleNavigateCursor}
@@ -659,8 +627,7 @@
       lane_index={default_stream_lane_index}
       row={default_stream_row}
       stream={{ placements: default_stream_placements }}
-      {max_column}
-    />
+      {max_column} />
     <Cursor
       on:begin_editing={handleBeginEditing}
       on:cancel_editing={handleCancelEditing}
@@ -679,15 +646,14 @@
       on:open_context_menu={handleOpenContextMenu}
       row={cursor_row}
       column={cursor_column}
-      item={cursor_item}
+      cell={cursor_cell}
       mode={cursor_mode}
       target_status={cell_drop_target?.column &&
       cell_drop_target.column === cursor_column &&
       cell_drop_target?.row &&
       cell_drop_target.row.rowIndex == cursor_row
         ? cell_drop_target?.targetStatus
-        : undefined}
-    />
+        : undefined} />
     {#if mode === 'disambiguating' && disambiguation}
       <TimelineDisambiguation
         name={disambiguation.name}
@@ -695,8 +661,7 @@
         top={disambiguation.top}
         left={disambiguation.left}
         on:define_and_place_command={handleDefineAndPlaceCommand}
-        on:define_and_place_read_model={handleDefineAndPlaceReadModel}
-      />
+        on:define_and_place_read_model={handleDefineAndPlaceReadModel} />
     {/if}
   </div>
 </div>

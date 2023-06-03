@@ -1,4 +1,4 @@
-import { FlowAnchor, type Decider, type DropTargetStatus, type Flow, type FlowCursor, type FlowPort, type LaneKind, type LinkingFlowColor, type PlacementType } from "../Grid";
+import { FlowAnchor, type Decider, type DropTargetStatus, type Flow, type FlowCursor, type FlowPort, type ReorderableLaneType, type LinkingFlowColor, type PlacementType } from "../Grid";
 
 // Types
 export interface WithDropTargetStatus { targetStatus: DropTargetStatus}
@@ -8,11 +8,11 @@ export interface WithRowIndex { rowIndex: number }
 export const DEFAULT_LANE = "DEFAULT_LANE";
 export type DefaultLane = "DEFAULT_LANE";
 export type SourceEffect = "MOVE" | "DUPLICATE";
-export type RowKind = LaneKind | "timeline";
+export type RowKind = ReorderableLaneType | "timeline";
 
 export interface LaneSource {
     laneId: string,
-    laneKind: LaneKind
+    laneKind: ReorderableLaneType
 }
 
 export interface PlacementSource {
@@ -270,7 +270,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: GridState, c:
                                             case "command":
                                                 reactionDecider.move_timeline_placement(placementId, column);
                                                 break;
-                                            case "readModel":
+                                            case "read_model":
                                                 reactionDecider.move_timeline_placement(placementId, column);
                                                 break;
                                             case "event":
@@ -286,7 +286,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: GridState, c:
                                             case "command":
                                                 reactionDecider.duplicate_timeline_placement(placementId, column);
                                                 break;
-                                            case "readModel":
+                                            case "read_model":
                                                 reactionDecider.duplicate_timeline_placement(placementId, column);
                                                 break;
                                             case "event":
@@ -465,7 +465,7 @@ function placementTargetStatus({ placementKind }: PlacementSource, { placementId
         case "stream":
             return ( placementKind == "event" ) ? "good" : "bad";
         case "timeline":
-            return (["readModel", "command"].includes(placementKind) ? "good" : "bad" )
+            return (["read_model", "command"].includes(placementKind) ? "good" : "bad" )
     }
 }
 
@@ -485,10 +485,10 @@ function flowTargetStatus({ placement: { placementKind, placementId } }: FlowPor
         case "command":
             return (targetPlacementKind === "event") ? "good" : "bad";
         case "event":
-            return (targetPlacementKind === "readModel") ? "good" : "bad";
+            return (targetPlacementKind === "read_model") ? "good" : "bad";
         case "interface":
             return (targetPlacementKind === "command") ? "good" : "bad";
-        case "readModel":
+        case "read_model":
             return (targetPlacementKind === "interface") ? "good" : "bad";
     }
 }
@@ -500,26 +500,26 @@ const flowTargetDefaultPort = (source: PlacementType, target: PlacementType): Fl
     else if ( source  === "command" && target === "event") {
         return FlowAnchor.Top;
     }
-    else if (source === "event" && target === "readModel") {
+    else if (source === "event" && target === "read_model") {
         return FlowAnchor.Bottom;
     }
-    else if (source === "readModel" && target === "interface") {
+    else if (source === "read_model" && target === "interface") {
         return FlowAnchor.Bottom;
     }
     // START IMPOSSIBLE LINKS THAT STILL NEED TO BE DISPLAYED ON A 'bad' TARGET
-    else if (source === "command" && target === "readModel") {
+    else if (source === "command" && target === "read_model") {
         return FlowAnchor.Left;
     }
-    else if (source === "readModel" && target === "command") {
+    else if (source === "read_model" && target === "command") {
         return FlowAnchor.Left;
     }
-    else if (source === "readModel" && target === "readModel") {
+    else if (source === "read_model" && target === "read_model") {
         return FlowAnchor.Left;
     }
     else if (source === "command" && target === "command") {
         return FlowAnchor.Left;
     }
-    else if (source === "readModel" && target === "event") {
+    else if (source === "read_model" && target === "event") {
         return FlowAnchor.Top;
     }
     else if (source === "command" && target ==="interface") {
@@ -535,9 +535,9 @@ const defaultFlowAnchorsByPlacementType = (source: PlacementType, target: Placem
         return [FlowAnchor.Bottom, FlowAnchor.Top];
     } else if (source === "command" && target === "event") {
         return [FlowAnchor.Bottom, FlowAnchor.Top];
-    } else if (source === "event" && target === "readModel") {
+    } else if (source === "event" && target === "read_model") {
         return [FlowAnchor.Top, FlowAnchor.Bottom];
-    } else if (source === "readModel" && target === "interface") {
+    } else if (source === "read_model" && target === "interface") {
         return [FlowAnchor.Top, FlowAnchor.Bottom];
     } else {
         return [FlowAnchor.Top, FlowAnchor.Bottom];

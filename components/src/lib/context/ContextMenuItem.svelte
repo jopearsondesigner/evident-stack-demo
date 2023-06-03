@@ -1,23 +1,23 @@
-<script>
-  import { onMount, getContext } from 'svelte';
-  import { key } from './contextMenu.js';
+<script lang="ts">
+  // import { getContext } from 'svelte';
+  // import { key } from './contextMenu.js';
 
   let liClass = 'px-1';
   export let childClass =
     'w-full text-left text-body dark:text-white cursor-default font-medium py-2 px-4 text-sm hover:bg-focus/20 hover:text-body dark:hover:text-white transition duration-200 ease-in';
-  export let href = undefined;
+  export let href: string | undefined = undefined;
   export let isDisabled = false;
 
   import { createEventDispatcher } from 'svelte';
   const dispatch = createEventDispatcher();
 
-  const { dispatchClick } = getContext(key);
+  // const { dispatchClick } = getContext(key);
 
-  const handleClick = (e) => {
+  const handleClick = (_e: any) => {
     if (isDisabled) return;
 
     dispatch('click');
-    dispatchClick();
+    // dispatchClick();
   };
 </script>
 
@@ -36,8 +36,7 @@
     on:focus
     on:blur
     on:mouseenter
-    on:mouseleave
-  >
+    on:mouseleave>
     <slot />
   </svelte:element>
 </li>

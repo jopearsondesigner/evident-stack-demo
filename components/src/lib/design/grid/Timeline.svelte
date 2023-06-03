@@ -71,10 +71,10 @@
         on:connect_flow={forward}
         on:flow_drag_start={forward}
       />
-    {:else if placement && placement.kind === 'readModel'}
+    {:else if placement && placement.kind === 'read_model'}
       <ReadModel
         id={placement.id}
-        readModel={placement.component}
+        read_model={placement.component}
         {column}
         name={placement.name}
         description={placement.description}

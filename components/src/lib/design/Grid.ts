@@ -25,9 +25,9 @@ export type Decider = {
   move_event_placement: (placement_id: string, index: number, stream: string | undefined) => any;
   remove_placement: (placement: string) => any;
   rename_placement: (placement: string, name: string) => any;
-  rename_lane: (kind: LaneKind, lane_id: string, name: string) => any;
-  reorder_lane: (kind: LaneKind, lane_id: string, index: number) => any;
-  remove_lane: (kind: LaneKind, lane_id: string) => any;
+  rename_lane: (kind: ReorderableLaneType, lane_id: string, name: string) => any;
+  reorder_lane: (kind: ReorderableLaneType, lane_id: string, index: number) => any;
+  remove_lane: (kind: ReorderableLaneType, lane_id: string) => any;
   add_lane: (kind: string, index: number, name: string) => any
   insert_columns: (index: number, direction: string, count: number) => any;
   add_to_description: (index: number, addition: string) => any;
@@ -89,55 +89,60 @@ export enum FlowAnchor {
   Right
 }
 
-export type Audience = {
-  id?: string;
-  name?: string;
-  placements: Array<InterfacePlacement>;
+// Adapted from grid.rs
+export type InterfaceType = 'blank' | 'figma' | 'image' | 'job'
+export type InterfaceConfig = {
+  kind: InterfaceType,
+  url?: string,
+}
+
+// Adapted from grid.rs
+export type PlacementType = 'interface' | 'command' | 'event' | 'read_model';
+export type Placement = {
+  kind: PlacementType,
+  id: string,
+  component_id: string,
+  index: number,
+  name: string,
+  description: string,
+  interface_config?: InterfaceConfig,
 };
 
-export type InterfacePlacement = {
-  id: string;
-  interface: string;
-  name: string;
-  description: string;
-  // TODO: supported placement types/config here
-  kind: string;
-};
-
-export type TimelinePlacement = {
-  id: string;
-  component: string;
-  kind: 'command' | 'readModel';
-  name: string;
-  description: string;
-};
-
-export type EventPlacement = {
-  id: string;
-  event: string;
-  name: string;
-  description: string;
-};
-
-export type Stream = {
-  id?: string;
-  name?: string;
-  placements: Array<EventPlacement>;
-};
-
-export type PlacementType = 'interface' | 'command' | 'event' | 'readModel';
+// Adapted from grid.rs
 export type CellType = 'interface' | 'timeline' | 'event';
-
-export type InterfacePlacementCell = { type: 'interface'; placement: InterfacePlacement, audience?: string, lane_index: number };
-export type TimelinePlacementCell = { type: 'timeline'; placement: TimelinePlacement, lane_index: undefined };
-export type EventPlacementCell = { type: 'event'; placement: EventPlacement, stream?: string, lane_index: number };
-export type EmptyCell = {
-  type: CellType;
-  placement?: undefined;
-  audience?: string;
-  stream?: string;
-  lane_index?: number;
+export type Cell = {
+  kind: CellType,
+  row: number,
+  column: number,
+  placement?: Placement,
+  audience?: string,
+  stream?: string,
 };
+
+// Adapted from grid.rs
+export type LaneType = 'default_audience' | 'audience' | 'timeline' | 'stream' | 'default_stream';
+export type Lane = {
+  kind: LaneType,
+  id?: string
+  row: number,
+  name: string,
+  cells: Cell[],
+}
+
+export type Grid = {
+  id: string,
+  name: string,
+  description: string,
+  column_count: number,
+  row_count: number,
+  default_audience: Lane,
+  audiences: Lane[],
+  timeline: Lane,
+  streams: Lane[],
+  default_stream: Lane,
+
+  flows: Flow[],
+}
 
 export type Disambiguation = { name: string; index: number; top: number; left: number } | null;
 
@@ -149,8 +154,8 @@ export const placementOrEmptyCellId = (
   return (placement && placement.id) || `empty-${col}-${row}`;
 };
 
+export type ReorderableLaneType = 'audience' | 'stream';
 export type GridMode = 'loading' | 'navigation' | 'editing' | 'disambiguating' | 'linking';
 export type CursorMode = 'editing' | 'navigation' | 'linking' | 'other';
-export type LaneKind = 'audience' | 'stream';
 export type DropTargetStatus = 'good' | 'bad';
 export type LinkingFlowColor = "red" | "green" | "black";

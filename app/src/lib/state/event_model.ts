@@ -1,6 +1,6 @@
 import { default as init, EventModelStateManager, setPanicHook } from "state-client";
 import { derived, readable } from 'svelte/store';
-import type { LaneKind } from '$components/design/Grid';
+import type { ReorderableLaneType } from '$components/design/Grid';
 
 const initialize_decider = async (id: string | undefined, user: string) => {
   // Initialize Wasm decider
@@ -78,13 +78,13 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       rename_placement: async (placement: string, name: string) => {
         return await manager.rename_placement(id!, placement, name)
       },
-      rename_lane: async (kind: LaneKind, lane_id: string, name: string) => {
+      rename_lane: async (kind: ReorderableLaneType, lane_id: string, name: string) => {
         return await manager.rename_lane(id!, kind, lane_id, name)
       },
-      reorder_lane: async (kind: LaneKind, lane_id: string, index: number) => {
+      reorder_lane: async (kind: ReorderableLaneType, lane_id: string, index: number) => {
         return await manager.reorder_lane(id!, kind, lane_id, index)
       },
-      remove_lane: async (kind: LaneKind, lane_id: string) => {
+      remove_lane: async (kind: ReorderableLaneType, lane_id: string) => {
         return await manager.remove_lane(id!, kind, lane_id)
       },
       add_lane: async (kind: string, index: number, name: string) => {

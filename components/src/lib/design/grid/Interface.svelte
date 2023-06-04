@@ -44,7 +44,7 @@
   };
 </script>
 
-<div class="relative group w-full h-full p-1"
+<div class="relative group w-full h-full"
      on:dragover={(e) => e.preventDefault()}>
   <FlowPort
     on:flow_drag_start={forward}
@@ -63,12 +63,14 @@
   <!-- TODO: tooltip interferes with link dragging -->
   <!-- <MaybeTooltip tip={descriptionHTML}> -->
   {#if config.kind == 'blank'}
-    <div
-      {id}
-      draggable="true"
-      on:dragstart={handleDragStart}
-      class="interface w-full h-full p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
-      {name}
+    <div class="w-full h-full p-[1.375rem]">
+      <div
+        {id}
+        draggable="true"
+        on:dragstart={handleDragStart}
+        class="interface w-full h-full p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
+        {name}
+      </div>
     </div>
   {:else if config.kind == 'job'}
     <!-- TODO: temporary -->
@@ -80,22 +82,20 @@
       {name} with gear icon!
     </div>
   {:else if config.kind == 'image'}
-    <!-- TODO: temporary -->
     <div
       {id}
       draggable="true"
       on:dragstart={handleDragStart}
-      class="interface flex flex-col items-center w-full h-full">
+      class="interface flex flex-col items-center w-full h-full p-1.5">
       <h4 class="text-xs">{name}</h4>
       <img class="flex-1 min-h-0 object-contain" src={config.url} alt={name} />
     </div>
   {:else if config.kind == 'figma'}
-    <!-- TODO: temporary -->
     <div
       {id}
       draggable="true"
       on:dragstart={handleDragStart}
-      class="interface m-[1.4375rem] w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
+      class="interface flex flex-col items-center w-full h-full p-1.5">
       {name} with Figma embed at {config.url}
     </div>
   {/if}

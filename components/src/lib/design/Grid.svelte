@@ -435,7 +435,7 @@
   on:dragenter={handleOutOfBoundsDragEnter}
   on:dragend={handleOutOfBoundsDragEnd} />
 
-<div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
+<div class="overflow-auto z-[0] h-full w-full bg-gray-canvas dark:bg-dark-1">
   {#if contextMenu}
     <ContextMenu
       x={contextMenu.x}

@@ -44,7 +44,8 @@
   };
 </script>
 
-<div class="relative group" on:dragover={(e) => e.preventDefault()}>
+<div class="relative group w-full h-full p-1"
+     on:dragover={(e) => e.preventDefault()}>
   <FlowPort
     on:flow_drag_start={forward}
     position="bottom"
@@ -66,7 +67,7 @@
       {id}
       draggable="true"
       on:dragstart={handleDragStart}
-      class="interface m-[1.4375rem] w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
+      class="interface w-full h-full p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
       {name}
     </div>
   {:else if config.kind == 'job'}
@@ -75,7 +76,7 @@
       {id}
       draggable="true"
       on:dragstart={handleDragStart}
-      class="interface m-[1.4375rem] w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
+      class="interface w-full h-full p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
       {name} with gear icon!
     </div>
   {:else if config.kind == 'image'}

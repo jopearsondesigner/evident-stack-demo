@@ -498,8 +498,8 @@
   <div
     bind:this={containerRef}
     on:dragover={handleDragOver}
-    class="grid relative w-max p-3 pl-5 justify-items-center items-center"
-    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({grid.row_count}, minmax(108px, min-content));">
+    class="grid relative w-full p-3 pl-5 justify-items-center items-center"
+    style="grid-template-columns: repeat({max_column}, 9rem); grid-template-rows: repeat({grid.row_count}, 9rem);">
     <FlowCanvas flows={allFlows} />
     <AudienceLane
       on:navigate_cursor={handleNavigateCursor}

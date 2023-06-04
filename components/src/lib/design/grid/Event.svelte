@@ -41,9 +41,8 @@
 </script>
 
 <div
-  class="relative group"
-  on:dragover={(e) => e.preventDefault()}
->
+  class="relative group w-full h-full p-[1.375rem]"
+  on:dragover={(e) => e.preventDefault()}>
   <FlowPort on:flow_drag_start={forward} position="top" type="event" placement={id} placement_kind="event" {column} />
   <FlowPort on:flow_drag_start={forward} position="right" type="event" placement={id} placement_kind="event"{column} />
   <!-- TODO: tooltip interferes with link dragging -->
@@ -52,8 +51,7 @@
     {id}
     draggable="true"
     on:dragstart={handleDragStart}
-    class="event col-border ring-white dark:ring-gray-brand-1 m-[1.375rem] w-[6.125rem] h-[6.125rem] p-3 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-event-dark via-event to-event-light"
-  >
+    class="event w-full h-full p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-event-dark via-event to-event-light">
     {name}
   </div>
   <!-- </MaybeTooltip> -->

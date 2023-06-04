@@ -81,7 +81,7 @@
   class:bg-emerald-200={good_target}
   class:bg-rose-400={bad_target}
   id={stream.id}
-  class="stream h-full w-full border-b border-gray-primary dark:border-gray-brand-3 cursor-move"
+  class="stream z-[-1] -ml-5 h-full w-full border-b border-gray-primary dark:border-gray-brand-3 cursor-move"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};" />
 
   {#each stream.cells as cell, column (cellId(column, row))}

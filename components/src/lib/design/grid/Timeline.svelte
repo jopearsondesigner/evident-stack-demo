@@ -36,7 +36,7 @@
 </h3>
 
 <div
-  class="timeline z-[-1] h-full w-full border-t border-b border-gray-brand-2 dark:border-white"
+  class="timeline z-[-1] -ml-5 h-full w-full border-t border-b border-gray-brand-2 dark:border-white"
   class:bg-emerald-200={good_target}
   class:bg-rose-400={bad_target}
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"/>

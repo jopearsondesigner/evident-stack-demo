@@ -80,7 +80,7 @@
   id={audience.id}
   class:bg-emerald-200={good_target}
   class:bg-rose-400={bad_target}
-  class="audience z-[-1] h-full w-full border-t border-gray-primary dark:border-gray-brand-3"
+  class="audience z-[-1] -ml-5 h-full w-full border-t border-gray-primary dark:border-gray-brand-3"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};" />
 
   {#each audience.cells as cell, column (cellId(column, row))}

@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 374.99">
-  <defs>
-    <style>
-      .cls-1 {
-        fill: #586e75;
-      }
-    </style>
-  </defs>
-  <path class="cls-1" d="m474.99,25v324.99H25V25h449.99M499.99,0H0v374.99h499.99V0h0Z"/>
-  <path class="cls-1" d="m387.49,62.5c27.57,0,50,22.43,50,50s-22.43,50-50,50-50-22.43-50-50,22.43-50,50-50m0-12.5c-34.52,0-62.5,27.98-62.5,62.5s27.98,62.5,62.5,62.5,62.5-27.98,62.5-62.5-27.98-62.5-62.5-62.5h0Z"/>
-  <path class="cls-1" d="m500,374.98H0v-47.44l165.47-182.1,120.81,95.75,71.48-47.22,142.23,119.87v61.13Zm-475-25h450v-24.51l-119.04-100.34-70.99,46.92-116.71-92.5L25,337.21v12.77Z"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 27.2.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 500 375" style="enable-background:new 0 0 500 375;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill: rgba(88, 110, 117, .2);}
+</style>
+<path class="st0" d="M387.5,62.5c27.6,0,50,22.4,50,50s-22.4,50-50,50s-50-22.4-50-50S359.9,62.5,387.5,62.5 M387.5,50
+	C353,50,325,78,325,112.5s28,62.5,62.5,62.5s62.5-28,62.5-62.5S422,50,387.5,50L387.5,50z"/>
+<path class="st0" d="M500,375L500,375l0-61.1V0H0v327.5V375v0L500,375L500,375L500,375z M25,350v-12.8l143.3-157.7L285,272l71-46.9
+	l119,100.3V350H25z M25,25h450v267.8L357.8,194l-71.5,47.2l-120.8-95.8L25,300V25z"/>
 </svg>

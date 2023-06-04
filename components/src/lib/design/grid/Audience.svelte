@@ -80,7 +80,7 @@
   id={audience.id}
   class:bg-emerald-200={good_target}
   class:bg-rose-400={bad_target}
-  class="audience z-[-1] absolute -top-px -left-3 bottom-0.5 -right-6 border-t border-gray-primary dark:border-gray-brand-3"
+  class="audience z-[-1] h-full w-full border-t border-gray-primary dark:border-gray-brand-3"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};" />
 
   {#each audience.cells as cell, column (cellId(column, row))}
@@ -108,6 +108,7 @@
         {column}
         name={cell.placement.name}
         description={cell.placement.description}
+        config={cell.placement.interface_config || { kind: 'blank' }}
         on:placement_drag_start={forward}
         on:connect_flow={forward}
         on:flow_drag_start={forward} />

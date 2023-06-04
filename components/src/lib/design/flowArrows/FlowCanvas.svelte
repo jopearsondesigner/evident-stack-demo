@@ -9,7 +9,7 @@
   export let refreshTime: number = 16;
   export let curveShapeFactor: number = 0.1;
   export let markerSize: number = 8;
-  let svgClass: string = 'absolute z-0';
+  let svgClass: string = 'absolute top-0 left-0 bottom-0 right-0 z-0';
   export { svgClass as class };
 
   let containerRef: SVGSVGElement;
@@ -31,8 +31,7 @@
   width="100%"
   height="100%"
   preserveAspectRatio="none"
-  xmlns="http://www.w3.org/2000/svg"
->
+  xmlns="http://www.w3.org/2000/svg">
   <defs>
     <FlowMarker {...markerConfig} />
   </defs>

@@ -3,30 +3,16 @@
   import type { DragEventHandler } from 'svelte/elements';
   import FlowPort from './FlowPort.svelte';
   import { createEventDispatcher } from 'svelte';
+  import type { InterfaceConfig } from '../Grid.js';
 
   export let id: string;
   export let interface_id: string;
   export let column: number;
 
-  type InterfaceConfig =
-    | { type: 'blank' }
-    | {
-        type: 'figma';
-        url: string;
-        width?: number | undefined | null;
-        height?: number | undefined | null;
-      }
-    | {
-        type: 'image';
-        url: string;
-        width?: number | undefined | null;
-        height?: number | undefined | null;
-      }
-    | { type: 'job' };
+  export let config: InterfaceConfig;
 
-  export let config: InterfaceConfig = { type: 'blank' };
   export let name: string;
-  export let description = '';
+  export let description: string;
 
   $: descriptionHTML = markdown(description);
 
@@ -65,25 +51,51 @@
     type="interface"
     placement={id}
     placement_kind="interface"
-    {column}
-  />
+    {column} />
   <FlowPort
     on:flow_drag_start={forward}
     position="right"
     type="interface"
     placement={id}
     placement_kind="interface"
-    {column}
-  />
+    {column} />
   <!-- TODO: tooltip interferes with link dragging -->
   <!-- <MaybeTooltip tip={descriptionHTML}> -->
-  <div
-    {id}
-    draggable="true"
-    on:dragstart={handleDragStart}
-    class="interface m-[1.4375rem] w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary"
-  >
-    {name}
-  </div>
+  {#if config.kind == 'blank'}
+    <div
+      {id}
+      draggable="true"
+      on:dragstart={handleDragStart}
+      class="interface m-[1.4375rem] w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
+      {name}
+    </div>
+  {:else if config.kind == 'job'}
+    <!-- TODO: temporary -->
+    <div
+      {id}
+      draggable="true"
+      on:dragstart={handleDragStart}
+      class="interface m-[1.4375rem] w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
+      {name} with gear icon!
+    </div>
+  {:else if config.kind == 'image'}
+    <!-- TODO: temporary -->
+    <div
+      {id}
+      draggable="true"
+      on:dragstart={handleDragStart}
+      class="interface m-[1.4375rem] w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
+      {name} with image at {config.url}
+    </div>
+  {:else if config.kind == 'figma'}
+    <!-- TODO: temporary -->
+    <div
+      {id}
+      draggable="true"
+      on:dragstart={handleDragStart}
+      class="interface m-[1.4375rem] w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
+      {name} with Figma embed at {config.url}
+    </div>
+  {/if}
   <!-- </MaybeTooltip> -->
 </div>

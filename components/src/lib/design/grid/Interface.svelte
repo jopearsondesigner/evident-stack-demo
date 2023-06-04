@@ -85,8 +85,9 @@
       {id}
       draggable="true"
       on:dragstart={handleDragStart}
-      class="interface m-[1.4375rem] w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
-      {name} with image at {config.url}
+      class="interface flex flex-col items-center w-full h-full">
+      <h4 class="text-xs">{name}</h4>
+      <img class="flex-1 min-h-0 object-contain" src={config.url} alt={name} />
     </div>
   {:else if config.kind == 'figma'}
     <!-- TODO: temporary -->

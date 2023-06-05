@@ -4,8 +4,8 @@
   import FlowPort from './FlowPort.svelte';
   import { createEventDispatcher } from 'svelte';
   import type { InterfaceConfig } from '../Grid.js';
-  import Icon from '$components/Icon.svelte';
-  import JobGears from '$components/icons/JobGears.svelte';
+  import Icon from '../../Icon.svelte';
+  import JobGears from '../../icons/JobGears.svelte';
 
   export let id: string;
   export let interface_id: string;
@@ -79,7 +79,7 @@
       on:dragstart={handleDragStart}
       class="interface flex flex-col items-center w-full h-full">
       {name}
-      <Icon name="job-gears" iconColor="text-body-light dark:text-body-dark" pathName={JobGears} />
+      <Icon class="flex-1 m-2 w-max transition duration-200 ease-in cursor-default" name="job-gears" iconColor="text-body-light dark:text-body-dark" pathName={JobGears} />
     </div>
   {:else if config.kind == 'image'}
     <div

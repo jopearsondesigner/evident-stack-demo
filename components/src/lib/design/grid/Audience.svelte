@@ -65,7 +65,7 @@
 <h3
   on:dragstart={handleDragStart}
   draggable="true"
-  class="audienceName sticky left-3 z-30 justify-self-start self-start cursor-pointer prose text-body-light dark:text-body-dark mt-3 select-none cursor-move"
+  class="audienceName sticky left-3 justify-self-start self-start cursor-pointer prose text-body-light dark:text-body-dark mt-3 select-none cursor-move"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};">
   {audience.name}
 </h3>
@@ -80,7 +80,7 @@
   id={audience.id}
   class:bg-emerald-200={good_target}
   class:bg-rose-400={bad_target}
-  class="audience z-[-1] -ml-5 h-full w-full border-t border-gray-primary dark:border-gray-brand-3"
+  class="audience -ml-5 h-full w-full border-t border-gray-primary dark:border-gray-brand-3"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};" />
 
   {#each audience.cells as cell, column (cellId(column, row))}

@@ -65,13 +65,4 @@
   class:bg-rose-400={bad_target}
   style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};">
   <slot />
-  <div class="relative z-[-2] left-[i42px] -mr-[1.5px] w-px col-border ring-offset-0 ring-white dark:ring-gray-brand-1" />
 </div>
-
-<style>
-  /* Grid column */
-  .col-border {
-    --tw-ring-offset-width: 0px;
-    box-shadow: 1px 0px 0px 0px var(--tw-ring-color);
-  }
-</style>

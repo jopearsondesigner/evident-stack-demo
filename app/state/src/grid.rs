@@ -144,7 +144,7 @@ fn interface_placement(
             url: Some(url.to_string()),
         },
         event_models::InterfaceConfig::Job => InterfaceConfig {
-            kind: InterfaceType::Blank,
+            kind: InterfaceType::Job,
             url: None,
         },
     };

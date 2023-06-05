@@ -6,7 +6,6 @@
   import { clickOutside } from '../utils/clickOutside';
   import { createEventDispatcher } from 'svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
-  export let activateClickOutside: boolean = true;
   export let hidden: boolean = true;
   export let divClass: string = 'z-40 top-0 fixed h-full bg-white dark:bg-dark-2';
   let className: string = '';
@@ -51,15 +50,9 @@
 <svelte:window on:keydown={keyboardHandler} />
 
 {#if !hidden}
-  {#if !drawerRight}
-    <div
-      transition:fly={transitionParams}
-      class={classNames(className, divClass)}
-      style="padding-top: {navbarHeight}px;">
-      <slot />
-    </div>
-  {:else if activateClickOutside}
+  {#if drawerRight}
     <div class={classNames('fixed inset-0 z-30', backdropClasses)} />
+    <slot name="extra" />
     <div
       use:clickOutside={handleClose}
       transition:fly={transitionParamsRight}
@@ -70,6 +63,13 @@
         size={12}
         btnClass="float-right mt-2 mr-2"
         on:click={handleClose} />
+      <slot />
+    </div>
+  {:else}
+    <div
+      transition:fly={transitionParams}
+      class={classNames(className, divClass)}
+      style="padding-top: {navbarHeight}px;">
       <slot />
     </div>
   {/if}

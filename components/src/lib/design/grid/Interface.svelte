@@ -4,6 +4,8 @@
   import FlowPort from './FlowPort.svelte';
   import { createEventDispatcher } from 'svelte';
   import type { InterfaceConfig } from '../Grid.js';
+  import Icon from '$components/Icon.svelte';
+  import JobGears from '$components/icons/JobGears.svelte';
 
   export let id: string;
   export let interface_id: string;
@@ -60,8 +62,6 @@
     placement={id}
     placement_kind="interface"
     {column} />
-  <!-- TODO: tooltip interferes with link dragging -->
-  <!-- <MaybeTooltip tip={descriptionHTML}> -->
   {#if config.kind == 'blank'}
     <div class="w-full h-full p-[1.375rem]">
       <div
@@ -73,13 +73,13 @@
       </div>
     </div>
   {:else if config.kind == 'job'}
-    <!-- TODO: temporary -->
     <div
       {id}
       draggable="true"
       on:dragstart={handleDragStart}
-      class="interface w-full h-full p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
-      {name} with gear icon!
+      class="interface flex flex-col items-center w-full h-full">
+      {name}
+      <Icon name="job-gears" iconColor="text-body-light dark:text-body-dark" pathName={JobGears} />
     </div>
   {:else if config.kind == 'image'}
     <div
@@ -88,16 +88,18 @@
       on:dragstart={handleDragStart}
       class="interface flex flex-col items-center w-full h-full p-1.5">
       <h4 class="text-xs">{name}</h4>
-      <img class="flex-1 min-h-0 object-contain" src={config.url} alt={name} />
+      <img class="flex-1 min-h-0 mt-1 object-contain" src={config.url} alt={name} />
     </div>
   {:else if config.kind == 'figma'}
-    <div
-      {id}
-      draggable="true"
-      on:dragstart={handleDragStart}
-      class="interface flex flex-col items-center w-full h-full p-1.5">
-      {name} with Figma embed at {config.url}
+    <div class="w-full h-full p-[1.375rem]">
+      <div
+        {id}
+        draggable="true"
+        on:dragstart={handleDragStart}
+        class="interface flex flex-col items-center w-full h-full p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
+        {name}
+        <img class="min-h-0 m-2" src="/images/figma-logo.svg" alt="Figma Logo" />
+      </div>
     </div>
   {/if}
-  <!-- </MaybeTooltip> -->
 </div>

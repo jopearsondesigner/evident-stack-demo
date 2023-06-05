@@ -51,7 +51,7 @@
     {id}
     draggable="true"
     on:dragstart={handleDragStart}
-    class="read_model w-full h-full p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-read_model to-read_model-light">
+    class="read_model w-full h-full p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-read_model-dark via-read_model to-read_model-light">
     {name}
   </div>
   <!-- </MaybeTooltip> -->

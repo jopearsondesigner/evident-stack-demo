@@ -131,6 +131,7 @@ pub enum EventModelError {
     LaneIndexOutOfBounds(LaneId, usize),
     DescriptionTextOutOfBounds(String, usize, usize),
     FieldError(FieldError),
+    InvalidInterfaceConfig(String, Option<String>),
 }
 
 //// ***** Types *****
@@ -263,6 +264,31 @@ pub enum InterfaceConfig {
         url: Url,
     },
     Job,
+}
+
+impl InterfaceConfig {
+    pub fn parse(
+        interface_type: String,
+        maybe_url: Option<String>,
+    ) -> Result<Self, EventModelError> {
+        let error =
+            EventModelError::InvalidInterfaceConfig(interface_type.clone(), maybe_url.clone());
+        match interface_type.as_str() {
+            "blank" => Ok(InterfaceConfig::Blank),
+            "figma" => maybe_url.map_or(Err(error.to_owned()), |url_str| {
+                Url::parse(&url_str)
+                    .map(|url| InterfaceConfig::Figma { url })
+                    .map_err(|_| error.to_owned())
+            }),
+            "image" => maybe_url.map_or(Err(error.to_owned()), |url_str| {
+                Url::parse(&url_str)
+                    .map(|url| InterfaceConfig::Image { url })
+                    .map_err(|_| error.to_owned())
+            }),
+            "job" => Ok(InterfaceConfig::Job),
+            _ => Err(error),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

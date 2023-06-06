@@ -1,4 +1,3 @@
-import { browser } from "$app/environment";
 import { init_supabase } from "$lib/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { Dexie, liveQuery, type Observable } from "dexie";
@@ -31,14 +30,12 @@ class EventModelDatabase extends Dexie {
   }
 }
 
-const buildDatabase = async () => {
-  if (browser) {
-    await import('dexie-observable');
-    await import('dexie-syncable');
-    Dexie.Syncable.registerSyncProtocol("evidentstack", SupabaseSync)
-  }
+let db: EventModelDatabase;
 
-  const db = new EventModelDatabase();
+export const initializeDexie = () => {
+  Dexie.Syncable.registerSyncProtocol("evidentstack", SupabaseSync)
+
+  db = new EventModelDatabase();
 
   // TODO: more gracefully handle upgrades blocked by other open tabs/windows
   db.on("blocked", () => {
@@ -48,8 +45,6 @@ const buildDatabase = async () => {
 
   return db;
 };
-
-export const db = await buildDatabase();
 
 const concatBuffers = (buf1: Uint8Array, buf2: Uint8Array) => {
   let ret = new Uint8Array(buf1.length + buf2.length);

@@ -14,7 +14,7 @@ const initialize_decider = async (id: string | undefined, user: string) => {
   let store: Readable<EventModelGrid | null>;
 
   if (id) {
-    // Initialize Dexie from existing patches
+    // Initialize manager from existing patches in Dexie
     let initial_bin = await model_binary(id);
     manager.refresh(initial_bin);
 
@@ -25,9 +25,9 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       try {
         manager.refresh(bin);
         manager.grid()
-          .then((grid) => {
+          .then((grid: EventModelGrid) => {
             setter(grid);
-          }).catch((_) => {
+          }).catch((_: any) => {
             setter(null);
           });
       } catch {

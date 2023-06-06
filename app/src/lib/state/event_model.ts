@@ -1,5 +1,5 @@
-import { default as init, EventModelStateManager, setPanicHook } from "state-client";
-import { derived, readable } from 'svelte/store';
+import { default as init, EventModelGrid, EventModelStateManager, setPanicHook } from "state-client";
+import { derived, readable, type Readable } from 'svelte/store';
 import type { ReorderableLaneType } from '$components/design/Grid';
 
 const initialize_decider = async (id: string | undefined, user: string) => {
@@ -11,7 +11,7 @@ const initialize_decider = async (id: string | undefined, user: string) => {
 
   const { model_binary, documentBinaryStore } = await import("./dexie");
 
-  let store;
+  let store: Readable<EventModelGrid | null>;
 
   if (id) {
     // Initialize Dexie from existing patches
@@ -117,6 +117,13 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       },
       connect_flow: async (source_placement_id_str: string, source_anchor_str: string | undefined, target_placement_id_str: string, target_anchor_str: string | undefined) => {
         return await manager.connect_flow(id!, source_placement_id_str, source_anchor_str, target_placement_id_str, target_anchor_str);
+      },
+      configure_interface: async (
+        interface_id_str: string,
+        interface_type: string,
+        interface_url: string | undefined,
+      ) => {
+        return await manager.configure_interface(id!, interface_id_str, interface_type, interface_url);
       },
     }
   };

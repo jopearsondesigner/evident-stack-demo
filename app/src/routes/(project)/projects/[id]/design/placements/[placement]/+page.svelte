@@ -2,24 +2,17 @@
   import Drawer from '$components/drawer/Drawer.svelte';
   import Icon from '$components/Icon.svelte';
   import JobGears from '$components/icons/JobGears.svelte';
-  import EventIcon from '$components/icons/EventIcon.svelte';
-  import CommandIcon from '$components/icons/CommandIcon.svelte';
-  import ReadModelIcon from '$components/icons/ReadModelIcon.svelte';
   import Button from '$components/Button.svelte';
-  import Form from '$components/form/Form.svelte';
   import Select from '$components/form/Select.svelte';
   import Input from '$components/form/Input.svelte';
   import Label from '$components/form/Label.svelte';
-  import ImageUpload from '$components/ImageUpload.svelte';
+  // import ImageUpload from '$components/ImageUpload.svelte';
   import FigmaEmbed from '$components/FigmaEmbed.svelte';
-
-  import CodeMirror from 'svelte-codemirror-editor';
-  import { javascript } from '@codemirror/lang-javascript';
-  import { oneDark } from '@codemirror/theme-one-dark';
 
   import type { PageData } from './$types';
   import type { InterfaceType } from '$components/design/Grid';
   import markdown from '$components/utils/markdown';
+  import Textarea from '$components/form/Textarea.svelte';
 
   export let data: PageData;
 
@@ -43,10 +36,15 @@
   $: proposed_description_html = markdown(proposed_description);
   let proposed_interface_config_kind: InterfaceType | undefined = undefined;
   let proposed_interface_config_url: string | undefined = undefined;
-  if (placement?.interface_config) {
-    proposed_interface_config_kind = placement.interface_config.kind;
-    proposed_interface_config_url = placement.interface_config.url;
+
+  const handleInterfaceConfigReset = () => {
+    if (placement?.interface_config) {
+      proposed_interface_config_kind = placement.interface_config.kind;
+      proposed_interface_config_url = placement.interface_config.url;
+    }
   }
+
+  handleInterfaceConfigReset(); // Initialize to placement config
 
   // TODO: display effective schema for command/event/read-model placements, w/ link to edit in /data
 
@@ -57,28 +55,32 @@
     { value: 'job', name: 'Job' }
   ];
 
-  let iconShadow = 'shadow-[0_2.5px_4px_-2px_rgba(0,0,0,0.82)]';
-
-  const handleEditDescription = async (e: SubmitEvent) => {
-    const formData = new FormData(e.target as HTMLFormElement);
-    let name = formData.get('name')?.toString();
-    if (name) {
-      console.log('TODO: create model');
+  const handleNameChange = async (_e: Event) => {
+    if (decider && placement?.id && proposed_name) {
+      await decider.rename_placement(placement.id, proposed_name);
     }
   };
 
-  let editable = false;
-  function handleKeydown() {}
-  function handleDblClick() {
-    editable = !editable;
+  const handleDescriptionChange = async (e: Event) => {
+    console.log('Updating name', e);
+  };
+
+  const handleUpdateInterfaceConfig = async (_e: SubmitEvent) => {
+    if (decider && placement?.component_id && proposed_interface_config_kind && proposed_interface_config_url) {
+      await decider.configure_interface(
+        placement.component_id,
+        proposed_interface_config_kind,
+        proposed_interface_config_url
+      );
+    }
   }
 </script>
 
 <Drawer placement="right" class="" drawerRight hidden={false} on:close={handle_close}>
   <div slot="extra">
     {#if placement?.kind == 'interface'}
-      <div class="flex flex-col items-start z-40 top-1/2 -translate-y-1/2 left-1/2 -translate-x-2/3 h-3/4 w-1/2 fixed bg-white dark:bg-dark-2">
-        <h3>{proposed_name}</h3>
+      <div class="flex flex-col items-start z-40 fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-2/3 h-3/4 w-1/2 p-3 bg-white dark:bg-dark-2">
+        <h3 class="mt-1 mb-2 text-xl font-bold text-body-light dark:text-body-dark">{proposed_name}</h3>
         {#if proposed_description_html}
           <div>{proposed_description_html}</div>
         {/if}
@@ -93,8 +95,8 @@
         {/if}
       </div>
     {:else}
-      <div class="z-40 top-1/2 h-3/4 -translate-y-1/2 w-1/2 left-1/2 -translate-x-2/3 fixed bg-{placement?.kind}">
-        <h3>{proposed_name}</h3>
+      <div class="flex flex-col items-stretch z-40 fixed top-1/2 h-3/4 -translate-y-1/2 w-1/2 left-1/2 -translate-x-2/3 p-3 bg-gradient-to-b from-{placement?.kind}-dark via-{placement?.kind} to-{placement?.kind}-light">
+        <h3 class="mt-1 mb-2 text-xl font-bold">{proposed_name}</h3>
         {#if proposed_description_html}
           <div>{proposed_description_html}</div>
         {/if}
@@ -104,73 +106,44 @@
   {#if placement}
     <aside
       class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3">
-        <div class="w-full h-full pb-6">
-          <h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
-            {placement_kind_display} Details
-          </h3>
-          <div
-            class="w-full h-full flex flex-col items-stretch mb-6 p-6 border rounded border-border-light dark:border-border-dark">
-            <div class="inline-flex">
-              <h2
-                class="ml-3 self-end text-xl font-bold text-body-light dark:text-body-dark"
-                on:dblclick={handleDblClick}
-                on:blur={handleDblClick}
-                on:keydown={handleKeydown}
-                contenteditable={editable}>
-                {placement.name}
-              </h2>
-            </div>
-            <p
-              class="my-3 text-sm leading-normal text-body dark:text-white"
-              on:dblclick={handleDblClick}
-              on:blur={handleDblClick}
-              on:keydown={handleKeydown}
-              contenteditable={editable}>
-              {placement.description}
-            </p>
-            {#if placement.kind == 'interface' && proposed_interface_config_kind}
-              <Form formClass="p-3 w-full">
-                <Select class="mt-2" placeholder="Choose Interface Type" items={placement_config_types} bind:value={proposed_interface_config_kind} />
-                {#if proposed_interface_config_kind == 'figma'}
-                  <Input class="my-6" size="sm" placeholder="Figma URL" />
-                {/if}
-                {#if proposed_interface_config_kind == 'image'}
-                  <Input class="my-6" size="sm" placeholder="Image URL" />
-                {/if}
-              </Form>
-            {/if}
-            <div class="grid grid-cols-2 justify-items-stretch">
-              <div class="mt-6 col-span-1 place-self-center justify-self-start">
-                <!-- <Button
-                     label="Choose Image"
-                     gradient
-                     color="ghost"
-                     size="sm"
-                     className="my-4 justify-self-start chan"
-                     on:click={() => {
-                     fileinput.click();
-                     }}
-                     class="">
-                     <Icon
-                       slot="icon"
-                       name="download"
-                       size={12}
-                       iconColor="text-body-light dark:text-white"
-                       class="inline-flex mb-1 rotate-180"
-                       pathName={Download} />
-                </Button> -->
-              </div>
+      <div class="w-full h-full pb-6">
+        <h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
+          {placement_kind_display} Details
+        </h3>
+        <div
+          class="w-full h-full flex flex-col items-stretch mb-6 p-6 border rounded border-border-light dark:border-border-dark">
+          <Label for="name">
+            Name
+          </Label>
+          <Input name="name" type="text" tabindex="0" bind:value={proposed_name} on:change={handleNameChange} />
+          <Label for="description">
+            Description
+          </Label>
+          <Textarea name="description" type="text" tabindex="0" bind:value={proposed_description} on:change={handleDescriptionChange} />
+          {#if placement.kind == 'interface' && proposed_interface_config_kind}
+            <h4 class="mt-5 text-left text-default font-bold text-body-light dark:text-body-dark mb-1">
+              Interface Config
+            </h4>
+            <form class="p-3 w-full" on:submit|preventDefault={handleUpdateInterfaceConfig}>
+              <Select class="mt-2" placeholder="Choose Interface Type" items={placement_config_types} bind:value={proposed_interface_config_kind} />
+              {#if proposed_interface_config_kind == 'figma'}
+                <Input class="my-6" size="sm" placeholder="Figma URL" bind:value={proposed_interface_config_url} />
+              {/if}
+              {#if proposed_interface_config_kind == 'image'}
+                <Input class="my-6" size="sm" placeholder="Image URL" bind:value={proposed_interface_config_url} />
+              {/if}
               <div class="mt-6 space-x-3 col-span-1 place-self-center justify-self-end">
                 <button
                   class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-                  on:click|preventDefault={handle_close}>
-                  cancel
+                  on:click|preventDefault={handleInterfaceConfigReset}>
+                  reset
                 </button>
-                <Button color="default" size="sm" label="Save" on:click class="" />
+                <Button color="default" size="sm" label="Save" />
               </div>
-            </div>
-          </div>
+            </form>
+          {/if}
         </div>
+      </div>
     </aside>
   {/if}
 </Drawer>

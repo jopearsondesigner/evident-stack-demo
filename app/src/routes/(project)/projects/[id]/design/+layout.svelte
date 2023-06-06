@@ -24,6 +24,7 @@
 
 {#if decider && $grid}
   <Grid
+    mode={$page.data.mode}
     {decider}
     grid={$grid}
     on:navigateToPlacementDetails={handleNavigateToPlacementDetails}

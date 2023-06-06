@@ -43,11 +43,7 @@
 
   // Grid Mode
 
-  let mode: GridMode = 'loading';
-
-  onMount(() => {
-    mode = 'navigation';
-  });
+  export let mode: GridMode = 'loading';
 
   // Disambiguation
 

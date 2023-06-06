@@ -154,7 +154,7 @@ export const cellId = (col: number, row: number): string => {
 };
 
 export type ReorderableLaneType = 'audience' | 'stream';
-export type GridMode = 'loading' | 'navigation' | 'editing' | 'disambiguating' | 'linking';
+export type GridMode = 'loading' | 'navigation' | 'editing' | 'disambiguating' | 'linking' | 'modal';
 export type CursorMode = 'editing' | 'navigation' | 'linking' | 'other';
 export type DropTargetStatus = 'good' | 'bad';
 export type LinkingFlowColor = "red" | "green" | "black";

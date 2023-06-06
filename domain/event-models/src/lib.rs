@@ -51,6 +51,8 @@ pub trait ModifiableEventModel: EventModel {
     //  by `decide` prior to this step
     fn component_renamed(&mut self, component_id: &ComponentId, name: &Name);
 
+    fn interface_configured(&mut self, interface_id: &InterfaceId, config: &InterfaceConfig);
+
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
     fn component_removed(&mut self, component_id: &ComponentId);
@@ -131,6 +133,7 @@ pub enum EventModelError {
     LaneIndexOutOfBounds(LaneId, usize),
     DescriptionTextOutOfBounds(String, usize, usize),
     FieldError(FieldError),
+    InterfaceNotFound(ComponentId),
     InvalidInterfaceConfig(String, Option<String>),
 }
 
@@ -224,10 +227,10 @@ pub enum Lane {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ComponentId {
-    InterfaceComponentId(InterfaceId),
-    CommandComponentId(CommandId),
-    EventComponentId(EventId),
-    ReadModelComponentId(ReadModelId),
+    Interface(InterfaceId),
+    Command(CommandId),
+    Event(EventId),
+    ReadModel(ReadModelId),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -620,15 +623,11 @@ impl Placement {
 
     pub fn component_id(&self) -> ComponentId {
         match self {
-            Placement::Interface { interface, .. } => {
-                ComponentId::InterfaceComponentId(interface.to_owned())
-            }
-            Placement::Command { command, .. } => {
-                ComponentId::CommandComponentId(command.to_owned())
-            }
-            Placement::Event { event, .. } => ComponentId::EventComponentId(event.to_owned()),
+            Placement::Interface { interface, .. } => ComponentId::Interface(interface.to_owned()),
+            Placement::Command { command, .. } => ComponentId::Command(command.to_owned()),
+            Placement::Event { event, .. } => ComponentId::Event(event.to_owned()),
             Placement::ReadModel { read_model, .. } => {
-                ComponentId::ReadModelComponentId(read_model.to_owned())
+                ComponentId::ReadModel(read_model.to_owned())
             }
         }
     }

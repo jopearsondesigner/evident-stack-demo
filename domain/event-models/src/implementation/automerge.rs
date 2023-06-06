@@ -580,16 +580,12 @@ impl AutomergeEventModel {
 
     fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<AutoComponentMut> {
         match id {
-            ComponentId::InterfaceComponentId(id) => {
+            ComponentId::Interface(id) => {
                 self.interfaces.get_mut(id).map(AutoComponentMut::Interface)
             }
-            ComponentId::CommandComponentId(id) => {
-                self.commands.get_mut(id).map(AutoComponentMut::Command)
-            }
-            ComponentId::EventComponentId(id) => {
-                self.events.get_mut(id).map(AutoComponentMut::Event)
-            }
-            ComponentId::ReadModelComponentId(id) => self
+            ComponentId::Command(id) => self.commands.get_mut(id).map(AutoComponentMut::Command),
+            ComponentId::Event(id) => self.events.get_mut(id).map(AutoComponentMut::Event),
+            ComponentId::ReadModel(id) => self
                 .read_models
                 .get_mut(id)
                 .map(AutoComponentMut::ReadModel),
@@ -717,18 +713,26 @@ impl ModifiableEventModel for AutomergeEventModel {
         }
     }
 
+    fn interface_configured(&mut self, interface_id: &InterfaceId, config: &InterfaceConfig) {
+        let mut interface = self
+            .interfaces
+            .get_mut(interface_id)
+            .expect("interface not found");
+        interface.config = config.into();
+    }
+
     fn component_removed(&mut self, component_id: &ComponentId) {
         match component_id {
-            ComponentId::InterfaceComponentId(id) => {
+            ComponentId::Interface(id) => {
                 self.interfaces.remove(id);
             }
-            ComponentId::CommandComponentId(id) => {
+            ComponentId::Command(id) => {
                 self.commands.remove(id);
             }
-            ComponentId::EventComponentId(id) => {
+            ComponentId::Event(id) => {
                 self.events.remove(id);
             }
-            ComponentId::ReadModelComponentId(id) => {
+            ComponentId::ReadModel(id) => {
                 self.read_models.remove(id);
             }
         }

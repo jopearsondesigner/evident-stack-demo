@@ -1,5 +1,5 @@
 use crate::{
-    Anchor, AudienceId, ComponentId, EventModelId, FlowId, InterfaceConfig, PlacementId, StreamId, ColumnShift,
+    Anchor, AudienceId, ColumnShift, ComponentId, EventModelId, FlowId, PlacementId, StreamId,
 };
 use serde::{Deserialize, Serialize};
 
@@ -53,7 +53,7 @@ pub enum EventModelCommand {
 
     // Component Details
     RenameComponent(EventModelId, ComponentId, String),
-    ConfigureInterface(EventModelId, ComponentId, InterfaceConfig),
+    ConfigureInterface(EventModelId, ComponentId, String, Option<String>),
     EditComponentDescription(EventModelId, ComponentId, usize, usize, String),
     EditComponentSchema(EventModelId, ComponentId, usize, usize, String),
 

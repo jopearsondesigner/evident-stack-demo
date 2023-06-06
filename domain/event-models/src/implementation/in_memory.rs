@@ -5,8 +5,9 @@ use uuid::Uuid;
 use crate::{
     Audience, Command, CommandId, Component, ComponentId, Described, Entity, Event, EventId,
     EventModel, EventModelData, EventModelId, EventModelState, FlowArrow, FlowId, HasSchema,
-    Interface, InterfaceId, Lane, LaneId, LaneIndex, ModifiableEventModel, Name, Named, Placement,
-    PlacementId, PlacementIndex, PlacementPosition, ReadModel, ReadModelId, Stream,
+    Interface, InterfaceConfig, InterfaceId, Lane, LaneId, LaneIndex, ModifiableEventModel, Name,
+    Named, Placement, PlacementId, PlacementIndex, PlacementPosition, ReadModel, ReadModelId,
+    Stream,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -89,16 +90,10 @@ impl InMemoryEventModel {
 
     fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<ComponentMut> {
         match id {
-            ComponentId::InterfaceComponentId(id) => {
-                self.interfaces.get_mut(id).map(ComponentMut::Interface)
-            }
-            ComponentId::CommandComponentId(id) => {
-                self.commands.get_mut(id).map(ComponentMut::Command)
-            }
-            ComponentId::EventComponentId(id) => self.events.get_mut(id).map(ComponentMut::Event),
-            ComponentId::ReadModelComponentId(id) => {
-                self.read_models.get_mut(id).map(ComponentMut::ReadModel)
-            }
+            ComponentId::Interface(id) => self.interfaces.get_mut(id).map(ComponentMut::Interface),
+            ComponentId::Command(id) => self.commands.get_mut(id).map(ComponentMut::Command),
+            ComponentId::Event(id) => self.events.get_mut(id).map(ComponentMut::Event),
+            ComponentId::ReadModel(id) => self.read_models.get_mut(id).map(ComponentMut::ReadModel),
         }
     }
 }
@@ -231,18 +226,26 @@ impl ModifiableEventModel for InMemoryEventModel {
         }
     }
 
+    fn interface_configured(&mut self, interface_id: &InterfaceId, config: &InterfaceConfig) {
+        let mut interface = self
+            .interfaces
+            .get_mut(interface_id)
+            .expect("interface not found");
+        interface.config = config.to_owned();
+    }
+
     fn component_removed(&mut self, component_id: &ComponentId) {
         match component_id {
-            ComponentId::InterfaceComponentId(id) => {
+            ComponentId::Interface(id) => {
                 self.interfaces.remove(id);
             }
-            ComponentId::CommandComponentId(id) => {
+            ComponentId::Command(id) => {
                 self.commands.remove(id);
             }
-            ComponentId::EventComponentId(id) => {
+            ComponentId::Event(id) => {
                 self.events.remove(id);
             }
-            ComponentId::ReadModelComponentId(id) => {
+            ComponentId::ReadModel(id) => {
                 self.read_models.remove(id);
             }
         }

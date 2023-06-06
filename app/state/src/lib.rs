@@ -616,20 +616,13 @@ impl EventModelStateManager {
     ) -> Result<EventModelGrid, JsValue> {
         let model_id = parse_uuid(model_id_str)?;
         let interface_id = parse_uuid(interface_id_str)?;
-        let error = JsValue::from(format!(
-            "Invalid interface config {:?}: {:?}",
-            &interface_type, &interface_url
-        ));
-        if let Ok(interface_config) = InterfaceConfig::parse(interface_type, interface_url) {
-            self.dispatch(EventModelCommand::ConfigureInterface(
-                model_id,
-                event_models::ComponentId::InterfaceComponentId(interface_id),
-                interface_config,
-            ))
-            .await
-        } else {
-            Err(error)
-        }
+        self.dispatch(EventModelCommand::ConfigureInterface(
+            model_id,
+            event_models::ComponentId::Interface(interface_id),
+            interface_type,
+            interface_url,
+        ))
+        .await
     }
 
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {

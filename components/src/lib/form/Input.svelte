@@ -9,6 +9,7 @@
   import Wrapper from '../utils/Wrapper.svelte';
   import classNames from 'classnames';
   import { getContext } from 'svelte';
+  export let autofocus = false;
   export let value: string | number = '';
   export let size: FormSizeType | undefined = undefined;
   export let defaultClass: string = 'block w-full disabled:cursor-not-allowed disabled:opacity-50';
@@ -78,7 +79,13 @@
     );
   }
   let floatClass =
-    'flex absolute inset-y-0 items-center pointer-events-none text-gray-500 dark:text-gray-400';
+      'flex absolute inset-y-0 items-center pointer-events-none text-gray-500 dark:text-gray-400';
+
+  function init(el: HTMLInputElement){
+    if (autofocus) {
+      el.focus()
+    }
+  }
 </script>
 
 <Wrapper class="relative w-full" show={$$slots.left || $$slots.right}>
@@ -102,7 +109,7 @@
       on:paste
       on:input
       class={inputClass}
-    />
+      use:init />
   </slot>
   {#if $$slots.right}
     <div class="{floatClass} right-0 pr-2.5"><slot name="right" /></div>

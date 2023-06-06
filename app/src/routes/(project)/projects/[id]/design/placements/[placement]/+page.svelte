@@ -115,11 +115,13 @@
           <Label for="name">
             Name
           </Label>
-          <Input name="name" type="text" tabindex="0" bind:value={proposed_name} on:change={handleNameChange} />
+          <!-- TODO: green check saved indicator -->
+          <Input name="name" type="text" tabindex="0" autofocus={true} bind:value={proposed_name} on:change={handleNameChange} />
           <Label for="description">
             Description
           </Label>
-          <Textarea name="description" type="text" tabindex="0" bind:value={proposed_description} on:change={handleDescriptionChange} />
+          <!-- TODO: green check saved/updated indicator -->
+          <Textarea name="description" type="text" bind:value={proposed_description} on:change={handleDescriptionChange} />
           {#if placement.kind == 'interface' && proposed_interface_config_kind}
             <h4 class="mt-5 text-left text-default font-bold text-body-light dark:text-body-dark mb-1">
               Interface Config

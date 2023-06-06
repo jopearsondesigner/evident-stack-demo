@@ -5,6 +5,11 @@ import wasm from 'vite-plugin-wasm';
 /** @type {import('vite').UserConfig} */
 const config = {
   server: {
+    watch: {
+      ignored: [
+        '!**/node_modules/state-client/**', // allow state-client changes to trigger hot reload
+      ]
+    },
     fs: {
       allow: ["./state/pkg"]
     }
@@ -25,6 +30,7 @@ const config = {
   },
   optimizeDeps: {
     exclude: [
+      'state-client', // Allow changes in state-client to trigger hot reload
       'codemirror',
       '@codemirror/language-javascript',
       '@codemirror/language-javascript',

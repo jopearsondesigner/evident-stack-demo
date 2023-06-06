@@ -47,11 +47,7 @@ pub struct IndexedDbStateRepository {
 }
 
 impl IndexedDbStateRepository {
-    pub async fn new(
-        key: Option<Uuid>,
-        user: String,
-        actor: ActorId,
-    ) -> Result<Self, IndexedDbError> {
+    pub fn new(key: Option<Uuid>, user: String, actor: ActorId) -> Result<Self, IndexedDbError> {
         let automerge = AutoCommit::new().with_actor(actor);
         Ok(Self {
             key,
@@ -86,7 +82,8 @@ impl StateRepository<EventModelState<AutomergeEventModel>, IndexedDbError>
     for IndexedDbStateRepository
 {
     async fn reify(&mut self) -> Result<EventModelState<AutomergeEventModel>, IndexedDbError> {
-        // We rely on in-memory AutoCommit doc, updated out-of-band via load_incremental, rather than reifying from storage
+        // We rely on in-memory AutoCommit doc, updated out-of-band
+        // via load_incremental, rather than reifying from storage
         self.state()
     }
 

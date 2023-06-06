@@ -7,22 +7,33 @@ const initialize_decider = async (id: string | undefined, user: string) => {
   await init();
   setPanicHook();
 
-  let manager = await new EventModelStateManager(id, user);
+  let manager = new EventModelStateManager(id, user);
 
-  // Initialize Dexie documentBinaryStore
-  const { documentBinaryStore } = await import("./dexie");
+  const { model_binary, documentBinaryStore } = await import("./dexie");
 
   let store;
 
   if (id) {
-    let $doc_binary = documentBinaryStore(id);
+    // Initialize Dexie from existing patches
+    let initial_bin = await model_binary(id);
+    manager.refresh(initial_bin);
 
-    store = derived($doc_binary, (bin) => {
+    // Setup store via documentBinaryStore for ongoing refreshes upon change to storage
+    let $doc_binary_store = documentBinaryStore(id);
+
+    store = derived($doc_binary_store, (bin, setter) => {
       try {
-        return manager.refresh(bin)
+        manager.refresh(bin);
+        manager.grid()
+          .then((grid) => {
+            setter(grid);
+          }).catch((_) => {
+            setter(null);
+          });
       } catch {
-        return null
+        setter(null);
       }
+      return () => console.debug("Unsubscribed last subscriber to empty Event Model State");
     });
   } else {
     store = readable(null, (_) => {
@@ -33,8 +44,12 @@ const initialize_decider = async (id: string | undefined, user: string) => {
   return {
     grid: store,
     decider: {
+      placement_by_id: async (placement_id: string) => {
+        let grid = await manager.grid();
+        return grid.placement_by_id(placement_id);
+      },
       create_model: async (name: string) => {
-        return await manager.create(name)
+        return await manager.create(name);
       },
       define_and_place_interface: async (name: string, index: number, audience: string | undefined) => {
         return await manager.define_and_place_interface(id!, name, index, audience);

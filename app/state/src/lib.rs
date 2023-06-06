@@ -14,7 +14,7 @@ use automerge::ActorId;
 use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError};
 use event_models::api::commands::EventModelCommand;
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
-use event_models::{Anchor, ColumnShift, EventModel, EventModelError};
+use event_models::{Anchor, ColumnShift, EventModel, EventModelError, InterfaceConfig};
 use js_sys::Uint8Array;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
@@ -149,7 +149,7 @@ fn get_actor() -> ActorId {
 #[wasm_bindgen]
 impl EventModelStateManager {
     #[wasm_bindgen(constructor)]
-    pub async fn new(
+    pub fn new(
         maybe_id_str: Option<String>,
         user: String,
     ) -> Result<EventModelStateManager, JsValue> {
@@ -159,19 +159,17 @@ impl EventModelStateManager {
                 Uuid::from_str(&id_str).map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
             Ok(EventModelStateManager {
                 repository: IndexedDbStateRepository::new(Some(event_model_id), user, actor)
-                    .await
                     .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?,
             })
         } else {
             Ok(EventModelStateManager {
                 repository: IndexedDbStateRepository::new(None, user, actor)
-                    .await
                     .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?,
             })
         }
     }
 
-    pub fn refresh(&mut self, bin: Uint8Array) -> Result<EventModelGrid, JsValue> {
+    pub fn refresh(&mut self, bin: Uint8Array) -> Result<(), JsValue> {
         if let Some(_model) = self.repository.key {
             // Save any local unsaved changes
             let local_changes = self.repository.save_incremental();
@@ -185,16 +183,13 @@ impl EventModelStateManager {
             self.repository
                 .load_incremental(local_changes)
                 .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
-            self.repository
-                .state()
-                .map(|ref state| state.into())
-                .map_err(|e| JsValue::from_str(&format!("{:?}", e)))
+            Ok(())
         } else {
             Err("Can't load data into a state manager with no model key!".into())
         }
     }
 
-    pub async fn state(&mut self) -> Result<EventModelGrid, JsValue> {
+    pub async fn grid(&mut self) -> Result<EventModelGrid, JsValue> {
         self.repository
             .reify()
             .await
@@ -610,6 +605,31 @@ impl EventModelStateManager {
             target_anchor,
         ))
         .await
+    }
+
+    pub async fn configure_interface(
+        &mut self,
+        model_id_str: String,
+        interface_id_str: String,
+        interface_type: String,
+        interface_url: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let interface_id = parse_uuid(interface_id_str)?;
+        let error = JsValue::from(format!(
+            "Invalid interface config {:?}: {:?}",
+            &interface_type, &interface_url
+        ));
+        if let Ok(interface_config) = InterfaceConfig::parse(interface_type, interface_url) {
+            self.dispatch(EventModelCommand::ConfigureInterface(
+                model_id,
+                event_models::ComponentId::InterfaceComponentId(interface_id),
+                interface_config,
+            ))
+            .await
+        } else {
+            Err(error)
+        }
     }
 
     async fn dispatch(&mut self, command: EventModelCommand) -> Result<EventModelGrid, JsValue> {

@@ -58,6 +58,13 @@ const concatBuffers = (buf1: Uint8Array, buf2: Uint8Array) => {
   return ret;
 };
 
+const combine_patches = (patches: Patch[]) => {
+  return patches.reduce(
+    (acc: Uint8Array, patch: Patch) => concatBuffers(acc, patch.data),
+    new Uint8Array()
+  )
+}
+
 const patchesLiveQuery = (model: string): Observable<Patch[]> => {
   return liveQuery(() => db.model_patches.where({ model }).toArray())
 }
@@ -67,10 +74,7 @@ export const documentBinaryStore = (model: string) => {
     new Uint8Array(),
     setter => {
       let subscription = patchesLiveQuery(model).subscribe(patches => {
-        let data = patches.reduce(
-          (acc: Uint8Array, patch: Patch) => concatBuffers(acc, patch.data),
-          new Uint8Array()
-        );
+        let data = combine_patches(patches);
         setter(data)
       });
       () => subscription.unsubscribe()
@@ -86,8 +90,12 @@ export const model_by_id = async (user: string, id: string) => {
   return results[0];
 }
 
-export const patches = async (model: string | undefined): Promise<Array<Patch>> => {
+export const model_patches = async (model: string | undefined): Promise<Array<Patch>> => {
   return await db.model_patches.where({ model }).toArray()
+}
+
+export const model_binary = async (model: string | undefined) => {
+  return combine_patches(await (model_patches(model)))
 }
 
 export const save = async (model: Model, patch: Patch) => {

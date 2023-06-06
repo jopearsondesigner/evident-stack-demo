@@ -2,7 +2,10 @@ import type { Session } from '@supabase/supabase-js';
 
 onmessage = async (e) => {
   const { debug } = await import('$lib/util');
-  const { connect } = await import('$lib/state/dexie');
+  const { initializeDexie, connect } = await import('$lib/state/dexie');
+  await import('dexie-observable');
+  await import('dexie-syncable');
+  initializeDexie();
   debug("Worker received message", e);
   let { url, session }: { url: string, session: Session } = e.data;
   if (url && session) {

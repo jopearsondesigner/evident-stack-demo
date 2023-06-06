@@ -103,7 +103,6 @@ const initialize_decider = async (id: string | undefined, user: string) => {
         return await manager.remove_lane(id!, kind, lane_id)
       },
       add_lane: async (kind: string, index: number, name: string) => {
-        console.warn("add lane", { kind, index , name });
         return manager.add_lane(id!, kind, index, name);
       },
       insert_columns: async (index: number, direction: string, count: number) => {

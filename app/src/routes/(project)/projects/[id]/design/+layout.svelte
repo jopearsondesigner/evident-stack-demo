@@ -22,15 +22,11 @@
 
 <slot />
 
-<Grid
-  {decider}
-  default_audience_placements={$grid?.default_audience}
-  audiences={$grid?.audiences}
-  timeline_placements={$grid?.timeline}
-  streams={$grid?.streams}
-  default_stream_placements={$grid?.default_stream}
-  flows={$grid?.flows}
-  column_count={$grid?.column_count || 0}
-  on:navigateToPlacementDetails={handleNavigateToPlacementDetails}
-  on:navigateToImportJson={handleNavigateToImportJson}
-  />
+{#if decider && $grid}
+  <Grid
+    mode={$page.data.mode}
+    {decider}
+    grid={$grid}
+    on:navigateToPlacementDetails={handleNavigateToPlacementDetails}
+    on:navigateToImportJson={handleNavigateToImportJson} />
+  {/if}

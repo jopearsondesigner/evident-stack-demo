@@ -41,7 +41,7 @@
   import ReadModelIcon from '$lib/icons/ReadModelIcon.svelte';
   let event = true;
   let command = false;
-  let readModel = false;
+  let read_model = false;
   let isClosed = true;
   export let user = true;
   let hidden = true;
@@ -233,7 +233,7 @@
             <Icon name="event-icon" size={48} class="" pathName={EventIcon} />
           {:else if command}
             <Icon name="command-icon" size={48} class="" pathName={CommandIcon} />
-          {:else if readModel}
+          {:else if read_model}
             <Icon name="read-model-icon" size={48} class="" pathName={ReadModelIcon} />
           {/if}
           <h2 class="ml-3 self-end text-xl font-bold text-body-light dark:text-body-dark">

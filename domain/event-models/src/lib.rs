@@ -51,6 +51,8 @@ pub trait ModifiableEventModel: EventModel {
     //  by `decide` prior to this step
     fn component_renamed(&mut self, component_id: &ComponentId, name: &Name);
 
+    fn interface_configured(&mut self, interface_id: &InterfaceId, config: &InterfaceConfig);
+
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
     fn component_removed(&mut self, component_id: &ComponentId);
@@ -131,6 +133,8 @@ pub enum EventModelError {
     LaneIndexOutOfBounds(LaneId, usize),
     DescriptionTextOutOfBounds(String, usize, usize),
     FieldError(FieldError),
+    InterfaceNotFound(ComponentId),
+    InvalidInterfaceConfig(String, Option<String>),
 }
 
 //// ***** Types *****
@@ -223,10 +227,10 @@ pub enum Lane {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ComponentId {
-    InterfaceComponentId(InterfaceId),
-    CommandComponentId(CommandId),
-    EventComponentId(EventId),
-    ReadModelComponentId(ReadModelId),
+    Interface(InterfaceId),
+    Command(CommandId),
+    Event(EventId),
+    ReadModel(ReadModelId),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -258,15 +262,36 @@ pub enum InterfaceConfig {
     Blank,
     Figma {
         url: Url,
-        width: Option<usize>,
-        height: Option<usize>,
     },
     Image {
         url: Url,
-        width: Option<usize>,
-        height: Option<usize>,
     },
     Job,
+}
+
+impl InterfaceConfig {
+    pub fn parse(
+        interface_type: String,
+        maybe_url: Option<String>,
+    ) -> Result<Self, EventModelError> {
+        let error =
+            EventModelError::InvalidInterfaceConfig(interface_type.clone(), maybe_url.clone());
+        match interface_type.as_str() {
+            "blank" => Ok(InterfaceConfig::Blank),
+            "figma" => maybe_url.map_or(Err(error.to_owned()), |url_str| {
+                Url::parse(&url_str)
+                    .map(|url| InterfaceConfig::Figma { url })
+                    .map_err(|_| error.to_owned())
+            }),
+            "image" => maybe_url.map_or(Err(error.to_owned()), |url_str| {
+                Url::parse(&url_str)
+                    .map(|url| InterfaceConfig::Image { url })
+                    .map_err(|_| error.to_owned())
+            }),
+            "job" => Ok(InterfaceConfig::Job),
+            _ => Err(error),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -598,15 +623,11 @@ impl Placement {
 
     pub fn component_id(&self) -> ComponentId {
         match self {
-            Placement::Interface { interface, .. } => {
-                ComponentId::InterfaceComponentId(interface.to_owned())
-            }
-            Placement::Command { command, .. } => {
-                ComponentId::CommandComponentId(command.to_owned())
-            }
-            Placement::Event { event, .. } => ComponentId::EventComponentId(event.to_owned()),
+            Placement::Interface { interface, .. } => ComponentId::Interface(interface.to_owned()),
+            Placement::Command { command, .. } => ComponentId::Command(command.to_owned()),
+            Placement::Event { event, .. } => ComponentId::Event(event.to_owned()),
             Placement::ReadModel { read_model, .. } => {
-                ComponentId::ReadModelComponentId(read_model.to_owned())
+                ComponentId::ReadModel(read_model.to_owned())
             }
         }
     }
@@ -764,5 +785,23 @@ impl FlowArrow {
 impl Entity for FlowArrow {
     fn id(&self) -> FlowId {
         self.id
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ColumnShift {
+    Left { index: usize, count: usize },
+    Right { index: usize, count: usize },
+}
+
+impl TryFrom<(&str, usize, usize)> for ColumnShift {
+    type Error = ();
+
+    fn try_from((dir, index, count): (&str, usize, usize)) -> Result<Self, Self::Error> {
+        match dir {
+            "LEFT" => Ok(Self::Left { index, count }),
+            "RIGHT" => Ok(Self::Right { index, count }),
+            _ => Err(()),
+        }
     }
 }

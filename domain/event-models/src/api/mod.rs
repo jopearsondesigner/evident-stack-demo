@@ -2,8 +2,9 @@ use crate::api::commands::EventModelCommand;
 use crate::api::events::EventModelEvent;
 use crate::json::import;
 use crate::{
-    Command, Component, Entity, Event, EventModelDataTransfer, EventModelError, FlowArrow,
-    Interface, Lane, LaneId, Name, Placement, PlacementPosition, ReadModel,
+    Audience, AudienceId, ColumnShift, Command, Component, ComponentId, Entity, Event,
+    EventModelDataTransfer, EventModelError, FlowArrow, Interface, InterfaceConfig, Lane, LaneId,
+    Name, Placement, PlacementPosition, ReadModel, Stream, StreamId,
 };
 use crate::{EventModel, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
@@ -170,8 +171,15 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     }
 
                     // Lanes
-                    EventModelCommand::AddAudience(_, _, _) => {
-                        todo!()
+                    EventModelCommand::AddAudience(model_id, index, name) => {
+                        Ok(vec![EventModelEvent::LaneAdded(
+                            *model_id,
+                            Lane::Audience(Audience::create(
+                                AudienceId::new_v4(),
+                                name.to_owned(),
+                            )?),
+                            *index,
+                        )])
                     }
                     EventModelCommand::RenameAudience(model_id, audience_id, name) => {
                         let valid_name = Name::create(name)?;
@@ -197,8 +205,12 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
 
                         Ok(vec![EventModelEvent::LaneRemoved(*model_id, lane_id)])
                     }
-                    EventModelCommand::AddStream(_, _, _) => {
-                        todo!()
+                    EventModelCommand::AddStream(model_id, index, name) => {
+                        Ok(vec![EventModelEvent::LaneAdded(
+                            *model_id,
+                            Lane::Stream(Stream::create(StreamId::new_v4(), name.to_owned())?),
+                            *index,
+                        )])
                     }
                     EventModelCommand::RenameStream(model_id, stream_id, name) => {
                         let lane_id = LaneId::Stream(*stream_id);
@@ -403,6 +415,20 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             *placement_id,
                         )])
                     }
+                    EventModelCommand::ShiftPlacements(model_id, shift) => match shift {
+                        ColumnShift::Left { index, count } => {
+                            Ok(vec![EventModelEvent::PlacementsShifted(
+                                *model_id, *index, *count,
+                            )])
+                        }
+                        ColumnShift::Right { index, count } => {
+                            Ok(vec![EventModelEvent::PlacementsShifted(
+                                *model_id,
+                                index + 1,
+                                *count,
+                            )])
+                        }
+                    },
                     EventModelCommand::DuplicateInterfacePlacement(
                         model_id,
                         placement_id,
@@ -513,8 +539,30 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                     }
                     EventModelCommand::EditComponentDescription(_, _, _, _, _) => todo!(),
                     EventModelCommand::EditComponentSchema(_, _, _, _, _) => todo!(),
-                    EventModelCommand::ConfigureInterface(_, _, _) => {
-                        todo!()
+                    EventModelCommand::ConfigureInterface(
+                        model_id,
+                        component_id,
+                        interface_type,
+                        interface_url,
+                    ) => {
+                        let config = InterfaceConfig::parse(
+                            interface_type.to_string(),
+                            interface_url.clone(),
+                        )?;
+                        let not_found = EventModelError::InterfaceNotFound(component_id.to_owned());
+                        if let ComponentId::Interface(interface_id) = component_id {
+                            if let Some(_interface) = model.interfaces().get(interface_id) {
+                                Ok(vec![EventModelEvent::InterfaceConfigured(
+                                    *model_id,
+                                    *interface_id,
+                                    config,
+                                )])
+                            } else {
+                                Err(not_found)
+                            }
+                        } else {
+                            Err(not_found)
+                        }
                     }
 
                     // TODO: delete these:
@@ -652,8 +700,9 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                 }
                 EventModelEvent::ComponentDescriptionEdited(_, _, _) => todo!(),
                 EventModelEvent::ComponentSchemaEdited(_, _, _) => todo!(),
-                EventModelEvent::InterfaceConfigured(_, _, _) => {
-                    todo!()
+                EventModelEvent::InterfaceConfigured(_, interface_id, config) => {
+                    model.interface_configured(interface_id, config);
+                    EventModelState::EventModel(model)
                 }
 
                 // TODO: delete these:

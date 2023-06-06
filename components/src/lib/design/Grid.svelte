@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
-    type DraggingState,
-    DraggingStateKind,
-    type DragCommand,
-    DraggingCommandKind,
+    type GridState,
+    GridStateKind,
+    type GridCommand,
+    GridCommandKind,
     buildEvolveAndReact,
     type LaneSource,
     type PlacementSource,
@@ -12,9 +12,14 @@
     type WithSourceEffect,
     type FlowPortSource,
     DEFAULT_LANE,
-    linkingFlowFromState
+    linkingFlowFromState,
+    type CursorTarget, ContextMenuCommand
   } from './grid/util';
+
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
+  import ContextMenu from '../context/ContextMenu.svelte';
+  import ContextMenuItem from '../context/ContextMenuItem.svelte';
+  import ContextMenuDivider from '../context/ContextMenuDivider.svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
 
   import Cursor from './grid/Cursor.svelte';
@@ -22,23 +27,10 @@
   import Timeline from './grid/Timeline.svelte';
   import StreamLane from './grid/Stream.svelte';
 
-  import {
-    type Decider,
-    type Audience,
-    type EventPlacement,
-    type InterfacePlacement,
-    type Stream,
-    type TimelinePlacement,
-    default_decider,
-    type Disambiguation,
-    type CursorMode,
-    type GridMode,
-    type Flow
-  } from './Grid';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { itemAtCursor } from './Grid';
   import TimelineDisambiguation from './grid/TimelineDisambiguation.svelte';
   import type { DragEventHandler } from 'svelte/elements';
+  import type { CursorMode, Decider, Disambiguation, EventModelGrid, GridMode } from './Grid';
 
   // Event dispatch
 
@@ -46,102 +38,141 @@
 
   // Grid Element State
 
-  export let decider: Decider = default_decider;
-  export let column_count: number;
-  export let default_audience_placements: Array<InterfacePlacement> = new Array(0);
-  export let audiences: Array<Audience> = new Array(0);
-  export let timeline_placements: Array<TimelinePlacement> = new Array(0);
-  export let streams: Array<Stream> = new Array(0);
-  export let default_stream_placements: Array<EventPlacement> = new Array(0);
-  export let flows: Array<Flow> = [];
+  export let decider: Decider;
+  export let grid: EventModelGrid; // Read Model
 
   // Grid Mode
 
-  let mode: GridMode = 'loading';
-
-  onMount(() => {
-    mode = 'navigation';
-  });
+  export let mode: GridMode = 'loading';
 
   // Disambiguation
 
   let disambiguation: Disambiguation = null;
 
   // Drag Drop
-  let dragState: DraggingState = { kind: DraggingStateKind.NONE };
+  let gridState: GridState = { kind: GridStateKind.NONE };
 
   const evolveAndReactDraggingState = buildEvolveAndReact(decider);
 
   const handleLaneDragStart = async (e: CustomEvent<LaneSource>) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.LANE_DRAG_START,
+    const command: GridCommand = {
+      kind: GridCommandKind.LANE_DRAG_START,
       value: e.detail
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleLaneDragEnter = async (e: CustomEvent<RowTarget>) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.LANE_DRAG_ENTER,
+    const command: GridCommand = {
+      kind: GridCommandKind.LANE_DRAG_ENTER,
       value: e.detail
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
-  const handleLaneDragDrop = async (e: CustomEvent) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.LANE_DRAG_DROP
+  const handleLaneDragDrop = async (_e: CustomEvent) => {
+    const command: GridCommand = {
+      kind: GridCommandKind.LANE_DRAG_DROP
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handlePlacementDragStart = async (e: CustomEvent<PlacementSource & WithSourceEffect>) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.PLACEMENT_DRAG_START,
+    const command: GridCommand = {
+      kind: GridCommandKind.PLACEMENT_DRAG_START,
       value: e.detail
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleFlowDragStart = async (e: CustomEvent<FlowPortSource>) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.FLOW_PORT_DRAG_START,
+    const command: GridCommand = {
+      kind: GridCommandKind.FLOW_PORT_DRAG_START,
       value: e.detail
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleCellDragEnter = async (e: CustomEvent<CellTarget>) => {
-    const command: DragCommand = {
-      kind: DraggingCommandKind.CELL_DRAG_ENTER,
+    const command: GridCommand = {
+      kind: GridCommandKind.CELL_DRAG_ENTER,
       value: e.detail
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
-  const handleCellDragDrop = async (e: CustomEvent) => {
-    const command: DragCommand = { kind: DraggingCommandKind.CELL_DRAG_DROP };
+  const handleCellDragDrop = async (_e: CustomEvent) => {
+    const command: GridCommand = { kind: GridCommandKind.CELL_DRAG_DROP };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleOutOfBoundsDragEnter: DragEventHandler<EventTarget> = (_e) => {
     console.info('DRAG OUT OF BOUNDS');
-    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER };
-    dragState = evolveAndReactDraggingState(dragState, command);
+    const command: GridCommand = { kind: GridCommandKind.OUT_OF_BOUNDS_DRAG_ENTER };
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
   const handleOutOfBoundsDragEnd: DragEventHandler<EventTarget> = (_e) => {
     console.info('DRAG DROP OUT OF BOUNDS END');
-    const command: DragCommand = { kind: DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END };
-    dragState = evolveAndReactDraggingState(dragState, command);
+    const command: GridCommand = { kind: GridCommandKind.OUT_OF_BOUNDS_DRAG_END };
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
+
+  // Context Menu
+  const handleOpenContextMenu = async (e: CustomEvent<CellTarget & CursorTarget>) => {
+    // const command: GridCommand = { kind: GridCommandKind.OPEN_CONTEXT_MENU, value: e.detail };
+    // gridState = evolveAndReactDraggingState(gridState, command);
+  };
+
+  const handleCloseContextMenu = async (_e: CustomEvent) => {
+    const command: GridCommand = { kind: GridCommandKind.CLOSE_CONTEXT_MENU };
+    gridState = evolveAndReactDraggingState(gridState, command);
+  };
+
+  const handleContextMenuCommand = async (cmd: ContextMenuCommand) => {
+    const command: GridCommand = { kind: GridCommandKind.CONTEXT_COMMAND, value: cmd };
+    gridState = evolveAndReactDraggingState(gridState, command);
+  };
+
+  const stateToContextMenu = (state: GridState) => {
+    if (state.kind !== GridStateKind.CONTEXT) {
+      return undefined;
+    }
+
+    const clientRect = containerRef.getBoundingClientRect();
+    const { x, y, placementId, placementKind, row } = state.source;
+    const { rowKind } = row;
+
+    const defaultLane =
+      rowKind === 'audience'
+        ? row.audienceId === DEFAULT_LANE
+        : rowKind === 'stream'
+        ? row.streamId === DEFAULT_LANE
+        : false;
+
+    // Offset so that default stream's context menu doesn't overflow
+    const yOffset = defaultLane && rowKind === 'stream' ? 150 : 0;
+
+    return {
+      x: x - clientRect.x,
+      y: y - clientRect.y - yOffset,
+      rowKind,
+      placementId,
+      placementKind,
+      defaultLane
+    };
+  };
+
+  $: contextMenu = stateToContextMenu(gridState);
+
+  const dispatchContextCommand = () => {};
 
   // Command Dispatch
 
@@ -203,18 +234,10 @@
     mode = 'navigation';
   };
 
-  // Rows
-
-  const default_audience_row = 0;
-  $: timeline_row = audiences.length + 1;
-  $: default_stream_row = timeline_row + streams.length + 1;
-  $: row_count = default_stream_row + 1;
-
   // Lanes
-  $: default_stream_lane_index = streams.length;
-  $: default_audience_lane_index = audiences.length;
-  $: lane_drop_target =
-    dragState.kind === DraggingStateKind.LANE ? dragState.value.target : undefined;
+  $: default_audience_lane_index = grid.default_audience.row + 1;
+  $: default_stream_lane_index = grid.default_stream.row - 1;
+  $: lane_drop_target = gridState.kind === GridStateKind.LANE ? gridState.value.target : undefined;
   $: audience_drop_target =
     lane_drop_target?.rowKind == 'audience'
       ? { index: lane_drop_target.laneIndex, targetStatus: lane_drop_target.targetStatus }
@@ -228,25 +251,22 @@
     lane_drop_target?.rowKind == 'timeline' ? lane_drop_target.targetStatus : undefined;
 
   $: cell_drop_target =
-    dragState.kind === DraggingStateKind.PLACEMENT ? dragState.value.target : undefined;
+    gridState.kind === GridStateKind.PLACEMENT ? gridState.value.target : undefined;
 
   // Flows
-  $: linkingFlow = linkingFlowFromState(dragState);
+  $: linkingFlow = linkingFlowFromState(gridState);
+
   // Cursor
 
   let cursor_row = 0;
   onMount(() => {
-    cursor_row = timeline_row;
+    cursor_row = grid.timeline.row ?? 0;
   });
   let cursor_column = 0;
-  $: cursor_item = itemAtCursor(
+
+  $: cursor_cell = grid.cell_by_row_col(
     cursor_row,
     cursor_column,
-    default_audience_placements,
-    audiences,
-    timeline_placements,
-    streams,
-    default_stream_placements
   );
 
   const gridModeToCursorMode = (mode: GridMode): CursorMode => {
@@ -267,7 +287,7 @@
 
   // Columns
 
-  $: max_column = Math.max(column_count, cursor_column + 10);
+  $: max_column = Math.max(grid.column_count, cursor_column + 10);
 
   // Navigation
 
@@ -289,7 +309,7 @@
 
   const navDown = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = Math.min(cursor_row + 1, default_stream_row);
+    cursor_row = Math.min(cursor_row + 1, grid.default_stream.row);
   };
 
   const navLeft = (event: KeyboardEvent) => {
@@ -299,7 +319,7 @@
 
   const navHome = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = timeline_row;
+    cursor_row = grid.timeline.row;
     cursor_column = 0;
   };
 
@@ -315,26 +335,25 @@
 
   const navTop = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = default_audience_row;
+    cursor_row = grid.default_audience.row;
   };
 
   const navBottom = (event: KeyboardEvent) => {
     event.preventDefault();
-    cursor_row = default_stream_row;
+    cursor_row = grid.default_stream.row;
   };
-
 
   const placementDetailsAtCursor = (event: KeyboardEvent) => {
     event.preventDefault();
-    if (cursor_item.placement) {
-      dispatch('navigateToPlacementDetails', {placement: cursor_item.placement.id});
+    if (cursor_cell?.placement) {
+      dispatch('navigateToPlacementDetails', { placement: cursor_cell.placement.id });
     }
-  }
+  };
 
   const importAtCursor = (event: KeyboardEvent) => {
     event.preventDefault();
-    dispatch('navigateToImportJson', {column: cursor_column});
-  }
+    dispatch('navigateToImportJson', { column: cursor_column });
+  };
 
   const navigationKeys: KeyBindingMap = {
     ArrowUp: navUp,
@@ -396,30 +415,87 @@
   // Drag Test
   const handleDragOver = (e: DragEvent) => {
     const clientRect = containerRef.getBoundingClientRect();
-    const command: DragCommand = {
-      kind: DraggingCommandKind.CURSOR_MOVE,
+    const command: GridCommand = {
+      kind: GridCommandKind.CURSOR_MOVE,
       value: { x: e.clientX - clientRect.x, y: e.clientY - clientRect.y }
     };
 
-    dragState = evolveAndReactDraggingState(dragState, command);
+    gridState = evolveAndReactDraggingState(gridState, command);
   };
 
-  $: allFlows = linkingFlow ? flows.concat(linkingFlow) : flows;
+  $: allFlows = linkingFlow ? grid.flows.concat(linkingFlow) : grid.flows;
 </script>
 
 <svelte:window
   on:keydown={keyboardHandler}
   on:dragenter={handleOutOfBoundsDragEnter}
-  on:dragend={handleOutOfBoundsDragEnd}
-/>
+  on:dragend={handleOutOfBoundsDragEnd} />
 
-<div class="overflow-auto z-[0] relative h-full w-full bg-gray-canvas dark:bg-dark-1">
+<div class="overflow-auto z-[0] h-full w-full bg-gray-canvas dark:bg-dark-1">
+  {#if contextMenu}
+    <ContextMenu
+      x={contextMenu.x}
+      y={contextMenu.y}
+      on:clickoutside={handleCloseContextMenu}>
+      {#if !contextMenu.placementId}
+        {#if contextMenu.rowKind === 'stream'}
+          <ContextMenuItem>Add Event</ContextMenuItem>
+        {:else if contextMenu.rowKind === 'audience'}
+          <ContextMenuItem>Add Interface</ContextMenuItem>
+        {:else if contextMenu.rowKind === 'timeline'}
+          <ContextMenuItem>Add Read Model</ContextMenuItem>
+          <ContextMenuItem>Add Command</ContextMenuItem>
+        {/if}
+      {:else if contextMenu.placementKind === 'event'}
+        <ContextMenuItem
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
+          Delete Event
+        </ContextMenuItem>
+      {:else if contextMenu.placementKind === 'interface'}
+        <ContextMenuItem
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
+          Delete Interface
+        </ContextMenuItem>
+      {:else if contextMenu.placementKind === 'read_model'}
+        <ContextMenuItem
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
+          Delete Read Model</ContextMenuItem>
+        {:else if contextMenu.placementKind === 'command'}
+          <ContextMenuItem
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
+            Delete Command
+          </ContextMenuItem>
+        {/if}
+        <ContextMenuDivider />
+        <ContextMenuItem
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnLeft)} >
+          Insert Column Left
+        </ContextMenuItem>
+        <ContextMenuItem
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnRight)} >
+          Insert Column Right
+        </ContextMenuItem>
+        {#if contextMenu.rowKind !== 'audience' || !contextMenu.defaultLane}
+          <ContextMenuItem
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneAbove)}>
+            Insert Lane Above
+          </ContextMenuItem>
+        {/if}
+        {#if contextMenu.rowKind !== 'stream' || !contextMenu.defaultLane}
+          <ContextMenuItem
+            on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneBelow)} >
+            Insert Lane Below
+          </ContextMenuItem>
+        {/if}
+        <ContextMenuDivider />
+        <ContextMenuItem>Import Event Model JSON</ContextMenuItem>
+    </ContextMenu>
+  {/if}
   <div
     bind:this={containerRef}
     on:dragover={handleDragOver}
-    class="grid w-max p-3 relative justify-items-center items-center"
-    style="grid-template-columns: repeat({max_column}, min-content); grid-template-rows: repeat({row_count}, minmax(108px, min-content));"
-  >
+    class="grid relative w-max p-3 pl-5 justify-items-center items-center"
+    style="grid-template-columns: repeat({max_column}, 9rem); grid-template-rows: repeat({grid.row_count}, 9rem);">
     <FlowCanvas flows={allFlows} />
     <AudienceLane
       on:navigate_cursor={handleNavigateCursor}
@@ -428,159 +504,149 @@
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
+      on:open_context_menu={handleOpenContextMenu}
       targeted_cell={cell_drop_target &&
       cell_drop_target.row.rowKind === 'audience' &&
       cell_drop_target.row.audienceId == DEFAULT_LANE
-        ? {
-            column: cell_drop_target.column,
-            targetStatus: cell_drop_target.targetStatus
-          }
-        : undefined}
+      ? {
+      column: cell_drop_target.column,
+      targetStatus: cell_drop_target.targetStatus
+      }
+      : undefined}
       targeted_lane={audience_drop_target?.index === default_audience_lane_index
-        ? audience_drop_target.targetStatus
-        : undefined}
-      row={default_audience_row}
-      audience={{ placements: default_audience_placements }}
-      lane_index={default_audience_lane_index}
-      {max_column}
-    />
+      ? audience_drop_target.targetStatus
+      : undefined}
+      audience={grid.default_audience}
+      {max_column} />
 
-    {#each audiences as audience, i (audience.id)}
-      {@const row = i + 1}
-      {@const lane_index = audiences.length - 1 - i}
+    {#each grid.audiences as audience (audience.id)}
       {@const targeted_lane =
-        audience_drop_target?.index == lane_index ? audience_drop_target.targetStatus : undefined}
-      {@const targeted_cell =
-        cell_drop_target &&
-        cell_drop_target.row.rowKind === 'audience' &&
-        cell_drop_target.row.audienceId == audience.id
-          ? {
-              column: cell_drop_target.column,
-              targetStatus: cell_drop_target.targetStatus
-            }
-          : undefined}
-      <AudienceLane
-        on:navigate_cursor={handleNavigateCursor}
-        on:lane_drag_start={handleLaneDragStart}
-        on:lane_drag_enter={handleLaneDragEnter}
-        on:lane_drag_drop={handleLaneDragDrop}
-        on:placement_drag_start={handlePlacementDragStart}
-        on:cell_drag_enter={handleCellDragEnter}
-        on:cell_drag_drop={handleCellDragDrop}
-        on:flow_drag_start={handleFlowDragStart}
-        {targeted_cell}
-        {targeted_lane}
-        {row}
-        {audience}
-        {max_column}
-        {lane_index}
-      />
-    {/each}
-
-    <Timeline
+    audience_drop_target?.index == audience.row ? audience_drop_target?.targetStatus : undefined}
+    {@const targeted_cell =
+    cell_drop_target &&
+    cell_drop_target.row.rowKind === 'audience' &&
+    cell_drop_target.row.audienceId == audience.id
+    ? {
+    column: cell_drop_target.column,
+    targetStatus: cell_drop_target.targetStatus
+    }
+    : undefined}
+    <AudienceLane
       on:navigate_cursor={handleNavigateCursor}
-      on:move_timeline_placement={handleMoveTimelinePlacement}
-      on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
-      on:placement_drag_start={handlePlacementDragStart}
-      on:cell_drag_enter={handleCellDragEnter}
-      on:cell_drag_drop={handleCellDragDrop}
-      on:flow_drag_start={handleFlowDragStart}
-      row={timeline_row}
-      placements={timeline_placements}
-      targeted_lane={timeline_drop_target}
-      targeted_cell={cell_drop_target && cell_drop_target.row.rowKind === 'timeline'
-        ? { column: cell_drop_target.column, targetStatus: cell_drop_target.targetStatus }
-        : undefined}
-      {max_column}
-    />
-
-    {#each streams as stream, lane_index (stream.id)}
-      {@const row = lane_index + timeline_row + 1}
-      {@const targeted_lane =
-        stream_drop_target?.index == lane_index ? stream_drop_target.targetStatus : undefined}
-      {@const targeted_cell =
-        cell_drop_target &&
-        cell_drop_target.row.rowKind === 'stream' &&
-        cell_drop_target.row.streamId == stream.id
-          ? {
-              column: cell_drop_target.column,
-              targetStatus: cell_drop_target.targetStatus
-            }
-          : undefined}
-      <StreamLane
-        on:navigate_cursor={handleNavigateCursor}
-        on:lane_drag_start={handleLaneDragStart}
-        on:lane_drag_enter={handleLaneDragEnter}
-        on:lane_drag_drop={handleLaneDragDrop}
-        on:placement_drag_start={handlePlacementDragStart}
-        on:cell_drag_enter={handleCellDragEnter}
-        on:cell_drag_drop={handleCellDragDrop}
-        on:flow_drag_start={handleFlowDragStart}
-        {targeted_lane}
-        {targeted_cell}
-        {row}
-        {stream}
-        {max_column}
-        {lane_index}
-      />
-    {/each}
-    <StreamLane
-      on:navigate_cursor={handleNavigateCursor}
+      on:lane_drag_start={handleLaneDragStart}
+      on:lane_drag_enter={handleLaneDragEnter}
       on:lane_drag_drop={handleLaneDragDrop}
       on:placement_drag_start={handlePlacementDragStart}
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
-      targeted_cell={cell_drop_target &&
-      cell_drop_target.row.rowKind === 'stream' &&
-      cell_drop_target.row.streamId == DEFAULT_LANE
-        ? {
-            column: cell_drop_target.column,
-            targetStatus: cell_drop_target.targetStatus
-          }
-        : undefined}
-      targeted_lane={stream_drop_target?.index === default_stream_lane_index
-        ? stream_drop_target.targetStatus
-        : undefined}
-      lane_index={default_stream_lane_index}
-      row={default_stream_row}
-      stream={{ placements: default_stream_placements }}
-      {max_column}
-    />
-    <Cursor
-      on:begin_editing={handleBeginEditing}
-      on:cancel_editing={handleCancelEditing}
-      on:define_and_place_interface={handleDefineAndPlaceInterface}
-      on:define_and_place_event={handleDefineAndPlaceEvent}
-      on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
-      on:remove_placement={handleRemovePlacement}
-      on:rename_placement={handleRenamePlacement}
-      on:move_interface_placement={handleMoveInterfacePlacement}
-      on:move_timeline_placement={handleMoveTimelinePlacement}
-      on:move_event_placement={handleMoveEventPlacement}
-      on:placement_drag_start={handlePlacementDragStart}
-      on:cell_drag_enter={handleCellDragEnter}
-      on:cell_drag_drop={handleCellDragDrop}
-      on:flow_drag_start={handleFlowDragStart}
-      row={cursor_row}
-      column={cursor_column}
-      item={cursor_item}
-      mode={cursor_mode}
-      target_status={
-        (cell_drop_target?.column && cell_drop_target.column === cursor_column) &&
-        (cell_drop_target?.row && cell_drop_target.row.rowIndex == cursor_row) ?
-          cell_drop_target?.targetStatus : undefined
-      }
-    />
-    {#if mode === 'disambiguating' && disambiguation}
-      <TimelineDisambiguation
-        name={disambiguation.name}
-        index={disambiguation.index}
-        top={disambiguation.top}
-        left={disambiguation.left}
-        on:define_and_place_command={handleDefineAndPlaceCommand}
-        on:define_and_place_read_model={handleDefineAndPlaceReadModel}
-      />
+      on:open_context_menu={handleOpenContextMenu}
+      {targeted_cell}
+      {targeted_lane}
+      {audience}
+      {max_column} />
+    {/each}
+
+<Timeline
+  on:navigate_cursor={handleNavigateCursor}
+  on:move_timeline_placement={handleMoveTimelinePlacement}
+  on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
+  on:placement_drag_start={handlePlacementDragStart}
+  on:cell_drag_enter={handleCellDragEnter}
+  on:cell_drag_drop={handleCellDragDrop}
+  on:flow_drag_start={handleFlowDragStart}
+  on:open_context_menu={handleOpenContextMenu}
+  timeline={grid.timeline}
+  targeted_lane={timeline_drop_target}
+  targeted_cell={cell_drop_target && cell_drop_target.row.rowKind === 'timeline'
+  ? { column: cell_drop_target.column, targetStatus: cell_drop_target.targetStatus }
+  : undefined}
+  {max_column} />
+
+{#each grid.streams as stream (stream.id)}
+  {@const targeted_lane =
+stream_drop_target?.index == stream.index ? stream_drop_target?.targetStatus : undefined}
+{@const targeted_cell =
+cell_drop_target &&
+cell_drop_target.row.rowKind === 'stream' &&
+cell_drop_target.row.streamId == stream.id
+? {
+column: cell_drop_target.column,
+targetStatus: cell_drop_target.targetStatus
+}
+: undefined}
+<StreamLane
+  on:navigate_cursor={handleNavigateCursor}
+  on:lane_drag_start={handleLaneDragStart}
+  on:lane_drag_enter={handleLaneDragEnter}
+  on:lane_drag_drop={handleLaneDragDrop}
+  on:placement_drag_start={handlePlacementDragStart}
+  on:cell_drag_enter={handleCellDragEnter}
+  on:cell_drag_drop={handleCellDragDrop}
+  on:flow_drag_start={handleFlowDragStart}
+  on:open_context_menu={handleOpenContextMenu}
+  {targeted_lane}
+  {targeted_cell}
+  {stream}
+  {max_column} />
+{/each}
+<StreamLane
+  on:navigate_cursor={handleNavigateCursor}
+  on:lane_drag_drop={handleLaneDragDrop}
+  on:placement_drag_start={handlePlacementDragStart}
+  on:cell_drag_enter={handleCellDragEnter}
+  on:cell_drag_drop={handleCellDragDrop}
+  on:flow_drag_start={handleFlowDragStart}
+  on:open_context_menu={handleOpenContextMenu}
+  targeted_cell={cell_drop_target &&
+  cell_drop_target.row.rowKind === 'stream' &&
+  cell_drop_target.row.streamId == DEFAULT_LANE
+  ? {
+  column: cell_drop_target.column,
+  targetStatus: cell_drop_target.targetStatus
+  }
+  : undefined}
+  targeted_lane={stream_drop_target?.index === default_stream_lane_index
+  ? stream_drop_target.targetStatus
+  : undefined}
+  stream={grid.default_stream}
+  {max_column} />
+{#if cursor_cell}
+  <Cursor
+    on:begin_editing={handleBeginEditing}
+    on:cancel_editing={handleCancelEditing}
+    on:define_and_place_interface={handleDefineAndPlaceInterface}
+    on:define_and_place_event={handleDefineAndPlaceEvent}
+    on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
+    on:remove_placement={handleRemovePlacement}
+    on:rename_placement={handleRenamePlacement}
+    on:move_interface_placement={handleMoveInterfacePlacement}
+    on:move_timeline_placement={handleMoveTimelinePlacement}
+    on:move_event_placement={handleMoveEventPlacement}
+    on:placement_drag_start={handlePlacementDragStart}
+    on:cell_drag_enter={handleCellDragEnter}
+    on:cell_drag_drop={handleCellDragDrop}
+    on:flow_drag_start={handleFlowDragStart}
+    on:open_context_menu={handleOpenContextMenu}
+    row={cursor_row}
+    column={cursor_column}
+    cell={cursor_cell}
+    mode={cursor_mode}
+    target_status={cell_drop_target?.column &&
+    cell_drop_target.column === cursor_column &&
+    cell_drop_target?.row &&
+    cell_drop_target.row.rowIndex == cursor_row
+    ? cell_drop_target?.targetStatus
+    : undefined} />
+  {/if}
+  {#if mode === 'disambiguating' && disambiguation}
+    <TimelineDisambiguation
+      name={disambiguation.name}
+      index={disambiguation.index}
+      top={disambiguation.top}
+      left={disambiguation.left}
+      on:define_and_place_command={handleDefineAndPlaceCommand}
+      on:define_and_place_read_model={handleDefineAndPlaceReadModel} />
     {/if}
   </div>
 </div>

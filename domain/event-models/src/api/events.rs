@@ -1,6 +1,6 @@
 use crate::{
-    Component, ComponentId, EventModelId, FlowArrow, FlowId, InterfaceConfig, Lane, LaneId, Name,
-    Placement, PlacementId, PlacementPosition, TextEdit,
+    Component, ComponentId, EventModelId, FlowArrow, FlowId, InterfaceConfig, InterfaceId, Lane,
+    LaneId, Name, Placement, PlacementId, PlacementPosition, TextEdit,
 };
 use epoch::decider::Event;
 use serde::{Deserialize, Serialize};
@@ -40,7 +40,7 @@ pub enum EventModelEvent {
     // Component Details
     ComponentDescriptionEdited(EventModelId, ComponentId, TextEdit),
     ComponentSchemaEdited(EventModelId, ComponentId, TextEdit),
-    InterfaceConfigured(EventModelId, ComponentId, InterfaceConfig),
+    InterfaceConfigured(EventModelId, InterfaceId, InterfaceConfig),
 
     // TODO: remove these:
     ComponentDescriptionSet(EventModelId, ComponentId, String),

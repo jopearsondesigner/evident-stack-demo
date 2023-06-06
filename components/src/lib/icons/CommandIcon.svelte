@@ -1,94 +1,20 @@
-<g filter="url(#filter0_d_826_4501)">
-  <g filter="url(#filter1_d_826_4501)">
-    <rect x="2" width="48" height="48" fill="url(#paint0_linear_826_4501)" />
-  </g>
-</g>
-
-<filter
-  id="filter0_d_826_4501"
-  x="0"
-  y="0"
-  width="52"
-  height="52"
-  filterUnits="userSpaceOnUse"
-  color-interpolation-filters="sRGB"
->
-  <feFlood flood-opacity="0" result="BackgroundImageFix" />
-  <feColorMatrix
-    in="SourceAlpha"
-    type="matrix"
-    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-    result="hardAlpha"
-  />
-  <feOffset dy="2" />
-  <feGaussianBlur stdDeviation="1" />
-  <feComposite in2="hardAlpha" operator="out" />
-  <feColorMatrix
-    type="matrix"
-    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-  />
-  <feBlend
-    mode="normal"
-    in2="BackgroundImageFix"
-    result="effect1_dropShadow_826_4501"
-  />
-  <feBlend
-    mode="normal"
-    in="SourceGraphic"
-    in2="effect1_dropShadow_826_4501"
-    result="shape"
-  />
-</filter>
-<filter
-  id="filter1_d_826_4501"
-  x="2"
-  y="0"
-  width="48"
-  height="50"
-  filterUnits="userSpaceOnUse"
-  color-interpolation-filters="sRGB"
->
-  <feFlood flood-opacity="0" result="BackgroundImageFix" />
-  <feColorMatrix
-    in="SourceAlpha"
-    type="matrix"
-    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-    result="hardAlpha"
-  />
-  <feMorphology
-    radius="4"
-    operator="erode"
-    in="SourceAlpha"
-    result="effect1_dropShadow_826_4501"
-  />
-  <feOffset dy="2" />
-  <feGaussianBlur stdDeviation="2" />
-  <feComposite in2="hardAlpha" operator="out" />
-  <feColorMatrix
-    type="matrix"
-    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.83 0"
-  />
-  <feBlend
-    mode="normal"
-    in2="BackgroundImageFix"
-    result="effect1_dropShadow_826_4501"
-  />
-  <feBlend
-    mode="normal"
-    in="SourceGraphic"
-    in2="effect1_dropShadow_826_4501"
-    result="shape"
-  />
-</filter>
 <linearGradient
-  id="paint0_linear_826_4501"
-  x1="26"
-  y1="0"
-  x2="26"
-  y2="48"
+  id="command-linear-gradient"
+  x1="24.04"
+  y1="-.21"
+  x2="24.04"
+  y2="48.1"
   gradientUnits="userSpaceOnUse"
 >
-  <stop stop-color="#1EA4CD" />
-  <stop offset="0.489583" stop-color="#6CCCEA" />
-  <stop offset="1" stop-color="#C1EAF6" />
+  <stop offset="0" stop-color="#1ea4cd" />
+  <stop offset=".5" stop-color="#2fb6e1" />
+  <stop offset="1" stop-color="#98dcf0" />
 </linearGradient>
+
+<rect class="cls-1" x=".04" y="-.02" width="48" height="48" />
+
+<style>
+  .cls-1 {
+    fill: url(#command-linear-gradient);
+  }
+</style>

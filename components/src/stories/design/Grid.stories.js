@@ -56,13 +56,13 @@ Default.args = {
 		,
 		{ id: '5', title: 'A command!', type: 'command', description: 'blah *blah* **blah**' },
 		,
-		{ id: '6', title: 'A read model!', type: 'readModel', description: 'blah *blah* **blah**' },
+		{ id: '6', title: 'A read model!', type: 'read_model', description: 'blah *blah* **blah**' },
 		,
 		{ id: '7', title: 'Another command!', type: 'command', description: 'blah *blah* **blah**' },
 		{
 			id: '8',
 			title: 'Another read model!',
-			type: 'readModel',
+			type: 'read_model',
 			description: 'blah *blah* **blah**'
 		}
 	],

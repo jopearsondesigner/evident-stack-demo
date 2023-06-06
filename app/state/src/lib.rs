@@ -7,7 +7,6 @@ pub mod strategies;
 use std::str::FromStr;
 
 pub use crate::grid::EventModelGrid;
-use crate::grid::Lane;
 use crate::indexed_db::{IndexedDbError, IndexedDbStateRepository};
 pub use crate::indexed_db::{Model, Patch};
 use crate::strategies::{ReifyDecideSave, ReifyDecideSaveError, StateRepository};
@@ -15,7 +14,7 @@ use automerge::ActorId;
 use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError};
 use event_models::api::commands::EventModelCommand;
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
-use event_models::{Anchor, EventModel, EventModelError};
+use event_models::{Anchor, ColumnShift, EventModel, EventModelError, InterfaceConfig};
 use js_sys::Uint8Array;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
@@ -76,6 +75,26 @@ impl Reconcilable for EventModelState<AutomergeEventModel> {
     }
 }
 
+pub enum Lane {
+    Audience,
+    Stream,
+}
+
+impl TryFrom<&str> for Lane {
+    type Error = JsValue;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value {
+            "audience" => Ok(Self::Audience),
+            "stream" => Ok(Self::Stream),
+            &_ => Err(JsValue::from(format!(
+                "Value {:?} is not a lane type",
+                value
+            ))),
+        }
+    }
+}
+
 #[wasm_bindgen]
 pub struct EventModelStateManager {
     repository: IndexedDbStateRepository,
@@ -130,7 +149,7 @@ fn get_actor() -> ActorId {
 #[wasm_bindgen]
 impl EventModelStateManager {
     #[wasm_bindgen(constructor)]
-    pub async fn new(
+    pub fn new(
         maybe_id_str: Option<String>,
         user: String,
     ) -> Result<EventModelStateManager, JsValue> {
@@ -140,33 +159,37 @@ impl EventModelStateManager {
                 Uuid::from_str(&id_str).map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
             Ok(EventModelStateManager {
                 repository: IndexedDbStateRepository::new(Some(event_model_id), user, actor)
-                    .await
                     .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?,
             })
         } else {
             Ok(EventModelStateManager {
                 repository: IndexedDbStateRepository::new(None, user, actor)
-                    .await
                     .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?,
             })
         }
     }
 
-    pub fn refresh(&mut self, bin: Uint8Array) -> Result<EventModelGrid, JsValue> {
+    pub fn refresh(&mut self, bin: Uint8Array) -> Result<(), JsValue> {
         if let Some(_model) = self.repository.key {
+            // Save any local unsaved changes
+            let local_changes = self.repository.save_incremental();
+            // Load from caller arg
             self.repository
                 .load_incremental(bin.to_vec())
                 .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
+            // Reset save_incremental state to prevent large, redundant patches after refresh
+            self.repository.save_incremental();
+            // Load local unsaved changes to they appear in next incremental save
             self.repository
-                .state()
-                .map(|ref state| state.into())
-                .map_err(|e| JsValue::from_str(&format!("{:?}", e)))
+                .load_incremental(local_changes)
+                .map_err(|e| JsValue::from_str(&format!("{:?}", e)))?;
+            Ok(())
         } else {
             Err("Can't load data into a state manager with no model key!".into())
         }
     }
 
-    pub async fn state(&mut self) -> Result<EventModelGrid, JsValue> {
+    pub async fn grid(&mut self) -> Result<EventModelGrid, JsValue> {
         self.repository
             .reify()
             .await
@@ -303,6 +326,26 @@ impl EventModelStateManager {
             stream,
         ))
         .await
+    }
+
+    pub async fn insert_columns(
+        &mut self,
+        model_id_str: String,
+        index: usize,
+        direction: String,
+        count: usize,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let column_shift =
+            ColumnShift::try_from((direction.as_str(), index, count)).map_err(|_| {
+                JsValue::from(format!(
+                    "{:?} is an invalid column shift direction",
+                    direction
+                ))
+            })?;
+
+        self.dispatch(EventModelCommand::ShiftPlacements(model_id, column_shift))
+            .await
     }
 
     pub async fn import(
@@ -473,6 +516,42 @@ impl EventModelStateManager {
         }
     }
 
+    pub async fn add_lane(
+        &mut self,
+        model_id_str: String,
+        kind: String,
+        index: usize,
+        name: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let lane_type = Lane::try_from(kind.as_str())?;
+
+        match lane_type {
+            Lane::Audience => {
+                let cmd = EventModelCommand::AddAudience(model_id, index, name);
+
+                console::log_2(
+                    &"Add Lane Command".into(),
+                    &format!("{:?}", cmd).as_str().into(),
+                );
+
+                let res = self.dispatch(cmd).await;
+
+                if let Ok(inner) = &res {
+                    console::log_2(&"Add Lane Command Res".into(), &inner.audiences());
+                } else {
+                    console::log_1(&"failed".into())
+                }
+
+                res
+            }
+            Lane::Stream => {
+                self.dispatch(EventModelCommand::AddStream(model_id, index, name))
+                    .await
+            }
+        }
+    }
+
     pub async fn add_to_description(
         &mut self,
         model_id_str: String,
@@ -524,6 +603,24 @@ impl EventModelStateManager {
             source_anchor,
             target_placement_id,
             target_anchor,
+        ))
+        .await
+    }
+
+    pub async fn configure_interface(
+        &mut self,
+        model_id_str: String,
+        interface_id_str: String,
+        interface_type: String,
+        interface_url: Option<String>,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let interface_id = parse_uuid(interface_id_str)?;
+        self.dispatch(EventModelCommand::ConfigureInterface(
+            model_id,
+            event_models::ComponentId::Interface(interface_id),
+            interface_type,
+            interface_url,
         ))
         .await
     }

@@ -38,26 +38,23 @@
 
 {#if website && activateClickOutside}
 	<li use:clickOutside={() => !hidden && handleDropdown()} class={liClass}>
-		<button on:click={() => handleDropdown()} class={liButtonClass}
-			>{name}
+		<button on:click={() => handleDropdown()} class={liButtonClass}>
+      {name}
 			<Icon
 				name="arrow-down"
 				class="ml-1 stroke-2"
 				iconColor="fill-current"
 				size={12}
-				pathName={ArrowDown}
-			/>
+				pathName={ArrowDown} />
 			{#if visible}
 				<Icon
 					name="nav-arrow-light"
 					class="block dark:hidden z-50 w-6 absolute mt-[37px] transform"
-					pathName={NavArrowLight}
-				/>
+					pathName={NavArrowLight} />
 				<Icon
 					name="nav-arrow-dark"
 					class="hidden dark:block z-50 w-6 absolute mt-[37px] transform"
-					pathName={NavArrowDark}
-				/>
+					pathName={NavArrowDark} />
 			{/if}
 		</button>
 
@@ -77,8 +74,7 @@
 			<!-- Dropdown menu -->
 			<ul
 				class={classNames('flex justify-center', dropdownClass, ulClass, marginTop)}
-				transition:fade={{ duration: 100 }}
-			>
+				transition:fade={{ duration: 100 }}>
 				<li class="flex flex-col">
 					<slot />
 				</li>

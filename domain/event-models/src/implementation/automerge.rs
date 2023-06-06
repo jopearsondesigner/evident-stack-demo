@@ -37,16 +37,8 @@ impl From<&AutoName> for Name {
 #[derive(Reconcile, Hydrate, Debug, Clone)]
 enum AutoInterfaceConfig {
     Blank,
-    Figma {
-        url: String,
-        width: Option<u32>,
-        height: Option<u32>,
-    },
-    Image {
-        url: String,
-        width: Option<u32>,
-        height: Option<u32>,
-    },
+    Figma { url: String },
+    Image { url: String },
     Job,
 }
 
@@ -54,15 +46,11 @@ impl From<&AutoInterfaceConfig> for InterfaceConfig {
     fn from(interface_config: &AutoInterfaceConfig) -> Self {
         match interface_config {
             AutoInterfaceConfig::Blank => InterfaceConfig::Blank,
-            AutoInterfaceConfig::Figma { url, width, height } => InterfaceConfig::Figma {
+            AutoInterfaceConfig::Figma { url } => InterfaceConfig::Figma {
                 url: Url::from_str(url).unwrap(),
-                width: width.map(|w| w as usize),
-                height: height.map(|h| h as usize),
             },
-            AutoInterfaceConfig::Image { url, width, height } => InterfaceConfig::Image {
+            AutoInterfaceConfig::Image { url } => InterfaceConfig::Image {
                 url: Url::from_str(url).unwrap(),
-                width: width.map(|w| w as usize),
-                height: height.map(|h| h as usize),
             },
             AutoInterfaceConfig::Job => InterfaceConfig::Job,
         }
@@ -73,15 +61,11 @@ impl From<&InterfaceConfig> for AutoInterfaceConfig {
     fn from(interface_config: &InterfaceConfig) -> Self {
         match interface_config {
             InterfaceConfig::Blank => AutoInterfaceConfig::Blank,
-            InterfaceConfig::Figma { url, width, height } => AutoInterfaceConfig::Figma {
+            InterfaceConfig::Figma { url } => AutoInterfaceConfig::Figma {
                 url: url.to_string(),
-                width: width.map(|w| w as u32),
-                height: height.map(|h| h as u32),
             },
-            InterfaceConfig::Image { url, width, height } => AutoInterfaceConfig::Image {
+            InterfaceConfig::Image { url } => AutoInterfaceConfig::Image {
                 url: url.to_string(),
-                width: width.map(|w| w as u32),
-                height: height.map(|h| h as u32),
             },
             InterfaceConfig::Job => AutoInterfaceConfig::Job,
         }
@@ -596,16 +580,12 @@ impl AutomergeEventModel {
 
     fn component_mut_by_id(&mut self, id: &ComponentId) -> Option<AutoComponentMut> {
         match id {
-            ComponentId::InterfaceComponentId(id) => {
+            ComponentId::Interface(id) => {
                 self.interfaces.get_mut(id).map(AutoComponentMut::Interface)
             }
-            ComponentId::CommandComponentId(id) => {
-                self.commands.get_mut(id).map(AutoComponentMut::Command)
-            }
-            ComponentId::EventComponentId(id) => {
-                self.events.get_mut(id).map(AutoComponentMut::Event)
-            }
-            ComponentId::ReadModelComponentId(id) => self
+            ComponentId::Command(id) => self.commands.get_mut(id).map(AutoComponentMut::Command),
+            ComponentId::Event(id) => self.events.get_mut(id).map(AutoComponentMut::Event),
+            ComponentId::ReadModel(id) => self
                 .read_models
                 .get_mut(id)
                 .map(AutoComponentMut::ReadModel),
@@ -733,18 +713,26 @@ impl ModifiableEventModel for AutomergeEventModel {
         }
     }
 
+    fn interface_configured(&mut self, interface_id: &InterfaceId, config: &InterfaceConfig) {
+        let mut interface = self
+            .interfaces
+            .get_mut(interface_id)
+            .expect("interface not found");
+        interface.config = config.into();
+    }
+
     fn component_removed(&mut self, component_id: &ComponentId) {
         match component_id {
-            ComponentId::InterfaceComponentId(id) => {
+            ComponentId::Interface(id) => {
                 self.interfaces.remove(id);
             }
-            ComponentId::CommandComponentId(id) => {
+            ComponentId::Command(id) => {
                 self.commands.remove(id);
             }
-            ComponentId::EventComponentId(id) => {
+            ComponentId::Event(id) => {
                 self.events.remove(id);
             }
-            ComponentId::ReadModelComponentId(id) => {
+            ComponentId::ReadModel(id) => {
                 self.read_models.remove(id);
             }
         }

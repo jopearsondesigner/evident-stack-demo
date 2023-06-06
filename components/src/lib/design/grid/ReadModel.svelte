@@ -5,7 +5,7 @@
   import { createEventDispatcher } from 'svelte';
 
   export let id: string;
-  export let readModel: string;
+  export let read_model: string;
   export let column: number;
   export let name: string;
   export let description = '';
@@ -25,35 +25,33 @@
         transfer.effectAllowed = 'copy';
         dispatch('placement_drag_start', {
           placementId: id,
-          placementKind: 'readModel',
+          placementKind: 'read_model',
           sourceEffect: 'DUPLICATE'
         });
       } else {
         transfer.effectAllowed = 'move';
         dispatch('placement_drag_start', {
           placementId: id,
-          placementKind: 'readModel',
+          placementKind: 'read_model',
           sourceEffect: 'MOVE'
         });
       }
     }
-  }; 
+  };
 </script>
 
 <div
-  class="relative group"
-  on:dragover={(e) => e.preventDefault()}
->
-  <FlowPort on:flow_drag_start={forward} position="top" type="readModel" placement={id} placement_kind="readModel" {column} />
-  <FlowPort on:flow_drag_start={forward} position="right" type="readModel" placement={id} placement_kind="readModel" {column} />
+  class="relative group w-full h-full p-[1.375rem]"
+  on:dragover={(e) => e.preventDefault()}>
+  <FlowPort on:flow_drag_start={forward} position="top" type="read_model" placement={id} placement_kind="read_model" {column} />
+  <FlowPort on:flow_drag_start={forward} position="right" type="read_model" placement={id} placement_kind="read_model" {column} />
   <!-- TODO: tooltip interferes with link dragging -->
   <!-- <MaybeTooltip tip={descriptionHTML}> -->
   <div
     {id}
     draggable="true"
     on:dragstart={handleDragStart}
-    class="readModel m-[1.375rem] w-[6.125rem] h-[6.125rem] p-3 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-readModel to-readModel-light"
-  >
+    class="read_model w-full h-full p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-read_model-dark via-read_model to-read_model-light">
     {name}
   </div>
   <!-- </MaybeTooltip> -->

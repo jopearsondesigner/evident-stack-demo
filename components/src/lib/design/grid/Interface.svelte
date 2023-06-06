@@ -3,30 +3,18 @@
   import type { DragEventHandler } from 'svelte/elements';
   import FlowPort from './FlowPort.svelte';
   import { createEventDispatcher } from 'svelte';
+  import type { InterfaceConfig } from '../Grid.js';
+  import Icon from '../../Icon.svelte';
+  import JobGears from '../../icons/JobGears.svelte';
 
   export let id: string;
   export let interface_id: string;
   export let column: number;
 
-  type InterfaceConfig =
-    | { type: 'blank' }
-    | {
-        type: 'figma';
-        url: string;
-        width?: number | undefined | null;
-        height?: number | undefined | null;
-      }
-    | {
-        type: 'image';
-        url: string;
-        width?: number | undefined | null;
-        height?: number | undefined | null;
-      }
-    | { type: 'job' };
+  export let config: InterfaceConfig;
 
-  export let config: InterfaceConfig = { type: 'blank' };
   export let name: string;
-  export let description = '';
+  export let description: string;
 
   $: descriptionHTML = markdown(description);
 
@@ -58,32 +46,60 @@
   };
 </script>
 
-<div class="relative group" on:dragover={(e) => e.preventDefault()}>
+<div class="relative group w-full h-full"
+     on:dragover={(e) => e.preventDefault()}>
   <FlowPort
     on:flow_drag_start={forward}
     position="bottom"
     type="interface"
     placement={id}
     placement_kind="interface"
-    {column}
-  />
+    {column} />
   <FlowPort
     on:flow_drag_start={forward}
     position="right"
     type="interface"
     placement={id}
     placement_kind="interface"
-    {column}
-  />
-  <!-- TODO: tooltip interferes with link dragging -->
-  <!-- <MaybeTooltip tip={descriptionHTML}> -->
-  <div
-    {id}
-    draggable="true"
-    on:dragstart={handleDragStart}
-    class="interface m-[1.4375rem] w-24 h-24 p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary"
-  >
-    {name}
-  </div>
-  <!-- </MaybeTooltip> -->
+    {column} />
+  {#if config.kind == 'blank'}
+    <div class="w-full h-full p-[1.375rem]">
+      <div
+        {id}
+        draggable="true"
+        on:dragstart={handleDragStart}
+        class="interface w-full h-full p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
+        {name}
+      </div>
+    </div>
+  {:else if config.kind == 'job'}
+    <div
+      {id}
+      draggable="true"
+      on:dragstart={handleDragStart}
+      class="interface flex flex-col items-center w-full h-full">
+      {name}
+      <Icon class="flex-1 m-2 w-max transition duration-200 ease-in cursor-default" name="job-gears" iconColor="text-body-light dark:text-body-dark" pathName={JobGears} />
+    </div>
+  {:else if config.kind == 'image'}
+    <div
+      {id}
+      draggable="true"
+      on:dragstart={handleDragStart}
+      class="interface flex flex-col items-center w-full h-full p-1.5">
+      <h4 class="text-xs">{name}</h4>
+      <img class="flex-1 min-h-0 mt-1 object-contain" src={config.url} alt={name} />
+    </div>
+  {:else if config.kind == 'figma'}
+    <div class="w-full h-full p-[1.375rem]">
+      <div
+        {id}
+        draggable="true"
+        on:dragstart={handleDragStart}
+        class="interface flex flex-col items-center w-full h-full p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
+        {name}
+        <img class="min-h-0 m-2" src="/images/figma-logo.svg" alt="Figma Logo" />
+      </div>
+    </div>
+  {/if}
 </div>

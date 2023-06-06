@@ -4,11 +4,9 @@ use event_models::{EventModelData, ModifiableEventModel};
 use event_models::{EventModelState, Name};
 use uuid::Uuid;
 
-use event_models::ComponentId::{
-    CommandComponentId, EventComponentId, InterfaceComponentId, ReadModelComponentId,
-};
 use event_models::{
-    Command, Component, Described, Entity, Event, Interface, InterfaceConfig, Named, ReadModel,
+    Command, Component, ComponentId, Described, Entity, Event, Interface, InterfaceConfig, Named,
+    ReadModel,
 };
 
 #[test]
@@ -128,16 +126,16 @@ fn renaming_components() {
     let new_read_model_name: Name = "read model foo".try_into().unwrap();
 
     model.component_renamed(
-        &InterfaceComponentId(interface.id().to_owned()),
+        &ComponentId::Interface(interface.id().to_owned()),
         &new_interface_name,
     );
     model.component_renamed(
-        &CommandComponentId(command.id().to_owned()),
+        &ComponentId::Command(command.id().to_owned()),
         &new_command_name,
     );
-    model.component_renamed(&EventComponentId(event.id().to_owned()), &new_event_name);
+    model.component_renamed(&ComponentId::Event(event.id().to_owned()), &new_event_name);
     model.component_renamed(
-        &ReadModelComponentId(read_model.id().to_owned()),
+        &ComponentId::ReadModel(read_model.id().to_owned()),
         &new_read_model_name,
     );
     assert_eq!(
@@ -197,20 +195,25 @@ fn adding_to_component_description() {
     model.component_defined(&Component::ReadModel(read_model.to_owned()));
 
     model.splice_component_description(
-        &InterfaceComponentId(interface.id()),
+        &ComponentId::Interface(interface.id()),
         0,
         0,
         "a really nice interface",
     );
     model.splice_component_description(
-        &CommandComponentId(command.id()),
+        &ComponentId::Command(command.id()),
         0,
         0,
         "a really nice command",
     );
-    model.splice_component_description(&EventComponentId(event.id()), 0, 0, "a really nice event");
     model.splice_component_description(
-        &ReadModelComponentId(read_model.id()),
+        &ComponentId::Event(event.id()),
+        0,
+        0,
+        "a really nice event",
+    );
+    model.splice_component_description(
+        &ComponentId::ReadModel(read_model.id()),
         0,
         0,
         "a really nice read model",
@@ -280,28 +283,33 @@ fn deleting_from_component_description() {
     model.component_defined(&Component::ReadModel(read_model.to_owned()));
 
     model.splice_component_description(
-        &InterfaceComponentId(interface.id()),
+        &ComponentId::Interface(interface.id()),
         0,
         0,
         "a really nice interface",
     );
     model.splice_component_description(
-        &CommandComponentId(command.id()),
+        &ComponentId::Command(command.id()),
         0,
         0,
         "a really nice command",
     );
-    model.splice_component_description(&EventComponentId(event.id()), 0, 0, "a really nice event");
     model.splice_component_description(
-        &ReadModelComponentId(read_model.id()),
+        &ComponentId::Event(event.id()),
+        0,
+        0,
+        "a really nice event",
+    );
+    model.splice_component_description(
+        &ComponentId::ReadModel(read_model.id()),
         0,
         0,
         "a really nice read model",
     );
-    model.splice_component_description(&InterfaceComponentId(interface.id()), 2, 1, "");
-    model.splice_component_description(&CommandComponentId(command.id()), 2, 1, "");
-    model.splice_component_description(&EventComponentId(event.id()), 2, 1, "");
-    model.splice_component_description(&ReadModelComponentId(read_model.id()), 2, 1, "");
+    model.splice_component_description(&ComponentId::Interface(interface.id()), 2, 1, "");
+    model.splice_component_description(&ComponentId::Command(command.id()), 2, 1, "");
+    model.splice_component_description(&ComponentId::Event(event.id()), 2, 1, "");
+    model.splice_component_description(&ComponentId::ReadModel(read_model.id()), 2, 1, "");
 
     assert_eq!(
         model

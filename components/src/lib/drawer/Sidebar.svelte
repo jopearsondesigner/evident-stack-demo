@@ -4,7 +4,7 @@
   export let asideClass =
     'h-full flex-column bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-gray-brand-3 transition-width duration-200 ease-in';
   export let nameClass =
-    'text-md font-bold text-body-light dark:text-body-dark text-center leading-[1.27] mx-4 mb-2';
+    'text-sm font-bold text-body-light dark:text-body-dark text-center leading-[1.27] mx-4 mb-2';
   export let descClass =
     'font-medium text-default text-body dark:text-white leading-normal text-center mx-4 mt-2 max-h-16 overflow-auto';
   export let divClass = 'grow-0 border-b border-gray-primary py-4';

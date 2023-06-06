@@ -118,10 +118,10 @@
         navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark">
         {#if session?.user}
           <DropdownMenu product={true} name="profile" marginTop="mt-9">
-            <IconButton slot="button" margin="mx-2 mt-1">
+            <IconButton slot="button" margin="mx-2">
               <Icon
                 name="profile"
-                size={32}
+                size={28}
                 viewBox="0 0 32 32"
                 class="vertical-middle"
                 iconColor=""
@@ -186,40 +186,6 @@
           title="Design"
           bind:expanded={designExpanded}>
           <SidebarGroup>
-            <SidebarDropdownWrapper label="Schema">
-              <Icon
-                slot="icon"
-                name="schema"
-                size={16}
-                iconColor="fill-current text-gray-brand-4 dark:text-white transition duration-200 ease-in"
-                pathName={Schema} />
-              <Icon
-                slot="icon-open"
-                name="schema"
-                size={16}
-                iconColor="fill-current text-white dark:text-white transition duration-200 ease-in"
-                pathName={Schema} />
-              <SidebarDropdownItem feature>
-                <Label class="mt-2 mb-6" color="default">
-                  <span class="text-body dark:text-white">Event Model Schema</span>
-                  <Textarea
-                    placeholder=""
-                    value=""
-                    name="description"
-                    rows="6"
-                    class="mt-1 font-mono block w-full overflow-auto text-sm border border-border-light dark:border-border-dark px-10 py-2.5"
-                    style="background-color: rgba(48, 56, 65, 100%); color: #D8DEE9;"
-                    disabled />
-                </Label>
-                <div class="mt-6 mx-3 space-x-3 flex justify-end">
-                  <button
-                    class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-                    on:click>cancel</button
-                                     >
-                  <Button color="default" size="sm" label="Edit" on:click class="" />
-                </div>
-              </SidebarDropdownItem>
-            </SidebarDropdownWrapper>
             <SidebarItem blank>
               <Button
                 label="Export JSON"

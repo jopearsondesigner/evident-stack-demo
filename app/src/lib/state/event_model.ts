@@ -1,28 +1,39 @@
-import { default as init, EventModelStateManager, setPanicHook } from "state-client";
-import { derived, readable } from 'svelte/store';
-import type { LaneKind } from '$components/design/Grid';
+import { default as init, EventModelGrid, EventModelStateManager, setPanicHook } from "state-client";
+import { derived, readable, type Readable } from 'svelte/store';
+import type { ReorderableLaneType } from '$components/design/Grid';
 
 const initialize_decider = async (id: string | undefined, user: string) => {
   // Initialize Wasm decider
   await init();
   setPanicHook();
 
-  let manager = await new EventModelStateManager(id, user);
+  let manager = new EventModelStateManager(id, user);
 
-  // Initialize Dexie documentBinaryStore
-  const { documentBinaryStore } = await import("./dexie");
+  const { model_binary, documentBinaryStore } = await import("./dexie");
 
-  let store;
+  let store: Readable<EventModelGrid | null>;
 
   if (id) {
-    let $doc_binary = documentBinaryStore(id);
+    // Initialize Dexie from existing patches
+    let initial_bin = await model_binary(id);
+    manager.refresh(initial_bin);
 
-    store = derived($doc_binary, (bin) => {
+    // Setup store via documentBinaryStore for ongoing refreshes upon change to storage
+    let $doc_binary_store = documentBinaryStore(id);
+
+    store = derived($doc_binary_store, (bin, setter) => {
       try {
-        return manager.refresh(bin)
+        manager.refresh(bin);
+        manager.grid()
+          .then((grid) => {
+            setter(grid);
+          }).catch((_) => {
+            setter(null);
+          });
       } catch {
-        return null
+        setter(null);
       }
+      return () => console.debug("Unsubscribed last subscriber to empty Event Model State");
     });
   } else {
     store = readable(null, (_) => {
@@ -33,8 +44,12 @@ const initialize_decider = async (id: string | undefined, user: string) => {
   return {
     grid: store,
     decider: {
+      placement_by_id: async (placement_id: string) => {
+        let grid = await manager.grid();
+        return grid.placement_by_id(placement_id);
+      },
       create_model: async (name: string) => {
-        return await manager.create(name)
+        return await manager.create(name);
       },
       define_and_place_interface: async (name: string, index: number, audience: string | undefined) => {
         return await manager.define_and_place_interface(id!, name, index, audience);
@@ -78,14 +93,21 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       rename_placement: async (placement: string, name: string) => {
         return await manager.rename_placement(id!, placement, name)
       },
-      rename_lane: async (kind: LaneKind, lane_id: string, name: string) => {
+      rename_lane: async (kind: ReorderableLaneType, lane_id: string, name: string) => {
         return await manager.rename_lane(id!, kind, lane_id, name)
       },
-      reorder_lane: async (kind: LaneKind, lane_id: string, index: number) => {
+      reorder_lane: async (kind: ReorderableLaneType, lane_id: string, index: number) => {
         return await manager.reorder_lane(id!, kind, lane_id, index)
       },
-      remove_lane: async (kind: LaneKind, lane_id: string) => {
+      remove_lane: async (kind: ReorderableLaneType, lane_id: string) => {
         return await manager.remove_lane(id!, kind, lane_id)
+      },
+      add_lane: async (kind: string, index: number, name: string) => {
+        console.warn("add lane", { kind, index , name });
+        return manager.add_lane(id!, kind, index, name);
+      },
+      insert_columns: async (index: number, direction: string, count: number) => {
+        return manager.insert_columns(id!, index, direction, count);
       },
       add_to_description: async (index: number, addition: string) => {
         return await manager.add_to_description(id!, index, addition)
@@ -95,6 +117,13 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       },
       connect_flow: async (source_placement_id_str: string, source_anchor_str: string | undefined, target_placement_id_str: string, target_anchor_str: string | undefined) => {
         return await manager.connect_flow(id!, source_placement_id_str, source_anchor_str, target_placement_id_str, target_anchor_str);
+      },
+      configure_interface: async (
+        interface_id_str: string,
+        interface_type: string,
+        interface_url: string | undefined,
+      ) => {
+        return await manager.configure_interface(id!, interface_id_str, interface_type, interface_url);
       },
     }
   };

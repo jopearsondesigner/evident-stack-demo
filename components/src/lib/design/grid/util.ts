@@ -1,4 +1,4 @@
-import { FlowAnchor, type Decider, type DropTargetStatus, type Flow, type FlowCursor, type FlowPort, type LaneKind, type LinkingFlowColor, type PlacementType } from "../Grid";
+import { FlowAnchor, type Decider, type DropTargetStatus, type Flow, type FlowCursor, type FlowPort, type ReorderableLaneType, type LinkingFlowColor, type PlacementType } from "../Grid";
 
 // Types
 export interface WithDropTargetStatus { targetStatus: DropTargetStatus}
@@ -8,11 +8,11 @@ export interface WithRowIndex { rowIndex: number }
 export const DEFAULT_LANE = "DEFAULT_LANE";
 export type DefaultLane = "DEFAULT_LANE";
 export type SourceEffect = "MOVE" | "DUPLICATE";
-export type RowKind = LaneKind | "timeline";
+export type RowKind = ReorderableLaneType | "timeline";
 
 export interface LaneSource {
     laneId: string,
-    laneKind: LaneKind
+    laneKind: ReorderableLaneType
 }
 
 export interface PlacementSource {
@@ -27,13 +27,13 @@ export interface FlowPortSource {
 
 export type AudienceTarget = {
     audienceId: string | DefaultLane,
-    laneIndex: number,
+    laneIndex?: number,
     rowKind: "audience"
 };
 
 export type StreamTarget = {
     streamId: string | DefaultLane,
-    laneIndex: number,
+    laneIndex?: number,
     rowKind: "stream"
 };
 
@@ -56,31 +56,35 @@ export interface CursorTarget {
     y: number
 }
 
-export enum DraggingStateKind {
+export enum GridStateKind {
     LANE,
     PLACEMENT,
     FLOW,
+    CONTEXT,
     NONE
 }
 
-export type DraggingState =
-    | { kind: DraggingStateKind.LANE,
+export type GridState =
+    | { kind: GridStateKind.LANE,
         value: {
             source: LaneSource,
             target?: RowTarget & WithDropTargetStatus} }
-    | { kind: DraggingStateKind.PLACEMENT,
+    | { kind: GridStateKind.PLACEMENT,
         value: {
             source: PlacementSource & WithSourceEffect,
             target?: CellTarget & WithDropTargetStatus } }
-    | { kind: DraggingStateKind.FLOW,
+    | { kind: GridStateKind.FLOW,
         value: {
             source: FlowPortSource,
             cursor?: CursorTarget,
             target?: (CellTarget & WithDropTargetStatus)
         }}
-    | { kind: DraggingStateKind.NONE };
+    | { kind: GridStateKind.CONTEXT
+        source: CellTarget & CursorTarget
+     }
+    | { kind: GridStateKind.NONE };
 
-export enum DraggingCommandKind {
+export enum GridCommandKind {
     LANE_DRAG_START,
     LANE_DRAG_ENTER,
     LANE_DRAG_DROP,
@@ -91,45 +95,70 @@ export enum DraggingCommandKind {
     OUT_OF_BOUNDS_DRAG_ENTER,
     OUT_OF_BOUNDS_DRAG_END,
     CURSOR_MOVE,
+    OPEN_CONTEXT_MENU,
+    CLOSE_CONTEXT_MENU,
+    CONTEXT_COMMAND
 }
 
-export type DragCommand =
-    | { kind: DraggingCommandKind.LANE_DRAG_START,
+export type GridCommand =
+    | { kind: GridCommandKind.LANE_DRAG_START,
         value: LaneSource }
-    | { kind: DraggingCommandKind.LANE_DRAG_ENTER,
+    | { kind: GridCommandKind.LANE_DRAG_ENTER,
         value: RowTarget }
-    | { kind: DraggingCommandKind.LANE_DRAG_DROP }
-    | { kind: DraggingCommandKind.PLACEMENT_DRAG_START,
+    | { kind: GridCommandKind.LANE_DRAG_DROP }
+    | { kind: GridCommandKind.PLACEMENT_DRAG_START,
         value: PlacementSource & WithSourceEffect }
-    | { kind: DraggingCommandKind.CELL_DRAG_ENTER,
+    | { kind: GridCommandKind.CELL_DRAG_ENTER,
         value: CellTarget }
-    | { kind: DraggingCommandKind.CELL_DRAG_DROP }
-    | { kind: DraggingCommandKind.FLOW_PORT_DRAG_START,
+    | { kind: GridCommandKind.CELL_DRAG_DROP }
+    | { kind: GridCommandKind.FLOW_PORT_DRAG_START,
         value: FlowPortSource }
-    | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER }
-    | { kind:  DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END }
-    | { kind: DraggingCommandKind.CURSOR_MOVE,
+    | { kind:  GridCommandKind.OUT_OF_BOUNDS_DRAG_ENTER }
+    | { kind:  GridCommandKind.OUT_OF_BOUNDS_DRAG_END }
+    | { kind: GridCommandKind.CURSOR_MOVE,
         value: CursorTarget }
+    | { kind: GridCommandKind.OPEN_CONTEXT_MENU,
+        value: CellTarget & CursorTarget }
+    | { kind: GridCommandKind.CLOSE_CONTEXT_MENU }
+    | { kind: GridCommandKind.CONTEXT_COMMAND,
+        value: ContextMenuCommand }
 
-export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState, c: DragCommand) => DraggingState {
-    return (state: DraggingState, command: DragCommand) => {
+export enum ContextMenuCommandKind {
+    InsertColumnLeft,
+    InsertColumnRight,
+    InsertLaneAbove,
+    InsertLaneBelow,
+    DeletePlacement
+}
+
+export enum ContextMenuCommand {
+    InsertColumnLeft,
+    InsertColumnRight,
+    InsertLaneAbove,
+    InsertLaneBelow,
+    DeletePlacement
+}
+
+
+export function buildEvolveAndReact(reactionDecider: Decider): (s: GridState, c: GridCommand) => GridState {
+    return (state: GridState, command: GridCommand) => {
         switch (command.kind) {
-                case DraggingCommandKind.LANE_DRAG_START: {
+                case GridCommandKind.LANE_DRAG_START: {
                     let { laneId, laneKind: laneType } = command.value
 
                     return {
-                        kind: DraggingStateKind.LANE,
+                        kind: GridStateKind.LANE,
                         value: {
                             source: { laneId, laneKind: laneType } ,
                         }
                     };
                 }
                     
-                case DraggingCommandKind.LANE_DRAG_ENTER: {
+                case GridCommandKind.LANE_DRAG_ENTER: {
                     const target = command.value;
 
                     switch (state.kind) {
-                        case DraggingStateKind.LANE:
+                        case GridStateKind.LANE:
                             return {
                                 ...state,
                                 value: {
@@ -145,32 +174,32 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             return state;
                     }
                 } 
-                case DraggingCommandKind.LANE_DRAG_DROP: {
+                case GridCommandKind.LANE_DRAG_DROP: {
                     switch (state.kind) {
-                        case DraggingStateKind.LANE:
+                        case GridStateKind.LANE:
                             if (state.value.target?.targetStatus == "good" && state.value.target?.rowKind !== "timeline") {
                                 const { source, target } = state.value;
                                 const { laneId, laneKind: laneType } = source;
                                 const { laneIndex } = target;
-                                reactionDecider.reorder_lane(laneType, laneId, laneIndex);
+                                reactionDecider.reorder_lane(laneType, laneId, laneIndex!);
                             }
                         default:
                     }
 
-                    return { kind: DraggingStateKind.NONE }
+                    return { kind: GridStateKind.NONE }
                 };
-                case DraggingCommandKind.PLACEMENT_DRAG_START:
+                case GridCommandKind.PLACEMENT_DRAG_START:
                     return {
-                        kind: DraggingStateKind.PLACEMENT,
+                        kind: GridStateKind.PLACEMENT,
                         value: {
                             source: command.value
                         }
                     };
-                case DraggingCommandKind.CELL_DRAG_ENTER: {
+                case GridCommandKind.CELL_DRAG_ENTER: {
                     const { row } = command.value;
 
                     switch (state.kind) {
-                        case DraggingStateKind.LANE: {
+                        case GridStateKind.LANE: {
                             return {
                                 ...state,
                                 value: {
@@ -182,7 +211,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                 }
                             }
                         }
-                        case DraggingStateKind.PLACEMENT: {
+                        case GridStateKind.PLACEMENT: {
                             const target = command.value;
 
                             return {
@@ -196,7 +225,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                 }
                             }
                         }
-                        case DraggingStateKind.FLOW: {
+                        case GridStateKind.FLOW: {
                             const target = command.value;
 
                             return {
@@ -211,23 +240,23 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             }
                         }
                             
-                        case DraggingStateKind.NONE:
+                        case GridStateKind.NONE:
                             return state;
                     }
                 }
-                case DraggingCommandKind.CELL_DRAG_DROP: {
+                case GridCommandKind.CELL_DRAG_DROP: {
                     switch (state.kind) {
-                        case DraggingStateKind.LANE: {
+                        case GridStateKind.LANE: {
                             if (state.value.target && state.value.target.rowKind !== "timeline" && state.value.target.targetStatus === "good") {
                                 const { source, target } = state.value;
                                 const { laneId, laneKind: laneType } = source;
                                 const { laneIndex } = target;
 
-                                reactionDecider.reorder_lane(laneType, laneId, laneIndex);
+                                reactionDecider.reorder_lane(laneType, laneId, laneIndex!);
                             }
-                            return { kind: DraggingStateKind.NONE }
+                            return { kind: GridStateKind.NONE }
                         }
-                        case DraggingStateKind.PLACEMENT: {
+                        case GridStateKind.PLACEMENT: {
                             if (state.value.target && state.value.target.targetStatus === "good") {
                                 const { source, target } = state.value;
                                 const { placementId, placementKind, sourceEffect } = source;
@@ -241,7 +270,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                             case "command":
                                                 reactionDecider.move_timeline_placement(placementId, column);
                                                 break;
-                                            case "readModel":
+                                            case "read_model":
                                                 reactionDecider.move_timeline_placement(placementId, column);
                                                 break;
                                             case "event":
@@ -257,7 +286,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                             case "command":
                                                 reactionDecider.duplicate_timeline_placement(placementId, column);
                                                 break;
-                                            case "readModel":
+                                            case "read_model":
                                                 reactionDecider.duplicate_timeline_placement(placementId, column);
                                                 break;
                                             case "event":
@@ -272,9 +301,9 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
 
                             }
 
-                            return { kind: DraggingStateKind.NONE };
+                            return { kind: GridStateKind.NONE };
                         }
-                        case DraggingStateKind.FLOW: {
+                        case GridStateKind.FLOW: {
                             if (state.value.target && state.value.target.targetStatus === "good") {
                                 const { source, target } = state.value;
                                 if (target.placementId && target.placementKind) {
@@ -288,23 +317,23 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                     )
                                 }
                             }
-                            return { kind: DraggingStateKind.NONE };
+                            return { kind: GridStateKind.NONE };
                         }
                         default:
-                            return { kind: DraggingStateKind.NONE };
+                            return { kind: GridStateKind.NONE };
                     }
                 }
-                case DraggingCommandKind.FLOW_PORT_DRAG_START: {
+                case GridCommandKind.FLOW_PORT_DRAG_START: {
                     return {
-                        kind: DraggingStateKind.FLOW,
+                        kind: GridStateKind.FLOW,
                         value: {
                             source: command.value
                         }
                     }
                 }
-                case DraggingCommandKind.OUT_OF_BOUNDS_DRAG_ENTER: {
+                case GridCommandKind.OUT_OF_BOUNDS_DRAG_ENTER: {
                     switch (state.kind) {
-                        case DraggingStateKind.LANE:
+                        case GridStateKind.LANE:
                             return {
                                 ...state,
                                 value: {
@@ -312,7 +341,7 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                                     target: undefined,
                                 }
                             };
-                        case DraggingStateKind.PLACEMENT:
+                        case GridStateKind.PLACEMENT:
                             return {
                                 ...state,
                                 value: {
@@ -325,14 +354,14 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             return state;
                     }
                 }
-                case DraggingCommandKind.OUT_OF_BOUNDS_DRAG_END: {
+                case GridCommandKind.OUT_OF_BOUNDS_DRAG_END: {
                     return {
-                        kind: DraggingStateKind.NONE
+                        kind: GridStateKind.NONE
                     };
                 }
-                case DraggingCommandKind.CURSOR_MOVE: {
+                case GridCommandKind.CURSOR_MOVE: {
                     switch (state.kind) {
-                        case DraggingStateKind.FLOW: {
+                        case GridStateKind.FLOW: {
                             const { target } = state.value;
 
                             if (target?.placementId && target.targetStatus === 'good') {
@@ -351,7 +380,68 @@ export function buildEvolveAndReact(reactionDecider: Decider): (s: DraggingState
                             return state;
                     }
                 }
+                case GridCommandKind.OPEN_CONTEXT_MENU:
+                    return {
+                        kind: GridStateKind.CONTEXT,
+                        source: command.value
+                    };
+                case GridCommandKind.CLOSE_CONTEXT_MENU:
+                    return { kind: GridStateKind.NONE };
+                case GridCommandKind.CONTEXT_COMMAND:
+                    switch (state.kind) {
+                        case GridStateKind.CONTEXT:
+                            contextMenuReact(state.source, command.value, reactionDecider)
+                        default:
+                            return state;
+                    }
             }
+    }
+}
+
+async function contextMenuReact(state: CellTarget & CursorTarget, command: ContextMenuCommand, reactionDecider: Decider) {
+    switch (command) {
+        case ContextMenuCommand.DeletePlacement:
+            if (state.placementId) {
+                await reactionDecider.remove_placement(state.placementId)
+            }
+            break;
+        case ContextMenuCommand.InsertColumnLeft:
+            await reactionDecider.insert_columns(state.column, "LEFT", 1);
+            break;
+        case ContextMenuCommand.InsertColumnRight:
+            await reactionDecider.insert_columns(state.column, "RIGHT", 1);
+            break;
+        case ContextMenuCommand.InsertLaneAbove:
+            if (state.row) {
+                switch (state.row.rowKind) {
+                    case "audience":
+                        await reactionDecider.add_lane("audience", state.row.laneIndex! + 1, "Placeholder Above")
+                        break;
+                    case "stream":
+                        await reactionDecider.add_lane("stream", state.row.laneIndex!, "Placeholder Above")
+                        break;
+                    case "timeline":
+                        await reactionDecider.add_lane("audience", 0, "Placeholder Above")
+                        break;
+                }
+            }
+           
+            break;
+        case ContextMenuCommand.InsertLaneBelow:
+            if (state.row) {
+                switch (state.row.rowKind) {
+                    case "audience":
+                        await reactionDecider.add_lane("audience", state.row.laneIndex!, "Placeholder Below")
+                        break;
+                    case "stream":
+                        await reactionDecider.add_lane("stream", state.row.laneIndex! - 1, "Placeholder Below")
+                        break;
+                    case "timeline":
+                        await reactionDecider.add_lane("stream", 0, "Placeholder Below")
+                        break;
+                }
+            }
+            break;
     }
 }
 
@@ -374,7 +464,7 @@ function placementTargetStatus({ placementKind }: PlacementSource, { placementId
         case "stream":
             return ( placementKind == "event" ) ? "good" : "bad";
         case "timeline":
-            return (["readModel", "command"].includes(placementKind) ? "good" : "bad" )
+            return (["read_model", "command"].includes(placementKind) ? "good" : "bad" )
     }
 }
 
@@ -394,10 +484,10 @@ function flowTargetStatus({ placement: { placementKind, placementId } }: FlowPor
         case "command":
             return (targetPlacementKind === "event") ? "good" : "bad";
         case "event":
-            return (targetPlacementKind === "readModel") ? "good" : "bad";
+            return (targetPlacementKind === "read_model") ? "good" : "bad";
         case "interface":
             return (targetPlacementKind === "command") ? "good" : "bad";
-        case "readModel":
+        case "read_model":
             return (targetPlacementKind === "interface") ? "good" : "bad";
     }
 }
@@ -409,26 +499,26 @@ const flowTargetDefaultPort = (source: PlacementType, target: PlacementType): Fl
     else if ( source  === "command" && target === "event") {
         return FlowAnchor.Top;
     }
-    else if (source === "event" && target === "readModel") {
+    else if (source === "event" && target === "read_model") {
         return FlowAnchor.Bottom;
     }
-    else if (source === "readModel" && target === "interface") {
+    else if (source === "read_model" && target === "interface") {
         return FlowAnchor.Bottom;
     }
     // START IMPOSSIBLE LINKS THAT STILL NEED TO BE DISPLAYED ON A 'bad' TARGET
-    else if (source === "command" && target === "readModel") {
+    else if (source === "command" && target === "read_model") {
         return FlowAnchor.Left;
     }
-    else if (source === "readModel" && target === "command") {
+    else if (source === "read_model" && target === "command") {
         return FlowAnchor.Left;
     }
-    else if (source === "readModel" && target === "readModel") {
+    else if (source === "read_model" && target === "read_model") {
         return FlowAnchor.Left;
     }
     else if (source === "command" && target === "command") {
         return FlowAnchor.Left;
     }
-    else if (source === "readModel" && target === "event") {
+    else if (source === "read_model" && target === "event") {
         return FlowAnchor.Top;
     }
     else if (source === "command" && target ==="interface") {
@@ -444,9 +534,9 @@ const defaultFlowAnchorsByPlacementType = (source: PlacementType, target: Placem
         return [FlowAnchor.Bottom, FlowAnchor.Top];
     } else if (source === "command" && target === "event") {
         return [FlowAnchor.Bottom, FlowAnchor.Top];
-    } else if (source === "event" && target === "readModel") {
+    } else if (source === "event" && target === "read_model") {
         return [FlowAnchor.Top, FlowAnchor.Bottom];
-    } else if (source === "readModel" && target === "interface") {
+    } else if (source === "read_model" && target === "interface") {
         return [FlowAnchor.Top, FlowAnchor.Bottom];
     } else {
         return [FlowAnchor.Top, FlowAnchor.Bottom];
@@ -485,8 +575,8 @@ const rowtargetToLaneId = (row: RowTarget): string | DefaultLane | undefined => 
 const laneIdFilterDefault = (laneId: string | DefaultLane | undefined): string | undefined =>
     (laneId === "DEFAULT_LANE") ? undefined : laneId;
 
-export const linkingFlowFromState = (state: DraggingState): Flow | void => {
-    if (state.kind !== DraggingStateKind.FLOW) {
+export const linkingFlowFromState = (state: GridState): Flow | void => {
+    if (state.kind !== GridStateKind.FLOW) {
         return;
     }
 
@@ -526,8 +616,8 @@ export const linkingFlowFromState = (state: DraggingState): Flow | void => {
     }
 }
 
-const linkingFlowColor = (state: DraggingState): LinkingFlowColor => {
-    if (state.kind === DraggingStateKind.FLOW) {
+const linkingFlowColor = (state: GridState): LinkingFlowColor => {
+    if (state.kind === GridStateKind.FLOW) {
         const { target } = state.value;
 
         if (target && target.placementId) {

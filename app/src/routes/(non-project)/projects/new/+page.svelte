@@ -12,7 +12,7 @@
     let name = formData.get('name')?.toString();
     if (name) {
       let state = await create_model(name);
-      goto(`/projects/${state.id()}`);
+      goto(`/projects/${state.id}`);
     }
   };
 </script>

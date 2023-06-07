@@ -1,14 +1,26 @@
 import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
-
-// Can't use SSR with dexie-observable
-export const ssr = false;
+import { models_for_user as remote_models_for_user } from "$lib/supabase/database";
+import { browser } from "$app/environment";
 
 export const load: PageLoad = async (event) => {
-  let { session } = await event.parent()
+  let { session, supabase } = await event.parent()
   if (session) {
-    const { models_for_user } = await import("$lib/state/dexie");
-    const projects = await models_for_user(session.user.id);
+    let projects: { id: string, name: string, description: string, user: string }[];
+    try {
+      const user_id = session.user.id;
+      const models = await remote_models_for_user(supabase);
+      projects = models.map((m) => {
+        return { user: user_id, ...m, description: m.description || "" }
+      });
+    } catch (e) {
+      if (browser) {
+        const { models_for_user } = await import("$lib/state/dexie");
+        projects = await models_for_user(session.user.id);
+      } else {
+        projects = [];
+      }
+    }
     return { projects }
   }
   throw error(404, "not found")

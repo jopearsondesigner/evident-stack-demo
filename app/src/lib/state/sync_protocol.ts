@@ -27,13 +27,12 @@ export const SupabaseSync: ISyncProtocol = {
     applyRemoteChanges, onChangesAccepted, onSuccess, onError) {
     debug("Syncing:", url, options, baseRevision, syncedRevision, changes, partial);
 
-    debug("Supabase", supabase);
-
-    const session = await supabase.auth.getSession()
+    const session = await supabase.auth.getSession();
     if (!session.data.session) {
       onError(`User is not logged in: ${session.error}`) // TODO: retry?
       return;
     }
+    const user_id = session.data.session.user.id;
 
     const send_changes = async (
       new_changes: typeof changes,
@@ -52,7 +51,7 @@ export const SupabaseSync: ISyncProtocol = {
               acc.patch_insertions.push(dexie_change_to_patch_obj(change));
             }; break;
             case UPDATE: if (change.table == options.local_models_table) {
-              // acc.model_updates.push(dexie_change_to_model_obj(change));
+              acc.model_updates.push(dexie_change_to_model_obj(change));
             }; break;
             case DELETE: if (change.table == options.local_models_table) {
               acc.model_deletions.push(change.key);
@@ -90,14 +89,14 @@ export const SupabaseSync: ISyncProtocol = {
           type: CREATE,
           table: options.local_models_table,
           key: event.subject,
-          obj: { user: event.user, ...event.data },
+          obj: { ...event.data, user: user_id },
         }];
         case 'updated': return [{
           type: UPDATE,
           table: options.local_models_table,
           key: event.subject,
-          mods: { user: event.user, ...event.data },
-          obj: { user: event.user, ...event.data },
+          mods: { name: event.data.name, description: event.data.description },
+          obj: { name: event.data.name, description: event.data.description },
           oldObj: null,
         }];
         case 'deleted': return [{
@@ -110,10 +109,14 @@ export const SupabaseSync: ISyncProtocol = {
           type: CREATE,
           table: options.local_patches_table,
           key: event.subject,
-          obj: { id: event.data.patch_id, model: event.subject, data: toByteArray(event.patch_data) }
+          obj: {
+            id: event.data.patch_id,
+            model: event.subject,
+            data: toByteArray(event.patch_data),
+            user: event.data.user
+          }
         }];
-        // nothing to do here, right? A newly granted collaborator should receive an initial,
-        // full sync of all events
+        // TODO: add my own role to the model here
         case 'collaborator_role_granted': return [];
         case 'collaborator_role_revoked': return [{
           type: DELETE,

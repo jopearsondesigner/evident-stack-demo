@@ -18,7 +18,7 @@
   // TODO: keyboard handler for disambiguation
 </script>
 
-<ul class="menu absolute z-50 bg-base-100 w-56" style="top: {top}; left: {left}">
+<ul class="menu absolute z-50 bg-base-100 w-56" style="top: {top}px; left: {left}px">
   <li><a href='/' on:click|preventDefault={handleCommand}>Command</a></li>
   <li><a href='/' on:click|preventDefault={handleReadModel}>Read Model</a></li>
 </ul>

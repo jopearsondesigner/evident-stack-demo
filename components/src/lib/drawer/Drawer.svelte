@@ -51,10 +51,11 @@
 
 {#if !hidden}
   {#if drawerRight}
-    <div class={classNames('fixed inset-0 z-30', backdropClasses)} />
+    <div class={classNames('fixed inset-0 z-30', backdropClasses)}
+         on:click={handleClose}
+         on:keypress={handleClose}/>
     <slot name="extra" />
     <div
-      use:clickOutside={handleClose}
       transition:fly={transitionParamsRight}
       class={classNames(className, divClass, placements[placement])}
       style="padding-top: {navbarHeight}px;" >

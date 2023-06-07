@@ -66,12 +66,20 @@
   };
 
   const handleUpdateInterfaceConfig = async (_e: SubmitEvent) => {
-    if (decider && placement?.component_id && proposed_interface_config_kind && proposed_interface_config_url) {
-      await decider.configure_interface(
-        placement.component_id,
-        proposed_interface_config_kind,
-        proposed_interface_config_url
-      );
+    if (decider && placement?.component_id && proposed_interface_config_kind) {
+      try {
+        await decider.configure_interface(
+          placement.component_id,
+          proposed_interface_config_kind,
+          proposed_interface_config_url
+        );
+      } catch (e) {
+        console.error("Error configuring placement", e, {
+          component_id: placement?.component_id,
+          proposed_interface_config_kind,
+          proposed_interface_config_url
+        });
+      }
     }
   }
 </script>
@@ -127,7 +135,9 @@
               Interface Config
             </h4>
             <form class="p-3 w-full" on:submit|preventDefault={handleUpdateInterfaceConfig}>
-              <Select class="mt-2" placeholder="Choose Interface Type" items={placement_config_types} bind:value={proposed_interface_config_kind} />
+              <Select class="mt-2" placeholder="Choose Interface Type"
+                      items={placement_config_types}
+                      bind:value={proposed_interface_config_kind} />
               {#if proposed_interface_config_kind == 'figma'}
                 <Input class="my-6" size="sm" placeholder="Figma URL" bind:value={proposed_interface_config_url} />
               {/if}

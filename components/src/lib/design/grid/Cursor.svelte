@@ -93,18 +93,16 @@
           cancelEditing(e);
         }
       } else if (cell.kind === 'interface') {
-        dispatch('define_and_place_interface', { name, index: column, ...cell });
+        dispatch('define_and_place_interface', { name, index: column, audience: cell.audience });
       } else if (cell.kind === 'timeline') {
-        let rect = form.getBoundingClientRect();
         dispatch('disambiguate_timeline_definition_and_placement', {
           name,
-          left: rect.left,
-          top: rect.top,
+          left: form.offsetLeft,
+          top: form.offsetTop,
           index: column,
-          ...cell
         });
       } else if (cell.kind === 'event') {
-        dispatch('define_and_place_event', { name, index: column, ...cell });
+        dispatch('define_and_place_event', { name, index: column, stream: cell.stream });
       }
     }
   };
@@ -210,7 +208,8 @@
     {#if cell.placement}
       {#if cell.kind == 'interface'}
         <Interface
-          id="{cell.placement.id}-cursor"
+          is_cursor={true}
+          id={cell.placement.id}
           interface_id={cell.placement.component_id}
           {column}
           name={cell.placement.name}
@@ -222,7 +221,8 @@
       {:else if cell.kind == 'timeline'}
         {#if cell.placement.kind == 'command'}
           <Command
-            id="{cell.placement.id}-cursor"
+            is_cursor={true}
+            id={cell.placement.id}
             command={cell.placement.component_id}
             {column}
             name={cell.placement.name}
@@ -232,7 +232,8 @@
             on:connect_flow={forward} />
         {:else if cell.placement.kind == 'read_model'}
           <ReadModel
-            id="{cell.placement.id}-cursor"
+            is_cursor={true}
+            id={cell.placement.id}
             read_model={cell.placement.component_id}
             {column}
             name={cell.placement.name}
@@ -243,7 +244,8 @@
         {/if}
       {:else if cell.kind == 'event'}
         <Event
-          id="{cell.placement.id}-cursor"
+          is_cursor={true}
+          id={cell.placement.id}
           event={cell.placement.component_id}
           {column}
           name={cell.placement.name}

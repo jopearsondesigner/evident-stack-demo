@@ -4,7 +4,10 @@
   import FlowPort from './FlowPort.svelte';
   import { createEventDispatcher } from 'svelte';
 
+  export let is_cursor = false;
   export let id: string;
+  $: dom_id = is_cursor ? `${id}-cursor` : id;
+
   export let event: string;
   export let column: number;
   export let name: string;
@@ -48,7 +51,7 @@
   <!-- TODO: tooltip interferes with link dragging -->
   <!-- <MaybeTooltip tip={descriptionHTML}> -->
   <div
-    {id}
+    id={dom_id}
     draggable="true"
     on:dragstart={handleDragStart}
     class="event w-full h-full p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-placement bg-gradient-to-b from-event-dark via-event to-event-light">

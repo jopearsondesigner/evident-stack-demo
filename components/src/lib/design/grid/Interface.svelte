@@ -7,7 +7,10 @@
   import Icon from '../../Icon.svelte';
   import JobGears from '../../icons/JobGears.svelte';
 
+  export let is_cursor = false;
   export let id: string;
+  $: dom_id = is_cursor ? `${id}-cursor` : id;
+
   export let interface_id: string;
   export let column: number;
 
@@ -65,7 +68,7 @@
   {#if config.kind == 'blank'}
     <div class="w-full h-full p-[1.375rem]">
       <div
-        {id}
+        id={dom_id}
         draggable="true"
         on:dragstart={handleDragStart}
         class="interface w-full h-full p-2 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">
@@ -74,7 +77,7 @@
     </div>
   {:else if config.kind == 'job'}
     <div
-      {id}
+      id={dom_id}
       draggable="true"
       on:dragstart={handleDragStart}
       class="interface flex flex-col items-center w-full h-full">
@@ -83,7 +86,7 @@
     </div>
   {:else if config.kind == 'image'}
     <div
-      {id}
+      id={dom_id}
       draggable="true"
       on:dragstart={handleDragStart}
       class="interface flex flex-col items-center w-full h-full p-1.5">
@@ -93,7 +96,7 @@
   {:else if config.kind == 'figma'}
     <div class="w-full h-full p-[1.375rem]">
       <div
-        {id}
+        id={dom_id}
         draggable="true"
         on:dragstart={handleDragStart}
         class="interface flex flex-col items-center w-full h-full p-1.5 overflow-visible text-left text-node font-semibold leading-tight shadow-interface bg-gradient-to-b from-interfaceColor to-interfaceColor-dark border-2 border-interfaceColor rounded-[4px] outline outline-2 outline-gray-primary">

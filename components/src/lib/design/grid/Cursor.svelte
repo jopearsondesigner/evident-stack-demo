@@ -208,7 +208,8 @@
     {#if cell.placement}
       {#if cell.kind == 'interface'}
         <Interface
-          id="{cell.placement.id}-cursor"
+          is_cursor={true}
+          id={cell.placement.id}
           interface_id={cell.placement.component_id}
           {column}
           name={cell.placement.name}
@@ -220,7 +221,8 @@
       {:else if cell.kind == 'timeline'}
         {#if cell.placement.kind == 'command'}
           <Command
-            id="{cell.placement.id}-cursor"
+            is_cursor={true}
+            id={cell.placement.id}
             command={cell.placement.component_id}
             {column}
             name={cell.placement.name}
@@ -230,7 +232,8 @@
             on:connect_flow={forward} />
         {:else if cell.placement.kind == 'read_model'}
           <ReadModel
-            id="{cell.placement.id}-cursor"
+            is_cursor={true}
+            id={cell.placement.id}
             read_model={cell.placement.component_id}
             {column}
             name={cell.placement.name}
@@ -241,7 +244,8 @@
         {/if}
       {:else if cell.kind == 'event'}
         <Event
-          id="{cell.placement.id}-cursor"
+          is_cursor={true}
+          id={cell.placement.id}
           event={cell.placement.component_id}
           {column}
           name={cell.placement.name}

@@ -95,13 +95,11 @@
       } else if (cell.kind === 'interface') {
         dispatch('define_and_place_interface', { name, index: column, audience: cell.audience });
       } else if (cell.kind === 'timeline') {
-        let rect = form.getBoundingClientRect();
         dispatch('disambiguate_timeline_definition_and_placement', {
           name,
-          left: rect.left,
-          top: rect.top,
+          left: form.offsetLeft,
+          top: form.offsetTop,
           index: column,
-          ...cell
         });
       } else if (cell.kind === 'event') {
         dispatch('define_and_place_event', { name, index: column, stream: cell.stream });

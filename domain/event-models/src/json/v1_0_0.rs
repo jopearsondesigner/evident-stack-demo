@@ -1,19 +1,16 @@
 use std::collections::HashMap;
 
+use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
-use crate::{
-    api::errors::EventModelError,
-    types::{InterfaceConfig, Schema},
-};
+use crate::{Entity, EventModelDataTransfer, EventModelError, InterfaceConfig};
 
 use super::as_string;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(tag = "type")]
-#[serde(rename_all = "lowercase")]
+#[serde(tag = "type", rename_all = "lowercase")]
 pub enum Interface {
     Blank {
         id: Uuid,
@@ -25,16 +22,12 @@ pub enum Interface {
         name: String,
         description: Option<String>,
         url: Url,
-        width: Option<u32>,
-        height: Option<u32>,
     },
     Image {
         id: Uuid,
         name: String,
         description: Option<String>,
         url: Url,
-        width: Option<u32>,
-        height: Option<u32>,
     },
     Job {
         id: Uuid,
@@ -43,7 +36,7 @@ pub enum Interface {
     },
 }
 
-impl TryFrom<Interface> for crate::types::Interface {
+impl TryFrom<Interface> for crate::Interface {
     type Error = EventModelError;
 
     fn try_from(value: Interface) -> Result<Self, Self::Error> {
@@ -52,48 +45,34 @@ impl TryFrom<Interface> for crate::types::Interface {
                 id,
                 name,
                 description,
-            } => crate::types::Interface::create(
-                id,
-                name,
-                as_string(description),
-                InterfaceConfig::Blank,
-            ),
+            } => crate::Interface::create(id, name, as_string(description), InterfaceConfig::Blank),
             Interface::Figma {
                 id,
                 name,
                 description,
                 url,
-                width,
-                height,
-            } => crate::types::Interface::create(
+            } => crate::Interface::create(
                 id,
                 name,
                 as_string(description),
-                InterfaceConfig::Figma { url, width, height },
+                InterfaceConfig::Figma { url },
             ),
             Interface::Image {
                 id,
                 name,
                 description,
                 url,
-                width,
-                height,
-            } => crate::types::Interface::create(
+            } => crate::Interface::create(
                 id,
                 name,
                 as_string(description),
-                InterfaceConfig::Image { url, width, height },
+                InterfaceConfig::Image { url },
             ),
             Interface::Job {
                 id,
                 name,
                 description,
-            } => crate::types::Interface::create(
-                id,
-                name,
-                as_string(description),
-                InterfaceConfig::Job,
-            ),
+            } => crate::Interface::create(id, name, as_string(description), InterfaceConfig::Job),
         }
     }
 }
@@ -103,18 +82,17 @@ pub struct Command {
     id: Uuid,
     name: String,
     description: Option<String>,
-    schema: Option<String>,
 }
 
-impl TryFrom<Command> for crate::types::Command {
+impl TryFrom<Command> for crate::Command {
     type Error = EventModelError;
 
     fn try_from(value: Command) -> Result<Self, Self::Error> {
-        crate::types::Command::create(
+        crate::Command::create(
             value.id,
             value.name,
             as_string(value.description),
-            Schema::new(as_string(value.schema)),
+            Default::default(),
         )
     }
 }
@@ -124,18 +102,17 @@ pub struct Event {
     id: Uuid,
     name: String,
     description: Option<String>,
-    schema: Option<String>,
 }
 
-impl TryFrom<Event> for crate::types::Event {
+impl TryFrom<Event> for crate::Event {
     type Error = EventModelError;
 
     fn try_from(value: Event) -> Result<Self, Self::Error> {
-        crate::types::Event::create(
+        crate::Event::create(
             value.id,
             value.name,
             as_string(value.description),
-            Schema::new(as_string(value.schema)),
+            Default::default(),
         )
     }
 }
@@ -145,18 +122,17 @@ pub struct ReadModel {
     id: Uuid,
     name: String,
     description: Option<String>,
-    schema: Option<String>,
 }
 
-impl TryFrom<ReadModel> for crate::types::ReadModel {
+impl TryFrom<ReadModel> for crate::ReadModel {
     type Error = EventModelError;
 
     fn try_from(value: ReadModel) -> Result<Self, Self::Error> {
-        crate::types::ReadModel::create(
+        crate::ReadModel::create(
             value.id,
             value.name,
             as_string(value.description),
-            Schema::new(as_string(value.schema)),
+            Default::default(),
         )
     }
 }
@@ -167,11 +143,11 @@ pub struct Audience {
     name: String,
 }
 
-impl TryFrom<Audience> for crate::types::Audience {
+impl TryFrom<Audience> for crate::Audience {
     type Error = EventModelError;
 
     fn try_from(value: Audience) -> Result<Self, Self::Error> {
-        crate::types::Audience::create(value.id, value.name)
+        crate::Audience::create(value.id, value.name)
     }
 }
 
@@ -181,11 +157,11 @@ pub struct Stream {
     name: String,
 }
 
-impl TryFrom<Stream> for crate::types::Stream {
+impl TryFrom<Stream> for crate::Stream {
     type Error = EventModelError;
 
     fn try_from(value: Stream) -> Result<Self, Self::Error> {
-        crate::types::Stream::create(value.id, value.name)
+        crate::Stream::create(value.id, value.name)
     }
 }
 
@@ -194,33 +170,29 @@ impl TryFrom<Stream> for crate::types::Stream {
 pub enum Placement {
     Interface {
         id: Uuid,
-        index: u32,
+        index: usize,
         interface: Uuid,
         audience: Option<Uuid>,
     },
     Command {
         id: Uuid,
-        index: u32,
+        index: usize,
         command: Uuid,
-        schema: Option<String>,
     },
     Event {
         id: Uuid,
-        index: u32,
+        index: usize,
         event: Uuid,
         stream: Option<Uuid>,
-        schema: Option<String>,
     },
     ReadModel {
         id: Uuid,
-        index: u32,
-        #[serde(rename = "read-model")]
+        index: usize,
         read_model: Uuid,
-        schema: Option<String>,
     },
 }
 
-impl TryFrom<Placement> for crate::types::Placement {
+impl TryFrom<Placement> for crate::Placement {
     type Error = EventModelError;
 
     fn try_from(value: Placement) -> Result<Self, Self::Error> {
@@ -230,46 +202,39 @@ impl TryFrom<Placement> for crate::types::Placement {
                 index,
                 interface,
                 audience,
-            } => Ok(crate::types::Placement::Interface {
+            } => Ok(crate::Placement::Interface {
                 id,
                 index,
                 interface,
                 audience,
             }),
-            Placement::Command {
+            Placement::Command { id, index, command } => Ok(crate::Placement::Command {
                 id,
                 index,
                 command,
-                schema,
-            } => Ok(crate::types::Placement::Command {
-                id,
-                index,
-                command,
-                schema: Schema::new(as_string(schema)),
+                schema: Default::default(),
             }),
             Placement::Event {
                 id,
                 index,
                 event,
                 stream,
-                schema,
-            } => Ok(crate::types::Placement::Event {
+            } => Ok(crate::Placement::Event {
                 id,
                 index,
                 event,
                 stream,
-                schema: Schema::new(as_string(schema)),
+                schema: Default::default(),
             }),
             Placement::ReadModel {
                 id,
                 index,
                 read_model,
-                schema,
-            } => Ok(crate::types::Placement::ReadModel {
+            } => Ok(crate::Placement::ReadModel {
                 id,
                 index,
                 read_model,
-                schema: Schema::new(as_string(schema)),
+                schema: Default::default(),
             }),
         }
     }
@@ -292,5 +257,90 @@ pub struct FlowArrow {
     to_anchor: Option<Anchor>,
 }
 
+impl From<Option<Anchor>> for crate::Anchor {
+    fn from(value: Option<Anchor>) -> Self {
+        match value {
+            Some(Anchor::Top) => crate::Anchor::Top,
+            Some(Anchor::Left) => crate::Anchor::Left,
+            Some(Anchor::Bottom) => crate::Anchor::Bottom,
+            Some(Anchor::Right) => crate::Anchor::Right,
+            None => crate::Anchor::None,
+        }
+    }
+}
+
+impl TryFrom<FlowArrow> for crate::FlowArrow {
+    type Error = EventModelError;
+
+    fn try_from(value: FlowArrow) -> Result<Self, Self::Error> {
+        crate::FlowArrow::create(
+            value.from,
+            value.from_anchor.into(),
+            value.to,
+            value.to_anchor.into(),
+        )
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct JsonV1_0_0Transfer {}
+pub struct JsonV1_0_0Transfer {
+    interfaces: HashMap<Uuid, Interface>,
+    commands: HashMap<Uuid, Command>,
+    events: HashMap<Uuid, Event>,
+    read_models: HashMap<Uuid, ReadModel>,
+    audiences: Vec<Audience>,
+    streams: Vec<Stream>,
+    placements: HashMap<Uuid, Placement>,
+    flows: HashMap<Uuid, FlowArrow>,
+    schema: String,
+}
+
+impl TryFrom<JsonV1_0_0Transfer> for EventModelDataTransfer {
+    type Error = EventModelError;
+
+    fn try_from(value: JsonV1_0_0Transfer) -> Result<Self, Self::Error> {
+        Ok(EventModelDataTransfer {
+            schema: value.schema,
+            interfaces: value
+                .interfaces
+                .into_values()
+                .map(|i| crate::Interface::try_from(i).map(|i| (i.id(), i)))
+                .try_collect()?,
+            commands: value
+                .commands
+                .into_values()
+                .map(|c| crate::Command::try_from(c).map(|c| (c.id().to_owned(), c)))
+                .try_collect()?,
+            events: value
+                .events
+                .into_values()
+                .map(|e| crate::Event::try_from(e).map(|e| (e.id().to_owned(), e)))
+                .try_collect()?,
+            read_models: value
+                .read_models
+                .into_values()
+                .map(|r| crate::ReadModel::try_from(r).map(|r| (r.id().to_owned(), r)))
+                .try_collect()?,
+            audiences: value
+                .audiences
+                .into_iter()
+                .map(crate::Audience::try_from)
+                .try_collect()?,
+            streams: value
+                .streams
+                .into_iter()
+                .map(crate::Stream::try_from)
+                .try_collect()?,
+            placements: value
+                .placements
+                .into_values()
+                .map(|p| crate::Placement::try_from(p).map(|p| (p.id().to_owned(), p)))
+                .try_collect()?,
+            flows: value
+                .flows
+                .into_values()
+                .map(|p| crate::FlowArrow::try_from(p).map(|p| (p.id().to_owned(), p)))
+                .try_collect()?,
+        })
+    }
+}

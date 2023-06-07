@@ -7,7 +7,7 @@ use self::{v0_1_0_beta::JsonV0_1_0BetaTransfer, v1_0_0::JsonV1_0_0Transfer};
 mod v0_1_0_beta;
 mod v1_0_0;
 
-pub fn as_string(option: Option<String>) -> String {
+fn as_string(option: Option<String>) -> String {
     match option {
         Some(s) => s,
         None => String::default(),
@@ -39,13 +39,8 @@ pub fn import(json: &[u8]) -> Result<JsonImport, serde_json::Error> {
     serde_json::from_slice(json)
 }
 
-#[derive(Debug, Clone, Serialize)]
-pub enum JsonExport {
-    V1_0_0(JsonV1_0_0Transfer),
-}
-
-pub fn export(_model: &JsonExport) -> String {
-    todo!()
+pub trait Export {
+    fn export(&self) -> Result<String, serde_json::Error>;
 }
 
 #[cfg(test)]

@@ -5,10 +5,7 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
-use crate::{
-    api::errors::EventModelError,
-    types::{interface::InterfaceConfig, Entity, Schema},
-};
+use crate::{Entity, EventModelDataTransfer, EventModelError, InterfaceConfig};
 
 use super::as_string;
 

@@ -1,27 +1,21 @@
 <script lang="ts">
-  import { enhance } from "$app/forms";
+  import { goto } from '$app/navigation';
   import type { LayoutData } from './$types'
 
-  export let data: LayoutData
+  export let data: LayoutData;
+  const { supabase } = data;
 
-  let loading = false;
-
-  function handleSubmit() {
-		loading = true;
-		return async () => {
-			loading = false;
-		};
-	}
+  const handleSubmit = async () => {
+    await supabase.auth.signOut()
+    await goto("/auth")
+	};
 </script>
 
 {#if data.session?.user}
   <p>
     You're already signed in. If you'd like to sign in with a
-    different account, first
+    different account, first <button class="button inline" on:click|preventDefault={handleSubmit}>sign out</button>.
   </p>
-  <form method="POST" action="/auth/sign-out" use:enhance={handleSubmit}>
-    <button class="button inline" disabled={loading}>sign out</button>
-  </form>.
 {:else}
   <slot />
 {/if}

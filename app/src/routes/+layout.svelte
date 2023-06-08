@@ -8,6 +8,7 @@
 
   export let data: LayoutData;
 
+	let { supabase, session } = data;
   $: ({ supabase, session } = data)
 
   onMount(() => {

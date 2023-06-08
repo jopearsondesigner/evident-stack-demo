@@ -34,17 +34,18 @@
   import DropdownMenu from '$components/dropdown/DropdownMenu.svelte';
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
-  import { enhance } from '$app/forms';
 
   import type { Readable } from 'svelte/store';
   import { onMount } from 'svelte';
   import { loadSyncWorker } from '$lib/state/sync';
+  import { goto } from '$app/navigation';
   // import Download from '$components/icons/Download.svelte';
   // import ImagePlacholder from '$components/icons/ImagePlacholder.svelte';
 
   export let data: LayoutData;
 
-  const { grid, session } = data; // TODO: this shouldn't be grid, but rather another read model
+  // TODO: this shouldn't be grid, but rather another read model
+  const { grid, session, supabase } = data;
 
   // ==== Model Sync State
 
@@ -58,13 +59,9 @@
 
   // === Authentication
 
-  let signOutLoading = false;
-
-  function handleSignOutSubmit() {
-    signOutLoading = true;
-    return async () => {
-      signOutLoading = false;
-    };
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    await goto("/auth")
   }
 
   // === End Authentication
@@ -133,9 +130,7 @@
             <DropdownItem href="/account">Account</DropdownItem>
             <DropdownDivider />
             <DropdownItem className="flex-1">
-              <form method="POST" action="/auth/sign-out" use:enhance={handleSignOutSubmit}>
-                <button class="button inline" disabled={signOutLoading}>sign out</button>
-              </form>
+              <button class="button inline" on:click|preventDefault={handleSignOut}>Sign Out</button>
             </DropdownItem>
           </DropdownMenu>
 
@@ -157,16 +152,7 @@
                 pathName={Support} />
             </IconButton>
           </MaybeTooltip>
-        {:else}
-          <Button
-            href="/auth/sign-in"
-            gradient
-            color="brandStackPrimary"
-            size="sm"
-            on:click
-            label="Sign In"
-            />
-          {/if}
+        {/if}
         </NavToolbar>
     </NavInner>
   </Navbar>

@@ -19,23 +19,18 @@
   import DropdownMenu from '$components/dropdown/DropdownMenu.svelte';
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
-  import { enhance } from '$app/forms';
-  import Button from '$components/Button.svelte';
+  import { goto } from '$app/navigation';
 
   // === Authentication
 
   export let data: LayoutData;
 
-  $: ({ session } = data)
+  $: ({ session, supabase } = data);
 
-  let signOutLoading = false;
-
-  function handleSignOutSubmit() {
-    signOutLoading = true;
-    return async () => {
-      signOutLoading = false;
-    };
-  }
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    await goto("/auth")
+  };
 
   // === End Authentication
 </script>
@@ -74,10 +69,8 @@
           </DropdownItem>
           <DropdownItem href="/account">Account</DropdownItem>
           <DropdownDivider />
-          <DropdownItem className="flex-1">
-            <form method="POST" action="/auth/sign-out" use:enhance={handleSignOutSubmit}>
-              <button class="button inline" disabled={signOutLoading}>sign out</button>
-            </form>
+          <DropdownItem>
+            <button class="button inline" on:click|preventDefault={handleSignOut}>Sign Out</button>
           </DropdownItem>
         </DropdownMenu>
 
@@ -99,15 +92,7 @@
               pathName={Support} />
           </IconButton>
         </MaybeTooltip>
-      {:else}
-        <Button
-          href="/auth/sign-in"
-          gradient
-          color="brandStackPrimary"
-          size="sm"
-          on:click
-          label="Sign In" />
-        {/if}
+      {/if}
       </NavToolbar>
   </NavInner>
 </Navbar>

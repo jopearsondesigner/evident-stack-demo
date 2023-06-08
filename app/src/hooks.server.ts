@@ -30,13 +30,14 @@ const authentication = (async ({ event, resolve }) => {
 const authorization = (async ({ event, resolve }) => {
   if (!event.url.pathname.startsWith('/auth')) {
     if (!(await event.locals.getSession())) {
-      throw redirect(303, '/auth/sign-in')
+      event.cookies.set('redirect_to', event.url.pathname, { path: '/' });
+      throw redirect(303, '/auth');
     }
   }
-  return resolve(event)
+  return resolve(event);
 }) satisfies Handle;
 
 export const handle: Handle = sequence(
   authentication,
-  authorization
+  authorization,
 );

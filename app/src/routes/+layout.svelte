@@ -8,6 +8,7 @@
 
   export let data: LayoutData;
 
+	let { supabase, session } = data;
   $: ({ supabase, session } = data)
 
   onMount(() => {
@@ -24,5 +25,9 @@
 
   // === End Authentication Handling
 </script>
+
+<svelte:head>
+  <title>Evident Stack</title>
+</svelte:head>
 
 <slot />

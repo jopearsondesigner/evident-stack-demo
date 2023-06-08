@@ -10,12 +10,12 @@
   <title>Login | Evident Stack</title>
 </svelte:head>
 
-<div class="container mx-auto">
+<div class="container mx-auto p-10">
   <h1>Login</h1>
   <Auth
     supabaseClient={data.supabase}
     view="magic_link"
-    redirectTo={`${data.url}/auth/sign-in/loading?redirect=/`}
+    redirectTo={`${data.url}/auth/callback`}
     showLinks={false}
     appearance={{ theme: ThemeSupa }} />
 </div>

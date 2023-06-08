@@ -16,7 +16,7 @@
 
   export let data: PageData;
 
-  const { decider, handle_close, placement } = data;
+  const { decider, grid, handle_close, placement } = data;
 
   let placement_kind_display = '';
   $: if (placement?.kind) {
@@ -83,6 +83,10 @@
     }
   }
 </script>
+
+<svelte:head>
+  <title>Placement Details | {placement?.name} | Design | {$grid?.name ?? "Project"} | Evident Stack</title>
+</svelte:head>
 
 <Drawer placement="right" class="" drawerRight hidden={false} on:close={handle_close}>
   <div slot="extra">

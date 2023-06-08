@@ -23,13 +23,8 @@
   import Sidebar from '$components/drawer/Sidebar.svelte';
   import SidebarContainer from '$components/drawer/SidebarContainer.svelte';
   import SidebarGroup from '$components/drawer/SidebarGroup.svelte';
-  import SidebarDropdownWrapper from '$components/drawer/SidebarDropdownWrapper.svelte';
   import { Accordion } from 'svelte-accessible-accordion';
-  import SidebarDropdownItem from '$components/drawer/SidebarDropdownItem.svelte';
   import SidebarItem from '$components/drawer/SidebarItem.svelte';
-  import Textarea from '$components/form/Textarea.svelte';
-  import Label from '$components/form/Label.svelte';
-  import Schema from '$components/icons/Schema.svelte';
   import Download from '$components/icons/Download.svelte';
   import DesignLogo from '$components/assets/images/product/design/evidentDesignLogo.svg';
   import DataLogo from '$components/assets/images/product/data/evidentDataLogo.svg';
@@ -39,17 +34,18 @@
   import DropdownMenu from '$components/dropdown/DropdownMenu.svelte';
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
-  import { enhance } from '$app/forms';
 
   import type { Readable } from 'svelte/store';
   import { onMount } from 'svelte';
   import { loadSyncWorker } from '$lib/state/sync';
+  import { goto } from '$app/navigation';
   // import Download from '$components/icons/Download.svelte';
   // import ImagePlacholder from '$components/icons/ImagePlacholder.svelte';
 
   export let data: LayoutData;
 
-  const { grid, session } = data;
+  // TODO: this shouldn't be grid, but rather another read model
+  const { grid, session, supabase } = data;
 
   // ==== Model Sync State
 
@@ -63,13 +59,9 @@
 
   // === Authentication
 
-  let signOutLoading = false;
-
-  function handleSignOutSubmit() {
-    signOutLoading = true;
-    return async () => {
-      signOutLoading = false;
-    };
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    await goto("/auth")
   }
 
   // === End Authentication
@@ -92,6 +84,11 @@
 
   // == end left-nav state
 </script>
+
+<!-- TODO: don't use `grid` here -->
+<svelte:head>
+  <title>{$grid?.name ?? "Project"} | Evident Stack</title>
+</svelte:head>
 
 <div class="min-h-screen">
   <Navbar website={false}>
@@ -133,9 +130,7 @@
             <DropdownItem href="/account">Account</DropdownItem>
             <DropdownDivider />
             <DropdownItem className="flex-1">
-              <form method="POST" action="/auth/sign-out" use:enhance={handleSignOutSubmit}>
-                <button class="button inline" disabled={signOutLoading}>sign out</button>
-              </form>
+              <button class="button inline" on:click|preventDefault={handleSignOut}>Sign Out</button>
             </DropdownItem>
           </DropdownMenu>
 
@@ -157,16 +152,7 @@
                 pathName={Support} />
             </IconButton>
           </MaybeTooltip>
-        {:else}
-          <Button
-            href="/auth/sign-in"
-            gradient
-            color="brandStackPrimary"
-            size="sm"
-            on:click
-            label="Sign In"
-            />
-          {/if}
+        {/if}
         </NavToolbar>
     </NavInner>
   </Navbar>
@@ -174,6 +160,7 @@
   <span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 mt-16"><ThemeSwitch /></span>
 
   <Drawer placement="left" hidden={false}>
+    <!-- TODO: don't use `grid` here -->
     <Sidebar name={$grid?.name ?? "Project Name"}
              description={$grid?.description ?? "Project Description"}
              sync_status={$sync_status}

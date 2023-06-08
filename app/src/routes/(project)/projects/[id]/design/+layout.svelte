@@ -20,6 +20,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Design | {$grid?.name ?? "Project"} | Evident Stack</title>
+</svelte:head>
+
 <slot />
 
 {#if decider && $grid}

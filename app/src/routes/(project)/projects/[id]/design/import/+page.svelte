@@ -10,7 +10,7 @@
 
   export let data: PageData;
 
-  const { decider } = data;
+  const { decider, grid } = data;
 
   let offset: number;
   $: offset = parseIntOr($page.url.searchParams.get('column'), 0);
@@ -28,6 +28,10 @@
     handleClose();
   };
 </script>
+
+<svelte:head>
+  <title>Import JSON | Design | {$grid?.name ?? "Project"} | Evident Stack</title>
+</svelte:head>
 
 <Modal open={true} size="xs" autoclose title="Import JSON File" on:close={handleClose}>
   <div class="text-center w-full inline-flex justify-center items-center p px-6">

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{EventModelDataTransfer, EventModelError};
+use crate::{EventModelData, EventModelDataTransfer, EventModelError};
 
 use self::{v0_1_0_beta::JsonV0_1_0BetaTransfer, v1_0_0::JsonV1_0_0Transfer};
 
@@ -39,7 +39,7 @@ pub fn import(json: &[u8]) -> Result<JsonImport, serde_json::Error> {
     serde_json::from_slice(json)
 }
 
-pub trait Export {
+pub trait JsonExport {
     fn export(&self) -> Result<String, serde_json::Error>;
 }
 

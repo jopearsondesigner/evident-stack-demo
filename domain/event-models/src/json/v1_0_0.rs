@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 use crate::{Entity, EventModelDataTransfer, EventModelError, InterfaceConfig};
 
-use super::as_string;
+use super::{as_string, JsonExport};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "lowercase")]
@@ -342,5 +342,11 @@ impl TryFrom<JsonV1_0_0Transfer> for EventModelDataTransfer {
                 .map(|p| crate::FlowArrow::try_from(p).map(|p| (p.id().to_owned(), p)))
                 .try_collect()?,
         })
+    }
+}
+
+impl JsonExport for JsonV1_0_0Transfer {
+    fn export(&self) -> Result<String, serde_json::Error> {
+        todo!()
     }
 }

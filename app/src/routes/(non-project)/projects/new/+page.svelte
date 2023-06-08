@@ -17,6 +17,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>New Project | Evident Stack</title>
+</svelte:head>
+
 <form on:submit|preventDefault={handleCreateEventModel}>
   <div class="form-control w-full max-w-xs">
     <label class="label" for="name">

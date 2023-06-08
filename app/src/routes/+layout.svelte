@@ -25,4 +25,8 @@
   // === End Authentication Handling
 </script>
 
+<svelte:head>
+  <title>Evident Stack</title>
+</svelte:head>
+
 <slot />

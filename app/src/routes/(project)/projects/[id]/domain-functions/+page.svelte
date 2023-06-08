@@ -15,8 +15,7 @@
         color="brandStackPrimary"
         size="md"
         label="Keep me updated"
-        class="m-3"
-      />
+        class="m-3" />
     </div>
   </div>
 </div>

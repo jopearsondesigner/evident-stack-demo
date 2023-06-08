@@ -23,13 +23,8 @@
   import Sidebar from '$components/drawer/Sidebar.svelte';
   import SidebarContainer from '$components/drawer/SidebarContainer.svelte';
   import SidebarGroup from '$components/drawer/SidebarGroup.svelte';
-  import SidebarDropdownWrapper from '$components/drawer/SidebarDropdownWrapper.svelte';
   import { Accordion } from 'svelte-accessible-accordion';
-  import SidebarDropdownItem from '$components/drawer/SidebarDropdownItem.svelte';
   import SidebarItem from '$components/drawer/SidebarItem.svelte';
-  import Textarea from '$components/form/Textarea.svelte';
-  import Label from '$components/form/Label.svelte';
-  import Schema from '$components/icons/Schema.svelte';
   import Download from '$components/icons/Download.svelte';
   import DesignLogo from '$components/assets/images/product/design/evidentDesignLogo.svg';
   import DataLogo from '$components/assets/images/product/data/evidentDataLogo.svg';
@@ -49,7 +44,7 @@
 
   export let data: LayoutData;
 
-  const { grid, session } = data;
+  const { grid, session } = data; // TODO: this shouldn't be grid, but rather another read model
 
   // ==== Model Sync State
 
@@ -92,6 +87,11 @@
 
   // == end left-nav state
 </script>
+
+<!-- TODO: don't use `grid` here -->
+<svelte:head>
+  <title>{$grid?.name ?? "Project"} | Evident Stack</title>
+</svelte:head>
 
 <div class="min-h-screen">
   <Navbar website={false}>
@@ -174,6 +174,7 @@
   <span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 mt-16"><ThemeSwitch /></span>
 
   <Drawer placement="left" hidden={false}>
+    <!-- TODO: don't use `grid` here -->
     <Sidebar name={$grid?.name ?? "Project Name"}
              description={$grid?.description ?? "Project Description"}
              sync_status={$sync_status}

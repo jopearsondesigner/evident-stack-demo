@@ -59,6 +59,20 @@ export interface Database {
           model?: string
           role?: Database["public"]["Enums"]["role"]
         }
+        Relationships: [
+          {
+            foreignKeyName: "model_collaborator_invitations_invitor_fkey"
+            columns: ["invitor"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "model_collaborator_invitations_model_fkey"
+            columns: ["model"]
+            referencedRelation: "models"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       model_collaborators: {
         Row: {
@@ -82,6 +96,26 @@ export interface Database {
           role?: Database["public"]["Enums"]["role"]
           user?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "model_collaborators_grantor_fkey"
+            columns: ["grantor"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "model_collaborators_model_fkey"
+            columns: ["model"]
+            referencedRelation: "models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "model_collaborators_user_fkey"
+            columns: ["user"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       model_events: {
         Row: {
@@ -111,6 +145,20 @@ export interface Database {
           type?: Database["public"]["Enums"]["event_type"]
           user?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "model_events_subject_fkey"
+            columns: ["subject"]
+            referencedRelation: "models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "model_events_user_fkey"
+            columns: ["user"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       model_patches: {
         Row: {
@@ -131,6 +179,14 @@ export interface Database {
           id?: string
           model?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "model_patches_model_fkey"
+            columns: ["model"]
+            referencedRelation: "models"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       models: {
         Row: {
@@ -154,6 +210,14 @@ export interface Database {
           id?: string
           name?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "models_creator_fkey"
+            columns: ["creator"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
@@ -301,6 +365,14 @@ export interface Database {
           public?: boolean | null
           updated_at?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "buckets_owner_fkey"
+            columns: ["owner"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       migrations: {
         Row: {
@@ -321,6 +393,7 @@ export interface Database {
           id?: number
           name?: string
         }
+        Relationships: []
       }
       objects: {
         Row: {
@@ -359,6 +432,20 @@ export interface Database {
           updated_at?: string | null
           version?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "objects_bucketId_fkey"
+            columns: ["bucket_id"]
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "objects_owner_fkey"
+            columns: ["owner"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
@@ -390,7 +477,7 @@ export interface Database {
         Args: {
           name: string
         }
-        Returns: string[]
+        Returns: unknown
       }
       get_size_by_bucket: {
         Args: Record<PropertyKey, never>

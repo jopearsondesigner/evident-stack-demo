@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('index page has expected h1', async ({ page }) => {
+test('true == true', async ({ page }) => {
 	await page.goto('/');
 	expect(true == true);
 });

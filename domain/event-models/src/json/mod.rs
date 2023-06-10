@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{EventModelDataTransfer, EventModelError};
 
-use self::{v0_1_0_beta::JsonV0_1_0BetaTransfer, v1_0_0::JsonV1_0_0Transfer};
+pub use self::{v0_1_0_beta::JsonV0_1_0BetaTransfer, v1_0_0::JsonV1_0_0Transfer};
 
 mod v0_1_0_beta;
 mod v1_0_0;

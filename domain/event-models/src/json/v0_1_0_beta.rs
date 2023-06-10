@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 use crate::{Entity, EventModelDataTransfer, EventModelError, InterfaceConfig};
 
-use super::as_string;
+use super::option_as_string;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "interface/type")]
@@ -81,17 +81,32 @@ impl TryFrom<Interface> for crate::Interface {
                 id,
                 name,
                 description,
-            } => crate::Interface::create(id, name, as_string(description), InterfaceConfig::Blank),
+            } => crate::Interface::create(
+                id,
+                name,
+                option_as_string(description),
+                InterfaceConfig::Blank,
+            ),
             Interface::Rest {
                 id,
                 name,
                 description,
-            } => crate::Interface::create(id, name, as_string(description), InterfaceConfig::Blank),
+            } => crate::Interface::create(
+                id,
+                name,
+                option_as_string(description),
+                InterfaceConfig::Blank,
+            ),
             Interface::Html {
                 id,
                 name,
                 description,
-            } => crate::Interface::create(id, name, as_string(description), InterfaceConfig::Blank),
+            } => crate::Interface::create(
+                id,
+                name,
+                option_as_string(description),
+                InterfaceConfig::Blank,
+            ),
             Interface::Figma {
                 id,
                 name,
@@ -100,7 +115,7 @@ impl TryFrom<Interface> for crate::Interface {
             } => crate::Interface::create(
                 id,
                 name,
-                as_string(description),
+                option_as_string(description),
                 InterfaceConfig::Figma { url },
             ),
             Interface::Image {
@@ -111,14 +126,19 @@ impl TryFrom<Interface> for crate::Interface {
             } => crate::Interface::create(
                 id,
                 name,
-                as_string(description),
+                option_as_string(description),
                 InterfaceConfig::Image { url },
             ),
             Interface::Job {
                 id,
                 name,
                 description,
-            } => crate::Interface::create(id, name, as_string(description), InterfaceConfig::Job),
+            } => crate::Interface::create(
+                id,
+                name,
+                option_as_string(description),
+                InterfaceConfig::Job,
+            ),
         }
     }
 }
@@ -140,7 +160,7 @@ impl TryFrom<Command> for crate::Command {
         crate::Command::create(
             value.id,
             value.name,
-            as_string(value.description),
+            option_as_string(value.description),
             Default::default(),
         )
     }
@@ -163,7 +183,7 @@ impl TryFrom<Event> for crate::Event {
         crate::Event::create(
             value.id,
             value.name,
-            as_string(value.description),
+            option_as_string(value.description),
             Default::default(),
         )
     }
@@ -186,7 +206,7 @@ impl TryFrom<ReadModel> for crate::ReadModel {
         crate::ReadModel::create(
             value.id,
             value.name,
-            as_string(value.description),
+            option_as_string(value.description),
             Default::default(),
         )
     }

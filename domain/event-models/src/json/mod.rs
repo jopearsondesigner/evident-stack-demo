@@ -7,10 +7,18 @@ use self::{v0_1_0_beta::JsonV0_1_0BetaTransfer, v1_0_0::JsonV1_0_0Transfer};
 mod v0_1_0_beta;
 mod v1_0_0;
 
-fn as_string(option: Option<String>) -> String {
+fn option_as_string(option: Option<String>) -> String {
     match option {
         Some(s) => s,
         None => String::default(),
+    }
+}
+
+fn string_as_option(string: String) -> Option<String> {
+    if string.is_empty() {
+        None
+    } else {
+        Some(string)
     }
 }
 

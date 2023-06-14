@@ -1,4 +1,4 @@
-# oNote Editor
+# Evident Stack UI
 
 Powered by:
 
@@ -6,7 +6,9 @@ Powered by:
 * [Tailwind CSS](https://tailwindcss.com/) and [DaisyUI](https://daisyui.com/) for styling and components
 * [Storybook](https://storybook.js.org/) to help manage our Design System and test our components
 * [Vite](https://vitejs.dev/) for building/packaging/etc.
-
+* [Rust/WASM](https://rustwasm.github.io/book/) for state management and client/edge/server code sharing
+* [Automerge](https://automerge.org/) for collaboration and state management
+* [Supabase](https://supabase.com/) for auth, DB, and real-time streams
 
 ## Install dependencies
 

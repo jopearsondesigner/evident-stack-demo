@@ -13,8 +13,9 @@ use crate::strategies::{ReifyDecideSave, ReifyDecideSaveError, StateRepository};
 use automerge::ActorId;
 use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError};
 use event_models::api::commands::EventModelCommand;
+use event_models::json::{JsonExport, JsonV1_0_0Transfer};
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
-use event_models::{Anchor, ColumnShift, EventModel, EventModelError, InterfaceConfig};
+use event_models::{Anchor, ColumnShift, EventModel, EventModelError, Named};
 use js_sys::Uint8Array;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
@@ -148,6 +149,14 @@ fn get_actor() -> ActorId {
 
 #[wasm_bindgen]
 impl EventModelStateManager {
+    pub async fn name(&mut self) -> Option<String> {
+        if let Ok(EventModelState::EventModel(model)) = self.repository.reify().await {
+            Some(model.name().into())
+        } else {
+            None
+        }
+    }
+
     #[wasm_bindgen(constructor)]
     pub fn new(
         maybe_id_str: Option<String>,
@@ -186,6 +195,23 @@ impl EventModelStateManager {
             Ok(())
         } else {
             Err("Can't load data into a state manager with no model key!".into())
+        }
+    }
+
+    pub async fn export(&mut self) -> Result<String, JsValue> {
+        let illegal_state = JsValue::from_str("Can't export model");
+        match self.repository.reify().await {
+            Ok(m) => match m {
+                EventModelState::BeforeCreation => Err(illegal_state),
+                EventModelState::Deleted(_) => Err(illegal_state),
+                EventModelState::EventModel(model) => {
+                    let transfer: JsonV1_0_0Transfer = model.into();
+                    transfer
+                        .export()
+                        .map_err(|err| JsValue::from_str(&format!("RepositoryError: {:?}", err)))
+                }
+            },
+            Err(e) => Err(JsValue::from_str(&format!("RepositoryError: {:?}", e))),
         }
     }
 

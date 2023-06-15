@@ -45,7 +45,7 @@
   export let data: LayoutData;
 
   // TODO: this shouldn't be grid, but rather another read model
-  const { grid, session, supabase } = data;
+  const { decider, grid, session, supabase } = data;
 
   // ==== Model Sync State
 
@@ -180,7 +180,8 @@
                 color="ghost"
                 size="sm"
                 className="my-4"
-                class="">
+                class=""
+                on:click={decider.export_json}>
                 <Icon
                   slot="icon"
                   name="download"

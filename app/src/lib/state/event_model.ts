@@ -46,10 +46,13 @@ const initialize_decider = async (id: string | undefined, user: string) => {
     grid: store,
     decider: {
       export_json: async () => {
-        try {
-          exportJson(await manager.name(), await manager.export());
-        } catch (e) {
-          console.error("Error exporting JSON:", e);
+        let name = await manager.name();
+        if (name) {
+          try {
+            exportJson(name, await manager.export());
+          } catch (e) {
+            console.error("Error exporting JSON:", e);
+          }
         }
       },
       placement_by_id: async (placement_id: string) => {

@@ -1,6 +1,7 @@
 import { default as init, EventModelGrid, EventModelStateManager, setPanicHook } from "state-client";
 import { derived, readable, type Readable } from 'svelte/store';
 import type { ReorderableLaneType } from '$components/design/Grid';
+import { exportJson } from "$lib/export";
 
 const initialize_decider = async (id: string | undefined, user: string) => {
   // Initialize Wasm decider
@@ -44,6 +45,13 @@ const initialize_decider = async (id: string | undefined, user: string) => {
   return {
     grid: store,
     decider: {
+      export_json: async () => {
+        try {
+          exportJson(await manager.name(), await manager.export());
+        } catch (e) {
+          console.error("Error exporting JSON:", e);
+        }
+      },
       placement_by_id: async (placement_id: string) => {
         let grid = await manager.grid();
         return grid.placement_by_id(placement_id);

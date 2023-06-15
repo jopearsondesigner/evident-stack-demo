@@ -15,7 +15,7 @@ use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError
 use event_models::api::commands::EventModelCommand;
 use event_models::json::{JsonExport, JsonV1_0_0Transfer};
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
-use event_models::{Anchor, ColumnShift, EventModel, EventModelError};
+use event_models::{Anchor, ColumnShift, EventModel, EventModelError, Named};
 use js_sys::Uint8Array;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
@@ -149,6 +149,14 @@ fn get_actor() -> ActorId {
 
 #[wasm_bindgen]
 impl EventModelStateManager {
+    pub async fn name(&mut self) -> Option<String> {
+        if let Ok(EventModelState::EventModel(model)) = self.repository.reify().await {
+            Some(model.name().into())
+        } else {
+            None
+        }
+    }
+
     #[wasm_bindgen(constructor)]
     pub fn new(
         maybe_id_str: Option<String>,

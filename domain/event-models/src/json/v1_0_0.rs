@@ -163,8 +163,19 @@ impl<T: EventModelData + Described> From<T> for JsonV1_0_0Transfer {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct JsonV1_0_0Export {
+    #[serde(rename = "spec-version")]
+    spec_version: String,
+    #[serde(rename = "event-model")]
+    event_model: JsonV1_0_0Transfer,
+}
+
 impl JsonExport for JsonV1_0_0Transfer {
     fn export(&self) -> Result<String, serde_json::Error> {
-        serde_json::to_string(self)
+        serde_json::to_string(&JsonV1_0_0Export {
+            spec_version: "1.0.0".to_string(),
+            event_model: self.to_owned(),
+        })
     }
 }

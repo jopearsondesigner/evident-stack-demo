@@ -30,7 +30,7 @@ impl TryFrom<JsonImport> for EventModelDataTransfer {
     fn try_from(value: JsonImport) -> Result<Self, Self::Error> {
         match value {
             JsonImport::V0_1_0Beta(transfer) => transfer.try_into(),
-            JsonImport::V1_0_0(_) => todo!(),
+            JsonImport::V1_0_0(transfer) => transfer.try_into(),
         }
     }
 }

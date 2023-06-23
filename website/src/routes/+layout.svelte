@@ -80,9 +80,8 @@
               color="brandStackPrimary"
               class="flex items-center"
               size="sm"
-              href="https://app.evidentstack.com/auth/sign-in"
-              label="Sign Up"
-            >
+              href="https://app.evidentstack.com/"
+              label="Sign Up">
               <Icon
                 name="arrow-right"
                 slot="icon"
@@ -133,7 +132,7 @@
                 color="brandStackPrimary"
                 class="flex items-center"
                 size="sm"
-                href="https://app.evidentstack.com/auth/sign-in"
+                href="https://app.evidentstack.com/"
                 label="Sign Up"
               >
                 <Icon

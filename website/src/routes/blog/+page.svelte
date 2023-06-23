@@ -115,16 +115,14 @@
                 size="sm"
                 label="Get Started"
                 class="flex items-center"
-                href="https://app.evidentstack.com/auth/sign-in"
-              >
+                href="https://app.evidentstack.com/">
                 <Icon
                   name="arrow-right"
                   slot="icon"
                   class="inline-flex ml-1 stroke-2"
                   iconColor="fill-current text-white"
                   size={12}
-                  pathName={ArrowRight}
-                />
+                  pathName={ArrowRight} />
               </Button>
             </BlogCta>
           </Section>
@@ -132,8 +130,7 @@
       </Column>
       <Column
         class="m-4 border-b border-border-light dark:border-border-dark"
-        customSpan="col-span-2"
-      >
+        customSpan="col-span-2">
         <Article customMargin="mt-0">
           <A href="/blog/event-modeling-explained"
             ><img src={BlogImage1} alt="Event Modeling Explained" class="object-cover" /></A

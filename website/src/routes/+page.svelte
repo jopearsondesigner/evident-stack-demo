@@ -183,7 +183,7 @@
                   size="md"
                   label="Get Started"
                   class="flex items-center"
-                  href="https://app.evidentstack.com/auth/sign-in"
+                  href="https://app.evidentstack.com/"
                 >
                   <Icon
                     name="arrow-right"

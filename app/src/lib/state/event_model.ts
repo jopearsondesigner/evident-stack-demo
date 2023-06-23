@@ -2,6 +2,7 @@ import { default as init, EventModelGrid, EventModelStateManager, setPanicHook }
 import { derived, readable, type Readable } from 'svelte/store';
 import type { ReorderableLaneType } from '$components/design/Grid';
 import { exportJson } from "$lib/export";
+import { upload_interface_image } from "$lib/interface_image_upload";
 
 const initialize_decider = async (id: string | undefined, user: string) => {
   // Initialize Wasm decider
@@ -131,9 +132,21 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       configure_interface: async (
         interface_id_str: string,
         interface_type: string,
-        interface_url: string | undefined,
+        interface_url: string | undefined = undefined,
+        image_blob: Blob | undefined = undefined,
       ) => {
-        return await manager.configure_interface(id!, interface_id_str, interface_type, interface_url);
+        let url: string | undefined;
+        if (image_blob) {
+          try {
+            url = await upload_interface_image(id!, image_blob);
+          } catch (e) {
+            console.error("Error uploading interface image", e);
+            throw e;
+          }
+        } else {
+          url = interface_url;
+        }
+        return await manager.configure_interface(id!, interface_id_str, interface_type, url);
       },
     }
   };

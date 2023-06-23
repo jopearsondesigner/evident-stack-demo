@@ -6,7 +6,6 @@
   import Select from '$components/form/Select.svelte';
   import Input from '$components/form/Input.svelte';
   import Label from '$components/form/Label.svelte';
-  // import ImageUpload from '$components/ImageUpload.svelte';
   import FigmaEmbed from '$components/FigmaEmbed.svelte';
 
   import type { PageData } from './$types';
@@ -16,7 +15,9 @@
 
   export let data: PageData;
 
-  const { decider, grid, handle_close, placement } = data;
+  const { decider, grid, handle_close, placement: initial_placement } = data;
+
+  let placement = initial_placement;
 
   let placement_kind_display = '';
   $: if (placement?.kind) {
@@ -36,11 +37,22 @@
   $: proposed_description_html = markdown(proposed_description);
   let proposed_interface_config_kind: InterfaceType | undefined = undefined;
   let proposed_interface_config_url: string | undefined = undefined;
+  let proposed_image_config_type: 'upload' | 'url';
+  let proposed_image_blobs: FileList | undefined;
+
+  const refreshPlacement = async () => {
+    let placement_id = placement?.id
+    if (placement_id) {
+      placement = await decider?.placement_by_id(placement_id)
+    }
+  }
 
   const handleInterfaceConfigReset = () => {
     if (placement?.interface_config) {
       proposed_interface_config_kind = placement.interface_config.kind;
       proposed_interface_config_url = placement.interface_config.url;
+      proposed_image_config_type = 'upload';
+      proposed_image_blobs = undefined;
     }
   }
 
@@ -71,13 +83,17 @@
         await decider.configure_interface(
           placement.component_id,
           proposed_interface_config_kind,
-          proposed_interface_config_url
+          proposed_interface_config_url,
+          proposed_image_blobs?.item(0) ?? undefined
         );
+        await refreshPlacement()
+        handleInterfaceConfigReset()
       } catch (e) {
         console.error("Error configuring placement", e, {
           component_id: placement?.component_id,
           proposed_interface_config_kind,
-          proposed_interface_config_url
+          proposed_interface_config_url,
+          proposed_image_blobs
         });
       }
     }
@@ -143,10 +159,27 @@
                       items={placement_config_types}
                       bind:value={proposed_interface_config_kind} />
               {#if proposed_interface_config_kind == 'figma'}
-                <Input class="my-6" size="sm" placeholder="Figma URL" bind:value={proposed_interface_config_url} />
+                <Input class="my-6" size="sm" placeholder="Figma URL"
+                       bind:value={proposed_interface_config_url} />
               {/if}
               {#if proposed_interface_config_kind == 'image'}
-                <Input class="my-6" size="sm" placeholder="Image URL" bind:value={proposed_interface_config_url} />
+                <div class="mt-6">
+                  <label>
+	                  <input type=radio bind:group={proposed_image_config_type} name="scoops" value="upload">
+                    Upload
+                  </label>
+                  <label>
+	                  <input type=radio bind:group={proposed_image_config_type} name="scoops" value="url">
+                    Manually enter URL
+                  </label>
+                  {#if proposed_image_config_type == 'url'}
+                    <Input class="my-6" size="sm" placeholder="Image URL"
+                           bind:value={proposed_interface_config_url} />
+                  {:else}
+                    <input type="file" accept="image/png, image/jpeg"
+                           class="my-6" bind:files={proposed_image_blobs} />
+                  {/if}
+                </div>
               {/if}
               <div class="mt-6 space-x-3 col-span-1 place-self-center justify-self-end">
                 <button

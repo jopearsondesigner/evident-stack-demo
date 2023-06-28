@@ -4,7 +4,7 @@ use crate::json::import;
 use crate::{
     Audience, AudienceId, ColumnShift, Command, Component, ComponentId, Entity, Event,
     EventModelDataTransfer, EventModelError, FlowArrow, Interface, InterfaceConfig, Lane, LaneId,
-    Name, Placement, PlacementPosition, ReadModel, Stream, StreamId,
+    Name, Placement, PlacementPosition, ReadModel, Stream, StreamId, TextEdit,
 };
 use crate::{EventModel, EventModelState, ModifiableEventModel};
 use epoch::decider::{DeciderWithContext, Evolver};
@@ -52,30 +52,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         Ok(vec![EventModelEvent::Renamed(*id, valid_name)])
                     }
                     EventModelCommand::EditDescription(_, _, _, _) => todo!(),
-                    EventModelCommand::EditSchema(_, _, _, _) => todo!(),
-
-                    // TODO: delete these:
-                    EventModelCommand::AddToDescription(model_id, index, addition) => {
-                        valid_description_index(model, index)?;
-
-                        Ok(vec![EventModelEvent::AddedToDescription(
-                            *model_id,
-                            *index,
-                            addition.to_owned(),
-                        )])
-                    }
-                    EventModelCommand::DeleteFromDescription(model_id, index, count) => {
-                        valid_description_bounds(model, index, count)?;
-
-                        Ok(vec![EventModelEvent::DeletedFromDescription(
-                            *model_id, *index, *count,
-                        )])
-                    }
-                    EventModelCommand::SetDescription(_, _) => todo!(),
-                    EventModelCommand::SetSchema(_, _) => todo!(),
-                    EventModelCommand::AddToSchema(_, _, _) => todo!(),
-                    EventModelCommand::DeleteFromSchema(_, _) => todo!(),
-                    // </TODO: delete these:>
+                    EventModelCommand::EditData(_, _, _, _) => todo!(),
 
                     // Import
                     EventModelCommand::Import(model_id, offset, json) => {
@@ -88,11 +65,14 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         let data_transfer: EventModelDataTransfer = import.try_into()?;
                         let mut events: Vec<EventModelEvent> = vec![];
 
-                        let schema_str = data_transfer.schema;
-                        events.push(EventModelEvent::AddedToSchema(
+                        let data_str = data_transfer.data;
+                        events.push(EventModelEvent::DataEdited(
                             *model_id,
-                            model.schema().len(),
-                            schema_str,
+                            TextEdit {
+                                position: model.data().len(),
+                                deletions: 0,
+                                addition: data_str,
+                            },
                         ));
 
                         // Shift placements before adding new placements (so that the new placements don't also get shifted...
@@ -271,7 +251,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             id: Uuid::new_v4(),
                             index: *index,
                             command: command_id,
-                            schema: Default::default(),
+                            data: Default::default(),
                         };
                         Ok(vec![
                             EventModelEvent::ComponentDefined(*model_id, component),
@@ -292,7 +272,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             index: *index,
                             event: event_id,
                             stream: *stream,
-                            schema: Default::default(),
+                            data: Default::default(),
                         };
                         Ok(vec![
                             EventModelEvent::ComponentDefined(*model_id, component),
@@ -312,7 +292,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                             id: Uuid::new_v4(),
                             index: *index,
                             read_model: read_model_id,
-                            schema: Default::default(),
+                            data: Default::default(),
                         };
                         Ok(vec![
                             EventModelEvent::ComponentDefined(*model_id, component),
@@ -476,7 +456,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                                     id: Uuid::new_v4(),
                                     index: *index,
                                     command: *command,
-                                    schema: Default::default(),
+                                    data: Default::default(),
                                 },
                             )])
                         }
@@ -487,7 +467,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                                     id: Uuid::new_v4(),
                                     index: *index,
                                     read_model: *read_model,
-                                    schema: Default::default(),
+                                    data: Default::default(),
                                 },
                             )])
                         }
@@ -527,7 +507,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                                 id: Uuid::new_v4(),
                                 index: *index,
                                 event,
-                                schema: Default::default(),
+                                data: Default::default(),
                                 stream,
                             },
                         )])
@@ -538,7 +518,7 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         todo!()
                     }
                     EventModelCommand::EditComponentDescription(_, _, _, _, _) => todo!(),
-                    EventModelCommand::EditComponentSchema(_, _, _, _, _) => todo!(),
+                    EventModelCommand::EditComponentData(_, _, _, _, _) => todo!(),
                     EventModelCommand::ConfigureInterface(
                         model_id,
                         component_id,
@@ -565,21 +545,8 @@ impl<T: EventModel + ModifiableEventModel + Send + Sync> DeciderWithContext for 
                         }
                     }
 
-                    // TODO: delete these:
-                    EventModelCommand::SetComponentDescription(_, _, _) => todo!(),
-                    EventModelCommand::SetComponentSchema(_, _, _) => todo!(),
-                    EventModelCommand::AddToComponentSchema(_, _, _, _) => todo!(),
-                    EventModelCommand::DeleteFromComponentSchema(_, _, _) => todo!(),
-                    EventModelCommand::AddToComponentDescription(_, _, _, _) => {
-                        todo!()
-                    }
-                    EventModelCommand::DeleteFromComponentDescription(_, _, _) => {
-                        todo!()
-                    }
-                    // </TODO: delete these:>
-
                     // Placements
-                    EventModelCommand::EditPlacementSchema(_, _, _, _, _) => todo!(),
+                    EventModelCommand::EditPlacementData(_, _, _, _, _) => todo!(),
 
                     // Flows
                     EventModelCommand::ConnectFlow(
@@ -649,28 +616,8 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::DescriptionEdited(_, _) => todo!(),
-                EventModelEvent::SchemaEdited(_, _) => todo!(),
+                EventModelEvent::DataEdited(_, _) => todo!(),
 
-                // TODO: delete these:
-                EventModelEvent::AddedToDescription(_, index, addition) => {
-                    model.splice_description(*index, 0, addition);
-                    EventModelState::EventModel(model)
-                }
-                EventModelEvent::DeletedFromDescription(_, index, count) => {
-                    model.splice_description(*index, *count, "");
-                    EventModelState::EventModel(model)
-                }
-                EventModelEvent::DescriptionSet(_, _) => todo!(),
-                EventModelEvent::AddedToSchema(_, index, addition) => {
-                    model.splice_schema(*index, 0, addition);
-                    EventModelState::EventModel(model)
-                }
-                EventModelEvent::DeletedFromSchema(_, index, count) => {
-                    model.splice_schema(*index, *count, "");
-                    EventModelState::EventModel(model)
-                }
-                EventModelEvent::SchemaSet(_, _) => todo!(),
-                // TODO: delete these:
                 EventModelEvent::LaneAdded(_, lane, index) => {
                     model.lane_added(lane, *index);
                     EventModelState::EventModel(model)
@@ -699,24 +646,12 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::ComponentDescriptionEdited(_, _, _) => todo!(),
-                EventModelEvent::ComponentSchemaEdited(_, _, _) => todo!(),
+                EventModelEvent::ComponentDataEdited(_, _, _) => todo!(),
                 EventModelEvent::InterfaceConfigured(_, interface_id, config) => {
                     model.interface_configured(interface_id, config);
                     EventModelState::EventModel(model)
                 }
 
-                // TODO: delete these:
-                EventModelEvent::AddedToComponentDescription(_, _, _, _) => {
-                    todo!()
-                }
-                EventModelEvent::DeletedFromComponentDescription(_, _, _) => {
-                    todo!()
-                }
-                EventModelEvent::ComponentDescriptionSet(_, _, _) => todo!(),
-                EventModelEvent::AddedToComponentSchema(_, _, _, _) => todo!(),
-                EventModelEvent::DeletedFromComponentSchema(_, _, _) => todo!(),
-                EventModelEvent::ComponentSchemaSet(_, _, _) => todo!(),
-                // </TODO: delete these:>
                 EventModelEvent::ComponentPlaced(_, placement) => {
                     model.component_placed(placement);
                     EventModelState::EventModel(model)
@@ -734,7 +669,7 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                     EventModelState::EventModel(model)
                 }
 
-                EventModelEvent::PlacementSchemaEdited(_, _) => todo!(),
+                EventModelEvent::PlacementDataEdited(_, _) => todo!(),
 
                 EventModelEvent::FlowConnected(_, flow_arrow) => {
                     model.plus_flow(flow_arrow);

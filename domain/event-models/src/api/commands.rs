@@ -10,16 +10,7 @@ pub enum EventModelCommand {
     Rename(EventModelId, String),
     Delete(EventModelId),
     EditDescription(EventModelId, usize, usize, String),
-    EditSchema(EventModelId, usize, usize, String),
-
-    // TODO: remove these:
-    SetDescription(EventModelId, String),
-    AddToDescription(EventModelId, usize, String),
-    DeleteFromDescription(EventModelId, usize, usize),
-    SetSchema(EventModelId, String),
-    AddToSchema(EventModelId, usize, String),
-    DeleteFromSchema(EventModelId, usize),
-    // </TODO: remove these>
+    EditData(EventModelId, usize, usize, String),
 
     // Composite Actions
     Import(EventModelId, usize, Vec<u8>),
@@ -55,19 +46,10 @@ pub enum EventModelCommand {
     RenameComponent(EventModelId, ComponentId, String),
     ConfigureInterface(EventModelId, ComponentId, String, Option<String>),
     EditComponentDescription(EventModelId, ComponentId, usize, usize, String),
-    EditComponentSchema(EventModelId, ComponentId, usize, usize, String),
-
-    // TODO: remove these:
-    SetComponentDescription(EventModelId, ComponentId, String),
-    AddToComponentDescription(EventModelId, ComponentId, usize, String),
-    DeleteFromComponentDescription(EventModelId, ComponentId, usize),
-    SetComponentSchema(EventModelId, ComponentId, String),
-    AddToComponentSchema(EventModelId, ComponentId, usize, String),
-    DeleteFromComponentSchema(EventModelId, ComponentId, usize),
-    // </TODO: remove these>
+    EditComponentData(EventModelId, ComponentId, usize, usize, String),
 
     // Placement Details
-    EditPlacementSchema(EventModelId, PlacementId, usize, usize, String),
+    EditPlacementData(EventModelId, PlacementId, usize, usize, String),
 
     // Flows
     ConnectFlow(EventModelId, PlacementId, Anchor, PlacementId, Anchor),

@@ -115,7 +115,7 @@ pub struct JsonV1_0_0Transfer {
     streams: Vec<Stream>,
     placements: HashMap<Uuid, Placement>,
     flows: HashMap<Uuid, FlowArrow>,
-    schema: String,
+    data: String,
 }
 
 impl TryFrom<JsonV1_0_0Transfer> for EventModelDataTransfer {
@@ -123,7 +123,7 @@ impl TryFrom<JsonV1_0_0Transfer> for EventModelDataTransfer {
 
     fn try_from(value: JsonV1_0_0Transfer) -> Result<Self, Self::Error> {
         Ok(EventModelDataTransfer {
-            schema: value.schema,
+            data: value.data,
             interfaces: value
                 .interfaces
                 .into_iter()
@@ -158,7 +158,7 @@ impl<T: EventModelData + Described> From<T> for JsonV1_0_0Transfer {
             streams: value.streams(),
             placements: value.placements(),
             flows: value.flows(),
-            schema: value.schema().to_string(),
+            data: value.data().to_string(),
         }
     }
 }

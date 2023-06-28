@@ -128,7 +128,7 @@
               />
               <SidebarDropdownItem feature>
                 <Label class="mt-2 mb-6" color="default"
-                  ><span class="text-body dark:text-white">Event Model Schema</span>
+                  ><span class="text-body dark:text-white">Event Model Data</span>
                   <Textarea
                     placeholder=""
                     value={code}
@@ -246,7 +246,7 @@
         </p>
         <div class="py-3">
           <Label color="default"
-            ><span class="text-body dark:text-white">Component Schema</span>
+            ><span class="text-body dark:text-white">Component Data</span>
             <Textarea
               placeholder=""
               value={code}
@@ -260,7 +260,7 @@
         </div>
         <div class="py-3">
           <Label color="default"
-            ><span class="text-body dark:text-white">Placement Schema</span>
+            ><span class="text-body dark:text-white">Placement Data</span>
             <Textarea
               placeholder=""
               value={code}

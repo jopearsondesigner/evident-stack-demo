@@ -10,17 +10,8 @@ pub enum EventModelEvent {
     Created(EventModelId, Name),
     Renamed(EventModelId, Name),
     DescriptionEdited(EventModelId, TextEdit),
-    SchemaEdited(EventModelId, TextEdit),
+    DataEdited(EventModelId, TextEdit),
     Deleted(EventModelId),
-
-    // TODO: remove these:
-    DescriptionSet(EventModelId, String),
-    AddedToDescription(EventModelId, usize, String),
-    DeletedFromDescription(EventModelId, usize, usize),
-    SchemaSet(EventModelId, String),
-    AddedToSchema(EventModelId, usize, String),
-    DeletedFromSchema(EventModelId, usize, usize),
-    // </TODO: remove these>
 
     // Lanes
     LaneAdded(EventModelId, Lane, usize),
@@ -39,20 +30,11 @@ pub enum EventModelEvent {
 
     // Component Details
     ComponentDescriptionEdited(EventModelId, ComponentId, TextEdit),
-    ComponentSchemaEdited(EventModelId, ComponentId, TextEdit),
+    ComponentDataEdited(EventModelId, ComponentId, TextEdit),
     InterfaceConfigured(EventModelId, InterfaceId, InterfaceConfig),
 
-    // TODO: remove these:
-    ComponentDescriptionSet(EventModelId, ComponentId, String),
-    AddedToComponentDescription(EventModelId, ComponentId, usize, String),
-    DeletedFromComponentDescription(EventModelId, ComponentId, usize),
-    ComponentSchemaSet(EventModelId, ComponentId, String),
-    AddedToComponentSchema(EventModelId, ComponentId, usize, String),
-    DeletedFromComponentSchema(EventModelId, ComponentId, usize),
-    // </TODO: remove these>
-
     // Placement Details
-    PlacementSchemaEdited(EventModelId, TextEdit),
+    PlacementDataEdited(EventModelId, TextEdit),
 
     // Flows
     FlowConnected(EventModelId, FlowArrow),

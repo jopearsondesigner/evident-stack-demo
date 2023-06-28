@@ -25,7 +25,7 @@ pub trait EventModel: Described + EventModelData + Sized {
     fn create(initial: &EventModelState<Self>, id: &EventModelId, name: &Name) -> Self;
 }
 
-pub trait EventModelData: HasSchema + Debug {
+pub trait EventModelData: HasData + Debug {
     fn interfaces(&self) -> HashMap<InterfaceId, Interface>;
     fn commands(&self) -> HashMap<CommandId, Command>;
     fn events(&self) -> HashMap<EventId, Event>;
@@ -42,7 +42,7 @@ pub trait ModifiableEventModel: EventModel {
     // ***** Metadata *****
     fn rename(&mut self, name: &Name);
     fn splice_description(&mut self, index: usize, del: usize, add: &str);
-    fn splice_schema(&mut self, index: usize, del: usize, add: &str);
+    fn splice_data(&mut self, index: usize, del: usize, add: &str);
 
     // ***** Components *****
     fn component_defined(&mut self, component: &Component);
@@ -69,7 +69,7 @@ pub trait ModifiableEventModel: EventModel {
 
     // Validation of presence of component_id must be performed
     //  by `decide` prior to this step
-    fn splice_component_schema(
+    fn splice_component_data(
         &mut self,
         component_id: &ComponentId,
         index: usize,
@@ -93,7 +93,7 @@ pub trait ModifiableEventModel: EventModel {
 
     // Validation of presence of placement_id must be performed
     //  by `decide` prior to this step
-    fn splice_placement_schema(
+    fn splice_placement_data(
         &mut self,
         placement_id: &PlacementId,
         index: usize,
@@ -197,8 +197,8 @@ pub trait Described: Named {
     fn description(&self) -> &str;
 }
 
-pub trait HasSchema {
-    fn schema(&self) -> &str;
+pub trait HasData {
+    fn data(&self) -> &str;
 }
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq, Serialize, Deserialize)]
@@ -243,7 +243,7 @@ pub enum Component {
 
 #[derive(Debug, Clone)]
 pub(crate) struct EventModelDataTransfer {
-    pub(crate) schema: String,
+    pub(crate) data: String,
     pub(crate) interfaces: HashMap<InterfaceId, Interface>,
     pub(crate) commands: HashMap<CommandId, Command>,
     pub(crate) events: HashMap<EventId, Event>,
@@ -348,7 +348,7 @@ pub struct Command {
     id: CommandId,
     name: Name,
     description: String,
-    schema: String,
+    data: String,
 }
 
 impl Command {
@@ -356,14 +356,14 @@ impl Command {
         id: Uuid,
         name: String,
         description: String,
-        schema: String,
+        data: String,
     ) -> Result<Self, EventModelError> {
         let name = Name::create(&name)?;
         Ok(Command {
             id,
             name,
             description,
-            schema,
+            data,
         })
     }
 }
@@ -386,9 +386,9 @@ impl Described for Command {
     }
 }
 
-impl HasSchema for Command {
-    fn schema(&self) -> &str {
-        &self.schema
+impl HasData for Command {
+    fn data(&self) -> &str {
+        &self.data
     }
 }
 
@@ -399,7 +399,7 @@ pub struct Event {
     id: EventId,
     name: Name,
     description: String,
-    schema: String,
+    data: String,
 }
 
 impl Event {
@@ -407,14 +407,14 @@ impl Event {
         id: Uuid,
         name: String,
         description: String,
-        schema: String,
+        data: String,
     ) -> Result<Self, EventModelError> {
         let name = Name::create(&name)?;
         Ok(Event {
             id,
             name,
             description,
-            schema,
+            data,
         })
     }
 }
@@ -437,9 +437,9 @@ impl Described for Event {
     }
 }
 
-impl HasSchema for Event {
-    fn schema(&self) -> &str {
-        &self.schema
+impl HasData for Event {
+    fn data(&self) -> &str {
+        &self.data
     }
 }
 
@@ -450,7 +450,7 @@ pub struct ReadModel {
     id: ReadModelId,
     name: Name,
     description: String,
-    schema: String,
+    data: String,
 }
 
 impl ReadModel {
@@ -458,14 +458,14 @@ impl ReadModel {
         id: Uuid,
         name: String,
         description: String,
-        schema: String,
+        data: String,
     ) -> Result<Self, EventModelError> {
         let name = Name::create(&name)?;
         Ok(ReadModel {
             id,
             name,
             description,
-            schema,
+            data,
         })
     }
 }
@@ -488,9 +488,9 @@ impl Described for ReadModel {
     }
 }
 
-impl HasSchema for ReadModel {
-    fn schema(&self) -> &str {
-        &self.schema
+impl HasData for ReadModel {
+    fn data(&self) -> &str {
+        &self.data
     }
 }
 
@@ -572,20 +572,20 @@ pub enum Placement {
         id: PlacementId,
         index: PlacementIndex,
         command: CommandId,
-        schema: String,
+        data: String,
     },
     Event {
         id: PlacementId,
         index: PlacementIndex,
         event: EventId,
         stream: Option<StreamId>,
-        schema: String,
+        data: String,
     },
     ReadModel {
         id: PlacementId,
         index: PlacementIndex,
         read_model: ReadModelId,
-        schema: String,
+        data: String,
     },
 }
 

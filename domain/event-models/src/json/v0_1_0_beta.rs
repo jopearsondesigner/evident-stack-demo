@@ -305,7 +305,7 @@ impl TryFrom<Placement> for crate::Placement {
                 id,
                 index,
                 command,
-                schema: Default::default(),
+                data: Default::default(),
             }),
             Placement::Event {
                 id,
@@ -317,7 +317,7 @@ impl TryFrom<Placement> for crate::Placement {
                 index,
                 event,
                 stream,
-                schema: Default::default(),
+                data: Default::default(),
             }),
             Placement::ReadModel {
                 id,
@@ -327,7 +327,7 @@ impl TryFrom<Placement> for crate::Placement {
                 id,
                 index,
                 read_model,
-                schema: Default::default(),
+                data: Default::default(),
             }),
         }
     }
@@ -400,7 +400,7 @@ pub struct JsonV0_1_0BetaTransfer {
     #[serde(rename = "event-model/flows")]
     flows: HashMap<Uuid, FlowArrow>,
     #[serde(skip)]
-    schema: String,
+    data: String,
 }
 
 impl TryFrom<JsonV0_1_0BetaTransfer> for EventModelDataTransfer {
@@ -408,7 +408,7 @@ impl TryFrom<JsonV0_1_0BetaTransfer> for EventModelDataTransfer {
 
     fn try_from(value: JsonV0_1_0BetaTransfer) -> Result<Self, Self::Error> {
         Ok(EventModelDataTransfer {
-            schema: value.schema,
+            data: value.data,
             interfaces: value
                 .interfaces
                 .into_values()

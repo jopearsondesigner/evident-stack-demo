@@ -3,7 +3,7 @@ use std::{collections::HashMap, str::FromStr};
 use crate::{
     validate_name, Anchor, Audience, Command, CommandId, Component, ComponentId, Described, Entity,
     Event, EventId, EventModel, EventModelData, EventModelError, EventModelId, EventModelState,
-    FlowArrow, FlowId, HasSchema, Interface, InterfaceConfig, InterfaceId, Lane, LaneId, LaneIndex,
+    FlowArrow, FlowId, HasData, Interface, InterfaceConfig, InterfaceId, Lane, LaneId, LaneIndex,
     ModifiableEventModel, Name, Named, Placement, PlacementId, PlacementIndex, PlacementPosition,
     Port, ReadModel, ReadModelId, Stream,
 };
@@ -113,7 +113,7 @@ struct AutoCommand {
     id: Uuid,
     name: AutoName,
     description: Text,
-    schema: Text,
+    data: Text,
 }
 
 impl From<&AutoCommand> for Command {
@@ -123,7 +123,7 @@ impl From<&AutoCommand> for Command {
             id: command.id,
             name: name.into(),
             description: command.description.as_str().to_string(),
-            schema: command.schema.as_str().to_string(),
+            data: command.data.as_str().to_string(),
         }
     }
 }
@@ -135,7 +135,7 @@ impl From<&Command> for AutoCommand {
             id: command.id,
             name: name.into(),
             description: Text::with_value(&command.description),
-            schema: Text::with_value(&command.schema),
+            data: Text::with_value(&command.data),
         }
     }
 }
@@ -146,7 +146,7 @@ struct AutoEvent {
     id: Uuid,
     name: AutoName,
     description: Text,
-    schema: Text,
+    data: Text,
 }
 
 impl From<&AutoEvent> for Event {
@@ -156,7 +156,7 @@ impl From<&AutoEvent> for Event {
             id: event.id,
             name: name.into(),
             description: event.description.as_str().to_string(),
-            schema: event.schema.as_str().to_string(),
+            data: event.data.as_str().to_string(),
         }
     }
 }
@@ -168,7 +168,7 @@ impl From<&Event> for AutoEvent {
             id: event.id,
             name: name.into(),
             description: Text::with_value(&event.description),
-            schema: Text::with_value(&event.schema),
+            data: Text::with_value(&event.data),
         }
     }
 }
@@ -179,7 +179,7 @@ struct AutoReadModel {
     id: Uuid,
     name: AutoName,
     description: Text,
-    schema: Text,
+    data: Text,
 }
 
 impl From<&AutoReadModel> for ReadModel {
@@ -189,7 +189,7 @@ impl From<&AutoReadModel> for ReadModel {
             id: read_model.id,
             name: name.into(),
             description: read_model.description.as_str().to_string(),
-            schema: read_model.schema.as_str().to_string(),
+            data: read_model.data.as_str().to_string(),
         }
     }
 }
@@ -201,7 +201,7 @@ impl From<&ReadModel> for AutoReadModel {
             id: read_model.id,
             name: name.into(),
             description: Text::with_value(&read_model.description),
-            schema: Text::with_value(&read_model.schema),
+            data: Text::with_value(&read_model.data),
         }
     }
 }
@@ -274,7 +274,7 @@ enum AutoPlacement {
         id: Uuid,
         index: u32,
         command: Uuid,
-        schema: Text,
+        data: Text,
     },
     Event {
         #[key]
@@ -282,14 +282,14 @@ enum AutoPlacement {
         index: u32,
         event: Uuid,
         stream: Option<Uuid>,
-        schema: Text,
+        data: Text,
     },
     ReadModel {
         #[key]
         id: Uuid,
         index: u32,
         read_model: Uuid,
-        schema: Text,
+        data: Text,
     },
 }
 
@@ -356,36 +356,36 @@ impl From<&AutoPlacement> for Placement {
                 id,
                 index,
                 command,
-                schema,
+                data,
             } => Placement::Command {
                 id: *id,
                 index: *index as usize,
                 command: *command,
-                schema: schema.as_str().to_string(),
+                data: data.as_str().to_string(),
             },
             AutoPlacement::Event {
                 id,
                 index,
                 event,
                 stream,
-                schema,
+                data,
             } => Placement::Event {
                 id: *id,
                 index: *index as usize,
                 event: *event,
                 stream: *stream,
-                schema: schema.as_str().to_string(),
+                data: data.as_str().to_string(),
             },
             AutoPlacement::ReadModel {
                 id,
                 index,
                 read_model,
-                schema,
+                data,
             } => Placement::ReadModel {
                 id: *id,
                 index: *index as usize,
                 read_model: *read_model,
-                schema: schema.as_str().to_string(),
+                data: data.as_str().to_string(),
             },
         }
     }
@@ -409,36 +409,36 @@ impl From<&Placement> for AutoPlacement {
                 id,
                 index,
                 command,
-                schema,
+                data,
             } => AutoPlacement::Command {
                 id: *id,
                 index: *index as u32,
                 command: *command,
-                schema: Text::with_value(schema),
+                data: Text::with_value(data),
             },
             Placement::Event {
                 id,
                 index,
                 event,
                 stream,
-                schema,
+                data,
             } => AutoPlacement::Event {
                 id: *id,
                 index: *index as u32,
                 event: *event,
                 stream: *stream,
-                schema: Text::with_value(schema),
+                data: Text::with_value(data),
             },
             Placement::ReadModel {
                 id,
                 index,
                 read_model,
-                schema,
+                data,
             } => AutoPlacement::ReadModel {
                 id: *id,
                 index: *index as u32,
                 read_model: *read_model,
-                schema: Text::with_value(schema),
+                data: Text::with_value(data),
             },
         }
     }
@@ -543,7 +543,7 @@ pub struct AutomergeEventModel {
     id: Uuid,
     name: AutoName,
     description: Text,
-    schema: Text,
+    data: Text,
     #[autosurgeon(with = "autosurgeon::map_with_parseable_keys")]
     interfaces: HashMap<Uuid, AutoInterface>,
     #[autosurgeon(with = "autosurgeon::map_with_parseable_keys")]
@@ -566,7 +566,7 @@ impl AutomergeEventModel {
             id: *id,
             name: name.into(),
             description: Default::default(),
-            schema: Default::default(),
+            data: Default::default(),
             interfaces: Default::default(),
             commands: Default::default(),
             events: Default::default(),
@@ -612,9 +612,9 @@ impl Described for AutomergeEventModel {
     }
 }
 
-impl HasSchema for AutomergeEventModel {
-    fn schema(&self) -> &str {
-        self.schema.as_str()
+impl HasData for AutomergeEventModel {
+    fn data(&self) -> &str {
+        self.data.as_str()
     }
 }
 
@@ -680,8 +680,8 @@ impl ModifiableEventModel for AutomergeEventModel {
         self.description.splice(index, del, add);
     }
 
-    fn splice_schema(&mut self, index: usize, del: usize, add: &str) {
-        self.schema.splice(index, del, add);
+    fn splice_data(&mut self, index: usize, del: usize, add: &str) {
+        self.data.splice(index, del, add);
     }
 
     fn component_defined(&mut self, component: &Component) {
@@ -764,7 +764,7 @@ impl ModifiableEventModel for AutomergeEventModel {
         }
     }
 
-    fn splice_component_schema(
+    fn splice_component_data(
         &mut self,
         component_id: &ComponentId,
         index: usize,
@@ -774,13 +774,13 @@ impl ModifiableEventModel for AutomergeEventModel {
         match self.component_mut_by_id(component_id) {
             Some(AutoComponentMut::Interface(_)) => (),
             Some(AutoComponentMut::Command(c)) => {
-                c.schema.splice(index, del, addition);
+                c.data.splice(index, del, addition);
             }
             Some(AutoComponentMut::Event(e)) => {
-                e.schema.splice(index, del, addition);
+                e.data.splice(index, del, addition);
             }
             Some(AutoComponentMut::ReadModel(r)) => {
-                r.schema.splice(index, del, addition);
+                r.data.splice(index, del, addition);
             }
             None => {
                 panic!("Component with id {:?} not found", component_id)
@@ -811,7 +811,7 @@ impl ModifiableEventModel for AutomergeEventModel {
         })
     }
 
-    fn splice_placement_schema(
+    fn splice_placement_data(
         &mut self,
         placement_id: &PlacementId,
         index: usize,
@@ -820,14 +820,14 @@ impl ModifiableEventModel for AutomergeEventModel {
     ) {
         match self.placements.get_mut(placement_id) {
             Some(AutoPlacement::Interface { .. }) => (),
-            Some(AutoPlacement::Command { schema, .. }) => {
-                schema.splice(index, del, addition);
+            Some(AutoPlacement::Command { data, .. }) => {
+                data.splice(index, del, addition);
             }
-            Some(AutoPlacement::Event { schema, .. }) => {
-                schema.splice(index, del, addition);
+            Some(AutoPlacement::Event { data, .. }) => {
+                data.splice(index, del, addition);
             }
-            Some(AutoPlacement::ReadModel { schema, .. }) => {
-                schema.splice(index, del, addition);
+            Some(AutoPlacement::ReadModel { data, .. }) => {
+                data.splice(index, del, addition);
             }
             None => {
                 panic!("Placement with id {:?} not found", placement_id)

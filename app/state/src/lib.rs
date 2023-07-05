@@ -585,8 +585,8 @@ impl EventModelStateManager {
         addition: String,
     ) -> Result<EventModelGrid, JsValue> {
         let model_id = parse_uuid(model_id_str)?;
-        self.dispatch(EventModelCommand::AddToDescription(
-            model_id, index, addition,
+        self.dispatch(EventModelCommand::EditDescription(
+            model_id, index, 0, addition,
         ))
         .await
     }
@@ -598,8 +598,11 @@ impl EventModelStateManager {
         count: usize,
     ) -> Result<EventModelGrid, JsValue> {
         let model_id = parse_uuid(model_id_str)?;
-        self.dispatch(EventModelCommand::DeleteFromDescription(
-            model_id, index, count,
+        self.dispatch(EventModelCommand::EditDescription(
+            model_id,
+            index,
+            count,
+            "".to_string(),
         ))
         .await
     }

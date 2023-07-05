@@ -134,7 +134,7 @@
 							pathName={Collaborations}
 						/>
 					</SidebarDropdownItem>
-					<SidebarDropdownItem label="Manage Schemas">
+					<SidebarDropdownItem label="Manage Data">
 						<Icon
 							slot="icon"
 							name="manage-schemas"

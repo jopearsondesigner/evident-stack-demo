@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use crate::{
     Audience, Command, CommandId, Component, ComponentId, Described, Entity, Event, EventId,
-    EventModel, EventModelData, EventModelId, EventModelState, FlowArrow, FlowId, HasSchema,
+    EventModel, EventModelData, EventModelId, EventModelState, FlowArrow, FlowId, HasData,
     Interface, InterfaceConfig, InterfaceId, Lane, LaneId, LaneIndex, ModifiableEventModel, Name,
     Named, Placement, PlacementId, PlacementIndex, PlacementPosition, ReadModel, ReadModelId,
     Stream,
@@ -15,7 +15,7 @@ pub struct InMemoryEventModel {
     id: EventModelId,
     name: Name,
     description: String,
-    schema: String,
+    data: String,
     interfaces: HashMap<InterfaceId, Interface>,
     commands: HashMap<CommandId, Command>,
     events: HashMap<EventId, Event>,
@@ -76,7 +76,7 @@ impl InMemoryEventModel {
             id: *id,
             name: name.to_owned(),
             description: Default::default(),
-            schema: Default::default(),
+            data: Default::default(),
             interfaces: Default::default(),
             commands: Default::default(),
             events: Default::default(),
@@ -122,9 +122,9 @@ impl Described for InMemoryEventModel {
     }
 }
 
-impl HasSchema for InMemoryEventModel {
-    fn schema(&self) -> &str {
-        &self.schema
+impl HasData for InMemoryEventModel {
+    fn data(&self) -> &str {
+        &self.data
     }
 }
 
@@ -192,8 +192,8 @@ impl ModifiableEventModel for InMemoryEventModel {
         splice_string(s, index, del, add);
     }
 
-    fn splice_schema(&mut self, index: usize, del: usize, add: &str) {
-        let s = &mut self.schema;
+    fn splice_data(&mut self, index: usize, del: usize, add: &str) {
+        let s = &mut self.data;
         splice_string(s, index, del, add);
     }
 
@@ -281,7 +281,7 @@ impl ModifiableEventModel for InMemoryEventModel {
         }
     }
 
-    fn splice_component_schema(
+    fn splice_component_data(
         &mut self,
         component_id: &ComponentId,
         index: usize,
@@ -291,15 +291,15 @@ impl ModifiableEventModel for InMemoryEventModel {
         match self.component_mut_by_id(component_id) {
             Some(ComponentMut::Interface(_)) => (),
             Some(ComponentMut::Command(c)) => {
-                let s = &mut c.schema;
+                let s = &mut c.data;
                 splice_string(s, index, del, addition);
             }
             Some(ComponentMut::Event(e)) => {
-                let s = &mut e.schema;
+                let s = &mut e.data;
                 splice_string(s, index, del, addition);
             }
             Some(ComponentMut::ReadModel(r)) => {
-                let s = &mut r.schema;
+                let s = &mut r.data;
                 splice_string(s, index, del, addition);
             }
             None => {
@@ -332,7 +332,7 @@ impl ModifiableEventModel for InMemoryEventModel {
         })
     }
 
-    fn splice_placement_schema(
+    fn splice_placement_data(
         &mut self,
         placement_id: &PlacementId,
         index: usize,
@@ -341,14 +341,14 @@ impl ModifiableEventModel for InMemoryEventModel {
     ) {
         match self.placements.get_mut(placement_id) {
             Some(Placement::Interface { .. }) => (),
-            Some(Placement::Command { schema, .. }) => {
-                splice_string(schema, index, del, addition);
+            Some(Placement::Command { data, .. }) => {
+                splice_string(data, index, del, addition);
             }
-            Some(Placement::Event { schema, .. }) => {
-                splice_string(schema, index, del, addition);
+            Some(Placement::Event { data, .. }) => {
+                splice_string(data, index, del, addition);
             }
-            Some(Placement::ReadModel { schema, .. }) => {
-                splice_string(schema, index, del, addition);
+            Some(Placement::ReadModel { data, .. }) => {
+                splice_string(data, index, del, addition);
             }
             None => {
                 panic!("Placement with id {:?} not found", placement_id)

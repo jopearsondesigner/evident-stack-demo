@@ -58,7 +58,7 @@
 
   handleInterfaceConfigReset(); // Initialize to placement config
 
-  // TODO: display effective schema for command/event/read-model placements, w/ link to edit in /data
+  // TODO: display effective data for command/event/read-model placements, w/ link to edit in /data
 
   let placement_config_types = [
     { value: 'blank', name: 'Blank' },

@@ -11,7 +11,8 @@
   import type { PageData } from './$types';
   import type { InterfaceType } from '$components/design/Grid';
   import markdown from '$components/utils/markdown';
-  import Textarea from '$components/form/Textarea.svelte';
+  import CodeMirror from '$components/CodeMirror.svelte';
+  import type { ChangeSet } from '@codemirror/state';
 
   export let data: PageData;
 
@@ -73,8 +74,29 @@
     }
   };
 
-  const handleDescriptionChange = async (e: Event) => {
-    console.log('Updating name', e);
+  let descriptionChangeBatch: ChangeSet[] = [];
+  let timer_id: any; // proper type?
+  const DESCRIPTION_CHANGE_DELAY = 500;
+
+  const commitDescriptionChangeBatch = () => {
+    const change = descriptionChangeBatch.reduce((acc: ChangeSet, change: ChangeSet) => {
+      if (acc) {
+        return acc.compose(change);
+      } else {
+        return change;
+      }
+    });
+    // TODO: dispatch splice of description in decider
+    console.log("commiting description change", change.toJSON());
+    descriptionChangeBatch = [];
+  };
+
+  const handleDescriptionChange = async (e: CustomEvent) => {
+    if (e.detail.docChanged) {
+      clearTimeout(timer_id);
+      descriptionChangeBatch.push(e.detail.changes);
+      timer_id = setTimeout(commitDescriptionChangeBatch, DESCRIPTION_CHANGE_DELAY);
+    }
   };
 
   const handleUpdateInterfaceConfig = async (_e: SubmitEvent) => {
@@ -149,7 +171,7 @@
             Description
           </Label>
           <!-- TODO: green check saved/updated indicator -->
-          <Textarea name="description" type="text" bind:value={proposed_description} on:change={handleDescriptionChange} />
+          <CodeMirror initial_value={proposed_description} on:document_updated={handleDescriptionChange} />
           {#if placement.kind == 'interface' && proposed_interface_config_kind}
             <h4 class="mt-5 text-left text-default font-bold text-body-light dark:text-body-dark mb-1">
               Interface Config

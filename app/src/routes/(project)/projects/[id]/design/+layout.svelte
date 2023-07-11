@@ -24,8 +24,6 @@
   <title>Design | {$grid?.name ?? "Project"} | Evident Stack</title>
 </svelte:head>
 
-<slot />
-
 {#if decider && $grid}
   <Grid
     mode={$page.data.mode}
@@ -33,4 +31,6 @@
     grid={$grid}
     on:navigateToPlacementDetails={handleNavigateToPlacementDetails}
     on:navigateToImportJson={handleNavigateToImportJson} />
-  {/if}
+{/if}
+
+<slot />

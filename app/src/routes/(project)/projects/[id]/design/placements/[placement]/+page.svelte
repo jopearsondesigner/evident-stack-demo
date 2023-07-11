@@ -78,7 +78,7 @@
   let timer_id: any; // proper type?
   const DESCRIPTION_CHANGE_DELAY = 500;
 
-  const commitDescriptionChangeBatch = () => {
+  const commitDescriptionChangeBatch = async () => {
     const change = descriptionChangeBatch.reduce((acc: ChangeSet, change: ChangeSet) => {
       if (acc) {
         return acc.compose(change);
@@ -89,6 +89,7 @@
     // TODO: dispatch splice of description in decider
     console.log("commiting description change", change.toJSON());
     descriptionChangeBatch = [];
+    await refreshPlacement();
   };
 
   const handleDescriptionChange = async (e: CustomEvent) => {
@@ -132,7 +133,7 @@
       <div class="flex flex-col items-start z-40 fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-2/3 h-3/4 w-1/2 p-3 bg-white dark:bg-dark-2">
         <h3 class="mt-1 mb-2 text-xl font-bold text-body-light dark:text-body-dark">{proposed_name}</h3>
         {#if proposed_description_html}
-          <div>{proposed_description_html}</div>
+          <div>{@html proposed_description_html}</div>
         {/if}
         {#if proposed_interface_config_kind == 'figma'}
           <div class="flex-1 self-stretch min-h-0">
@@ -148,7 +149,7 @@
       <div class="flex flex-col items-stretch z-40 fixed top-1/2 h-3/4 -translate-y-1/2 w-1/2 left-1/2 -translate-x-2/3 p-3 bg-gradient-to-b from-{placement?.kind}-dark via-{placement?.kind} to-{placement?.kind}-light">
         <h3 class="mt-1 mb-2 text-xl font-bold">{proposed_name}</h3>
         {#if proposed_description_html}
-          <div>{proposed_description_html}</div>
+          <div>{@html proposed_description_html}</div>
         {/if}
       </div>
     {/if}

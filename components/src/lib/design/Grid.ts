@@ -30,8 +30,7 @@ export type Decider = {
   remove_lane: (kind: ReorderableLaneType, lane_id: string) => any;
   add_lane: (kind: string, index: number, name: string) => any
   insert_columns: (index: number, direction: string, count: number) => any;
-  add_to_description: (index: number, addition: string) => any;
-  delete_from_description: (index: number, count: number) => any;
+  edit_description: (index: number, deletion_count: number, addition: string) => any;
   connect_flow: (source_placement_id_str: string, source_anchor_str: string | undefined, target_placement_id_str: string, target_anchor_str: string | undefined) => any;
 };
 
@@ -55,8 +54,7 @@ export const default_decider: Decider = {
   remove_lane: console.log,
   add_lane: console.log,
   insert_columns: console.log,
-  add_to_description: console.log,
-  delete_from_description: console.log,
+  edit_description: console.log,
   connect_flow: console.log
 };
 

@@ -1,4 +1,4 @@
-import { error } from "@sveltejs/kit";
+import { error, redirect } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 import { models_for_user as remote_models_for_user } from "$lib/supabase/database";
 import { browser } from "$app/environment";
@@ -23,5 +23,5 @@ export const load: PageLoad = async (event) => {
     }
     return { projects }
   }
-  throw error(404, "not found")
+  throw redirect(303, '/auth');
 }

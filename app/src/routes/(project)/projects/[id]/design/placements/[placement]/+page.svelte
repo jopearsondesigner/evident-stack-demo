@@ -86,7 +86,7 @@
         return change;
       }
     });
-    // TODO: dispatch splice of description in decider
+    await decider;
     console.log("commiting description change", change.toJSON());
     descriptionChangeBatch = [];
     await refreshPlacement();

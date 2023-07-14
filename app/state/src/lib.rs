@@ -15,7 +15,7 @@ use autosurgeon::{hydrate, reconcile, Doc, HydrateError, ReadDoc, ReconcileError
 use event_models::api::commands::EventModelCommand;
 use event_models::json::{JsonExport, JsonV1_0_0Transfer};
 use event_models::{implementation::automerge::AutomergeEventModel, EventModelId, EventModelState};
-use event_models::{Anchor, ColumnShift, EventModel, EventModelError, Named};
+use event_models::{Anchor, ColumnShift, ComponentId, EventModel, EventModelError, Named};
 use js_sys::Uint8Array;
 use uuid::Uuid;
 use wasm_bindgen::prelude::*;
@@ -88,6 +88,30 @@ impl TryFrom<&str> for Lane {
         match value {
             "audience" => Ok(Self::Audience),
             "stream" => Ok(Self::Stream),
+            &_ => Err(JsValue::from(format!(
+                "Value {:?} is not a lane type",
+                value
+            ))),
+        }
+    }
+}
+
+pub enum ComponentType {
+    Interface,
+    Command,
+    Event,
+    ReadModel,
+}
+
+impl TryFrom<&str> for ComponentType {
+    type Error = JsValue;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value {
+            "interface" => Ok(Self::Interface),
+            "command" => Ok(Self::Command),
+            "event" => Ok(Self::Event),
+            "read_model" => Ok(Self::ReadModel),
             &_ => Err(JsValue::from(format!(
                 "Value {:?} is not a lane type",
                 value
@@ -225,6 +249,16 @@ impl EventModelStateManager {
 
     pub async fn create(&mut self, name: String) -> Result<EventModelGrid, JsValue> {
         self.dispatch(EventModelCommand::Create(name)).await
+    }
+
+    pub async fn rename(
+        &mut self,
+        name: String,
+        model_id_str: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        self.dispatch(EventModelCommand::Rename(model_id, name))
+            .await
     }
 
     pub async fn delete(&mut self, model_id_str: String) -> Result<EventModelGrid, JsValue> {
@@ -578,31 +612,47 @@ impl EventModelStateManager {
         }
     }
 
-    pub async fn add_to_description(
+    pub async fn edit_description(
         &mut self,
         model_id_str: String,
         index: usize,
+        deletion_count: usize,
         addition: String,
-    ) -> Result<EventModelGrid, JsValue> {
-        let model_id = parse_uuid(model_id_str)?;
-        self.dispatch(EventModelCommand::EditDescription(
-            model_id, index, 0, addition,
-        ))
-        .await
-    }
-
-    pub async fn delete_from_description(
-        &mut self,
-        model_id_str: String,
-        index: usize,
-        count: usize,
     ) -> Result<EventModelGrid, JsValue> {
         let model_id = parse_uuid(model_id_str)?;
         self.dispatch(EventModelCommand::EditDescription(
             model_id,
             index,
-            count,
-            "".to_string(),
+            deletion_count,
+            addition,
+        ))
+        .await
+    }
+
+    pub async fn edit_component_description(
+        &mut self,
+        model_id_str: String,
+        component_type_str: String,
+        component_id_str: String,
+        index: usize,
+        deletion_count: usize,
+        addition: String,
+    ) -> Result<EventModelGrid, JsValue> {
+        let model_id = parse_uuid(model_id_str)?;
+        let component_type = ComponentType::try_from(component_type_str.as_str())?;
+        let component_id_uuid = parse_uuid(component_id_str)?;
+        let component_id = match component_type {
+            ComponentType::Interface => ComponentId::Interface(component_id_uuid),
+            ComponentType::Command => ComponentId::Command(component_id_uuid),
+            ComponentType::Event => ComponentId::Event(component_id_uuid),
+            ComponentType::ReadModel => ComponentId::ReadModel(component_id_uuid),
+        };
+        self.dispatch(EventModelCommand::EditComponentDescription(
+            model_id,
+            component_id,
+            index,
+            deletion_count,
+            addition,
         ))
         .await
     }

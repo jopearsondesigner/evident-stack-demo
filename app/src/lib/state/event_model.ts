@@ -63,6 +63,12 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       create_model: async (name: string) => {
         return await manager.create(name);
       },
+      rename_model: async (name: string) => {
+        return await manager.rename(id!, name);
+      },
+      edit_description: async (index: number, deletion_count: number, addition: string) => {
+        return await manager.edit_description(id!, index, deletion_count, addition)
+      },
       define_and_place_interface: async (name: string, index: number, audience: string | undefined) => {
         return await manager.define_and_place_interface(id!, name, index, audience);
       },
@@ -119,12 +125,6 @@ const initialize_decider = async (id: string | undefined, user: string) => {
       },
       insert_columns: async (index: number, direction: string, count: number) => {
         return manager.insert_columns(id!, index, direction, count);
-      },
-      add_to_description: async (index: number, addition: string) => {
-        return await manager.add_to_description(id!, index, addition)
-      },
-      delete_from_description: async (index: number, count: number) => {
-        return await manager.delete_from_description(id!, index, count)
       },
       connect_flow: async (source_placement_id_str: string, source_anchor_str: string | undefined, target_placement_id_str: string, target_anchor_str: string | undefined) => {
         return await manager.connect_flow(id!, source_placement_id_str, source_anchor_str, target_placement_id_str, target_anchor_str);

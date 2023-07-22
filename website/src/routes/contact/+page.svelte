@@ -61,11 +61,11 @@
             </a>
           </li>
           <li class="my-3">
-            <a href="mailto:hello@onote.com" class="text-white inline-block">
+            <a href="mailto:hello@evidentstack.com" class="text-white inline-block">
               <span class="relative float-left align-middle mt-[3px] mr-2">
                 <Icon name="Email" iconColor="text-white" pathName={Email} />
               </span>
-              <span class="text-base">hello@onote.com</span>
+              <span class="text-base">hello@evidentstack.com</span>
             </a>
           </li>
         </ul>
@@ -76,27 +76,15 @@
         <Form action="create_ticket" method="post">
           <ul>
             <li class="mb-4">
-              <Input
-                type="text"
-                placeholder="ticket subject"
-                name="subject"
-                class="border"
-                required
-              />
+              <Input type="text" placeholder="Subject" name="subject" class="border" required />
             </li>
             <li class="mb-4">
-              <Textarea
-                placeholder="what's the problem?"
-                name="description"
-                rows="6"
-                class=""
-                required
-              />
+              <Textarea placeholder="Message?" name="description" rows="6" class="" required />
             </li>
             <li class="mb-4">
               <Input
                 type="email"
-                placeholder="your email address"
+                placeholder="Email address"
                 name="email"
                 class="border"
                 required

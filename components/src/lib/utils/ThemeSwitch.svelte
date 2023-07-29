@@ -6,7 +6,7 @@
 
   // import { browser } from '$app/environment';
 
-  let darkMode = true;
+  let darkMode = false;
 
   function handleSwitchDarkMode() {
     darkMode = !darkMode;

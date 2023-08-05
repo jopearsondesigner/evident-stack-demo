@@ -1,62 +1,100 @@
-<script context="module">
-  // retain module scoped expansion state for each tree node
-  const _expansionState = {
-    /* treeNodeId: expanded <boolean> */
-  };
+<script context="module" lang="ts">
+  export interface TreeItem {
+    name: string;
+    type: string;
+    [id: number]: any;
+    children?: TreeItem[];
+
+    // To allow custom keys
+    [key: string]: any;
+  }
+
+  export type TreeData = TreeItem[];
 </script>
 
 <script lang="ts">
-  import { slide } from 'svelte/transition';
-  export let tree;
-  const { label, children } = tree;
+  import classNames from 'classnames';
+  import Icon from '$lib/Icon.svelte';
+  import CloseUp from '$lib/icons/CloseUp.svelte';
+  import OpenDown from '$lib/icons/OpenDown.svelte';
 
-  // @ts-ignore
-  let expanded = _expansionState[label] || false;
-  const toggleExpansion = () => {
+  export let tree_data: TreeData = [];
+
+  function summaryKeyup(event: KeyboardEvent) {
     // @ts-ignore
-    expanded = _expansionState[label] = !expanded;
-  };
-  $: arrowDown = expanded;
+    if (event.key == ' ' && document.activeElement.tagName != 'SUMMARY') {
+      event.preventDefault();
+    }
+  }
+
+  export let isClosed: any | boolean | never[] = [];
+  export let summaryClass: string | undefined = '';
+  export let btnClass: string | undefined = '';
 </script>
 
 <ul>
-  <!-- transition:slide -->
-  <li>
-    {#if children}
-      <span on:click={toggleExpansion} on:keydown>
-        <span class="arrow" class:arrowDown>&#x25b6</span>
-        {label}
-      </span>
-      {#if expanded}
-        {#each children as child}
-          <svelte:self tree={child} />
-        {/each}
+  {#each tree_data as item (item.id)}
+    <li>
+      {#if item.children}
+        <details open>
+          <summary
+            class={classNames(
+              summaryClass,
+              'flex items-center bg-transparent hover:bg-focus/[.20] transition duration-200 ease-in w-full cursor-pointer'
+            )}
+            on:keyup={summaryKeyup}
+            tabindex="0"
+            on:click={() => (isClosed = !isClosed)}
+            on:keyup
+          >
+            {#if !isClosed}
+              <Icon
+                name="close-up"
+                size={14}
+                class="mx-1"
+                iconColor="text-body-light dark:text-body-dark"
+                pathName={CloseUp}
+              />
+            {:else}
+              <Icon
+                name="open-down"
+                size={14}
+                class="mx-1"
+                iconColor="text-body-light dark:text-body-dark"
+                pathName={OpenDown}
+              />
+            {/if}
+            <slot {item} list={tree_data} id={item.id}>
+              {item.name}
+            </slot>
+          </summary>
+
+          {#if item.children}
+            <svelte:self tree_data={item.children} let:item let:list={tree_data} let:id>
+              <slot {item} list={tree_data} id={item.id}>
+                {item.name}
+              </slot>
+            </svelte:self>
+          {/if}
+        </details>
+      {:else}
+        <slot {item} list={tree_data} id={item.id}>
+          {item.name}
+        </slot>
       {/if}
-    {:else}
-      <span>
-        <span class="no-arrow" />
-        {label}
-      </span>
-    {/if}
-  </li>
+    </li>
+  {/each}
 </ul>
 
 <style>
-  ul {
-    margin: 0;
-    list-style: none;
-    padding-left: 1.2rem;
-    user-select: none;
+  summary::-webkit-details-marker {
+    display: none !important;
   }
-  .no-arrow {
-    padding-left: 1rem;
+  summary {
+    list-style: none !important;
   }
-  .arrow {
-    cursor: pointer;
-    display: inline-block;
-    /* transition: transform 200ms; */
-  }
-  .arrowDown {
-    transform: rotate(90deg);
+
+  ul li ul li details summary {
+    padding-left: 6px;
   }
 </style>

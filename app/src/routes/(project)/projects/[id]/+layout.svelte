@@ -1,4 +1,5 @@
 <script lang="ts">
+  import classNames from 'classnames';
   import type { LayoutData } from './$types';
   import { page } from '$app/stores';
 
@@ -35,12 +36,44 @@
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
 
+  // import TreeView from '$components/data/TreeView.svelte';
+  // let isActive: string | number;
+  // let btnClass: string | undefined =
+  //   'grow text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
+  // let summaryClass: string | undefined =
+  //   'grow text-body dark:text-body-dark text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
+
+  // const tree_data = [
+  //   {
+  //     name: 'Autonomo Mobile iOS App',
+  //     type: 'event-model',
+  //     id: 1,
+  //     children: [
+  //       {
+  //         name: 'My Vehicles',
+  //         type: 'read-model',
+  //         id: 2,
+  //         children: [
+  //           {
+  //             name: 'Vehicle Added',
+  //             type: 'event',
+  //             id: 3
+  //           },
+  //           {
+  //             name: 'Placement',
+  //             type: 'placement',
+  //             id: 4
+  //           }
+  //         ]
+  //       }
+  //     ]
+  //   }
+  // ];
+
   import type { Readable } from 'svelte/store';
   import { onMount } from 'svelte';
   import { loadSyncWorker } from '$lib/state/sync';
   import { goto } from '$app/navigation';
-  // import Download from '$components/icons/Download.svelte';
-  // import ImagePlacholder from '$components/icons/ImagePlacholder.svelte';
 
   export let data: LayoutData;
 
@@ -60,9 +93,9 @@
   // === Authentication
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    await goto("/auth")
-  }
+    await supabase.auth.signOut();
+    await goto('/auth');
+  };
 
   // === End Authentication
 
@@ -77,8 +110,9 @@
   $: dbExpanded = expandedLeftNavItem == 'db';
 
   let leftNavOpen = false;
-
-  const toggleLeftNav = () => {
+  let hidden = false;
+  let toggleLeftNav = () => {
+    hidden = !hidden;
     leftNavOpen = !leftNavOpen;
   };
 
@@ -87,32 +121,33 @@
 
 <!-- TODO: don't use `grid` here -->
 <svelte:head>
-  <title>{$grid?.name ?? "Project"} | Evident Stack</title>
+  <title>{$grid?.name ?? 'Project'} | Evident Stack</title>
 </svelte:head>
 
 <div class="min-h-screen">
   <Navbar website={false}>
     <NavInner navDivClass="flex justify-between items-center">
       <NavToolbar navClass="px-3 mx-3 h-9 inline-flex space-x-4 items-center">
-        <NavHamburger
-          website={false}
-          hamburgerClass="mx-2"
-          on:click={toggleLeftNav} />
+        <NavHamburger website={false} hamburgerClass="mx-2" on:click={toggleLeftNav} />
         <NavBrand src={Logo} height={28} logoClass="flex no-underline mx-3 cursor-default" />
-        <div class="h-9 pr-3 border-r border-gray-secondary dark:border-border-dark flex items-center">
+        <div
+          class="h-9 pr-3 border-r border-gray-secondary dark:border-border-dark flex items-center"
+        >
           <MaybeTooltip tip="Home" position="tooltip-bottom">
             <IconButton href="/">
               <Icon
                 name="home"
                 size={16}
                 iconColor="text-body-light dark:text-body-dark"
-                pathName={Home} />
+                pathName={Home}
+              />
             </IconButton>
           </MaybeTooltip>
         </div>
       </NavToolbar>
       <NavToolbar
-        navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark">
+        navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark"
+      >
         {#if session?.user}
           <DropdownMenu product={true} name="profile" marginTop="mt-9">
             <IconButton slot="button" margin="mx-2">
@@ -122,15 +157,17 @@
                 viewBox="0 0 32 32"
                 class="vertical-middle"
                 iconColor=""
-                pathName={Profile} />
+                pathName={Profile}
+              />
             </IconButton>
             <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
-              {session.user.email ?? "email@example.com"}
+              {session.user.email ?? 'email@example.com'}
             </DropdownItem>
             <DropdownItem href="/account">Account</DropdownItem>
             <DropdownDivider />
             <DropdownItem className="flex-1">
-              <button class="button inline" on:click|preventDefault={handleSignOut}>Sign Out</button>
+              <button class="button inline" on:click|preventDefault={handleSignOut}>Sign Out</button
+              >
             </DropdownItem>
           </DropdownMenu>
 
@@ -140,7 +177,8 @@
                 name="docs"
                 size={18}
                 iconColor="text-body-light dark:text-body-dark"
-                pathName={Docs} />
+                pathName={Docs}
+              />
             </IconButton>
           </MaybeTooltip>
           <MaybeTooltip tip="Support" position="tooltip-bottom">
@@ -149,29 +187,33 @@
                 name="support"
                 size={18}
                 iconColor="text-body-light dark:text-body-dark"
-                pathName={Support} />
+                pathName={Support}
+              />
             </IconButton>
           </MaybeTooltip>
         {/if}
-        </NavToolbar>
+      </NavToolbar>
     </NavInner>
   </Navbar>
 
   <span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 mt-16"><ThemeSwitch /></span>
 
-  <Drawer placement="left" hidden={false}>
+  <Drawer placement="left" bind:hidden>
     <!-- TODO: don't use `grid` here -->
-    <Sidebar name={$grid?.name ?? "Project Name"}
-             description={$grid?.description ?? "Project Description"}
-             sync_status={$sync_status}
-             class={leftNavOpen ? 'w-[417px]' : 'w-[160px]'}>
+    <Sidebar
+      name={$grid?.name ?? 'Project Name'}
+      description={$grid?.description ?? 'Project Description'}
+      sync_status={$sync_status}
+      class="w-[240px]"
+    >
       <Accordion class="grow-1 flex flex-col">
         <SidebarContainer
           src={DesignLogo}
           href="/projects/{$page.params.id}/design"
           id="design"
           title="Design"
-          bind:expanded={designExpanded}>
+          bind:expanded={designExpanded}
+        >
           <SidebarGroup>
             <SidebarItem blank>
               <Button
@@ -181,14 +223,16 @@
                 size="sm"
                 className="my-4"
                 class=""
-                on:click={decider.export_json}>
+                on:click={decider.export_json}
+              >
                 <Icon
                   slot="icon"
                   name="download"
                   size={12}
                   iconColor="text-body-light dark:text-white"
                   class="inline-flex mb-1"
-                  pathName={Download} />
+                  pathName={Download}
+                />
               </Button>
             </SidebarItem>
           </SidebarGroup>
@@ -198,9 +242,57 @@
           href="/projects/{$page.params.id}/data"
           id="data"
           title="Data"
-          bind:expanded={dataExpanded}>
+          bind:expanded={dataExpanded}
+        >
           <SidebarGroup>
-            <SidebarItem label="Hello, please develop me!" blank />
+            <SidebarItem blank>
+              <!-- <TreeView {tree_data} isClosed let:item {btnClass} {summaryClass}>
+                <div class="flex w-full group h-7">
+                  {#if item.children}
+                    <div class={classNames(summaryClass)}>
+                      <img
+                        src="../../../src/lib/assets/images/icons/{item.type}.svg"
+                        alt={item.type}
+                        width="14"
+                        class="inline-flex w-3.5 h-3.5 mr-0.5"
+                      />
+                      <span class="ml-1">{item.name}</span>
+                    </div>
+                  {:else}
+                    <button
+                      class={classNames(
+                        btnClass,
+                        'flex w-full pl-[35px] h-7 text-body dark:text-body-dark bg-transparent hover:bg-focus/[.20] transition duration-200 ease-in'
+                      )}
+                      class:selected={isActive === item.id}
+                      on:click={() => (isActive = item.id)}
+                    >
+                      {#if item.type == 'placement'}
+                        <span
+                          class="relative border-l border-b border-gray-brand-4 dark:border-gray-brand-1 w-1.5 h-5 -top-[9px] -right-1.5 mr-2"
+                        />
+                      {/if}
+                      {#if item.id == isActive && item.type == 'placement'}
+                        <img
+                          src="../../../src/lib/assets/images/icons/{item.type}-selected.svg"
+                          alt={item.type}
+                          width="14"
+                          class="inline-flex w-3.5 h-3.5"
+                        />
+                      {:else}
+                        <img
+                          src="../../../src/lib/assets/images/icons/{item.type}.svg"
+                          alt={item.type}
+                          width="14"
+                          class="inline-flex w-3.5 h-3.5"
+                        />
+                      {/if}
+                      <span class="ml-1">{item.name}</span>
+                    </button>
+                  {/if}
+                </div>
+              </TreeView> -->
+            </SidebarItem>
           </SidebarGroup>
         </SidebarContainer>
         <SidebarContainer
@@ -208,7 +300,8 @@
           href="/projects/{$page.params.id}/domain-functions"
           id="domain-functions"
           title="Domain Functions"
-          bind:expanded={domainFunctionsExpanded} >
+          bind:expanded={domainFunctionsExpanded}
+        >
           <SidebarGroup />
         </SidebarContainer>
         <SidebarContainer
@@ -216,7 +309,8 @@
           href="/projects/{$page.params.id}/deploy"
           id="deploy"
           title="Deploy"
-          bind:expanded={deployExpanded} >
+          bind:expanded={deployExpanded}
+        >
           <SidebarGroup />
         </SidebarContainer>
         <SidebarContainer
@@ -224,7 +318,8 @@
           href="/projects/{$page.params.id}/db"
           id="db"
           title="Database"
-          bind:expanded={dbExpanded} >
+          bind:expanded={dbExpanded}
+        >
           <SidebarGroup />
         </SidebarContainer>
       </Accordion>
@@ -232,10 +327,11 @@
   </Drawer>
 
   <main
-    class="relative left-0 right-0 transition-all duration-[200ms] pt-16"
-    class:ml-[160px]={!leftNavOpen}
-    class:ml-[417px]={leftNavOpen}
-    class:ease-in={leftNavOpen} >
+    class="relative left-0 right-0 transition-all duration-[200ms] pt-16 ml-0"
+    class:ml-[240px]={!leftNavOpen}
+    class:ease-out={leftNavOpen}
+    class:duration-100={leftNavOpen}
+  >
     <slot />
   </main>
 </div>

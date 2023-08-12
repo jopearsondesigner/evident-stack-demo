@@ -10,18 +10,30 @@
   const { grid, decider } = data;
 
   const handleNavigateToPlacementDetails = (e: CustomEvent) => {
-    debug("handling navigateToPlacementDetails", e, `/projects/${$page.params.id}/design/placements/${e.detail.placement}`);
-    goto(`/projects/${$page.params.id}/design/placements/${e.detail.placement}`, {noScroll: true})
-  }
+    debug(
+      'handling navigateToPlacementDetails',
+      e,
+      `/projects/${$page.params.id}/design/placements/${e.detail.placement}`
+    );
+    goto(`/projects/${$page.params.id}/design/placements/${e.detail.placement}`, {
+      noScroll: true
+    });
+  };
 
   const handleNavigateToImportJson = (e: CustomEvent) => {
-    debug("handling navigateToPlacementDetails", e, `/projects/${$page.params.id}/design/import?column=${e.detail.column}`);
-    goto(`/projects/${$page.params.id}/design/import?column=${e.detail.column}`, {noScroll: true})
-  }
+    debug(
+      'handling navigateToPlacementDetails',
+      e,
+      `/projects/${$page.params.id}/design/import?column=${e.detail.column}`
+    );
+    goto(`/projects/${$page.params.id}/design/import?column=${e.detail.column}`, {
+      noScroll: true
+    });
+  };
 </script>
 
 <svelte:head>
-  <title>Design | {$grid?.name ?? "Project"} | Evident Stack</title>
+  <title>Design | {$grid?.name ?? 'Project'} | Evident Stack</title>
 </svelte:head>
 
 {#if decider && $grid}
@@ -30,7 +42,8 @@
     {decider}
     grid={$grid}
     on:navigateToPlacementDetails={handleNavigateToPlacementDetails}
-    on:navigateToImportJson={handleNavigateToImportJson} />
+    on:navigateToImportJson={handleNavigateToImportJson}
+  />
 {/if}
 
 <slot />

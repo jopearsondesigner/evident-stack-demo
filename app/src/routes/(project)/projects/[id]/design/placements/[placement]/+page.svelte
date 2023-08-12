@@ -42,11 +42,11 @@
   let proposed_image_blobs: FileList | undefined;
 
   const refreshPlacement = async () => {
-    let placement_id = placement?.id
+    let placement_id = placement?.id;
     if (placement_id) {
-      placement = await decider?.placement_by_id(placement_id)
+      placement = await decider?.placement_by_id(placement_id);
     }
-  }
+  };
 
   const handleInterfaceConfigReset = () => {
     if (placement?.interface_config) {
@@ -55,7 +55,7 @@
       proposed_image_config_type = 'upload';
       proposed_image_blobs = undefined;
     }
-  }
+  };
 
   handleInterfaceConfigReset(); // Initialize to placement config
 
@@ -87,7 +87,7 @@
       }
     });
     await decider;
-    console.log("commiting description change", change.toJSON());
+    console.log('commiting description change', change.toJSON());
     descriptionChangeBatch = [];
     await refreshPlacement();
   };
@@ -109,10 +109,10 @@
           proposed_interface_config_url,
           proposed_image_blobs?.item(0) ?? undefined
         );
-        await refreshPlacement()
-        handleInterfaceConfigReset()
+        await refreshPlacement();
+        handleInterfaceConfigReset();
       } catch (e) {
-        console.error("Error configuring placement", e, {
+        console.error('Error configuring placement', e, {
           component_id: placement?.component_id,
           proposed_interface_config_kind,
           proposed_interface_config_url,
@@ -120,18 +120,24 @@
         });
       }
     }
-  }
+  };
 </script>
 
 <svelte:head>
-  <title>Placement Details | {placement?.name} | Design | {$grid?.name ?? "Project"} | Evident Stack</title>
+  <title
+    >Placement Details | {placement?.name} | Design | {$grid?.name ?? 'Project'} | Evident Stack</title
+  >
 </svelte:head>
 
 <Drawer placement="right" class="" drawerRight hidden={false} on:close={handle_close}>
   <div slot="extra">
     {#if placement?.kind == 'interface'}
-      <div class="flex flex-col items-start z-40 fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-2/3 h-3/4 w-1/2 p-3 bg-white dark:bg-dark-2">
-        <h3 class="mt-1 mb-2 text-xl font-bold text-body-light dark:text-body-dark">{proposed_name}</h3>
+      <div
+        class="flex flex-col items-start z-40 fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-2/3 h-3/4 w-1/2 p-3 bg-white dark:bg-dark-2"
+      >
+        <h3 class="mt-1 mb-2 text-xl font-bold text-body-light dark:text-body-dark">
+          {proposed_name}
+        </h3>
         {#if proposed_description_html}
           <div>{@html proposed_description_html}</div>
         {/if}
@@ -140,13 +146,24 @@
             <FigmaEmbed url={proposed_interface_config_url} />
           </div>
         {:else if proposed_interface_config_kind == 'image'}
-          <img class="flex-1 self-center min-h-0 m-4" src={proposed_interface_config_url} alt={proposed_interface_config_url} />
+          <img
+            class="flex-1 self-center min-h-0 m-4"
+            src={proposed_interface_config_url}
+            alt={proposed_interface_config_url}
+          />
         {:else if proposed_interface_config_kind == 'job'}
-          <Icon class="flex-1 self-center min-h-0 m-10 w-max transition duration-200 ease-in cursor-default" name="job-gears" iconColor="text-body-light dark:text-body-dark" pathName={JobGears} />
+          <Icon
+            class="flex-1 self-center min-h-0 m-10 w-max transition duration-200 ease-in cursor-default"
+            name="job-gears"
+            iconColor="text-body-light dark:text-body-dark"
+            pathName={JobGears}
+          />
         {/if}
       </div>
     {:else}
-      <div class="flex flex-col items-stretch z-40 fixed top-1/2 h-3/4 -translate-y-1/2 w-1/2 left-1/2 -translate-x-2/3 p-3 bg-gradient-to-b from-{placement?.kind}-dark via-{placement?.kind} to-{placement?.kind}-light">
+      <div
+        class="flex flex-col items-stretch z-40 fixed top-1/2 h-3/4 -translate-y-1/2 w-1/2 left-1/2 -translate-x-2/3 p-3 bg-gradient-to-b from-{placement?.kind}-dark via-{placement?.kind} to-{placement?.kind}-light"
+      >
         <h3 class="mt-1 mb-2 text-xl font-bold">{proposed_name}</h3>
         {#if proposed_description_html}
           <div>{@html proposed_description_html}</div>
@@ -156,58 +173,94 @@
   </div>
   {#if placement}
     <aside
-      class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3">
+      class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
+    >
       <div class="w-full h-full pb-6">
         <h3 class="text-left text-default font-extrabold text-body-light dark:text-body-dark mb-1">
           {placement_kind_display} Details
         </h3>
         <div
-          class="w-full h-full flex flex-col items-stretch mb-6 p-6 border rounded border-border-light dark:border-border-dark">
-          <Label for="name">
-            Name
-          </Label>
+          class="w-full h-full flex flex-col items-stretch mb-6 p-6 border rounded border-border-light dark:border-border-dark"
+        >
+          <Label for="name">Name</Label>
           <!-- TODO: green check saved indicator -->
-          <Input name="name" type="text" tabindex="0" autofocus={true} bind:value={proposed_name} on:change={handleNameChange} />
-          <Label for="description">
-            Description
-          </Label>
+          <Input
+            name="name"
+            type="text"
+            tabindex="0"
+            autofocus={true}
+            bind:value={proposed_name}
+            on:change={handleNameChange}
+          />
+          <Label for="description">Description</Label>
           <!-- TODO: green check saved/updated indicator -->
-          <CodeMirror initial_value={proposed_description} on:document_updated={handleDescriptionChange} />
+          <CodeMirror
+            initial_value={proposed_description}
+            on:document_updated={handleDescriptionChange}
+          />
           {#if placement.kind == 'interface' && proposed_interface_config_kind}
-            <h4 class="mt-5 text-left text-default font-bold text-body-light dark:text-body-dark mb-1">
+            <h4
+              class="mt-5 text-left text-default font-bold text-body-light dark:text-body-dark mb-1"
+            >
               Interface Config
             </h4>
             <form class="p-3 w-full" on:submit|preventDefault={handleUpdateInterfaceConfig}>
-              <Select class="mt-2" placeholder="Choose Interface Type"
-                      items={placement_config_types}
-                      bind:value={proposed_interface_config_kind} />
+              <Select
+                class="mt-2"
+                placeholder="Choose Interface Type"
+                items={placement_config_types}
+                bind:value={proposed_interface_config_kind}
+              />
               {#if proposed_interface_config_kind == 'figma'}
-                <Input class="my-6" size="sm" placeholder="Figma URL"
-                       bind:value={proposed_interface_config_url} />
+                <Input
+                  class="my-6"
+                  size="sm"
+                  placeholder="Figma URL"
+                  bind:value={proposed_interface_config_url}
+                />
               {/if}
               {#if proposed_interface_config_kind == 'image'}
                 <div class="mt-6">
                   <label>
-	                  <input type=radio bind:group={proposed_image_config_type} name="scoops" value="upload">
+                    <input
+                      type="radio"
+                      bind:group={proposed_image_config_type}
+                      name="scoops"
+                      value="upload"
+                    />
                     Upload
                   </label>
                   <label>
-	                  <input type=radio bind:group={proposed_image_config_type} name="scoops" value="url">
+                    <input
+                      type="radio"
+                      bind:group={proposed_image_config_type}
+                      name="scoops"
+                      value="url"
+                    />
                     Manually enter URL
                   </label>
                   {#if proposed_image_config_type == 'url'}
-                    <Input class="my-6" size="sm" placeholder="Image URL"
-                           bind:value={proposed_interface_config_url} />
+                    <Input
+                      class="my-6"
+                      size="sm"
+                      placeholder="Image URL"
+                      bind:value={proposed_interface_config_url}
+                    />
                   {:else}
-                    <input type="file" accept="image/png, image/jpeg"
-                           class="my-6" bind:files={proposed_image_blobs} />
+                    <input
+                      type="file"
+                      accept="image/png, image/jpeg"
+                      class="my-6"
+                      bind:files={proposed_image_blobs}
+                    />
                   {/if}
                 </div>
               {/if}
               <div class="mt-6 space-x-3 col-span-1 place-self-center justify-self-end">
                 <button
                   class="text-sm underline text-focus dark:text-white hover:text-[#054FDE] dark:hover:text-focus transition duration-200 ease-in"
-                  on:click|preventDefault={handleInterfaceConfigReset}>
+                  on:click|preventDefault={handleInterfaceConfigReset}
+                >
                   reset
                 </button>
                 <Button color="default" size="sm" label="Save" />

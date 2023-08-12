@@ -1,7 +1,7 @@
 <script lang="ts">
-	export let divClass = 'w-full';
+  export let divClass = 'w-full';
 </script>
 
 <div class={divClass}>
-	<slot />
+  <slot />
 </div>

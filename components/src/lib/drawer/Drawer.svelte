@@ -9,7 +9,7 @@
   export let hidden: boolean = true;
   export let divClass: string = 'z-40 top-0 fixed h-full bg-white dark:bg-dark-2';
   let className: string = '';
-  export {className as class};
+  export { className as class };
   export let leftOffset: string = 'left-0';
   export let rightOffset: string = 'right-0';
   export let placement: 'left' | 'right';
@@ -34,11 +34,11 @@
 
   export let backdropClasses = 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80';
 
-  const dispatch = createEventDispatcher()
+  const dispatch = createEventDispatcher();
 
   export const handleClose = () => {
-    dispatch('close')
-  }
+    dispatch('close');
+  };
 
   const drawerKeys: KeyBindingMap = {
     Escape: handleClose
@@ -51,26 +51,32 @@
 
 {#if !hidden}
   {#if drawerRight}
-    <div class={classNames('fixed inset-0 z-30', backdropClasses)}
-         on:click={handleClose}
-         on:keypress={handleClose}/>
+    <div
+      class={classNames('fixed inset-0 z-30', backdropClasses)}
+      on:click={handleClose}
+      on:keypress={handleClose}
+    />
     <slot name="extra" />
     <div
       transition:fly={transitionParamsRight}
       class={classNames(className, divClass, placements[placement])}
-      style="padding-top: {navbarHeight}px;" >
+      style="padding-top: {navbarHeight}px;"
+    >
       <CloseButton
         {name}
         size={12}
+        type="button"
         btnClass="float-right mt-2 mr-2"
-        on:click={handleClose} />
+        on:click={handleClose}
+      />
       <slot />
     </div>
   {:else}
     <div
       transition:fly={transitionParams}
       class={classNames(className, divClass)}
-      style="padding-top: {navbarHeight}px;">
+      style="padding-top: {navbarHeight}px;"
+    >
       <slot />
     </div>
   {/if}

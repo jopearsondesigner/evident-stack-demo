@@ -24,7 +24,7 @@
   export let targeted_lane: DropTargetStatus | undefined = undefined;
 
   export let targeted_cell: { column: number; targetStatus: DropTargetStatus } | undefined =
-  undefined;
+    undefined;
 
   $: stream.cells.length = max_column;
   $: good_target = targeted_lane == 'good';
@@ -67,33 +67,35 @@
   on:dragstart={handleDragStart}
   draggable="true"
   class="streamName laneName sticky left-3 justify-self-start self-end cursor-pointer prose text-body-light nndark:text-body-dark mb-3 cursor-move"
-  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};">
+  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
+>
   {stream.name}
 </h3>
 
 <div
   on:dragenter={handleDragEnter}
   on:dragover={(e) => {
-  e.preventDefault();
+    e.preventDefault();
   }}
   on:dragleave={handleDragLeave}
   on:drop={handleDragDrop}
   class:bg-emerald-200={good_target}
   class:bg-rose-400={bad_target}
   id={stream.id}
-  class="stream -ml-5 h-full w-full border-b border-gray-primary dark:border-gray-brand-3 cursor-move"
-  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};" />
+  class="stream z-[-1] -ml-5 h-full w-full border-b border-gray-primary dark:border-gray-brand-1 cursor-move"
+  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
+/>
 
-  {#each stream.cells as cell, column (cellId(column, row))}
-    {@const drop_target =
-  targeted_cell && targeted_cell.column === column ? targeted_cell.targetStatus : undefined}
+{#each stream.cells as cell, column (cellId(column, row))}
+  {@const drop_target =
+    targeted_cell && targeted_cell.column === column ? targeted_cell.targetStatus : undefined}
   <Cell
     {column}
     row={{
-    rowIndex: row,
-    streamId: stream.id || DEFAULT_LANE,
-    laneIndex: lane_index,
-    rowKind: 'stream'
+      rowIndex: row,
+      streamId: stream.id || DEFAULT_LANE,
+      laneIndex: lane_index,
+      rowKind: 'stream'
     }}
     maybe_placement={cell.placement?.id}
     maybe_placement_kind="event"
@@ -101,7 +103,8 @@
     on:navigate_cursor={forward}
     on:cell_drag_enter={forward}
     on:cell_drag_drop={forward}
-    on:open_context_menu={forward}>
+    on:open_context_menu={forward}
+  >
     {#if cell.placement?.id}
       <Event
         id={cell.placement.id}
@@ -111,14 +114,16 @@
         description={cell.placement.description}
         on:placement_drag_start={forward}
         on:flow_drag_start={forward}
-        on:connect_flow={forward} />
-      {:else}
-        <EmptyCell
-          {column}
-          kind="event"
-          lane={stream.id}
-          on:move_event_placement={forward}
-          on:duplicate_event_placement={forward} />
-        {/if}
-      </Cell>
-    {/each}
+        on:connect_flow={forward}
+      />
+    {:else}
+      <EmptyCell
+        {column}
+        kind="event"
+        lane={stream.id}
+        on:move_event_placement={forward}
+        on:duplicate_event_placement={forward}
+      />
+    {/if}
+  </Cell>
+{/each}

@@ -30,16 +30,18 @@
 </script>
 
 <h3
-  class="timelineName sticky left-3 justify-self-start self-center prose text-body-light dark:text-body-dark"
-  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};">
+  class="timelineName z-30 sticky left-3 justify-self-start self-center prose text-body-light dark:text-gray-brand-4"
+  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
+>
   Timeline
 </h3>
 
 <div
-  class="timeline -ml-5 h-full w-full border-t border-b border-gray-brand-2 dark:border-white"
+  class="timeline z-[-1] -ml-5 h-full w-full border-t border-b border-gray-brand-2 dark:border-gray-primary"
   class:bg-emerald-200={good_target}
   class:bg-rose-400={bad_target}
-  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"/>
+  style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
+/>
 
 {#each timeline.cells as cell, column (cellId(column, row))}
   {@const drop_target =
@@ -56,7 +58,8 @@
     on:navigate_cursor={forward}
     on:cell_drag_enter={forward}
     on:cell_drag_drop={forward}
-    on:open_context_menu={forward}>
+    on:open_context_menu={forward}
+  >
     {#if cell.placement && cell.placement.kind === 'command'}
       <Command
         id={cell.placement.id}
@@ -66,7 +69,8 @@
         description={cell.placement.description}
         on:placement_drag_start={forward}
         on:connect_flow={forward}
-        on:flow_drag_start={forward} />
+        on:flow_drag_start={forward}
+      />
     {:else if cell.placement && cell.placement.kind === 'read_model'}
       <ReadModel
         id={cell.placement.id}
@@ -76,13 +80,15 @@
         description={cell.placement.description}
         on:placement_drag_start={forward}
         on:connect_flow={forward}
-        on:flow_drag_start={forward} />
+        on:flow_drag_start={forward}
+      />
     {:else}
       <EmptyCell
         {column}
         kind="timeline"
         on:move_timeline_placement={forward}
-        on:duplicate_timeline_placement={forward} />
+        on:duplicate_timeline_placement={forward}
+      />
     {/if}
   </Cell>
 {/each}

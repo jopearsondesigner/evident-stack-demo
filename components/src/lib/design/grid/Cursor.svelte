@@ -99,7 +99,7 @@
           name,
           left: form.offsetLeft,
           top: form.offsetTop,
-          index: column,
+          index: column
         });
       } else if (cell.kind === 'event') {
         dispatch('define_and_place_event', { name, index: column, stream: cell.stream });
@@ -160,7 +160,7 @@
       placementId: maybePlacement,
       placementKind: maybePlacementKind
     });
-  }
+  };
 </script>
 
 <svelte:window on:keydown={keyboardHandler} />
@@ -174,7 +174,7 @@
     on:dragleave={handleDragLeave}
     on:drop={handleDragDrop}
     bind:this={element}
-    class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300 bg-gray-canvas dark:bg-dark-1"
+    class="cursor z-20 relative self-stretch w-full h-full transition duration-200 ease-in border-2 border-focus bg-gray-canvas dark:bg-dark-1 box-border"
     style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
   >
     <form
@@ -183,7 +183,7 @@
     >
       <input
         name="name"
-        class="text-sm text-body dark:text-body-dark m-1 focus:border focus:ring-focus focus:border-focus focus-visible:border-0 focus-visible:outline-0 focus-visible:ring-focus focus-visible:ring-2 bg-transparent"
+        class="text-sm text-body dark:text-body-dark focus:border focus:ring-focus focus:border-focus focus-visible:border-0 focus-visible:outline-0 focus-visible:ring-focus focus-visible:ring-2 bg-transparent"
         type="text"
         value={cell.placement?.name || ''}
         bind:this={input}
@@ -203,8 +203,9 @@
     on:click={beginEditing}
     class:bg-emerald-200={good_target}
     class:bg-rose-400={bad_target}
-    class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-cyan-300"
-    style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};" >
+    class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-focus bg-gray-canvas dark:bg-dark-1 box-border"
+    style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
+  >
     {#if cell.placement}
       {#if cell.kind == 'interface'}
         <Interface
@@ -217,7 +218,8 @@
           config={cell.placement.interface_config || { kind: 'blank' }}
           on:placement_drag_start={forward}
           on:flow_drag_start={forward}
-          on:connect_flow={forward} />
+          on:connect_flow={forward}
+        />
       {:else if cell.kind == 'timeline'}
         {#if cell.placement.kind == 'command'}
           <Command
@@ -229,7 +231,8 @@
             description={cell.placement.description}
             on:placement_drag_start={forward}
             on:flow_drag_start={forward}
-            on:connect_flow={forward} />
+            on:connect_flow={forward}
+          />
         {:else if cell.placement.kind == 'read_model'}
           <ReadModel
             is_cursor={true}
@@ -240,7 +243,8 @@
             description={cell.placement.description}
             on:placement_drag_start={forward}
             on:flow_drag_start={forward}
-            on:connect_flow={forward} />
+            on:connect_flow={forward}
+          />
         {/if}
       {:else if cell.kind == 'event'}
         <Event
@@ -252,7 +256,8 @@
           description={cell.placement.description}
           on:placement_drag_start={forward}
           on:flow_drag_start={forward}
-          on:connect_flow={forward} />
+          on:connect_flow={forward}
+        />
       {/if}
     {:else}
       <EmptyCell
@@ -264,7 +269,8 @@
         on:move_event_placement={forward}
         on:duplicate_interface_placement={forward}
         on:duplicate_timeline_placement={forward}
-        on:duplicate_event_placement={forward} />
+        on:duplicate_event_placement={forward}
+      />
     {/if}
   </div>
 {/if}

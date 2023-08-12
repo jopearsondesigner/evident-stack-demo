@@ -20,7 +20,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.5",
+    "@codemirror/lang-javascript": "^6.1.9",
     "@codemirror/lang-markdown": "^6.2.0",
+    "@codemirror/language-data": "^6.3.1",
     "@codemirror/theme-one-dark": "^6.1.2",
     "@lottiefiles/svelte-lottie-player": "^0.3.0",
     "@playwright/test": "^1.28.1",
@@ -79,5 +81,7 @@
   "bugs": {
     "url": "https://github.com/evidentsystems/platform/issues"
   },
-  "homepage": "https://github.com/evidentsystems/platform#readme"
+  "dependencies": {
+    "svelte-codemirror-editor": "^1.1.0"
+  }
 }

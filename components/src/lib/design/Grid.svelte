@@ -13,7 +13,8 @@
     type FlowPortSource,
     DEFAULT_LANE,
     linkingFlowFromState,
-    type CursorTarget, ContextMenuCommand
+    type CursorTarget,
+    ContextMenuCommand
   } from './grid/util';
 
   import FlowCanvas from './flowArrows/FlowCanvas.svelte';
@@ -264,10 +265,7 @@
   });
   let cursor_column = 0;
 
-  $: cursor_cell = grid.cell_by_row_col(
-    cursor_row,
-    cursor_column,
-  );
+  $: cursor_cell = grid.cell_by_row_col(cursor_row, cursor_column);
 
   const gridModeToCursorMode = (mode: GridMode): CursorMode => {
     return mode === 'editing'
@@ -429,14 +427,12 @@
 <svelte:window
   on:keydown={keyboardHandler}
   on:dragenter={handleOutOfBoundsDragEnter}
-  on:dragend={handleOutOfBoundsDragEnd} />
+  on:dragend={handleOutOfBoundsDragEnd}
+/>
 
-<div class="overflow-auto z-[0] h-full w-full bg-gray-canvas dark:bg-dark-1">
+<div class="overflow-auto relative z-[0] h-full w-full bg-gray-canvas dark:bg-dark-1">
   {#if contextMenu}
-    <ContextMenu
-      x={contextMenu.x}
-      y={contextMenu.y}
-      on:clickoutside={handleCloseContextMenu}>
+    <ContextMenu x={contextMenu.x} y={contextMenu.y} on:clickoutside={handleCloseContextMenu}>
       {#if !contextMenu.placementId}
         {#if contextMenu.rowKind === 'stream'}
           <ContextMenuItem>Add Event</ContextMenuItem>
@@ -448,54 +444,64 @@
         {/if}
       {:else if contextMenu.placementKind === 'event'}
         <ContextMenuItem
-          on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
+        >
           Delete Event
         </ContextMenuItem>
       {:else if contextMenu.placementKind === 'interface'}
         <ContextMenuItem
-          on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
+        >
           Delete Interface
         </ContextMenuItem>
       {:else if contextMenu.placementKind === 'read_model'}
         <ContextMenuItem
-          on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
-          Delete Read Model</ContextMenuItem>
-        {:else if contextMenu.placementKind === 'command'}
-          <ContextMenuItem
-            on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)} >
-            Delete Command
-          </ContextMenuItem>
-        {/if}
-        <ContextMenuDivider />
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
+        >
+          Delete Read Model</ContextMenuItem
+        >
+      {:else if contextMenu.placementKind === 'command'}
         <ContextMenuItem
-          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnLeft)} >
-          Insert Column Left
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.DeletePlacement)}
+        >
+          Delete Command
         </ContextMenuItem>
+      {/if}
+      <ContextMenuDivider />
+      <ContextMenuItem
+        on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnLeft)}
+      >
+        Insert Column Left
+      </ContextMenuItem>
+      <ContextMenuItem
+        on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnRight)}
+      >
+        Insert Column Right
+      </ContextMenuItem>
+      {#if contextMenu.rowKind !== 'audience' || !contextMenu.defaultLane}
         <ContextMenuItem
-          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertColumnRight)} >
-          Insert Column Right
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneAbove)}
+        >
+          Insert Lane Above
         </ContextMenuItem>
-        {#if contextMenu.rowKind !== 'audience' || !contextMenu.defaultLane}
-          <ContextMenuItem
-            on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneAbove)}>
-            Insert Lane Above
-          </ContextMenuItem>
-        {/if}
-        {#if contextMenu.rowKind !== 'stream' || !contextMenu.defaultLane}
-          <ContextMenuItem
-            on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneBelow)} >
-            Insert Lane Below
-          </ContextMenuItem>
-        {/if}
-        <ContextMenuDivider />
-        <ContextMenuItem>Import Event Model JSON</ContextMenuItem>
+      {/if}
+      {#if contextMenu.rowKind !== 'stream' || !contextMenu.defaultLane}
+        <ContextMenuItem
+          on:click={() => handleContextMenuCommand(ContextMenuCommand.InsertLaneBelow)}
+        >
+          Insert Lane Below
+        </ContextMenuItem>
+      {/if}
+      <ContextMenuDivider />
+      <ContextMenuItem>Import Event Model JSON</ContextMenuItem>
     </ContextMenu>
   {/if}
   <div
     bind:this={containerRef}
     on:dragover={handleDragOver}
     class="grid relative w-max p-3 pl-5 justify-items-center items-center"
-    style="grid-template-columns: repeat({max_column}, 9rem); grid-template-rows: repeat({grid.row_count}, 9rem);">
+    style="grid-template-columns: repeat({max_column}, 9rem); grid-template-rows: repeat({grid.row_count}, 9rem);"
+  >
     <FlowCanvas flows={allFlows} />
     <AudienceLane
       on:navigate_cursor={handleNavigateCursor}
@@ -508,145 +514,154 @@
       targeted_cell={cell_drop_target &&
       cell_drop_target.row.rowKind === 'audience' &&
       cell_drop_target.row.audienceId == DEFAULT_LANE
-      ? {
-      column: cell_drop_target.column,
-      targetStatus: cell_drop_target.targetStatus
-      }
-      : undefined}
+        ? {
+            column: cell_drop_target.column,
+            targetStatus: cell_drop_target.targetStatus
+          }
+        : undefined}
       targeted_lane={audience_drop_target?.index === default_audience_lane_index
-      ? audience_drop_target.targetStatus
-      : undefined}
+        ? audience_drop_target.targetStatus
+        : undefined}
       audience={grid.default_audience}
-      {max_column} />
+      {max_column}
+    />
 
     {#each grid.audiences as audience (audience.id)}
       {@const targeted_lane =
-    audience_drop_target?.index == audience.row ? audience_drop_target?.targetStatus : undefined}
-    {@const targeted_cell =
-    cell_drop_target &&
-    cell_drop_target.row.rowKind === 'audience' &&
-    cell_drop_target.row.audienceId == audience.id
-    ? {
-    column: cell_drop_target.column,
-    targetStatus: cell_drop_target.targetStatus
-    }
-    : undefined}
-    <AudienceLane
+        audience_drop_target?.index == audience.row
+          ? audience_drop_target?.targetStatus
+          : undefined}
+      {@const targeted_cell =
+        cell_drop_target &&
+        cell_drop_target.row.rowKind === 'audience' &&
+        cell_drop_target.row.audienceId == audience.id
+          ? {
+              column: cell_drop_target.column,
+              targetStatus: cell_drop_target.targetStatus
+            }
+          : undefined}
+      <AudienceLane
+        on:navigate_cursor={handleNavigateCursor}
+        on:lane_drag_start={handleLaneDragStart}
+        on:lane_drag_enter={handleLaneDragEnter}
+        on:lane_drag_drop={handleLaneDragDrop}
+        on:placement_drag_start={handlePlacementDragStart}
+        on:cell_drag_enter={handleCellDragEnter}
+        on:cell_drag_drop={handleCellDragDrop}
+        on:flow_drag_start={handleFlowDragStart}
+        on:open_context_menu={handleOpenContextMenu}
+        {targeted_cell}
+        {targeted_lane}
+        {audience}
+        {max_column}
+      />
+    {/each}
+
+    <Timeline
       on:navigate_cursor={handleNavigateCursor}
-      on:lane_drag_start={handleLaneDragStart}
-      on:lane_drag_enter={handleLaneDragEnter}
+      on:move_timeline_placement={handleMoveTimelinePlacement}
+      on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
+      on:placement_drag_start={handlePlacementDragStart}
+      on:cell_drag_enter={handleCellDragEnter}
+      on:cell_drag_drop={handleCellDragDrop}
+      on:flow_drag_start={handleFlowDragStart}
+      on:open_context_menu={handleOpenContextMenu}
+      timeline={grid.timeline}
+      targeted_lane={timeline_drop_target}
+      targeted_cell={cell_drop_target && cell_drop_target.row.rowKind === 'timeline'
+        ? { column: cell_drop_target.column, targetStatus: cell_drop_target.targetStatus }
+        : undefined}
+      {max_column}
+    />
+
+    {#each grid.streams as stream (stream.id)}
+      {@const targeted_lane =
+        stream_drop_target?.index == stream.index ? stream_drop_target?.targetStatus : undefined}
+      {@const targeted_cell =
+        cell_drop_target &&
+        cell_drop_target.row.rowKind === 'stream' &&
+        cell_drop_target.row.streamId == stream.id
+          ? {
+              column: cell_drop_target.column,
+              targetStatus: cell_drop_target.targetStatus
+            }
+          : undefined}
+      <StreamLane
+        on:navigate_cursor={handleNavigateCursor}
+        on:lane_drag_start={handleLaneDragStart}
+        on:lane_drag_enter={handleLaneDragEnter}
+        on:lane_drag_drop={handleLaneDragDrop}
+        on:placement_drag_start={handlePlacementDragStart}
+        on:cell_drag_enter={handleCellDragEnter}
+        on:cell_drag_drop={handleCellDragDrop}
+        on:flow_drag_start={handleFlowDragStart}
+        on:open_context_menu={handleOpenContextMenu}
+        {targeted_lane}
+        {targeted_cell}
+        {stream}
+        {max_column}
+      />
+    {/each}
+    <StreamLane
+      on:navigate_cursor={handleNavigateCursor}
       on:lane_drag_drop={handleLaneDragDrop}
       on:placement_drag_start={handlePlacementDragStart}
       on:cell_drag_enter={handleCellDragEnter}
       on:cell_drag_drop={handleCellDragDrop}
       on:flow_drag_start={handleFlowDragStart}
       on:open_context_menu={handleOpenContextMenu}
-      {targeted_cell}
-      {targeted_lane}
-      {audience}
-      {max_column} />
-    {/each}
-
-<Timeline
-  on:navigate_cursor={handleNavigateCursor}
-  on:move_timeline_placement={handleMoveTimelinePlacement}
-  on:duplicate_timeline_placement={handleDuplicateTimelinePlacement}
-  on:placement_drag_start={handlePlacementDragStart}
-  on:cell_drag_enter={handleCellDragEnter}
-  on:cell_drag_drop={handleCellDragDrop}
-  on:flow_drag_start={handleFlowDragStart}
-  on:open_context_menu={handleOpenContextMenu}
-  timeline={grid.timeline}
-  targeted_lane={timeline_drop_target}
-  targeted_cell={cell_drop_target && cell_drop_target.row.rowKind === 'timeline'
-  ? { column: cell_drop_target.column, targetStatus: cell_drop_target.targetStatus }
-  : undefined}
-  {max_column} />
-
-{#each grid.streams as stream (stream.id)}
-  {@const targeted_lane =
-stream_drop_target?.index == stream.index ? stream_drop_target?.targetStatus : undefined}
-{@const targeted_cell =
-cell_drop_target &&
-cell_drop_target.row.rowKind === 'stream' &&
-cell_drop_target.row.streamId == stream.id
-? {
-column: cell_drop_target.column,
-targetStatus: cell_drop_target.targetStatus
-}
-: undefined}
-<StreamLane
-  on:navigate_cursor={handleNavigateCursor}
-  on:lane_drag_start={handleLaneDragStart}
-  on:lane_drag_enter={handleLaneDragEnter}
-  on:lane_drag_drop={handleLaneDragDrop}
-  on:placement_drag_start={handlePlacementDragStart}
-  on:cell_drag_enter={handleCellDragEnter}
-  on:cell_drag_drop={handleCellDragDrop}
-  on:flow_drag_start={handleFlowDragStart}
-  on:open_context_menu={handleOpenContextMenu}
-  {targeted_lane}
-  {targeted_cell}
-  {stream}
-  {max_column} />
-{/each}
-<StreamLane
-  on:navigate_cursor={handleNavigateCursor}
-  on:lane_drag_drop={handleLaneDragDrop}
-  on:placement_drag_start={handlePlacementDragStart}
-  on:cell_drag_enter={handleCellDragEnter}
-  on:cell_drag_drop={handleCellDragDrop}
-  on:flow_drag_start={handleFlowDragStart}
-  on:open_context_menu={handleOpenContextMenu}
-  targeted_cell={cell_drop_target &&
-  cell_drop_target.row.rowKind === 'stream' &&
-  cell_drop_target.row.streamId == DEFAULT_LANE
-  ? {
-  column: cell_drop_target.column,
-  targetStatus: cell_drop_target.targetStatus
-  }
-  : undefined}
-  targeted_lane={stream_drop_target?.index === default_stream_lane_index
-  ? stream_drop_target.targetStatus
-  : undefined}
-  stream={grid.default_stream}
-  {max_column} />
-{#if cursor_cell}
-  <Cursor
-    on:begin_editing={handleBeginEditing}
-    on:cancel_editing={handleCancelEditing}
-    on:define_and_place_interface={handleDefineAndPlaceInterface}
-    on:define_and_place_event={handleDefineAndPlaceEvent}
-    on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
-    on:remove_placement={handleRemovePlacement}
-    on:rename_placement={handleRenamePlacement}
-    on:move_interface_placement={handleMoveInterfacePlacement}
-    on:move_timeline_placement={handleMoveTimelinePlacement}
-    on:move_event_placement={handleMoveEventPlacement}
-    on:placement_drag_start={handlePlacementDragStart}
-    on:cell_drag_enter={handleCellDragEnter}
-    on:cell_drag_drop={handleCellDragDrop}
-    on:flow_drag_start={handleFlowDragStart}
-    on:open_context_menu={handleOpenContextMenu}
-    row={cursor_row}
-    column={cursor_column}
-    cell={cursor_cell}
-    mode={cursor_mode}
-    target_status={cell_drop_target?.column &&
-    cell_drop_target.column === cursor_column &&
-    cell_drop_target?.row &&
-    cell_drop_target.row.rowIndex == cursor_row
-    ? cell_drop_target?.targetStatus
-    : undefined} />
-  {/if}
-  {#if mode === 'disambiguating' && disambiguation}
-    <TimelineDisambiguation
-      name={disambiguation.name}
-      index={disambiguation.index}
-      top={disambiguation.top}
-      left={disambiguation.left}
-      on:define_and_place_command={handleDefineAndPlaceCommand}
-      on:define_and_place_read_model={handleDefineAndPlaceReadModel} />
+      targeted_cell={cell_drop_target &&
+      cell_drop_target.row.rowKind === 'stream' &&
+      cell_drop_target.row.streamId == DEFAULT_LANE
+        ? {
+            column: cell_drop_target.column,
+            targetStatus: cell_drop_target.targetStatus
+          }
+        : undefined}
+      targeted_lane={stream_drop_target?.index === default_stream_lane_index
+        ? stream_drop_target.targetStatus
+        : undefined}
+      stream={grid.default_stream}
+      {max_column}
+    />
+    {#if cursor_cell}
+      <Cursor
+        on:begin_editing={handleBeginEditing}
+        on:cancel_editing={handleCancelEditing}
+        on:define_and_place_interface={handleDefineAndPlaceInterface}
+        on:define_and_place_event={handleDefineAndPlaceEvent}
+        on:disambiguate_timeline_definition_and_placement={handleDisambiguateTimelineDefinitionAndPlacement}
+        on:remove_placement={handleRemovePlacement}
+        on:rename_placement={handleRenamePlacement}
+        on:move_interface_placement={handleMoveInterfacePlacement}
+        on:move_timeline_placement={handleMoveTimelinePlacement}
+        on:move_event_placement={handleMoveEventPlacement}
+        on:placement_drag_start={handlePlacementDragStart}
+        on:cell_drag_enter={handleCellDragEnter}
+        on:cell_drag_drop={handleCellDragDrop}
+        on:flow_drag_start={handleFlowDragStart}
+        on:open_context_menu={handleOpenContextMenu}
+        row={cursor_row}
+        column={cursor_column}
+        cell={cursor_cell}
+        mode={cursor_mode}
+        target_status={cell_drop_target?.column &&
+        cell_drop_target.column === cursor_column &&
+        cell_drop_target?.row &&
+        cell_drop_target.row.rowIndex == cursor_row
+          ? cell_drop_target?.targetStatus
+          : undefined}
+      />
+    {/if}
+    {#if mode === 'disambiguating' && disambiguation}
+      <TimelineDisambiguation
+        name={disambiguation.name}
+        index={disambiguation.index}
+        top={disambiguation.top}
+        left={disambiguation.left}
+        on:define_and_place_command={handleDefineAndPlaceCommand}
+        on:define_and_place_read_model={handleDefineAndPlaceReadModel}
+      />
     {/if}
   </div>
 </div>

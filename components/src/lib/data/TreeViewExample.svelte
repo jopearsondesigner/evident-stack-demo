@@ -1,111 +1,111 @@
 <script lang="ts">
   import classNames from 'classnames';
-  import TreeView, { type TreeItem } from './TreeView.svelte';
+  import TreeView from './TreeView.svelte';
 
   let isActive: string | number;
   let btnClass: string | undefined =
     'grow text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
   let summaryClass: string | undefined =
     'grow text-body dark:text-body-dark text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
-  let number: number = Math.floor(Math.random() * 100);
+  let num: number = Math.floor(Math.random() * 100);
 
   const tree_data = [
     {
       name: 'Autonomo Mobile iOS App',
       type: 'event-model',
-      id: { number },
+      id: { num },
       children: [
         {
           name: 'My Vehicles',
           type: 'read-model',
-          id: { number },
+          id: { num },
           children: [
             {
               name: 'Vehicle Added',
               type: 'event',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Placement',
               type: 'placement',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Change',
               type: 'event',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Placement',
               type: 'placement',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Vehicle Removed',
               type: 'event',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Placement',
               type: 'placement',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Add a Vehicle',
               type: 'interface',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Placement',
               type: 'placement',
-              id: { number }
+              id: { num }
             },
             {
               name: 'My Vehicles',
               type: 'interface',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Placement',
               type: 'placement',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Remove a Vehicle',
               type: 'interface',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Placement',
               type: 'placement',
-              id: { number }
+              id: { num }
             }
           ]
         },
         {
           name: 'Add a Vehicle',
           type: 'command',
-          id: { number },
+          id: { num },
           children: [
             {
               name: 'Vehicle Added',
               type: 'event',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Placement',
               type: 'placement',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Add a Vehicle',
               type: 'interface',
-              id: { number }
+              id: { num }
             },
             {
               name: 'Placement',
               type: 'placement',
-              id: { number }
+              id: { num }
             }
           ]
         }

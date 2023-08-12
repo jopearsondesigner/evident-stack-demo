@@ -1,78 +1,70 @@
 <script lang="ts">
-	import classNames from 'classnames';
-	export let id: number;
-	export let activeTabValue: number;
-	export let inactiveClass: string = '';
-	export let activeClass: string = 'active';
-	export let liClass: string = '';
-	export let buttonClass: string = 'featureTabs';
-	export let hClass: string = '';
-	export let name: string = 'Tab name';
+  import classNames from 'classnames';
+  import { createEventDispatcher } from 'svelte';
+  import CloseButton from '$lib/utils/CloseButton.svelte';
+  export let id: number;
+  export let activeTabValue: number;
+  export let inactiveClass: string =
+    'bg-dark-2 hover:bg-[#303841]/[.40] text-brand-gray-4 hover:text-white';
+  export let activeClass: string = 'active bg-[#303841] text-white';
+  export let liClass: string = '';
+  export let btnClass: string =
+    'transition duration-200 ease-in h-[28px] min-w-[188px] w-auto rounded-t-[6px] pl-[12px] !m-0 relative bottom-0 h-[28px]';
+  export let nameClass: string = 'text-default text-left font-medium text-inherit mr-3';
+  export let name: string = 'Tab name';
+  let className: string = '';
+  export { className as class };
+
+  const dispatch = createEventDispatcher();
+
+  const handleClose = (e: { target?: any; preventDefault?: any }) => {
+    e.preventDefault();
+    dispatch('close');
+  };
+
+  export let type: 'submit' | 'reset' | 'button' | undefined | null = 'button';
+  export let tabindex: number = 0;
+  let iconColor = 'text-white';
 </script>
 
 <li class={liClass} role="presentation">
-	<button
-		on:click
-		class={classNames(
-			activeTabValue === id ? activeClass : inactiveClass,
-			buttonClass,
-			'lg:mr-2.5'
-		)}
-		id="{id}-tabhead"
-		type="button"
-		role="tab"
-	>
-		<h2 class={hClass}>{name}</h2>
-		<slot />
-	</button>
+  <svelte:element
+    this={type ? 'button' : 'div'}
+    on:click
+    {tabindex}
+    class={classNames(
+      activeTabValue === id ? activeClass : inactiveClass,
+      btnClass,
+      className,
+      'lg:mr-2.5 flex items-center justify-between'
+    )}
+    id="tab-{id}"
+    type="button"
+    role="tab"
+  >
+    <div class={nameClass}>{name}</div>
+    <div class="flex">
+      <CloseButton
+        type="button"
+        name=""
+        size={8}
+        on:click={handleClose}
+        btnClass="p-1 mr-1.5"
+        {iconColor}
+      />
+
+      <div
+        class="divider border-r border-gray-brand-1 max-h-[16px] -mr-[1px] my-auto ml-0 w-px z-[1] relative"
+      />
+    </div>
+  </svelte:element>
 </li>
 
 <style>
-	.featureButtons.active {
-		border-color: #2fb6e1;
-	}
-	.featureButtons.active h2 {
-		color: #2fb6e1;
-		transition-property: color, background-color, border-color, text-decoration-color, fill, stroke,
-			opacity, box-shadow, transform, filter, backdrop-filter;
-		transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-		transition-duration: 150ms;
-		transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
-		transition-duration: 300ms;
-	}
-	.featureTabs {
-		position: relative;
-		display: inline-block;
-		color: #586e75;
-		text-decoration: none;
-		padding: 0.3em 1em 0;
-	}
-	.featureTabs::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: -1;
-		border-bottom: none;
-		border-radius: 0.5em 0.5em 0 0;
-		background-color: #e6e6e6;
-		box-shadow: 0 1px white inset;
-		transform: scale(1.2, 1.3) perspective(0.5em) rotateX(5deg);
-		transform-origin: bottom left;
-		transition-property: color, background-color, border-color, text-decoration-color, fill, stroke,
-			opacity, box-shadow, transform, filter, backdrop-filter;
-		transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
-		transition-duration: 300ms;
-	}
-	.featureTabs.active {
-		color: white;
-		z-index: 2;
-	}
-	.featureTabs.active::before {
-		background-color: #2fb6e1;
-		border-bottom-width: 1px;
-		border-color: #2fb6e1;
-	}
+  .active {
+    z-index: 2;
+  }
+  .active .divider {
+    display: none;
+  }
 </style>

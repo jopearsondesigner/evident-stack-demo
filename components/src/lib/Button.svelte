@@ -9,6 +9,7 @@
   export let label = '';
   export let tabindex: number | undefined = 0;
   export let boundTo = '';
+  export let ghostTextColor = 'text-body-light dark:text-white';
   export let color:
     | 'default'
     | 'primary'
@@ -34,7 +35,7 @@
     brandStackPrimary:
       'text-white bg-gradient-to-t from-stack-brand-700 via-stack-brand-500 to-stack-brand-300 hover:to-stack-brand-700 hover:via-stack-brand-700 hover:from-stack-brand-700 ring-stack-brand-500',
     ghost:
-      'text-body-light dark:text-white bg-gradient-to-t from-transparent to-transparent hover:to-transparent hover:from-[#E4E4E4]/[.60] hover:dark:to-transparent hover:dark:from-focus/[.13] ring-focus'
+      'bg-gradient-to-t from-transparent to-transparent hover:to-transparent hover:from-focus/[.20] hover:dark:to-transparent hover:dark:from-focus/[.13] ring-focus'
   };
   const sizeClasses = {
     xs: 'px-3 py-1 text-xs',
@@ -49,6 +50,7 @@
     : classNames(
         'font-primary font-medium rounded uppercase ring-1 h-auto min-h-0 transition duration-200 ease-in',
         className,
+        ghostTextColor,
         // @ts-ignore
         gradient ? gradientClasses[color] : colorClasses[color],
         sizeClasses[size],

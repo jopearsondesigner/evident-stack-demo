@@ -39,7 +39,6 @@
   };
 
   const handleRightClick: MouseEventHandler<HTMLDivElement> = (e) => {
-
     dispatch('open_context_menu', {
       x: e.clientX,
       y: e.clientY,
@@ -48,7 +47,7 @@
       placementId: maybe_placement,
       placementKind: maybe_placement_kind
     });
-  }
+  };
 </script>
 
 <div
@@ -60,9 +59,22 @@
   }}
   on:dragleave={handleDragLeave}
   on:drop={handleDragDrop}
-  class="cell z-20 flex w-full h-full place-self-center align-items-center hover:bg-focus/[.18] transition duration-200 ease-in border-2 border-transparent"
+  class="cell relative top-0 mb-px flex w-full h-full place-self-center align-items-center hover:bg-focus/[.18] transition duration-200 ease-in border-2 border-transparent box-border"
   class:bg-emerald-200={good_target}
   class:bg-rose-400={bad_target}
-  style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};">
+  style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
+>
+  <div
+    class="relative z-[-2] -ml-[1.5px] w-px col-border ring-offset-0 ring-white dark:ring-border-dark"
+  />
+
   <slot />
 </div>
+
+<style>
+  /* Grid column */
+  .col-border {
+    --tw-ring-offset-width: 0px;
+    box-shadow: 1px 0px 0px 0px var(--tw-ring-color);
+  }
+</style>

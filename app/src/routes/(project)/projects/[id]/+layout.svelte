@@ -36,12 +36,12 @@
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
 
-  // import TreeView from '$components/data/TreeView.svelte';
-  // let isActive: string | number;
-  // let btnClass: string | undefined =
-  //   'grow text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
-  // let summaryClass: string | undefined =
-  //   'grow text-body dark:text-body-dark text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
+  import TreeView from '$components/data/TreeView.svelte';
+  let isActive: string | number;
+  let btnClass: string | undefined =
+    'grow text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
+  let summaryClass: string | undefined =
+    'grow text-body dark:text-body-dark text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
 
   // const tree_data = [
   //   {

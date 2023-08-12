@@ -2,12 +2,13 @@
   import classNames from 'classnames';
 
   export let asideClass =
-    'h-full flex-column bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-gray-brand-3 transition-width duration-200 ease-in';
+    'h-full flex-column bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-border-dark transition-width duration-200 ease-in';
   export let nameClass =
-    'text-sm font-bold text-body-light dark:text-body-dark text-center leading-[1.27] mx-4 mb-2';
+    'text-sm font-bold text-body-light dark:text-gray-brand-4 text-center leading-[1.27] mx-4 mb-2';
   export let descClass =
     'font-medium text-default text-body dark:text-white leading-normal text-center mx-4 mt-2 max-h-16 overflow-auto';
-  export let divClass = 'grow-0 border-b border-gray-primary py-4';
+  export let divClass =
+    'grow-0 bg-black/[2%] dark:bg-black/[8%] border-b border-gray-primary dark:border-border-dark py-4';
   export let style = '';
   let className = '';
   export { className as class };
@@ -30,7 +31,8 @@
       class={nameClass}
       on:dblclick={handleDblClick}
       contenteditable="true"
-      bind:textContent={name}>
+      bind:textContent={name}
+    >
       {name}
     </h2>
     <p class={descClass} contenteditable="true" bind:textContent={description}>

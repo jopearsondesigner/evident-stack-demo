@@ -59,6 +59,7 @@
       {id}
       aria-labelledby={button_id}
       hidden={!expanded}
+      class={classNames('grow')}
       in:slide={{ delay: 0, duration: 200, easing: sineIn }}
       out:slide={{ delay: 0, duration: 200, easing: sineIn }}
     >

@@ -21,6 +21,7 @@
   import ThemeSwitch from '$components/utils/ThemeSwitch.svelte';
 
   import Drawer from '$components/drawer/Drawer.svelte';
+  import DrawerDetails from '$components/drawer/DrawerDetails.svelte';
   import Sidebar from '$components/drawer/Sidebar.svelte';
   import SidebarContainer from '$components/drawer/SidebarContainer.svelte';
   import SidebarGroup from '$components/drawer/SidebarGroup.svelte';
@@ -36,39 +37,189 @@
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
 
-  import TreeView from '$components/data/TreeView.svelte';
-  let isActive: string | number;
-  let btnClass: string | undefined =
-    'grow text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
-  let summaryClass: string | undefined =
-    'grow text-body dark:text-body-dark text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
+  import TreeView, { type TreeData } from '$components/data/TreeView.svelte';
 
-  // const tree_data = [
-  //   {
-  //     name: 'Autonomo Mobile iOS App',
-  //     type: 'event-model',
-  //     id: 1,
-  //     children: [
-  //       {
-  //         name: 'My Vehicles',
-  //         type: 'read-model',
-  //         id: 2,
-  //         children: [
-  //           {
-  //             name: 'Vehicle Added',
-  //             type: 'event',
-  //             id: 3
-  //           },
-  //           {
-  //             name: 'Placement',
-  //             type: 'placement',
-  //             id: 4
-  //           }
-  //         ]
-  //       }
-  //     ]
-  //   }
-  // ];
+  import Pin from '$components/icons/Pin.svelte';
+  import EventIcon from '$components/icons/EventIcon.svelte';
+  import CommandIcon from '$components/icons/CommandIcon.svelte';
+  import ReadModelIcon from '$components/icons/ReadModelIcon.svelte';
+  import InterfaceIcon from '$components/icons/InterfaceIcon.svelte';
+  import EventModelIcon from '$components/icons/EventModel.svelte';
+  let isActive: string | number;
+  let btnClass: string | undefined = '';
+  let summaryClass: string | undefined = '';
+
+  const tree_data = [
+    {
+      name: 'Autonomo Mobile iOS App',
+      type: 'event-model',
+      id: 1,
+      children: [
+        {
+          name: 'My Vehicles',
+          type: 'read-model',
+          id: 2,
+          children: [
+            {
+              name: 'Vehicle Added',
+              type: 'event',
+              id: 3
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 4
+            },
+            {
+              name: 'Change',
+              type: 'event',
+              id: 5
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 6
+            },
+            {
+              name: 'Vehicle Removed',
+              type: 'event',
+              id: 7
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 8
+            },
+            {
+              name: 'Add a Vehicle',
+              type: 'interface',
+              id: 9
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 10
+            },
+            {
+              name: 'My Vehicles',
+              type: 'interface',
+              id: 11
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 12
+            },
+            {
+              name: 'Remove a Vehicle',
+              type: 'interface',
+              id: 13
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 14
+            }
+          ]
+        },
+        {
+          name: 'My Vehicles',
+          type: 'read-model',
+          id: 20,
+          children: [
+            {
+              name: 'Vehicle Added',
+              type: 'event',
+              id: 21
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 22
+            },
+            {
+              name: 'Change',
+              type: 'event',
+              id: 23
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 24
+            },
+            {
+              name: 'Vehicle Removed',
+              type: 'event',
+              id: 25
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 26
+            },
+            {
+              name: 'Add a Vehicle',
+              type: 'interface',
+              id: 27
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 28
+            },
+            {
+              name: 'My Vehicles',
+              type: 'interface',
+              id: 29
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 30
+            },
+            {
+              name: 'Remove a Vehicle',
+              type: 'interface',
+              id: 31
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 32
+            }
+          ]
+        },
+
+        {
+          name: 'Add a Vehicle',
+          type: 'command',
+          id: 15,
+          children: [
+            {
+              name: 'Vehicle Added',
+              type: 'event',
+              id: 16
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 17
+            },
+            {
+              name: 'Add a Vehicle',
+              type: 'interface',
+              id: 18
+            },
+            {
+              name: 'Placement',
+              type: 'placement',
+              id: 19
+            }
+          ]
+        }
+      ]
+    }
+  ];
 
   import type { Readable } from 'svelte/store';
   import { onMount } from 'svelte';
@@ -200,13 +351,14 @@
 
   <Drawer placement="left" bind:hidden>
     <!-- TODO: don't use `grid` here -->
-    <Sidebar
+    <DrawerDetails
       name={$grid?.name ?? 'Project Name'}
       description={$grid?.description ?? 'Project Description'}
       sync_status={$sync_status}
-      class="w-[240px]"
-    >
-      <Accordion class="grow-1 flex flex-col">
+      isOpen
+    />
+    <Sidebar class="w-[240px]">
+      <Accordion class="flex grow flex-col">
         <SidebarContainer
           src={DesignLogo}
           href="/projects/{$page.params.id}/design"
@@ -222,7 +374,6 @@
                 color="ghost"
                 size="sm"
                 className="my-4"
-                class=""
                 on:click={decider.export_json}
               >
                 <Icon
@@ -245,53 +396,121 @@
           bind:expanded={dataExpanded}
         >
           <SidebarGroup>
-            <SidebarItem blank>
-              <!-- <TreeView {tree_data} isClosed let:item {btnClass} {summaryClass}>
-                <div class="flex w-full group h-7">
+            <SidebarItem divClass="p-0" blank>
+              <TreeView {tree_data} let:item ulClass="" bind:isActive>
+                <div class="flex items-center w-full group h-7">
                   {#if item.children}
-                    <div class={classNames(summaryClass)}>
-                      <img
-                        src="../../../src/lib/assets/images/icons/{item.type}.svg"
-                        alt={item.type}
-                        width="14"
-                        class="inline-flex w-3.5 h-3.5 mr-0.5"
-                      />
+                    <!-- <div class={classNames(summaryClass)}> -->
+                    <div class={classNames('')}>
+                      {#if item.type === 'event-model'}
+                        <Icon
+                          name="event-model-icon"
+                          size={14}
+                          iconColor="fill-current"
+                          class="inline-flex mr-px"
+                          pathName={EventModelIcon}
+                        />
+                      {:else if item.type === 'read-model'}
+                        <Icon
+                          name="read-model-icon"
+                          size={14}
+                          class="inline-flex mr-px"
+                          pathName={ReadModelIcon}
+                        />
+                      {:else if item.type === 'command'}
+                        <Icon
+                          name="command-icon"
+                          size={14}
+                          class="inline-flex mr-px"
+                          pathName={CommandIcon}
+                        />
+                      {:else if item.type === 'interface'}
+                        <Icon
+                          name="interface-icon"
+                          size={14}
+                          class="inline-flex mr-px"
+                          pathName={InterfaceIcon}
+                        />
+                      {:else if item.type === 'event'}
+                        <Icon
+                          name="event-icon"
+                          size={14}
+                          class="inline-flex mr-px"
+                          pathName={EventIcon}
+                        />
+                      {/if}
                       <span class="ml-1">{item.name}</span>
                     </div>
                   {:else}
                     <button
                       class={classNames(
                         btnClass,
-                        'flex w-full pl-[35px] h-7 text-body dark:text-body-dark bg-transparent hover:bg-focus/[.20] transition duration-200 ease-in'
+                        'flex w-full items-center pl-[35px] h-7 text-body dark:text-body-dark text-default bg-transparent hover:bg-focus/[.20] transition duration-200 ease-in'
                       )}
+                      id={item.id}
                       class:selected={isActive === item.id}
                       on:click={() => (isActive = item.id)}
                     >
                       {#if item.type == 'placement'}
                         <span
-                          class="relative border-l border-b border-gray-brand-4 dark:border-gray-brand-1 w-1.5 h-5 -top-[9px] -right-1.5 mr-2"
+                          class="placement-indicator relative border-l border-b border-gray-brand-2 dark:border-gray-brand-2 w-1.5 h-5 -top-[9px] -right-1.5 mr-2"
                         />
                       {/if}
-                      {#if item.id == isActive && item.type == 'placement'}
-                        <img
-                          src="../../../src/lib/assets/images/icons/{item.type}-selected.svg"
-                          alt={item.type}
-                          width="14"
-                          class="inline-flex w-3.5 h-3.5"
+                      {#if item.type === 'placement'}
+                        <Icon
+                          name="pin"
+                          size={14}
+                          class="inline-flex"
+                          viewBox="0 0 20 20"
+                          iconColor="fill-current"
+                          pathName={Pin}
                         />
-                      {:else}
-                        <img
-                          src="../../../src/lib/assets/images/icons/{item.type}.svg"
-                          alt={item.type}
-                          width="14"
-                          class="inline-flex w-3.5 h-3.5"
+                      {:else if item.type === 'event-model'}
+                        <Icon
+                          name="event-model-icon"
+                          size={14}
+                          class="inline-flex mr-px"
+                          viewBox="0 0 20 20"
+                          pathName={EventModelIcon}
+                        />
+                      {:else if item.type === 'event'}
+                        <Icon
+                          name="event-icon"
+                          size={14}
+                          class="inline-flex mr-px"
+                          viewBox="0 0 20 20"
+                          pathName={EventIcon}
+                        />
+                      {:else if item.type === 'command'}
+                        <Icon
+                          name="command-icon"
+                          size={14}
+                          class="inline-flex mr-px"
+                          viewBox="0 0 20 20"
+                          pathName={CommandIcon}
+                        />
+                      {:else if item.type === 'read-model'}
+                        <Icon
+                          name="read-model-icon"
+                          size={14}
+                          class="inline-flex mr-px"
+                          viewBox="0 0 20 20"
+                          pathName={ReadModelIcon}
+                        />
+                      {:else if item.type === 'interface'}
+                        <Icon
+                          name="interface-icon"
+                          size={14}
+                          class="inline-flex mr-px"
+                          viewBox="0 0 20 20"
+                          pathName={InterfaceIcon}
                         />
                       {/if}
                       <span class="ml-1">{item.name}</span>
                     </button>
                   {/if}
                 </div>
-              </TreeView> -->
+              </TreeView>
             </SidebarItem>
           </SidebarGroup>
         </SidebarContainer>
@@ -335,3 +554,13 @@
     <slot />
   </main>
 </div>
+
+<style>
+  .selected {
+    background-color: #1e6aff !important;
+    color: white !important;
+  }
+  .selected .placement-indicator {
+    border-color: white !important;
+  }
+</style>

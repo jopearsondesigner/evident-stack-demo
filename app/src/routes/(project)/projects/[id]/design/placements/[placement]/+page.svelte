@@ -1,5 +1,6 @@
 <script lang="ts">
   import Drawer from '$components/drawer/Drawer.svelte';
+  import Sidebar from '$components/drawer/Sidebar.svelte';
   import Icon from '$components/Icon.svelte';
   import JobGears from '$components/icons/JobGears.svelte';
   import Button from '$components/Button.svelte';
@@ -172,7 +173,7 @@
     {/if}
   </div>
   {#if placement}
-    <aside
+    <Sidebar
       class="w-[480px] h-full py-6 flex items-center px-6 bg-white dark:bg-dark-2 border-l border-gray-primary dark:border-gray-brand-3"
     >
       <div class="w-full h-full pb-6">
@@ -269,6 +270,6 @@
           {/if}
         </div>
       </div>
-    </aside>
+    </Sidebar>
   {/if}
 </Drawer>

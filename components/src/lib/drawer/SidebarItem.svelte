@@ -10,7 +10,7 @@
   export let featureTextClass = 'font-medium text-default text-body dark:text-white';
   export let sidebarItemClass = 'sidebarItem flex items-center pl-4 pr-1';
   export let divClass =
-    'min-h-8 items-center pl-4 pr-1 bg-white dark:bg-dark-2 text-body-light dark:text-white w-full space-x-3 cursor-default';
+    'min-h-8 items-center pl-4 pr-1 bg-white dark:bg-dark-2 text-body-light dark:text-white w-full cursor-default';
   export let sidebarBtnClass =
     'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] dark:text-white focus:text-body focus:bg-focus/[.20] dark:hover:bg-focus/[.20] transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
   export let sidebarActiveClass =
@@ -20,7 +20,7 @@
   export let sidebarSpanClass = 'flex-1 ml-3 text-left whitespace-nowrap';
 </script>
 
-<li class="sidebarItem flex items-center justify-center">
+<li class="sidebarItem">
   {#if featureData}
     <button class={classNames(sidebarItemClass, sidebarBtnClass)}>
       {#if headerText}

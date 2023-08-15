@@ -1,12 +1,10 @@
 <script lang="ts">
   import classNames from 'classnames';
-  import TreeView from './TreeView.svelte';
+  import TreeView, { type TreeItem } from './TreeView.svelte';
 
   let isActive: string | number;
-  let btnClass: string | undefined =
-    'grow text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
-  let summaryClass: string | undefined =
-    'grow text-body dark:text-body-dark text-default whitespace-nowrap text-ellipsis leading-normal flex items-center';
+  let btnClass: string | undefined = '';
+  let summaryClass: string | undefined = '';
   let num: number = Math.floor(Math.random() * 100);
 
   const tree_data = [
@@ -119,7 +117,7 @@
 <span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 mt-4"><ThemeSwitch /></span>
 
 <div class="w-[240px] bg-white dark:bg-dark-2 h-screen overflow-hidden">
-  <TreeView {tree_data} isClosed let:item {btnClass} {summaryClass}>
+  <TreeView {tree_data} isClosed let:item>
     <div class="flex w-full group h-7">
       {#if item.children}
         <div class={classNames(summaryClass)}>

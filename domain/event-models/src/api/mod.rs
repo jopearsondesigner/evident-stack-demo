@@ -616,7 +616,10 @@ impl<T: EventModel + ModifiableEventModel + Debug> Evolver for EventModelState<T
                     EventModelState::EventModel(model)
                 }
                 EventModelEvent::DescriptionEdited(_, _) => todo!(),
-                EventModelEvent::DataEdited(_, _) => todo!(),
+                EventModelEvent::DataEdited(_, TextEdit { position, deletions, addition }) => {
+                    model.splice_data(*position, *deletions, addition);
+                    EventModelState::EventModel(model)
+                }
 
                 EventModelEvent::LaneAdded(_, lane, index) => {
                     model.lane_added(lane, *index);

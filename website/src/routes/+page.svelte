@@ -183,8 +183,7 @@
                   size="md"
                   label="Get Started"
                   class="flex items-center"
-                  href="https://app.evidentstack.com/"
-                >
+                  href="https://app.evidentstack.com/">
                   <Icon
                     name="arrow-right"
                     slot="icon"

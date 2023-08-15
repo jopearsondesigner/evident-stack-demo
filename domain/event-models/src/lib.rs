@@ -348,6 +348,7 @@ pub struct Command {
     id: CommandId,
     name: Name,
     description: String,
+    #[serde(default)]
     data: String,
 }
 
@@ -399,6 +400,7 @@ pub struct Event {
     id: EventId,
     name: Name,
     description: String,
+    #[serde(default)]
     data: String,
 }
 
@@ -450,6 +452,7 @@ pub struct ReadModel {
     id: ReadModelId,
     name: Name,
     description: String,
+    #[serde(default)]
     data: String,
 }
 
@@ -572,6 +575,7 @@ pub enum Placement {
         id: PlacementId,
         index: PlacementIndex,
         command: CommandId,
+        #[serde(default)]
         data: String,
     },
     Event {
@@ -579,12 +583,14 @@ pub enum Placement {
         index: PlacementIndex,
         event: EventId,
         stream: Option<StreamId>,
+        #[serde(default)]
         data: String,
     },
     ReadModel {
         id: PlacementId,
         index: PlacementIndex,
         read_model: ReadModelId,
+        #[serde(default)]
         data: String,
     },
 }

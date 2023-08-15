@@ -81,7 +81,7 @@
   </Modal>
 {:else}
   <p>
-    Whoops, you're not signed in! Please <a class="text-primary" href="/auth/sign-in">sign in</a> to
+    Whoops, you're not signed in! Please <a class="text-primary" href="/auth">sign in</a> to
     continue.
   </p>
 {/if}

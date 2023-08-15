@@ -115,6 +115,7 @@ pub struct JsonV1_0_0Transfer {
     streams: Vec<Stream>,
     placements: HashMap<Uuid, Placement>,
     flows: HashMap<Uuid, FlowArrow>,
+    #[serde(default)]
     data: String,
 }
 

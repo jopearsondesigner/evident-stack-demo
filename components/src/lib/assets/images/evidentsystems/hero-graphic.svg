@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 640.5 391.5">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient-2);
+      }
+
+      .cls-3 {
+        fill: none;
+        stroke: #f2f2f2;
+        stroke-miterlimit: 10;
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1=".5" y1="344.64" x2="342.37" y2="344.64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset=".01" stop-color="#fff" stop-opacity=".03"/>
+      <stop offset=".13" stop-color="#fff" stop-opacity=".25"/>
+      <stop offset=".25" stop-color="#fff" stop-opacity=".45"/>
+      <stop offset=".37" stop-color="#fff" stop-opacity=".62"/>
+      <stop offset=".49" stop-color="#fff" stop-opacity=".76"/>
+      <stop offset=".62" stop-color="#fff" stop-opacity=".86"/>
+      <stop offset=".74" stop-color="#fff" stop-opacity=".94"/>
+      <stop offset=".87" stop-color="#fff" stop-opacity=".99"/>
+      <stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1=".5" y1="195.5" x2="640.5" y2="195.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset=".45" stop-color="#b3d7b5" stop-opacity=".44"/>
+      <stop offset="1" stop-color="#54a658"/>
+    </linearGradient>
+  </defs>
+  <polyline class="cls-3" points="640.5 391 56.45 391 31.21 391 .5 391 .5 378.6 .5 377.87 .5 377.86 .5 0"/>
+  <polygon class="cls-1" points="342.37 315.87 333.69 329.53 325.48 342.44 323.13 331.88 56.45 391 .5 391 .5 378.6 116.37 352.92 119.12 352.31 317.87 308.24 315.65 298.28 327.51 306.09 342.37 315.87"/>
+  <path class="cls-2" d="m640.5,27.96l-10.17-3.23-.14-.04-.08-.03c-15.23,30.45-50.11,65.14-105.73,105.29-53.43,38.57-125.86,81.89-215.27,128.76-69.16,36.25-138.06,69.11-192.74,94.21-35.8,16.43-65.49,29.54-85.17,38.08H.5v-13.14c26.53-11.28,161.55-69.41,297.51-140.67,88.37-46.32,159.78-89.02,212.25-126.91,36.09-26.06,78.86-61.38,96.42-93.06l-9.29-2.96,12.72-6.34,1.26-.63h.02s11.67-5.82,11.67-5.82l2.97-1.47,1.07,2.08,6.36,12.28.64,1.24h.01s6.39,12.35,6.39,12.35Z"/>
+</svg>

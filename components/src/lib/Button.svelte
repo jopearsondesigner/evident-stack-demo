@@ -19,13 +19,15 @@
     | 'disabled'
     | 'brandDesignPrimary'
     | 'brandStackPrimary'
+    | 'evidentsystems'
     | 'ghost';
 
   const colorClasses = {
     default: 'text-white bg-focus hover:bg-[#054FDE] ring-focus',
     secondary: 'text-focus bg-focus/0 hover:bg-focus/100 hover:text-white ring-focus',
     warning: 'text-white bg-focus/0 hover:bg-focus/20 ring-red',
-    success: 'text-white bg-focus/0 hover:bg-focus/20 ring-green'
+    success: 'text-white bg-focus/0 hover:bg-focus/20 ring-green',
+    evidentsystems: 'text-white bg-[#54A658] hover:bg-[#3C8E40] ring-[#54A658]'
   };
   const gradientClasses = {
     primary:

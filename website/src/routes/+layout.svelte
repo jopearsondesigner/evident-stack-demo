@@ -81,7 +81,8 @@
               class="flex items-center"
               size="sm"
               href="https://app.evidentstack.com/"
-              label="Sign Up">
+              label="Sign Up"
+            >
               <Icon
                 name="arrow-right"
                 slot="icon"

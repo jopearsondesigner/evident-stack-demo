@@ -21,3 +21,5 @@ declare module 'svelte-click-outside';
 declare module '@lottiefiles/svelte-lottie-player';
 
 declare module 'svelte-carousel';
+
+declare module 'svelte-scrollto';

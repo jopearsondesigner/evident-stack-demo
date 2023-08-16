@@ -1,5 +1,6 @@
 <script lang="ts">
   import classNames from 'classnames';
+  import { onMount } from 'svelte';
   import CloseButton from '../utils/CloseButton.svelte';
   import { fly } from 'svelte/transition';
   import { sineOut } from 'svelte/easing';
@@ -7,13 +8,13 @@
   import { createEventDispatcher } from 'svelte';
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
   export let hidden: boolean = true;
-  export let divClass: string = 'z-40 top-0 fixed h-full bg-white dark:bg-dark-2';
+  export let divClass: string =
+    'z-40 top-0 bottom-0 box-border fixed flex flex-col h-screen bg-white dark:bg-dark-2';
   let className: string = '';
   export { className as class };
   export let leftOffset: string = 'left-0';
   export let rightOffset: string = 'right-0';
   export let placement: 'left' | 'right';
-  export let navbarHeight: number = 64;
   export let name: string = '';
   let transitionParams = {
     x: -240,
@@ -45,6 +46,12 @@
   };
 
   const keyboardHandler: EventListener = createKeybindingsHandler(drawerKeys);
+
+  export let win = window,
+    doc = document,
+    docElem = doc.documentElement,
+    body = doc.getElementsByTagName('body')[0],
+    height = win.innerHeight || docElem.clientHeight || body.clientHeight;
 </script>
 
 <svelte:window on:keydown={keyboardHandler} />
@@ -60,7 +67,6 @@
     <div
       transition:fly={transitionParamsRight}
       class={classNames(className, divClass, placements[placement])}
-      style="padding-top: {navbarHeight}px;"
     >
       <CloseButton
         {name}
@@ -73,9 +79,10 @@
     </div>
   {:else}
     <div
+      id="left-drawer"
       transition:fly={transitionParams}
       class={classNames(className, divClass)}
-      style="padding-top: {navbarHeight}px;"
+      style="max-height: {height}px"
     >
       <slot />
     </div>

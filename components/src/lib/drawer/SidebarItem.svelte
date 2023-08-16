@@ -8,9 +8,10 @@
   export let blank = true;
   export let headerTextClass = 'font-extrabold text-default text-body dark:text-white';
   export let featureTextClass = 'font-medium text-default text-body dark:text-white';
-  export let sidebarItemClass = 'sidebarItem flex items-center pl-4 pr-1';
+  export let sidebarItemClass = 'sidebarItem flex items-center';
+  export let padding = 'pl-4 pr-1';
   export let divClass =
-    'min-h-8 items-center pl-4 pr-1 bg-white dark:bg-dark-2 text-body-light dark:text-white w-full cursor-default';
+    'min-h-8 items-center grow overflow-auto bg-white dark:bg-dark-2 text-body-light dark:text-white w-full cursor-default';
   export let sidebarBtnClass =
     'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] dark:text-white focus:text-body focus:bg-focus/[.20] dark:hover:bg-focus/[.20] transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
   export let sidebarActiveClass =
@@ -31,13 +32,13 @@
       <slot />
     </button>
   {:else if headerItem}
-    <div class={classNames(sidebarItemClass, sidebarHeaderClass)}>
+    <div class={classNames(sidebarItemClass, sidebarHeaderClass, padding)}>
       <slot name="leftIcon" />
       <span class={classNames(headerTextClass, sidebarSpanClass)}>{label}</span>
       <slot name="rightIcon" />
     </div>
   {:else if active}
-    <button class={classNames(sidebarItemClass, sidebarActiveClass)}>
+    <button class={classNames(sidebarItemClass, sidebarActiveClass, padding)}>
       {#if headerText}
         <span style="color: white;" class={classNames(headerTextClass, sidebarSpanClass)}
           >{label}</span
@@ -50,12 +51,12 @@
       <slot name="icon" />
     </button>
   {:else if blank}
-    <div class={classNames(divClass)}>
+    <div class={classNames(divClass, padding)}>
       <span class={classNames(featureTextClass)}>{label}</span>
       <slot />
     </div>
   {:else}
-    <button class={classNames(sidebarItemClass, sidebarBtnClass)}>
+    <button class={classNames(sidebarItemClass, sidebarBtnClass, padding)}>
       {#if headerText}
         <span class={classNames(headerTextClass, sidebarSpanClass)}>{label}</span>
       {:else}

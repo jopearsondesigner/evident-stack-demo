@@ -18,7 +18,6 @@
     'absolute right-0.5 top-5 text-current rounded-full border-none p-0 flex items-center justify-center bg-gray-brand-1/0 dark:bg-white/0 hover:bg-gray-brand-1/[.09] dark:hover:bg-white/[.09] cursor-pointer';
   export let isClosed = true;
   export let name: string;
-  export let isOpen = true;
   export let description: string;
   // TODO: sync status indicator, per Dexie SyncStatus
   export let sync_status: number;
@@ -29,6 +28,7 @@
     editable = true; // or use  editable=!editable  to toggle
   }
 
+  export let isOpen: boolean;
   export const handleClick = () => (isOpen = !isOpen);
 </script>
 
@@ -44,16 +44,16 @@
             <Icon
               name="close-up"
               size={14}
-              class={classNames('mx-px flex-none')}
-              iconColor="fill-current"
+              class={classNames('mx-px flex-none stroke-2')}
+              iconColor="text-gray-brand-1 dark:text-gray-brand-4"
               pathName={ArrowUp}
             />
           {:else}
             <Icon
               name="open-down"
               size={14}
-              class={classNames('mx-px flex-none')}
-              iconColor="fill-current"
+              class={classNames('mx-px flex-none stroke-2')}
+              iconColor="text-gray-brand-1 dark:text-gray-brand-4"
               pathName={ArrowDown}
             />
           {/if}

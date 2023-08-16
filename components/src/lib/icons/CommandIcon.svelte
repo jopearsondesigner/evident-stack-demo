@@ -1,9 +1,9 @@
 <linearGradient
   id="command-linear-gradient"
-  x1="10"
-  y1="1.94"
-  x2="10"
-  y2="18.04"
+  x1="24.04"
+  y1="-.21"
+  x2="24.04"
+  y2="48.1"
   gradientUnits="userSpaceOnUse"
 >
   <stop offset="0" stop-color="#1ea4cd" />
@@ -11,7 +11,7 @@
   <stop offset="1" stop-color="#98dcf0" />
 </linearGradient>
 
-<rect class="cls-1" x="2" y="2" width="16" height="16" />
+<rect class="cls-1" x=".04" y="-.02" width="48" height="48" />
 
 <style>
   .cls-1 {

@@ -351,13 +351,14 @@
 
   <Drawer placement="left" bind:hidden>
     <!-- TODO: don't use `grid` here -->
-    <DrawerDetails
-      name={$grid?.name ?? 'Project Name'}
-      description={$grid?.description ?? 'Project Description'}
-      sync_status={$sync_status}
-      isOpen
-    />
     <Sidebar class="w-[240px]">
+      <DrawerDetails
+        name={$grid?.name ?? 'Project Name'}
+        description={$grid?.description ?? 'Project Description'}
+        sync_status={$sync_status}
+        isOpen={false}
+      />
+      <!-- <Accordion class="flex grow flex-col"> -->
       <Accordion class="flex grow flex-col">
         <SidebarContainer
           src={DesignLogo}
@@ -396,7 +397,7 @@
           bind:expanded={dataExpanded}
         >
           <SidebarGroup>
-            <SidebarItem divClass="p-0" blank>
+            <SidebarItem padding="p-0" blank>
               <TreeView {tree_data} let:item ulClass="" bind:isActive>
                 <div class="flex items-center w-full group h-7">
                   {#if item.children}

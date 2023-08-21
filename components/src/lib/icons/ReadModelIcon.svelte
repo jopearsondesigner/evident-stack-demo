@@ -11,7 +11,7 @@
   <stop offset="1" stop-color="#a4df86" />
 </linearGradient>
 
-<rect class="cls-1" x="0" y="0" width="48" height="48" />
+<rect class="cls-1" x="0" y="0" width="16" height="16" />
 
 <style>
   .cls-1 {

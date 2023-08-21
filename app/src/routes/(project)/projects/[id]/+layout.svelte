@@ -37,7 +37,7 @@
   import DropdownItem from '$components/dropdown/DropdownItem.svelte';
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
 
-  import TreeView, { type TreeData } from '$components/data/TreeView.svelte';
+  import TreeView from '$components/data/tree/TreeView.svelte';
 
   import Pin from '$components/icons/Pin.svelte';
   import EventIcon from '$components/icons/EventIcon.svelte';
@@ -47,7 +47,30 @@
   import EventModelIcon from '$components/icons/EventModel.svelte';
   let isActive: string | number;
   let btnClass: string | undefined = '';
-  let summaryClass: string | undefined = '';
+
+  let root = [
+    {
+      name: 'Important work stuff',
+      files: [{ name: 'quarterly-results.xlsx' }]
+    },
+    {
+      name: 'Animal GIFs',
+      files: [
+        {
+          name: 'Dogs',
+          files: [{ name: 'treadmill.gif' }, { name: 'rope-jumping.gif' }]
+        },
+        {
+          name: 'Goats',
+          files: [{ name: 'parkour.gif' }, { name: 'rampage.gif' }]
+        },
+        { name: 'cat-roomba.gif' },
+        { name: 'duck-shuffle.gif' },
+        { name: 'monkey-on-a-pig.gif' }
+      ]
+    },
+    { name: 'TODO.md' }
+  ];
 
   const tree_data = [
     {
@@ -122,74 +145,6 @@
             }
           ]
         },
-        {
-          name: 'My Vehicles',
-          type: 'read-model',
-          id: 20,
-          children: [
-            {
-              name: 'Vehicle Added',
-              type: 'event',
-              id: 21
-            },
-            {
-              name: 'Placement',
-              type: 'placement',
-              id: 22
-            },
-            {
-              name: 'Change',
-              type: 'event',
-              id: 23
-            },
-            {
-              name: 'Placement',
-              type: 'placement',
-              id: 24
-            },
-            {
-              name: 'Vehicle Removed',
-              type: 'event',
-              id: 25
-            },
-            {
-              name: 'Placement',
-              type: 'placement',
-              id: 26
-            },
-            {
-              name: 'Add a Vehicle',
-              type: 'interface',
-              id: 27
-            },
-            {
-              name: 'Placement',
-              type: 'placement',
-              id: 28
-            },
-            {
-              name: 'My Vehicles',
-              type: 'interface',
-              id: 29
-            },
-            {
-              name: 'Placement',
-              type: 'placement',
-              id: 30
-            },
-            {
-              name: 'Remove a Vehicle',
-              type: 'interface',
-              id: 31
-            },
-            {
-              name: 'Placement',
-              type: 'placement',
-              id: 32
-            }
-          ]
-        },
-
         {
           name: 'Add a Vehicle',
           type: 'command',
@@ -358,8 +313,7 @@
         sync_status={$sync_status}
         isOpen={false}
       />
-      <!-- <Accordion class="flex grow flex-col"> -->
-      <Accordion class="flex grow flex-col">
+      <Accordion>
         <SidebarContainer
           src={DesignLogo}
           href="/projects/{$page.params.id}/design"
@@ -368,7 +322,7 @@
           bind:expanded={designExpanded}
         >
           <SidebarGroup>
-            <SidebarItem blank>
+            <SidebarItem maxHeightNum={194} blank>
               <Button
                 label="Export JSON"
                 gradient
@@ -397,47 +351,34 @@
           bind:expanded={dataExpanded}
         >
           <SidebarGroup>
-            <SidebarItem padding="p-0" blank>
-              <TreeView {tree_data} let:item ulClass="" bind:isActive>
+            <SidebarItem padding="p-0" maxHeightNum={322} blank>
+              <TreeView {tree_data} let:item bind:isActive>
                 <div class="flex items-center w-full group h-7">
                   {#if item.children}
-                    <!-- <div class={classNames(summaryClass)}> -->
                     <div class={classNames('')}>
                       {#if item.type === 'event-model'}
                         <Icon
-                          name="event-model-icon"
+                          name="{item.type}-icon"
                           size={14}
                           iconColor="fill-current"
                           class="inline-flex mr-px"
                           pathName={EventModelIcon}
                         />
-                      {:else if item.type === 'read-model'}
-                        <Icon
-                          name="read-model-icon"
-                          size={14}
-                          class="inline-flex mr-px"
-                          pathName={ReadModelIcon}
-                        />
                       {:else if item.type === 'command'}
                         <Icon
-                          name="command-icon"
+                          name="{item.type}-icon"
                           size={14}
                           class="inline-flex mr-px"
+                          viewBox="0 0 20 20"
                           pathName={CommandIcon}
                         />
-                      {:else if item.type === 'interface'}
+                      {:else if item.type === 'read-model'}
                         <Icon
-                          name="interface-icon"
+                          name="{item.type}-icon"
                           size={14}
                           class="inline-flex mr-px"
-                          pathName={InterfaceIcon}
-                        />
-                      {:else if item.type === 'event'}
-                        <Icon
-                          name="event-icon"
-                          size={14}
-                          class="inline-flex mr-px"
-                          pathName={EventIcon}
+                          viewBox="0 0 20 20"
+                          pathName={ReadModelIcon}
                         />
                       {/if}
                       <span class="ml-1">{item.name}</span>
@@ -446,7 +387,7 @@
                     <button
                       class={classNames(
                         btnClass,
-                        'flex w-full items-center pl-[35px] h-7 text-body dark:text-body-dark text-default bg-transparent hover:bg-focus/[.20] transition duration-200 ease-in'
+                        'flex w-full items-center pl-[35px] h-7 text-body dark:text-body-dark text-default bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20]'
                       )}
                       id={item.id}
                       class:selected={isActive === item.id}
@@ -459,8 +400,8 @@
                       {/if}
                       {#if item.type === 'placement'}
                         <Icon
-                          name="pin"
-                          size={14}
+                          name={item.type}
+                          size={12}
                           class="inline-flex"
                           viewBox="0 0 20 20"
                           iconColor="fill-current"
@@ -468,7 +409,7 @@
                         />
                       {:else if item.type === 'event-model'}
                         <Icon
-                          name="event-model-icon"
+                          name="{item.type}-icon"
                           size={14}
                           class="inline-flex mr-px"
                           viewBox="0 0 20 20"
@@ -476,31 +417,15 @@
                         />
                       {:else if item.type === 'event'}
                         <Icon
-                          name="event-icon"
+                          name="{item.type}-icon"
                           size={14}
                           class="inline-flex mr-px"
                           viewBox="0 0 20 20"
                           pathName={EventIcon}
                         />
-                      {:else if item.type === 'command'}
-                        <Icon
-                          name="command-icon"
-                          size={14}
-                          class="inline-flex mr-px"
-                          viewBox="0 0 20 20"
-                          pathName={CommandIcon}
-                        />
-                      {:else if item.type === 'read-model'}
-                        <Icon
-                          name="read-model-icon"
-                          size={14}
-                          class="inline-flex mr-px"
-                          viewBox="0 0 20 20"
-                          pathName={ReadModelIcon}
-                        />
                       {:else if item.type === 'interface'}
                         <Icon
-                          name="interface-icon"
+                          name="{item.type}-icon"
                           size={14}
                           class="inline-flex mr-px"
                           viewBox="0 0 20 20"

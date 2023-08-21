@@ -1,4 +1,4 @@
-import TreeView from '$lib/data/TreeViewExample.svelte';
+import TreeView from '$lib/data/tree/TreeViewExample.svelte';
 
 export default {
   title: 'Evident Data/TreeView',

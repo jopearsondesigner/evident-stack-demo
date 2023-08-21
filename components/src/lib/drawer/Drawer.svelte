@@ -9,7 +9,7 @@
   import { createKeybindingsHandler, type KeyBindingMap } from '../vendor/tinykeys/tinykeys';
   export let hidden: boolean = true;
   export let divClass: string =
-    'z-40 top-0 bottom-0 box-border fixed flex flex-col h-screen bg-white dark:bg-dark-2';
+    'z-40 top-0 bottom-0 box-border fixed flex flex-col bg-white dark:bg-dark-2';
   let className: string = '';
   export { className as class };
   export let leftOffset: string = 'left-0';
@@ -82,7 +82,7 @@
       id="left-drawer"
       transition:fly={transitionParams}
       class={classNames(className, divClass)}
-      style="max-height: {height}px"
+      style="max-height: {height}px !important"
     >
       <slot />
     </div>

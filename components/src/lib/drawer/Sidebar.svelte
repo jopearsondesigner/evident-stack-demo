@@ -2,7 +2,7 @@
   import classNames from 'classnames';
 
   export let asideClass =
-    'flex flex-col  h-full relative bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-border-dark transition-width duration-200 ease-in';
+    'flex flex-col h-full relative bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-border-dark';
 
   export let navbarHeight: number = 64;
 

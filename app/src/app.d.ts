@@ -1,6 +1,7 @@
 import { SupabaseClient, Session } from '@supabase/supabase-js';
 import { Database } from '$lib/supabase/database.types';
 declare module 'svelte-layout-aware-transitions';
+declare module '@codemirror/theme-one-dark';
 
 declare global {
   namespace App {

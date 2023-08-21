@@ -43,16 +43,16 @@
           {#if isOpen}
             <Icon
               name="close-up"
-              size={14}
-              class={classNames('mx-px flex-none stroke-2')}
+              size={12}
+              class={classNames('mx-px flex-none stroke-1')}
               iconColor="text-gray-brand-1 dark:text-gray-brand-4"
               pathName={ArrowUp}
             />
           {:else}
             <Icon
               name="open-down"
-              size={14}
-              class={classNames('mx-px flex-none stroke-2')}
+              size={12}
+              class={classNames('mx-px flex-none stroke-1')}
               iconColor="text-gray-brand-1 dark:text-gray-brand-4"
               pathName={ArrowDown}
             />

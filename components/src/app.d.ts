@@ -20,3 +20,9 @@ interface HTMLOrSVGElement {
 }
 
 declare module 'lottie-web/build/player/lottie';
+
+declare module '*.svelte' {
+  export { SvelteComponent as default };
+}
+
+declare module '@codemirror/theme-one-dark';

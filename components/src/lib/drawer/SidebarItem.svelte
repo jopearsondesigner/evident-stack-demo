@@ -1,5 +1,6 @@
-<script>
+<script lang="ts">
   import classNames from 'classnames';
+  import onMount from 'svelte';
   export let label = '';
   export let featureData = false;
   export let headerText = false;
@@ -11,7 +12,7 @@
   export let sidebarItemClass = 'sidebarItem flex items-center';
   export let padding = 'pl-4 pr-1';
   export let divClass =
-    'min-h-8 items-center grow overflow-auto bg-white dark:bg-dark-2 text-body-light dark:text-white w-full cursor-default';
+    'min-h-8 overflow-auto bg-white dark:bg-dark-2 text-body-light dark:text-white w-full cursor-default';
   export let sidebarBtnClass =
     'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] dark:text-white focus:text-body focus:bg-focus/[.20] dark:hover:bg-focus/[.20] transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
   export let sidebarActiveClass =
@@ -19,6 +20,8 @@
   export let sidebarHeaderClass =
     'bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20] dark:text-white transition duration-200 ease-in w-full space-x-3 h-8 cursor-default';
   export let sidebarSpanClass = 'flex-1 ml-3 text-left whitespace-nowrap';
+
+  export let maxHeightNum: number;
 </script>
 
 <li class="sidebarItem">
@@ -51,7 +54,7 @@
       <slot name="icon" />
     </button>
   {:else if blank}
-    <div class={classNames(divClass, padding)}>
+    <div class={classNames(divClass, padding)} style="max-height: calc(100vh - {maxHeightNum}px);">
       <span class={classNames(featureTextClass)}>{label}</span>
       <slot />
     </div>

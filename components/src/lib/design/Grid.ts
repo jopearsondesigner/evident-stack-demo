@@ -28,10 +28,15 @@ export type Decider = {
   rename_lane: (kind: ReorderableLaneType, lane_id: string, name: string) => any;
   reorder_lane: (kind: ReorderableLaneType, lane_id: string, index: number) => any;
   remove_lane: (kind: ReorderableLaneType, lane_id: string) => any;
-  add_lane: (kind: string, index: number, name: string) => any
+  add_lane: (kind: string, index: number, name: string) => any;
   insert_columns: (index: number, direction: string, count: number) => any;
   edit_description: (index: number, deletion_count: number, addition: string) => any;
-  connect_flow: (source_placement_id_str: string, source_anchor_str: string | undefined, target_placement_id_str: string, target_anchor_str: string | undefined) => any;
+  connect_flow: (
+    source_placement_id_str: string,
+    source_anchor_str: string | undefined,
+    target_placement_id_str: string,
+    target_anchor_str: string | undefined
+  ) => any;
 };
 
 export const default_decider: Decider = {
@@ -62,22 +67,22 @@ export type Flow = {
   id: string;
   to: FlowPort | FlowCursor;
   from: FlowPort;
-  dashed?: boolean,
-  color?: string,
-  strokeWidth?: number,
+  dashed?: boolean;
+  color?: string;
+  strokeWidth?: number;
 };
 
 export type FlowPort = {
-  placement_id: string,
-  anchor: FlowAnchor,
-  kind: "FlowPort",
+  placement_id: string;
+  anchor: FlowAnchor;
+  kind: 'FlowPort';
 };
 
 export type FlowCursor = {
-  x: number,
-  y: number,
-  kind: "FlowCursor",
-}
+  x: number;
+  y: number;
+  kind: 'FlowCursor';
+};
 
 export enum FlowAnchor {
   None,
@@ -88,62 +93,62 @@ export enum FlowAnchor {
 }
 
 // Adapted from grid.rs
-export type InterfaceType = 'blank' | 'figma' | 'image' | 'job'
+export type InterfaceType = 'blank' | 'figma' | 'image' | 'job';
 export type InterfaceConfig = {
-  kind: InterfaceType,
-  url?: string,
-}
+  kind: InterfaceType;
+  url?: string;
+};
 
 // Adapted from grid.rs
 export type PlacementType = 'interface' | 'command' | 'event' | 'read_model';
 export type Placement = {
-  kind: PlacementType,
-  id: string,
-  component_id: string,
-  index: number,
-  name: string,
-  description: string,
-  interface_config?: InterfaceConfig,
+  kind: PlacementType;
+  id: string;
+  component_id: string;
+  index: number;
+  name: string;
+  description: string;
+  interface_config?: InterfaceConfig;
 };
 
 // Adapted from grid.rs
 export type CellType = 'interface' | 'timeline' | 'event';
 export type Cell = {
-  kind: CellType,
-  row: number,
-  column: number,
-  placement?: Placement,
-  audience?: string,
-  stream?: string,
+  kind: CellType;
+  row: number;
+  column: number;
+  placement?: Placement;
+  audience?: string;
+  stream?: string;
 };
 
 // Adapted from grid.rs
 export type LaneType = 'default_audience' | 'audience' | 'timeline' | 'stream' | 'default_stream';
 export type Lane = {
-  kind: LaneType,
-  id?: string
-  index?: number,
-  row: number,
-  name: string,
-  cells: Cell[],
-}
+  kind: LaneType;
+  id?: string;
+  index?: number;
+  row: number;
+  name: string;
+  cells: Cell[];
+};
 
 export type EventModelGrid = {
-  id: string,
-  name: string,
-  description: string,
-  column_count: number,
-  row_count: number,
-  default_audience: Lane,
-  audiences: Lane[],
-  timeline: Lane,
-  streams: Lane[],
-  default_stream: Lane,
+  id: string;
+  name: string;
+  description: string;
+  column_count: number;
+  row_count: number;
+  default_audience: Lane;
+  audiences: Lane[];
+  timeline: Lane;
+  streams: Lane[];
+  default_stream: Lane;
 
-  flows: Flow[],
+  flows: Flow[];
 
-  cell_by_row_col: (row: number, col: number) => Cell | undefined
-}
+  cell_by_row_col: (row: number, col: number) => Cell | undefined;
+};
 
 export type Disambiguation = { name: string; index: number; top: number; left: number } | null;
 
@@ -152,7 +157,13 @@ export const cellId = (col: number, row: number): string => {
 };
 
 export type ReorderableLaneType = 'audience' | 'stream';
-export type GridMode = 'loading' | 'navigation' | 'editing' | 'disambiguating' | 'linking' | 'modal';
+export type GridMode =
+  | 'loading'
+  | 'navigation'
+  | 'editing'
+  | 'disambiguating'
+  | 'linking'
+  | 'modal';
 export type CursorMode = 'editing' | 'navigation' | 'linking' | 'other';
 export type DropTargetStatus = 'good' | 'bad';
-export type LinkingFlowColor = "red" | "green" | "black";
+export type LinkingFlowColor = 'red' | 'green' | 'black';

@@ -1,47 +1,36 @@
-<script context="module" lang="ts">
-  import { minimalSetup, basicSetup } from 'codemirror';
-  import { EditorView, drawSelection, keymap, lineNumbers } from '@codemirror/view';
-  import { Transaction, Annotation, EditorState, Compartment } from '@codemirror/state';
-  import { undo, redo, defaultKeymap, historyKeymap, history } from '@codemirror/commands';
-  export {
-    minimalSetup,
-    basicSetup,
-    EditorView,
-    drawSelection,
-    keymap,
-    lineNumbers,
-    Transaction,
-    Annotation,
-    EditorState,
-    Compartment,
-    undo,
-    redo,
-    defaultKeymap,
-    historyKeymap,
-    history
-  };
-
-  export interface EditorItem {
-    name: string;
-    [id: number]: any;
-
-    // To allow custom keys
-    [key: string]: any;
-  }
-  export type EditorData = EditorItem[];
-</script>
-
 <script lang="ts">
-  export const editor_data: EditorData = [];
+  import classNames from 'classnames';
+  import { EditorView, basicSetup } from 'codemirror';
+  import { EditorState } from '@codemirror/state';
+  import { createEventDispatcher, onMount } from 'svelte';
 
-  export const theme: 'markdown' | 'cue' = 'markdown';
-  export const initial_value: string | undefined = '';
+  export let theme: 'markdown' | 'cue' = 'markdown';
+  export let initial_value = '';
+  export let divClass = 'w-full border border-border-light dark:border-border-dark';
+
+  const dispatch = createEventDispatcher();
+
+  const updateListener = EditorView.updateListener.of(function (e) {
+    dispatch('document_updated', e);
+  });
+
+  let startState = EditorState.create({
+    doc: initial_value,
+    extensions: [basicSetup, updateListener]
+  });
+
+  let parent: Element;
+
+  let _view: EditorView;
+
+  onMount(() => {
+    _view = new EditorView({
+      state: startState,
+      parent
+    });
+  });
 </script>
 
-<div class="codemirror"><slot /></div>
-
-<style>
-  .codemirror {
-    width: 100%;
-  }
-</style>
+<div class={classNames('codemirror-container', divClass)}>
+  <slot />
+</div>

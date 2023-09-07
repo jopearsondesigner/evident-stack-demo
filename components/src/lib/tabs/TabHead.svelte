@@ -1,6 +1,6 @@
 <script lang="ts">
   export let divClass = '';
-  export let ulClass = 'flex';
+  export let ulClass = 'no-scrollbar flex overflow-auto w-auto';
 </script>
 
 <div class={divClass}>
@@ -8,3 +8,10 @@
     <slot />
   </ul>
 </div>
+
+<style>
+  /* Hide scrollbar*/
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+</style>

@@ -1,19 +1,20 @@
 <script lang="ts">
-  import CodeMirror from '../CodeMirror.svelte';
+  import CodeMirror from '$components/CodeMirror.svelte';
   import { EditorView, basicSetup } from 'codemirror';
   import { EditorState, Compartment, Annotation, Transaction } from '@codemirror/state';
   import { defaultKeymap, historyKeymap, history, undo, redo } from '@codemirror/commands';
   import { drawSelection, keymap, lineNumbers } from '@codemirror/view';
-  import Button from '$lib/Button.svelte';
-  import TabWrapper from '$lib/tabs/TabWrapper.svelte';
-  import TabHead from '$lib/tabs/TabHead.svelte';
-  import TabHeadItem from '$lib/tabs/TabHeadItem.svelte';
+
+  import Button from '$components/Button.svelte';
+  import TabWrapper from '$components/tabs/TabWrapper.svelte';
+  import TabHead from '$components/tabs/TabHead.svelte';
+  import TabHeadItem from '$components/tabs/TabHeadItem.svelte';
   import { javascript } from '@codemirror/lang-javascript';
   import { markdown } from '@codemirror/lang-markdown';
   import { languages } from '@codemirror/language-data';
   import { oneDark } from '@codemirror/theme-one-dark';
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-  import ThemeSwitch from '$lib/utils/ThemeSwitch.svelte';
+  import { page } from '$app/stores';
 
   export let _mounted = false;
   onMount(() => {
@@ -49,7 +50,7 @@
   let language = new Compartment(),
     tabSize = new Compartment(),
     parent: Element | DocumentFragment | undefined,
-    initial_value: string = 'Hello jo';
+    initial_value: string = '';
 
   let startState = EditorState.create({
     doc: initial_value,
@@ -121,58 +122,139 @@
     }
   });
 
-  $: editor_data = [
-    { name: 'Vehicle Added', id: 1 },
-    { name: 'Vehicle Removed/Placement', id: 2 },
-    { name: 'Add a Vehicle/Placement', id: 3 }
+  // Data for testing
+  $: tree_data = [
+    {
+      name: 'Autonomo Mobile iOS App',
+      type: 'event-model',
+      id: 1
+    },
+    {
+      name: 'My Vehicles',
+      type: 'read-model',
+      id: 2
+    },
+    {
+      name: 'Vehicle Added',
+      type: 'event',
+      id: 3
+    },
+    {
+      name: 'Vehicle Added/Placement',
+      type: 'placement',
+      id: 4
+    },
+    {
+      name: 'Change',
+      type: 'event',
+      id: 5
+    },
+    {
+      name: 'Change/Placement',
+      type: 'placement',
+      id: 6
+    },
+    {
+      name: 'Vehicle Removed',
+      type: 'event',
+      id: 7
+    },
+    {
+      name: 'Vehicle Removed/Placement',
+      type: 'placement',
+      id: 8
+    },
+    {
+      name: 'Add a Vehicle',
+      type: 'interface',
+      id: 9
+    },
+    {
+      name: 'Add a Vehicle/Placement',
+      type: 'placement',
+      id: 10
+    },
+    {
+      name: 'My Vehicles',
+      type: 'interface',
+      id: 11
+    },
+    {
+      name: 'My Vehicles/Placement',
+      type: 'placement',
+      id: 12
+    },
+    {
+      name: 'Remove a Vehicle',
+      type: 'interface',
+      id: 13
+    },
+    {
+      name: 'Remove a Vehicle/Placement',
+      type: 'placement',
+      id: 14
+    },
+    {
+      name: 'Add a Vehicle',
+      type: 'command',
+      id: 15
+    },
+    {
+      name: 'Vehicle Added',
+      type: 'event',
+      id: 16
+    },
+    {
+      name: 'Vehicle Added/Placement',
+      type: 'placement',
+      id: 17
+    },
+    {
+      name: 'Add a Vehicle',
+      type: 'interface',
+      id: 18
+    },
+    {
+      name: 'Add a Vehicle/Placement',
+      type: 'placement',
+      id: 19
+    }
   ];
-
-  export let activeTabValue: number = 1;
-
-  export const handleClick = (tabValue: number) => () => {
-    activeTabValue = tabValue;
-  };
 </script>
 
-<span class="lg:block hidden right-0 z-40 fixed pt-4 pr-10 mt-0"><ThemeSwitch /></span>
-
-<div class="h-screen w-full flex justify-center items-center">
-  <div class="w-full" bind:this={parent}>
-    <CodeMirror>
-      <TabWrapper divClass=" bg-dark-2 h-[492px] flex w-full relative">
-        <TabHead divClass="h-[29px] w-full self-start ml-[30px] pt-px">
-          {#each editor_data as editor (editor.id)}
-            <TabHeadItem
-              id={editor.id}
-              {activeTabValue}
-              name={editor.name}
-              on:click={handleClick(editor.id)}
-            >
-              <slot {editor} list={editor_data} id={editor.id}>
-                {editor.name}
-              </slot>
-            </TabHeadItem>
-          {/each}
-        </TabHead>
-        <div class="flex w-full absolute top-[29px] bottom-[53px] h-auto max-h-full">
-          <div id="editor" class="w-1/2" />
-          <div id="output" class="w-1/2" />
+<div class="h-screen bg-gray-canvas dark:bg-dark-1 w-full flex justify-center items-center px-3">
+  <CodeMirror>
+    <TabWrapper divClass="bg-dark-2 dark:bg-dark-2 h-[492px] flex w-full relative">
+      <TabHead divClass="h-[29px] w-full self-start pl-[30px] pt-px">
+        {#each tree_data as item (item.id)}
+          <TabHeadItem
+            id={item.id}
+            name={item.name}
+            href="/projects/{$page.params.id}/data/schemas/{item.id}"
+            on:click
+          />
+        {/each}
+      </TabHead>
+      <div class="flex w-full absolute top-[29px] bottom-[53px] h-auto max-h-full">
+        <div id="editor" class="w-1/2" bind:this={parent} />
+        <div id="output" class="w-1/2" bind:this={parent} />
+      </div>
+      <div
+        class="h-[53px] flex justify-start items-center w-full absolute bottom-0 border-t border-border-dark dark:border-border-dark"
+      >
+        <div class="flex items-center justify-end space-x-2 px-2 w-1/2">
+          <Button
+            ghostTextColor="text-white dark:text-white"
+            gradient
+            color="ghost"
+            size="sm"
+            class="flex-none"
+            label="Cancel"
+            on:click
+          />
+          <Button color="default" size="sm" class="flex-none" label="Save" on:click />
         </div>
-        <div class="h-[53px] flex justify-start items-center w-full absolute bottom-0">
-          <div class="flex items-center justify-end space-x-2 px-2 w-1/2">
-            <Button
-              ghostTextColor="text-white"
-              gradient
-              color="ghost"
-              size="sm"
-              class="flex-none"
-              label="Cancel"
-              on:click
-            />
-            <Button color="default" size="sm" class="flex-none" label="Save" on:click />
-          </div>
-        </div>
-      </TabWrapper>
-    </CodeMirror>
-  </div>
+      </div>
+    </TabWrapper>
+  </CodeMirror>
 </div>

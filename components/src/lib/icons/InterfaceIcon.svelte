@@ -1,5 +1,5 @@
 <linearGradient
-  id="interface-linear-gradient"
+  id="linear-gradient"
   x1="10"
   y1="2.67"
   x2="10"
@@ -27,7 +27,7 @@
 
 <style>
   .cls-1 {
-    fill: url(#interface-linear-gradient);
+    fill: url(#linear-gradient);
   }
 
   .cls-2 {

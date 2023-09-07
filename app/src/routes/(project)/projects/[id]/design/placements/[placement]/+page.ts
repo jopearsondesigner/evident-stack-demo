@@ -6,7 +6,7 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ params, parent }) => {
   const handle_close = async () => {
-    await goto(`/projects/${params.id}/data`, { noScroll: true });
+    await goto(`/projects/${params.id}/design`, { noScroll: true });
   };
 
   if (browser) {

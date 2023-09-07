@@ -14,7 +14,6 @@
 
 <script lang="ts">
   import classNames from 'classnames';
-  import { goto } from '$app/navigation';
   import { page } from '$app/stores';
 
   export let tree_data: TreeData = [];
@@ -23,18 +22,20 @@
     'text-default whitespace-nowrap text-ellipsis leading-normal w-full';
 
   export let elementClass = '';
-
-  // const handleClick = () => {
-  //   goto(`/projects/${$page.params.id}/data/schemas/`);
-  // };
-
-  export let href = `/projects/${$page.params.id}/data/`;
+  export let href = '';
 </script>
 
-<!-- <button class={classNames(btnClass, className)} on:click={handleClick}>
+<a class={classNames(btnClass, elementClass)} {href} class:selected={$page.url.pathname === href}>
   <slot />
-</button> -->
+</a>
 
-<svelte:element this={href ? 'a' : 'button'} {href} class={classNames(btnClass, elementClass)}>
-  <slot />
-</svelte:element>
+<style>
+  .selected {
+    background-color: #1e6aff !important;
+    color: white !important;
+  }
+  .selected *,
+  .selected button {
+    color: white !important;
+  }
+</style>

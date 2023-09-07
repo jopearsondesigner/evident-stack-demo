@@ -38,6 +38,8 @@
   import DropdownDivider from '$components/dropdown/DropdownDivider.svelte';
 
   import TreeView from '$components/data/tree/TreeView.svelte';
+  import TreeItem from '$components/data/tree/TreeItem.svelte';
+  // let href = `/projects/${$page.params.id}/data/schemas/`;
 
   import Pin from '$components/icons/Pin.svelte';
   import EventIcon from '$components/icons/EventIcon.svelte';
@@ -48,30 +50,7 @@
   let isActive: string | number;
   let btnClass: string | undefined = '';
 
-  let root = [
-    {
-      name: 'Important work stuff',
-      files: [{ name: 'quarterly-results.xlsx' }]
-    },
-    {
-      name: 'Animal GIFs',
-      files: [
-        {
-          name: 'Dogs',
-          files: [{ name: 'treadmill.gif' }, { name: 'rope-jumping.gif' }]
-        },
-        {
-          name: 'Goats',
-          files: [{ name: 'parkour.gif' }, { name: 'rampage.gif' }]
-        },
-        { name: 'cat-roomba.gif' },
-        { name: 'duck-shuffle.gif' },
-        { name: 'monkey-on-a-pig.gif' }
-      ]
-    },
-    { name: 'TODO.md' }
-  ];
-
+  // Data for testing
   const tree_data = [
     {
       name: 'Autonomo Mobile iOS App',
@@ -266,12 +245,12 @@
                 pathName={Profile}
               />
             </IconButton>
-            <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
+            <DropdownItem padding="pt-2 pb-4 px-4">
               {session.user.email ?? 'email@example.com'}
             </DropdownItem>
-            <DropdownItem href="/account">Account</DropdownItem>
+            <DropdownItem href="/account" textOnly={true}>Account</DropdownItem>
             <DropdownDivider />
-            <DropdownItem className="flex-1">
+            <DropdownItem className="flex-1 text-center" textOnly={true}>
               <button class="button inline" on:click|preventDefault={handleSignOut}>Sign Out</button
               >
             </DropdownItem>
@@ -345,7 +324,7 @@
         </SidebarContainer>
         <SidebarContainer
           src={DataLogo}
-          href="/projects/{$page.params.id}/data"
+          href="/projects/{$page.params.id}/data/schemas/[schema]"
           id="data"
           title="Data"
           bind:expanded={dataExpanded}
@@ -353,22 +332,25 @@
           <SidebarGroup>
             <SidebarItem padding="p-0" maxHeightNum={322} blank>
               <TreeView {tree_data} let:item bind:isActive>
-                <div class="flex items-center w-full group h-7">
-                  {#if item.children}
+                {#if item.children}
+                  <TreeItem
+                    elementClass="flex items-center w-full group h-7"
+                    href="/projects/{$page.params.id}/data/schemas/{item.id}"
+                  >
                     <div class={classNames('')}>
                       {#if item.type === 'event-model'}
                         <Icon
                           name="{item.type}-icon"
                           size={14}
                           iconColor="fill-current"
-                          class="inline-flex mr-px"
+                          class="inline-flex ml-1"
                           pathName={EventModelIcon}
                         />
                       {:else if item.type === 'command'}
                         <Icon
                           name="{item.type}-icon"
                           size={14}
-                          class="inline-flex mr-px"
+                          class="inline-flex ml-1"
                           viewBox="0 0 20 20"
                           pathName={CommandIcon}
                         />
@@ -376,66 +358,64 @@
                         <Icon
                           name="{item.type}-icon"
                           size={14}
-                          class="inline-flex mr-px"
+                          class="inline-flex ml-1"
                           viewBox="0 0 20 20"
                           pathName={ReadModelIcon}
                         />
                       {/if}
-                      <span class="ml-1">{item.name}</span>
+                      <span class="ml-0.5">{item.name}</span>
                     </div>
-                  {:else}
-                    <button
-                      class={classNames(
-                        btnClass,
-                        'flex w-full items-center pl-[35px] h-7 text-body dark:text-body-dark text-default bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20]'
-                      )}
-                      id={item.id}
-                      class:selected={isActive === item.id}
-                      on:click={() => (isActive = item.id)}
-                    >
-                      {#if item.type == 'placement'}
-                        <span
-                          class="placement-indicator relative border-l border-b border-gray-brand-2 dark:border-gray-brand-2 w-1.5 h-5 -top-[9px] -right-1.5 mr-2"
-                        />
-                      {/if}
-                      {#if item.type === 'placement'}
-                        <Icon
-                          name={item.type}
-                          size={12}
-                          class="inline-flex"
-                          viewBox="0 0 20 20"
-                          iconColor="fill-current"
-                          pathName={Pin}
-                        />
-                      {:else if item.type === 'event-model'}
-                        <Icon
-                          name="{item.type}-icon"
-                          size={14}
-                          class="inline-flex mr-px"
-                          viewBox="0 0 20 20"
-                          pathName={EventModelIcon}
-                        />
-                      {:else if item.type === 'event'}
-                        <Icon
-                          name="{item.type}-icon"
-                          size={14}
-                          class="inline-flex mr-px"
-                          viewBox="0 0 20 20"
-                          pathName={EventIcon}
-                        />
-                      {:else if item.type === 'interface'}
-                        <Icon
-                          name="{item.type}-icon"
-                          size={14}
-                          class="inline-flex mr-px"
-                          viewBox="0 0 20 20"
-                          pathName={InterfaceIcon}
-                        />
-                      {/if}
-                      <span class="ml-1">{item.name}</span>
-                    </button>
-                  {/if}
-                </div>
+                  </TreeItem>
+                {:else}
+                  <TreeItem
+                    elementClass={classNames(
+                      btnClass,
+                      'pl-[35px] flex items-center w-full h-7 text-body dark:text-body-dark text-default bg-white dark:bg-dark-2 hover:bg-focus/[.20] dark:hover:bg-focus/[.20]'
+                    )}
+                    href="/projects/{$page.params.id}/data/schemas/{item.id}"
+                  >
+                    {#if item.type == 'placement'}
+                      <span
+                        class="placement-indicator relative border-l border-b border-gray-brand-2 dark:border-gray-brand-2 w-1.5 h-5 -top-[9px] -right-[9px] mr-2.5"
+                      />
+                    {/if}
+                    {#if item.type === 'placement'}
+                      <Icon
+                        name={item.type}
+                        size={12}
+                        class="inline-flex"
+                        viewBox="0 0 20 20"
+                        iconColor="fill-current"
+                        pathName={Pin}
+                      />
+                    {:else if item.type === 'event-model'}
+                      <Icon
+                        name="{item.type}-icon"
+                        size={14}
+                        class="inline-flex ml-1"
+                        viewBox="0 0 20 20"
+                        pathName={EventModelIcon}
+                      />
+                    {:else if item.type === 'event'}
+                      <Icon
+                        name="{item.type}-icon"
+                        size={14}
+                        class="inline-flex ml-1"
+                        viewBox="0 0 20 20"
+                        pathName={EventIcon}
+                      />
+                    {:else if item.type === 'interface'}
+                      <Icon
+                        name="{item.type}-icon"
+                        size={14}
+                        class="inline-flex ml-1"
+                        viewBox="0 0 20 20"
+                        pathName={InterfaceIcon}
+                      />
+                    {/if}
+                    <span class="ml-1">{item.name}</span>
+                  </TreeItem>
+                {/if}
               </TreeView>
             </SidebarItem>
           </SidebarGroup>
@@ -486,7 +466,8 @@
     background-color: #1e6aff !important;
     color: white !important;
   }
-  .selected .placement-indicator {
-    border-color: white !important;
+  .selected *,
+  .selected button {
+    color: white !important;
   }
 </style>

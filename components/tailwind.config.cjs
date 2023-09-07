@@ -8,7 +8,7 @@ module.exports = {
       copy: 'lato, san-serif',
       sans: 'lato, san-serif',
       header: 'strokeWeight, sans-serif',
-      mono: 'input-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+      mono: 'input-mono, monospace'
     },
     extend: {
       borderWidth: {

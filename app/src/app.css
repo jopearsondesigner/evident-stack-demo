@@ -1,3 +1,6 @@
+/* Lato & Input Mono */
+@import url('https://use.typekit.net/dcj2uau.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -66,7 +66,7 @@
 <h3
   on:dragstart={handleDragStart}
   draggable="true"
-  class="streamName laneName sticky left-3 justify-self-start self-end cursor-pointer prose text-body-light nndark:text-body-dark mb-3 cursor-move"
+  class="streamName laneName sticky left-3 justify-self-start self-end cursor-pointer prose text-body-light dark:text-gray-brand-4 mb-3 cursor-move"
   style="grid-column: 1 / -1; grid-row: {gridRow} / {gridRow};"
 >
   {stream.name}

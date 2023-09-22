@@ -80,7 +80,7 @@
         alt: `${title}`
       }
     ],
-    site_name: 'Flowbite-Svelte'
+    site_name: 'Evident Stack'
   }}
   twitter={{
     handle: '@shinokada',

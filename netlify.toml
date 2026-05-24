@@ -1,4 +1,4 @@
 [build]
   base = "website"
   command = "npm run build"
-  publish = ".svelte-kit/output/client"
+  publish = "build"

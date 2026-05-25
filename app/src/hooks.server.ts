@@ -1,10 +1,7 @@
-import {
-  PUBLIC_SUPABASE_URL,
-  PUBLIC_SUPABASE_ANON_KEY
-} from '$env/static/public';
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
-import { redirect, type Handle } from "@sveltejs/kit";
-import { sequence } from "@sveltejs/kit/hooks";
+import { redirect, type Handle } from '@sveltejs/kit';
+import { sequence } from '@sveltejs/kit/hooks';
 
 const authentication = (async ({ event, resolve }) => {
   event.locals.supabase = createSupabaseServerClient({
@@ -28,7 +25,7 @@ const authentication = (async ({ event, resolve }) => {
 }) satisfies Handle;
 
 const authorization = (async ({ event, resolve }) => {
-  if (!event.url.pathname.startsWith('/auth')) {
+  if (!event.url.pathname.startsWith('/auth') && !event.url.pathname.startsWith('/demo')) {
     if (!(await event.locals.getSession())) {
       event.cookies.set('redirect_to', event.url.pathname, { path: '/' });
       throw redirect(303, '/auth');
@@ -37,7 +34,4 @@ const authorization = (async ({ event, resolve }) => {
   return resolve(event);
 }) satisfies Handle;
 
-export const handle: Handle = sequence(
-  authentication,
-  authorization,
-);
+export const handle: Handle = sequence(authentication, authorization);

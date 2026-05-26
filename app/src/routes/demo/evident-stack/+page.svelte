@@ -10,6 +10,7 @@
   import Sidebar from '$components/drawer/Sidebar.svelte';
   import SidebarContainer from '$components/drawer/SidebarContainer.svelte';
   import SidebarGroup from '$components/drawer/SidebarGroup.svelte';
+  import { Accordion } from 'svelte-accessible-accordion';
 
   import Grid from '$components/design/Grid.svelte';
 
@@ -22,7 +23,7 @@
 
   import { mockGrid, mockDecider } from './mockGrid';
 
-  let hidden = false;
+  let hidden = true;
 
   const toggleLeftNav = () => {
     hidden = !hidden;
@@ -56,31 +57,33 @@
         <p class="mt-1 text-xs text-gray-primary">Portfolio-safe demo project</p>
       </div>
 
-      <SidebarContainer src={DesignLogo} href="#" id="design" title="Design" expanded={true}>
-        <SidebarGroup />
-      </SidebarContainer>
+      <Accordion>
+        <SidebarContainer src={DesignLogo} href="#" id="design" title="Design" expanded={true}>
+          <SidebarGroup />
+        </SidebarContainer>
 
-      <SidebarContainer src={DataLogo} href="#" id="data" title="Data" expanded={false}>
-        <SidebarGroup />
-      </SidebarContainer>
+        <SidebarContainer src={DataLogo} href="#" id="data" title="Data" expanded={false}>
+          <SidebarGroup />
+        </SidebarContainer>
 
-      <SidebarContainer
-        src={DomainFunctionsLogo}
-        href="#"
-        id="domain-functions"
-        title="Domain Functions"
-        expanded={false}
-      >
-        <SidebarGroup />
-      </SidebarContainer>
+        <SidebarContainer
+          src={DomainFunctionsLogo}
+          href="#"
+          id="domain-functions"
+          title="Domain Functions"
+          expanded={false}
+        >
+          <SidebarGroup />
+        </SidebarContainer>
 
-      <SidebarContainer src={DeployLogo} href="#" id="deploy" title="Deploy" expanded={false}>
-        <SidebarGroup />
-      </SidebarContainer>
+        <SidebarContainer src={DeployLogo} href="#" id="deploy" title="Deploy" expanded={false}>
+          <SidebarGroup />
+        </SidebarContainer>
 
-      <SidebarContainer src={DatabaseLogo} href="#" id="database" title="Database" expanded={false}>
-        <SidebarGroup />
-      </SidebarContainer>
+        <SidebarContainer src={DatabaseLogo} href="#" id="db" title="Database" expanded={false}>
+          <SidebarGroup />
+        </SidebarContainer>
+      </Accordion>
     </Sidebar>
   </Drawer>
 

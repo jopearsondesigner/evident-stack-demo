@@ -85,11 +85,9 @@
   </Drawer>
 
   <main
-    class="relative left-0 right-0 transition-all duration-[200ms] pt-16 ml-0 h-[100vh] overflow-hidden"
+    class="relative left-0 right-0 transition-all duration-[200ms] pt-16 ml-0 h-screen overflow-hidden"
     class:ml-[240px]={!hidden}
   >
-    <div class="h-[calc(100vh-4rem)] overflow-hidden">
-      <Grid mode="navigation" grid={mockGrid} decider={mockDecider} />
-    </div>
+    <Grid mode="navigation" grid={mockGrid} decider={mockDecider} />
   </main>
 </div>

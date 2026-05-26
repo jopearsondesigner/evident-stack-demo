@@ -10,6 +10,7 @@
   import Sidebar from '$components/drawer/Sidebar.svelte';
   import SidebarContainer from '$components/drawer/SidebarContainer.svelte';
   import SidebarGroup from '$components/drawer/SidebarGroup.svelte';
+  import DrawerDetails from '$components/drawer/DrawerDetails.svelte';
   import { Accordion } from 'svelte-accessible-accordion';
 
   import Grid from '$components/design/Grid.svelte';
@@ -28,6 +29,9 @@
   const toggleLeftNav = () => {
     hidden = !hidden;
   };
+
+  let projectDescriptionOpen = false;
+  const syncStatus = 0;
 </script>
 
 <svelte:head>
@@ -50,12 +54,12 @@
 
   <Drawer placement="left" bind:hidden>
     <Sidebar class="w-[240px]">
-      <div class="px-4 py-4 border-b border-gray-secondary dark:border-border-dark">
-        <h2 class="text-sm font-semibold text-body-light dark:text-body-dark">
-          Autonomo Mobile iOS App
-        </h2>
-        <p class="mt-1 text-xs text-gray-primary">Portfolio-safe demo project</p>
-      </div>
+      <DrawerDetails
+        name="Autonomo Mobile iOS App"
+        description="Portfolio-safe demo of the Evident Stack event modeling interface."
+        sync_status={syncStatus}
+        bind:isOpen={projectDescriptionOpen}
+      />
 
       <Accordion>
         <SidebarContainer src={DesignLogo} href="#" id="design" title="Design" expanded={true}>

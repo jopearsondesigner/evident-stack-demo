@@ -56,7 +56,7 @@
 
   let isActive: string | number;
 
-  const demoHref = '/demo/evident-stack';
+  const demoHref = '/';
 
   const tree_data = [
     {

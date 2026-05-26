@@ -1,6 +1,4 @@
 <script lang="ts">
-  import Navbar from '../../../../package/src/lib/navbar/Navbar.svelte';
-
   export let navbarClass =
     'fixed top-0 shadow-header w-full px-3 py-3.5 text-light dark:text-dark bg-white dark:bg-dark-2 z-50 cursor-default';
   export let navbarWebClass =

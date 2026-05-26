@@ -34,6 +34,7 @@ const placements = {
     'Mobile interface used by vehicle owners.',
     'figma'
   ),
+
   riderApp: placement(
     'interface',
     'placement-interface-rider-app',
@@ -42,6 +43,7 @@ const placements = {
     'Mobile interface used by riders.',
     'figma'
   ),
+
   vehiclePortal: placement(
     'interface',
     'placement-interface-vehicle-portal',
@@ -50,6 +52,25 @@ const placements = {
     'Administrative interface for fleet and vehicle management.',
     'figma'
   ),
+
+  analyticsDashboard: placement(
+    'interface',
+    'placement-interface-analytics-dashboard',
+    5,
+    'Analytics Dashboard',
+    'Operational analytics and ride metrics.',
+    'figma'
+  ),
+
+  opsConsole: placement(
+    'interface',
+    'placement-interface-ops-console',
+    6,
+    'Operations Console',
+    'Internal operations and dispatch tooling.',
+    'job'
+  ),
+
   addVehicle: placement(
     'command',
     'placement-command-add-vehicle',
@@ -57,6 +78,7 @@ const placements = {
     'Add Vehicle',
     'Command triggered when an owner adds a vehicle.'
   ),
+
   vehicleAdded: placement(
     'event',
     'placement-event-vehicle-added',
@@ -64,6 +86,7 @@ const placements = {
     'Vehicle Added',
     'Event recorded after a vehicle is added.'
   ),
+
   vehicleProfile: placement(
     'read_model',
     'placement-read-model-vehicle-profile',
@@ -71,6 +94,7 @@ const placements = {
     'Vehicle Profile',
     'Read model showing vehicle details and availability.'
   ),
+
   requestRide: placement(
     'command',
     'placement-command-request-ride',
@@ -78,6 +102,7 @@ const placements = {
     'Request Ride',
     'Command triggered when a rider requests a ride.'
   ),
+
   rideRequested: placement(
     'event',
     'placement-event-ride-requested',
@@ -85,6 +110,7 @@ const placements = {
     'Ride Requested',
     'Event recorded when a ride request is created.'
   ),
+
   rideStatus: placement(
     'read_model',
     'placement-read-model-ride-status',
@@ -92,6 +118,7 @@ const placements = {
     'Ride Status',
     'Read model representing the rider-facing ride state.'
   ),
+
   assignVehicle: placement(
     'command',
     'placement-command-assign-vehicle',
@@ -99,12 +126,37 @@ const placements = {
     'Assign Vehicle',
     'Command assigning an available vehicle to a ride.'
   ),
+
   vehicleAssigned: placement(
     'event',
     'placement-event-vehicle-assigned',
     11,
     'Vehicle Assigned',
     'Event recorded when a vehicle is assigned.'
+  ),
+
+  completeRide: placement(
+    'command',
+    'placement-command-complete-ride',
+    12,
+    'Complete Ride',
+    'Command triggered when a ride completes.'
+  ),
+
+  rideCompleted: placement(
+    'event',
+    'placement-event-ride-completed',
+    13,
+    'Ride Completed',
+    'Event recorded after a ride is completed.'
+  ),
+
+  billingProjection: placement(
+    'read_model',
+    'placement-read-model-billing-projection',
+    14,
+    'Billing Projection',
+    'Aggregated billing and payment state.'
   )
 };
 
@@ -145,7 +197,9 @@ const defaultAudience: Lane = {
     {
       1: placements.ownerApp,
       2: placements.riderApp,
-      4: placements.vehiclePortal
+      4: placements.vehiclePortal,
+      5: placements.analyticsDashboard,
+      6: placements.opsConsole
     },
     'default'
   )
@@ -178,7 +232,9 @@ const timeline: Lane = {
     4: placements.vehicleProfile,
     6: placements.requestRide,
     8: placements.rideStatus,
-    10: placements.assignVehicle
+    10: placements.assignVehicle,
+    12: placements.completeRide,
+    14: placements.billingProjection
   })
 };
 
@@ -211,7 +267,8 @@ const rideStream: Lane = {
     5,
     columnCount,
     {
-      7: placements.rideRequested
+      7: placements.rideRequested,
+      13: placements.rideCompleted
     },
     'stream-ride'
   )
@@ -250,6 +307,7 @@ const flows: Flow[] = [
       anchor: FlowAnchor.Left
     }
   },
+
   {
     id: 'flow-request-ride-to-ride-requested',
     from: {
@@ -263,6 +321,7 @@ const flows: Flow[] = [
       anchor: FlowAnchor.Left
     }
   },
+
   {
     id: 'flow-assign-vehicle-to-vehicle-assigned',
     from: {
@@ -273,6 +332,20 @@ const flows: Flow[] = [
     to: {
       kind: 'FlowPort',
       placement_id: placements.vehicleAssigned.id,
+      anchor: FlowAnchor.Left
+    }
+  },
+
+  {
+    id: 'flow-complete-ride-to-ride-completed',
+    from: {
+      kind: 'FlowPort',
+      placement_id: placements.completeRide.id,
+      anchor: FlowAnchor.Right
+    },
+    to: {
+      kind: 'FlowPort',
+      placement_id: placements.rideCompleted.id,
       anchor: FlowAnchor.Left
     }
   }

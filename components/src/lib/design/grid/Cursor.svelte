@@ -174,7 +174,7 @@
     on:dragleave={handleDragLeave}
     on:drop={handleDragDrop}
     bind:this={element}
-    class="cursor z-20 relative self-stretch w-full h-full transition duration-200 ease-in border-2 border-focus bg-gray-canvas dark:bg-dark-1 box-border"
+    class="cursor z-20 relative self-stretch w-full h-full transition-none border-2 border-focus bg-gray-canvas dark:bg-dark-1 box-border"
     style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
   >
     <form
@@ -203,7 +203,7 @@
     on:click={beginEditing}
     class:bg-emerald-200={good_target}
     class:bg-rose-400={bad_target}
-    class="cursor z-20 self-stretch w-full h-full transition duration-200 ease-in border-2 border-focus bg-gray-canvas dark:bg-dark-1 box-border"
+    class="cursor z-20 self-stretch w-full h-full transition-none border-2 border-focus bg-gray-canvas dark:bg-dark-1 box-border"
     style="grid-row: {gridRow} / {gridRow}; grid-column: {gridColumn} / {gridColumn};"
   >
     {#if cell.placement}

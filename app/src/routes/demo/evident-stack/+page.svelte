@@ -206,6 +206,22 @@
     class="relative left-0 right-0 transition-all duration-[200ms] pt-16 ml-0 h-screen overflow-hidden"
     class:ml-[240px]={!hidden}
   >
+    <div
+      class="absolute top-20 left-6 z-30 max-w-md rounded-md bg-white/90 dark:bg-dark-2/90 backdrop-blur-sm border border-gray-secondary dark:border-border-dark shadow-header px-4 py-3"
+    >
+      <p class="text-xs uppercase tracking-wide text-gray-brand-2 dark:text-gray-brand-4">
+        Portfolio Demo
+      </p>
+
+      <h1 class="mt-1 text-sm font-bold text-body-light dark:text-body-dark">
+        Evident Stack SaaS Interface
+      </h1>
+
+      <p class="mt-1 text-xs leading-normal text-body-light dark:text-gray-brand-4">
+        A portfolio-safe demo of real product UI, design systems, event modeling, and front-end
+        implementation work.
+      </p>
+    </div>
     <Grid mode="navigation" grid={mockGrid} decider={mockDecider} />
   </main>
 </div>

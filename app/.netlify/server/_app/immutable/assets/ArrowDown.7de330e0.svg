@@ -1,0 +1,12 @@
+<svg id="Arrow_Down" data-name="Arrow Down" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #414042;
+        stroke-miterlimit: 10;
+      }
+    </style>
+  </defs>
+  <polyline class="cls-1" points="16 7 10 13 4 7"/>
+</svg>

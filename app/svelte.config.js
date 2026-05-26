@@ -1,19 +1,19 @@
-import adapter from '@sveltejs/adapter-netlify';
-import preprocess from 'svelte-preprocess';
+import adapter from '@sveltejs/adapter-static';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
+  preprocess: vitePreprocess(),
+
   kit: {
-    adapter: adapter(),
+    adapter: adapter({
+      fallback: 'index.html'
+    }),
+
     alias: {
-      $components: '../components/src/lib/*'
+      $components: '../components/src/lib'
     }
-  },
-  preprocess: [
-    preprocess({
-      postcss: true
-    })
-  ]
+  }
 };
 
 export default config;

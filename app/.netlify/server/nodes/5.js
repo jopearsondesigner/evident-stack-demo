@@ -1,0 +1,9 @@
+import * as universal from '../entries/pages/(project)/projects/_id_/_layout.ts.js';
+
+export const index = 5;
+export const component = async () => (await import('../entries/pages/(project)/projects/_id_/_layout.svelte.js')).default;
+export { universal };
+export const universal_id = "src/routes/(project)/projects/[id]/+layout.ts";
+export const imports = ["_app/immutable/nodes/5.2cef63cd.js","_app/immutable/chunks/preload-helper.41c905a7.js","_app/immutable/chunks/event_model.567db5f3.js","_app/immutable/chunks/dexie.ad0fafb0.js","_app/immutable/chunks/client.12b74c51.js","_app/immutable/chunks/_commonjsHelpers.725317a4.js","_app/immutable/chunks/index.8aa1a1f6.js","_app/immutable/chunks/index.959f4cef.js","_app/immutable/chunks/util.13123f40.js","_app/immutable/chunks/index.5e2a9a64.js","_app/immutable/chunks/control.f5b05b5f.js","_app/immutable/chunks/database.64fdf969.js","_app/immutable/chunks/index.94423881.js","_app/immutable/chunks/stores.5ed4ceb6.js","_app/immutable/chunks/singletons.9b2e0396.js","_app/immutable/chunks/ArrowDown.6ee93ae1.js","_app/immutable/chunks/Icon.ffddc412.js","_app/immutable/chunks/TreeItem.21f32f45.js","_app/immutable/chunks/index.6789e2ee.js","_app/immutable/chunks/navigation.9babf070.js","_app/immutable/chunks/IconButton.47dab825.js","_app/immutable/chunks/Button.9513590e.js","_app/immutable/chunks/DropdownDivider.1c2d870b.js","_app/immutable/chunks/Sidebar.6c7a5f7b.js","_app/immutable/chunks/CloseButton.4e56d5e3.js","_app/immutable/chunks/tinykeys.87a1c916.js"];
+export const stylesheets = ["_app/immutable/assets/5.75bc47c1.css","_app/immutable/assets/ArrowDown.6d588bbc.css","_app/immutable/assets/TreeItem.ca0c631b.css","_app/immutable/assets/DropdownDivider.de648ee9.css","_app/immutable/assets/CloseButton.7da38b17.css"];
+export const fonts = [];

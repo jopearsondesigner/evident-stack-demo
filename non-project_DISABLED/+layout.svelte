@@ -28,8 +28,8 @@
   $: ({ session, supabase } = data);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    await goto("/auth")
+    await supabase.auth.signOut();
+    await goto('/');
   };
 
   // === End Authentication
@@ -39,20 +39,24 @@
   <NavInner navDivClass="flex justify-between items-center">
     <NavToolbar navClass="px-3 mx-3 h-9 inline-flex space-x-4 items-center">
       <NavBrand src={Logo} height={28} logoClass="flex no-underline mx-3 cursor-default" />
-      <div class="h-9 pr-3 border-r border-gray-secondary dark:border-border-dark flex items-center">
+      <div
+        class="h-9 pr-3 border-r border-gray-secondary dark:border-border-dark flex items-center"
+      >
         <MaybeTooltip tip="Home" position="tooltip-bottom">
           <IconButton href="/">
             <Icon
               name="home"
               size={16}
               iconColor="text-body-light dark:text-body-dark"
-              pathName={Home} />
+              pathName={Home}
+            />
           </IconButton>
         </MaybeTooltip>
       </div>
     </NavToolbar>
     <NavToolbar
-      navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark">
+      navClass="px-3 h-9 inline-flex space-x-2.5 mx-3 items-center border-l border-gray-secondary dark:border-border-dark"
+    >
       {#if session}
         <DropdownMenu product={true} name="profile" marginTop="mt-9" hidden>
           <IconButton slot="button" margin="mx-2">
@@ -62,10 +66,11 @@
               viewBox="0 0 32 32"
               class="vertical-middle"
               iconColor=""
-              pathName={Profile} />
+              pathName={Profile}
+            />
           </IconButton>
           <DropdownItem padding="pt-2 pb-4 px-4" textOnly={true}>
-            {session.user.email ?? "email@example.com"}
+            {session.user.email ?? 'email@example.com'}
           </DropdownItem>
           <DropdownItem href="/account">Account</DropdownItem>
           <DropdownDivider />
@@ -80,7 +85,8 @@
               name="docs"
               size={18}
               iconColor="text-body-light dark:text-body-dark"
-              pathName={Docs} />
+              pathName={Docs}
+            />
           </IconButton>
         </MaybeTooltip>
         <MaybeTooltip tip="Support" position="tooltip-bottom">
@@ -89,11 +95,12 @@
               name="support"
               size={18}
               iconColor="text-body-light dark:text-body-dark"
-              pathName={Support} />
+              pathName={Support}
+            />
           </IconButton>
         </MaybeTooltip>
       {/if}
-      </NavToolbar>
+    </NavToolbar>
   </NavInner>
 </Navbar>
 

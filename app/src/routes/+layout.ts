@@ -1,14 +1,29 @@
-import { init_supabase } from '$lib/supabase/client';
-import type { LayoutLoad } from './$types';
+export const ssr = false;
+export const prerender = true;
 
-export const load: LayoutLoad = async ({ fetch, data, depends }) => {
-  depends('supabase:auth');
+const fakeSupabase = {
+  auth: {
+    getSession: async () => ({
+      data: {
+        session: null
+      }
+    }),
 
-  const supabase = init_supabase(data.session, fetch);
+    signOut: async () => ({ error: null }),
 
-  const {
-    data: { session }
-  } = await supabase.auth.getSession();
+    onAuthStateChange: () => ({
+      data: {
+        subscription: {
+          unsubscribe: () => {}
+        }
+      }
+    })
+  }
+};
 
-  return { supabase, session };
+export const load = async () => {
+  return {
+    supabase: fakeSupabase,
+    session: null
+  };
 };

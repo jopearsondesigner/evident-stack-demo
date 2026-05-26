@@ -1,0 +1,950 @@
+
+> app@0.1.0 build
+> npm run state:build && npm run app:build
+
+
+> app@0.1.0 state:build
+> cd state && wasm-pack build --release --target web
+
+[INFO]: Checking for the Wasm target...
+[INFO]: Compiling to Wasm...
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /Users/josephpearson/Documents/platform/app/state/Cargo.toml
+workspace: /Users/josephpearson/Documents/platform/Cargo.toml
+warning: unreachable expression
+   --> domain/event-models/src/lib.rs:739:9
+    |
+738 |           todo!("Validation of flow arrow");
+    |           --------------------------------- any code following this expression is unreachable
+739 | /         Ok(FlowArrow {
+740 | |             id: flow_id(&from.placement, &to.placement),
+741 | |             from,
+742 | |             to,
+743 | |         })
+    | |__________^ unreachable expression
+    |
+    = note: `#[warn(unreachable_code)]` on by default
+
+warning: unused variable: `from_placement`
+   --> domain/event-models/src/lib.rs:736:13
+    |
+736 |         let from_placement = model.placements().get(&from.placement);
+    |             ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_from_placement`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `to_placement`
+   --> domain/event-models/src/lib.rs:737:13
+    |
+737 |         let to_placement = model.placements().get(&to.placement);
+    |             ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_to_placement`
+
+warning: function `valid_description_bounds` is never used
+   --> domain/event-models/src/api/mod.rs:690:4
+    |
+690 | fn valid_description_bounds(
+    |    ^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: function `valid_description_index` is never used
+   --> domain/event-models/src/api/mod.rs:708:4
+    |
+708 | fn valid_description_index(model: &impl EventModel, index: &usize) -> Result<(), EventModelError> {
+    |    ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: associated function `create` is never used
+  --> domain/event-models/src/implementation/automerge.rs:19:8
+   |
+19 |     fn create(value: &str) -> Result<Self, EventModelError> {
+   |        ^^^^^^
+
+warning: `event-models` (lib) generated 6 warnings (run `cargo fix --lib -p event-models` to apply 2 suggestions)
+    Finished release [optimized] target(s) in 0.17s
+[INFO]: Installing wasm-bindgen...
+[INFO]: Optional fields missing from Cargo.toml: 'description', 'repository', and 'license'. These are not necessary, but recommended
+[INFO]: :-) Done in 0.84s
+[INFO]: :-) Your wasm pkg is ready to publish at /Users/josephpearson/Documents/platform/app/state/pkg.
+[WARN]: :-) There's a newer version of wasm-pack available, the new version is: 0.15.0, you are using: 0.10.3. To update, navigate to: https://rustwasm.github.io/wasm-pack/installer/
+
+> app@0.1.0 app:build
+> vite build
+
+▲ [WARNING] Cannot find base config file "./.svelte-kit/tsconfig.json" [tsconfig.json]
+
+    tsconfig.json:2:12:
+      2 │   "extends": "./.svelte-kit/tsconfig.json",
+        ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following Vite config options will be overridden by SvelteKit:
+  - build.rollupOptions.input
+
+
+vite v4.3.9 building SSR bundle for production...
+transforming...
+11:48:29 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/Button.svelte:67:2 A11y: noninteractive element cannot have nonnegative tabIndex value
+65:   </svelte:element>
+66: {:else}
+67:   <label {...$$restProps} for={boundTo} {tabindex} class={buttonClass}>{label}</label>
+      ^
+68: {/if}
+69: 
+11:48:30 AM [vite-plugin-svelte] /src/routes/(project)/projects/[id]/+layout.svelte:443:2 Unused CSS selector ".selected button"
+441:   }
+442:   .selected *,
+443:   .selected button {
+       ^
+444:     color: white !important;
+445:   }
+11:48:30 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/dropdown/DropdownItem.svelte:7:11 DropdownItem has unused export property 'active'. If it is for external reference only, please consider using `export const active`
+ 5: export let textOnly = false;
+ 6: export let href = void 0;
+ 7: export let active = false;
+               ^
+ 8: export let className = "";
+ 9: </script>
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+[35m🌼 daisyUI components 2.52.0[0m [0m https://daisyui.com
+  [32m✔︎ Including:[0m [0m base, components, 29 themes, utilities
+  [32m❤︎ Support daisyUI: [0m https://opencollective.com/daisyui [0m
+  
+
+[35m🌼 daisyUI components 2.52.0[0m [0m https://daisyui.com
+  [32m✔︎ Including:[0m [0m base, components, 29 themes, utilities
+  [32m❤︎ Support daisyUI: [0m https://opencollective.com/daisyui [0m
+  
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/drawer/DrawerDetails.svelte:7:11 DrawerDetails has unused export property 'nameClass'. If it is for external reference only, please consider using `export const nameClass`
+ 5: import ArrowDown from "../icons/ArrowDown.svelte";
+ 6: import MaybeTooltip from "../utils/MaybeTooltip.svelte";
+ 7: export let nameClass = "";
+               ^
+ 8: export let descClass = "";
+ 9: export let divClass = "relative grid justify-items-stretch bg-black/[2%] dark:bg-black/[8%] border-b border-gray-primary dark:border-border-dark py-4";
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/drawer/DrawerDetails.svelte:14:11 DrawerDetails has unused export property 'isClosed'. If it is for external reference only, please consider using `export const isClosed`
+12: export let summaryClass = "";
+13: export let iconBtnClass = "absolute right-0.5 top-5 text-current rounded-full border-none p-0 flex items-center justify-center bg-gray-brand-1/0 dark:bg-white/0 hover:bg-gray-brand-1/[.09] dark:hover:bg-white/[.09] cursor-pointer";
+14: export let isClosed = true;
+               ^
+15: export let name;
+16: export let description;
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/drawer/DrawerDetails.svelte:17:11 DrawerDetails has unused export property 'sync_status'. If it is for external reference only, please consider using `export const sync_status`
+15: export let name;
+16: export let description;
+17: export let sync_status;
+               ^
+18: let editable = false;
+19: function handleDblClick(event) {
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:231:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+229:   {#each layout as item}
+230:     {#if item === 'playpause'}
+231:       <div class="btn" on:click="{togglePlay}" class:active="{isPlaying || isPaused}">
+           ^
+232:         {#if isPlaying}
+233:           <svg {...ICON_SIZE}>
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:244:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+242:       </div>
+243:     {:else if item === 'stop'}
+244:       <div class="btn" on:click="{stop}" class:active="{isStopped}">
+           ^
+245:         <svg {...ICON_SIZE}>
+246:           <path
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:269:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+267:       />
+268:     {:else if item === 'loop'}
+269:       <div class="btn" on:click="{toggleLooping}" class:active="{loop}">
+           ^
+270:         <svg {...ICON_SIZE}>
+271:           <path
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:317:6 A11y: on:mouseover must be accompanied by on:focus
+315:       </div>
+316:     {:else if item === 'snapshot'}
+317:       <div
+           ^
+318:         class=""
+319:         on:mouseout="{() => currentState === PlayerState.Frozen && play()}"
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:317:6 A11y: on:mouseout must be accompanied by on:blur
+315:       </div>
+316:     {:else if item === 'snapshot'}
+317:       <div
+           ^
+318:         class=""
+319:         on:mouseout="{() => currentState === PlayerState.Frozen && play()}"
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:351:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+349:       </div>
+350:     {:else if item === 'zoom'}
+351:       <div class="btn" on:click="{onToggleZoom}">
+           ^
+352:         {#if isZoomed}
+353:           <svg {...ICON_SIZE}>
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:399:8 A11y: on:mouseover must be accompanied by on:focus
+397:     {:else if item === 'frame'}
+398:       <div class="">
+399:         <input
+             ^
+400:           class="frame-number"
+401:           type="text"
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:399:8 A11y: on:mouseout must be accompanied by on:blur
+397:     {:else if item === 'frame'}
+398:       <div class="">
+399:         <input
+             ^
+400:           class="frame-number"
+401:           type="text"
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:410:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+408:       </div>
+409:     {:else if item === 'nextFrame'}
+410:       <div class="btn" on:click="{onNextFrame}">
+           ^
+411:         <svg {...ICON_SIZE}>
+412:           <path
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:420:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+418:       </div>
+419:     {:else if item === 'previousFrame'}
+420:       <div class="btn" on:click="{oPreviousFrame}">
+           ^
+421:         <svg {...ICON_SIZE}>
+422:           <path d="M22 4.5a1.4 1.4 0 00-2.1-1.2l-13 7.5a1.4 1.4 0 000 2.4l13 7.5a1.4 1.4 0 002.1-1.2z"></path>
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/drawer/Sidebar.svelte:4:11 Sidebar has unused export property 'style'. If it is for external reference only, please consider using `export const style`
+2: export let asideClass = "flex flex-col h-full relative bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-border-dark";
+3: export let navbarHeight = 64;
+4: export let style = "";
+              ^
+5: let className = "";
+6: export { className as class };
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/data/tree/TreeView.svelte:19:11 TreeView has unused export property 'isActive'. If it is for external reference only, please consider using `export const isActive`
+17: export let ulClass = "";
+18: export let spanClass = "pointer-events-auto block h-7 w-auto flex justify-center items-center";
+19: export let isActive;
+               ^
+20: export let href = "";
+21: </script>
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/data/tree/TreeView.svelte:20:11 TreeView has unused export property 'href'. If it is for external reference only, please consider using `export const href`
+18: export let spanClass = "pointer-events-auto block h-7 w-auto flex justify-center items-center";
+19: export let isActive;
+20: export let href = "";
+               ^
+21: </script>
+22: 
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/data/tree/TreeView.svelte:95:2 Unused CSS selector "ul li ul li details summary ul li details summary ul li button"
+93:   }
+94: 
+95:   ul li ul li details summary ul li details summary ul li button {
+      ^
+96:     padding-left: 12px !important;
+97:   }
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/data/tree/TreeItem.svelte:5:11 TreeItem has unused export property 'tree_data'. If it is for external reference only, please consider using `export const tree_data`
+3: <script lang="ts">import classNames from "classnames";
+4: import { page } from "$app/stores";
+5: export let tree_data = [];
+              ^
+6: export let btnClass = "text-default whitespace-nowrap text-ellipsis leading-normal w-full";
+7: export let elementClass = "";
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/data/tree/TreeItem.svelte:21:2 Unused CSS selector ".selected button"
+19:   }
+20:   .selected *,
+21:   .selected button {
+      ^
+22:     color: white !important;
+23:   }
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Popover.svelte:82:0 A11y: on:mouseover must be accompanied by on:focus
+80: </style>
+81: 
+82: <div
+    ^
+83:   class="popover"
+84:   on:mousedown
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Popover.svelte:82:0 A11y: on:mouseout must be accompanied by on:blur
+80: </style>
+81: 
+82: <div
+    ^
+83:   class="popover"
+84:   on:mousedown
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/CodeMirror.svelte:5:11 CodeMirror has unused export property 'theme'. If it is for external reference only, please consider using `export const theme`
+3: import { EditorState } from "@codemirror/state";
+4: import { createEventDispatcher, onMount } from "svelte";
+5: export let theme = "markdown";
+              ^
+6: export let initial_value = "";
+7: export let divClass = "w-full border border-border-light dark:border-border-dark";
+11:48:31 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/tabs/TabHeadItem.svelte:20:11 TabHeadItem has unused export property 'type'. If it is for external reference only, please consider using `export const type`
+18:   dispatch("close");
+19: };
+20: export let type = "button";
+               ^
+21: export let tabindex = 0;
+22: let iconColor = "text-white";
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/utils/CloseButton.svelte:10:11 CloseButton has unused export property 'name'. If it is for external reference only, please consider using `export const name`
+ 8: }
+ 9: export let btnClass = "";
+10: export let name = "";
+               ^
+11: export let href = "";
+12: export let type;
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/utils/CloseButton.svelte:11:11 CloseButton has unused export property 'href'. If it is for external reference only, please consider using `export const href`
+ 9: export let btnClass = "";
+10: export let name = "";
+11: export let href = "";
+               ^
+12: export let type;
+13: export let iconColor = "text-body-light dark:text-gray-primary";
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/Cursor.svelte:164:2 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+162:   </div>
+163: {:else}
+164:   <div
+       ^
+165:     on:contextmenu|preventDefault={handleRightClick}
+166:     on:dragenter={handleDragEnter}
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/EmptyCell.svelte:1:29 EmptyCell has unused export property 'column'. If it is for external reference only, please consider using `export const column`
+1: <script lang="ts">export let column;
+                                ^
+2: export let kind;
+3: export let lane = void 0;
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/EmptyCell.svelte:2:11 EmptyCell has unused export property 'kind'. If it is for external reference only, please consider using `export const kind`
+1: <script lang="ts">export let column;
+2: export let kind;
+              ^
+3: export let lane = void 0;
+4: </script>
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/EmptyCell.svelte:3:11 EmptyCell has unused export property 'lane'. If it is for external reference only, please consider using `export const lane`
+1: <script lang="ts">export let column;
+2: export let kind;
+3: export let lane = void 0;
+              ^
+4: </script>
+5: 
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/Cell.svelte:46:0 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+44: </script>
+45: 
+46: <div
+    ^
+47:   on:click|preventDefault={handleClick}
+48:   on:contextmenu|preventDefault={handleRightClick}
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/Interface.svelte:10:11 Interface has unused export property 'interface_id'. If it is for external reference only, please consider using `export const interface_id`
+ 8: $:
+ 9:   dom_id = is_cursor ? `${id}-cursor` : id;
+10: export let interface_id;
+               ^
+11: export let column;
+12: export let config;
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/Event.svelte:8:11 Event has unused export property 'event'. If it is for external reference only, please consider using `export const event`
+ 6: $:
+ 7:   dom_id = is_cursor ? `${id}-cursor` : id;
+ 8: export let event;
+               ^
+ 9: export let column;
+10: export let name;
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/ReadModel.svelte:8:11 ReadModel has unused export property 'read_model'. If it is for external reference only, please consider using `export const read_model`
+ 6: $:
+ 7:   dom_id = is_cursor ? `${id}-cursor` : id;
+ 8: export let read_model;
+               ^
+ 9: export let column;
+10: export let name;
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/Command.svelte:8:11 Command has unused export property 'command'. If it is for external reference only, please consider using `export const command`
+ 6: $:
+ 7:   dom_id = is_cursor ? `${id}-cursor` : id;
+ 8: export let command;
+               ^
+ 9: export let column;
+10: export let name;
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/FlowPort.svelte:4:11 FlowPort has unused export property 'type'. If it is for external reference only, please consider using `export const type`
+2: import { createEventDispatcher } from "svelte";
+3: export let position;
+4: export let type;
+              ^
+5: export let placement;
+6: export let placement_kind;
+11:48:32 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/FlowPort.svelte:7:11 FlowPort has unused export property 'column'. If it is for external reference only, please consider using `export const column`
+ 5: export let placement;
+ 6: export let placement_kind;
+ 7: export let column;
+               ^
+ 8: const dispatch = createEventDispatcher();
+ 9: const positionToFlowAnchor = (p) => {
+"@supabase/auth-helpers-sveltekit" is imported by " virtual:_app/immutable/workers/sync.worker-12f7d8e8.js", but could not be resolved – treating it as an external dependency.
+"dexie" is imported by " virtual:_app/immutable/workers/sync.worker-12f7d8e8.js", but could not be resolved – treating it as an external dependency.
+"base64-js" is imported by " virtual:_app/immutable/workers/sync.worker-12f7d8e8.js", but could not be resolved – treating it as an external dependency.
+"dexie-observable" is imported by " virtual:_app/immutable/workers/sync.worker-12f7d8e8.js", but could not be resolved – treating it as an external dependency.
+"dexie-syncable" is imported by " virtual:_app/immutable/workers/sync.worker-12f7d8e8.js", but could not be resolved – treating it as an external dependency.
+No name was provided for external module "@supabase/auth-helpers-sveltekit" in "output.globals" – guessing "authHelpersSveltekit".
+No name was provided for external module "dexie" in "output.globals" – guessing "dexie".
+No name was provided for external module "base64-js" in "output.globals" – guessing "base64Js".
+✓ 288 modules transformed.
+rendering chunks...
+The following Vite config options will be overridden by SvelteKit:
+  - build.rollupOptions.input
+
+
+vite v4.3.9 building for production...
+transforming...
+11:48:34 AM [vite-plugin-svelte] /src/routes/(project)/projects/[id]/+layout.svelte:443:2 Unused CSS selector ".selected button"
+441:   }
+442:   .selected *,
+443:   .selected button {
+       ^
+444:     color: white !important;
+445:   }
+11:48:34 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/dropdown/DropdownItem.svelte:7:11 DropdownItem has unused export property 'active'. If it is for external reference only, please consider using `export const active`
+ 5: export let textOnly = false;
+ 6: export let href = void 0;
+ 7: export let active = false;
+               ^
+ 8: export let className = "";
+ 9: </script>
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/drawer/Sidebar.svelte:4:11 Sidebar has unused export property 'style'. If it is for external reference only, please consider using `export const style`
+2: export let asideClass = "flex flex-col h-full relative bg-white dark:bg-dark-2 border-r border-gray-primary dark:border-border-dark";
+3: export let navbarHeight = 64;
+4: export let style = "";
+              ^
+5: let className = "";
+6: export { className as class };
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/drawer/DrawerDetails.svelte:7:11 DrawerDetails has unused export property 'nameClass'. If it is for external reference only, please consider using `export const nameClass`
+ 5: import ArrowDown from "../icons/ArrowDown.svelte";
+ 6: import MaybeTooltip from "../utils/MaybeTooltip.svelte";
+ 7: export let nameClass = "";
+               ^
+ 8: export let descClass = "";
+ 9: export let divClass = "relative grid justify-items-stretch bg-black/[2%] dark:bg-black/[8%] border-b border-gray-primary dark:border-border-dark py-4";
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/drawer/DrawerDetails.svelte:14:11 DrawerDetails has unused export property 'isClosed'. If it is for external reference only, please consider using `export const isClosed`
+12: export let summaryClass = "";
+13: export let iconBtnClass = "absolute right-0.5 top-5 text-current rounded-full border-none p-0 flex items-center justify-center bg-gray-brand-1/0 dark:bg-white/0 hover:bg-gray-brand-1/[.09] dark:hover:bg-white/[.09] cursor-pointer";
+14: export let isClosed = true;
+               ^
+15: export let name;
+16: export let description;
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/drawer/DrawerDetails.svelte:17:11 DrawerDetails has unused export property 'sync_status'. If it is for external reference only, please consider using `export const sync_status`
+15: export let name;
+16: export let description;
+17: export let sync_status;
+               ^
+18: let editable = false;
+19: function handleDblClick(event) {
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/Button.svelte:67:2 A11y: noninteractive element cannot have nonnegative tabIndex value
+65:   </svelte:element>
+66: {:else}
+67:   <label {...$$restProps} for={boundTo} {tabindex} class={buttonClass}>{label}</label>
+      ^
+68: {/if}
+69: 
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/data/tree/TreeView.svelte:19:11 TreeView has unused export property 'isActive'. If it is for external reference only, please consider using `export const isActive`
+17: export let ulClass = "";
+18: export let spanClass = "pointer-events-auto block h-7 w-auto flex justify-center items-center";
+19: export let isActive;
+               ^
+20: export let href = "";
+21: </script>
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/data/tree/TreeView.svelte:20:11 TreeView has unused export property 'href'. If it is for external reference only, please consider using `export const href`
+18: export let spanClass = "pointer-events-auto block h-7 w-auto flex justify-center items-center";
+19: export let isActive;
+20: export let href = "";
+               ^
+21: </script>
+22: 
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/data/tree/TreeView.svelte:95:2 Unused CSS selector "ul li ul li details summary ul li details summary ul li button"
+93:   }
+94: 
+95:   ul li ul li details summary ul li details summary ul li button {
+      ^
+96:     padding-left: 12px !important;
+97:   }
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/data/tree/TreeItem.svelte:5:11 TreeItem has unused export property 'tree_data'. If it is for external reference only, please consider using `export const tree_data`
+3: <script lang="ts">import classNames from "classnames";
+4: import { page } from "$app/stores";
+5: export let tree_data = [];
+              ^
+6: export let btnClass = "text-default whitespace-nowrap text-ellipsis leading-normal w-full";
+7: export let elementClass = "";
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/data/tree/TreeItem.svelte:21:2 Unused CSS selector ".selected button"
+19:   }
+20:   .selected *,
+21:   .selected button {
+      ^
+22:     color: white !important;
+23:   }
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/CodeMirror.svelte:5:11 CodeMirror has unused export property 'theme'. If it is for external reference only, please consider using `export const theme`
+3: import { EditorState } from "@codemirror/state";
+4: import { createEventDispatcher, onMount } from "svelte";
+5: export let theme = "markdown";
+              ^
+6: export let initial_value = "";
+7: export let divClass = "w-full border border-border-light dark:border-border-dark";
+11:48:35 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/tabs/TabHeadItem.svelte:20:11 TabHeadItem has unused export property 'type'. If it is for external reference only, please consider using `export const type`
+18:   dispatch("close");
+19: };
+20: export let type = "button";
+               ^
+21: export let tabindex = 0;
+22: let iconColor = "text-white";
+11:48:36 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/utils/CloseButton.svelte:10:11 CloseButton has unused export property 'name'. If it is for external reference only, please consider using `export const name`
+ 8: }
+ 9: export let btnClass = "";
+10: export let name = "";
+               ^
+11: export let href = "";
+12: export let type;
+11:48:36 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/utils/CloseButton.svelte:11:11 CloseButton has unused export property 'href'. If it is for external reference only, please consider using `export const href`
+ 9: export let btnClass = "";
+10: export let name = "";
+11: export let href = "";
+               ^
+12: export let type;
+13: export let iconColor = "text-body-light dark:text-gray-primary";
+11:48:36 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/Cursor.svelte:164:2 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+162:   </div>
+163: {:else}
+164:   <div
+       ^
+165:     on:contextmenu|preventDefault={handleRightClick}
+166:     on:dragenter={handleDragEnter}
+11:48:37 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/EmptyCell.svelte:1:29 EmptyCell has unused export property 'column'. If it is for external reference only, please consider using `export const column`
+1: <script lang="ts">export let column;
+                                ^
+2: export let kind;
+3: export let lane = void 0;
+11:48:37 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/EmptyCell.svelte:2:11 EmptyCell has unused export property 'kind'. If it is for external reference only, please consider using `export const kind`
+1: <script lang="ts">export let column;
+2: export let kind;
+              ^
+3: export let lane = void 0;
+4: </script>
+11:48:37 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/EmptyCell.svelte:3:11 EmptyCell has unused export property 'lane'. If it is for external reference only, please consider using `export const lane`
+1: <script lang="ts">export let column;
+2: export let kind;
+3: export let lane = void 0;
+              ^
+4: </script>
+5: 
+11:48:37 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/Command.svelte:8:11 Command has unused export property 'command'. If it is for external reference only, please consider using `export const command`
+ 6: $:
+ 7:   dom_id = is_cursor ? `${id}-cursor` : id;
+ 8: export let command;
+               ^
+ 9: export let column;
+10: export let name;
+11:48:37 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/ReadModel.svelte:8:11 ReadModel has unused export property 'read_model'. If it is for external reference only, please consider using `export const read_model`
+ 6: $:
+ 7:   dom_id = is_cursor ? `${id}-cursor` : id;
+ 8: export let read_model;
+               ^
+ 9: export let column;
+10: export let name;
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/Event.svelte:8:11 Event has unused export property 'event'. If it is for external reference only, please consider using `export const event`
+ 6: $:
+ 7:   dom_id = is_cursor ? `${id}-cursor` : id;
+ 8: export let event;
+               ^
+ 9: export let column;
+10: export let name;
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/Cell.svelte:46:0 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+44: </script>
+45: 
+46: <div
+    ^
+47:   on:click|preventDefault={handleClick}
+48:   on:contextmenu|preventDefault={handleRightClick}
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/Interface.svelte:10:11 Interface has unused export property 'interface_id'. If it is for external reference only, please consider using `export const interface_id`
+ 8: $:
+ 9:   dom_id = is_cursor ? `${id}-cursor` : id;
+10: export let interface_id;
+               ^
+11: export let column;
+12: export let config;
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:231:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+229:   {#each layout as item}
+230:     {#if item === 'playpause'}
+231:       <div class="btn" on:click="{togglePlay}" class:active="{isPlaying || isPaused}">
+           ^
+232:         {#if isPlaying}
+233:           <svg {...ICON_SIZE}>
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:244:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+242:       </div>
+243:     {:else if item === 'stop'}
+244:       <div class="btn" on:click="{stop}" class:active="{isStopped}">
+           ^
+245:         <svg {...ICON_SIZE}>
+246:           <path
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:269:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+267:       />
+268:     {:else if item === 'loop'}
+269:       <div class="btn" on:click="{toggleLooping}" class:active="{loop}">
+           ^
+270:         <svg {...ICON_SIZE}>
+271:           <path
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:317:6 A11y: on:mouseover must be accompanied by on:focus
+315:       </div>
+316:     {:else if item === 'snapshot'}
+317:       <div
+           ^
+318:         class=""
+319:         on:mouseout="{() => currentState === PlayerState.Frozen && play()}"
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:317:6 A11y: on:mouseout must be accompanied by on:blur
+315:       </div>
+316:     {:else if item === 'snapshot'}
+317:       <div
+           ^
+318:         class=""
+319:         on:mouseout="{() => currentState === PlayerState.Frozen && play()}"
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:351:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+349:       </div>
+350:     {:else if item === 'zoom'}
+351:       <div class="btn" on:click="{onToggleZoom}">
+           ^
+352:         {#if isZoomed}
+353:           <svg {...ICON_SIZE}>
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:399:8 A11y: on:mouseover must be accompanied by on:focus
+397:     {:else if item === 'frame'}
+398:       <div class="">
+399:         <input
+             ^
+400:           class="frame-number"
+401:           type="text"
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:399:8 A11y: on:mouseout must be accompanied by on:blur
+397:     {:else if item === 'frame'}
+398:       <div class="">
+399:         <input
+             ^
+400:           class="frame-number"
+401:           type="text"
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:410:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+408:       </div>
+409:     {:else if item === 'nextFrame'}
+410:       <div class="btn" on:click="{onNextFrame}">
+           ^
+411:         <svg {...ICON_SIZE}>
+412:           <path
+11:48:38 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Controls.svelte:420:6 A11y: visible, non-interactive elements with an on:click event must be accompanied by an on:keydown, on:keyup, or on:keypress event.
+418:       </div>
+419:     {:else if item === 'previousFrame'}
+420:       <div class="btn" on:click="{oPreviousFrame}">
+           ^
+421:         <svg {...ICON_SIZE}>
+422:           <path d="M22 4.5a1.4 1.4 0 00-2.1-1.2l-13 7.5a1.4 1.4 0 000 2.4l13 7.5a1.4 1.4 0 002.1-1.2z"></path>
+11:48:39 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Popover.svelte:82:0 A11y: on:mouseover must be accompanied by on:focus
+80: </style>
+81: 
+82: <div
+    ^
+83:   class="popover"
+84:   on:mousedown
+11:48:39 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/node_modules/@lottiefiles/svelte-lottie-player/src/components/Popover.svelte:82:0 A11y: on:mouseout must be accompanied by on:blur
+80: </style>
+81: 
+82: <div
+    ^
+83:   class="popover"
+84:   on:mousedown
+11:48:39 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/FlowPort.svelte:4:11 FlowPort has unused export property 'type'. If it is for external reference only, please consider using `export const type`
+2: import { createEventDispatcher } from "svelte";
+3: export let position;
+4: export let type;
+              ^
+5: export let placement;
+6: export let placement_kind;
+11:48:39 AM [vite-plugin-svelte] /Users/josephpearson/Documents/platform/components/src/lib/design/grid/FlowPort.svelte:7:11 FlowPort has unused export property 'column'. If it is for external reference only, please consider using `export const column`
+ 5: export let placement;
+ 6: export let placement_kind;
+ 7: export let column;
+               ^
+ 8: const dispatch = createEventDispatcher();
+ 9: const positionToFlowAnchor = (p) => {
+Use of eval in "../node_modules/lottie-web/build/player/lottie.js" is strongly discouraged as it poses security risks and may cause issues with minification.
+✓ 601 modules transformed.
+rendering chunks...
+The emitted file "_app/version.json" overwrites a previously emitted file of the same name.
+computing gzip size...
+.svelte-kit/output/client/_app/version.json                                                  0.03 kB │ gzip:   0.05 kB
+.svelte-kit/output/client/_app/immutable/assets/ArrowDown.7de330e0.svg                       0.30 kB │ gzip:   0.22 kB
+.svelte-kit/output/client/_app/immutable/assets/evidentDataLogo.5a4da2f4.svg                 2.40 kB │ gzip:   0.95 kB
+.svelte-kit/output/client/_app/immutable/assets/evidentDeployLogo.bb89affe.svg               2.80 kB │ gzip:   1.14 kB
+.svelte-kit/output/client/_app/immutable/assets/evidentDatabaseLogo.f28924c3.svg             3.42 kB │ gzip:   1.32 kB
+.svelte-kit/output/client/_app/immutable/assets/evidentStackLogo.7d5def46.svg                4.25 kB │ gzip:   1.53 kB
+.svelte-kit/output/client/_app/immutable/assets/evidentDomainFunctionsLogo.4c7f34f1.svg      4.50 kB │ gzip:   1.58 kB
+.svelte-kit/output/client/_app/immutable/assets/evidentDesignLogo.fe5b79a7.svg              11.71 kB │ gzip:   7.78 kB
+.svelte-kit/output/client/vite-manifest.json                                                57.29 kB │ gzip:   5.35 kB
+.svelte-kit/output/client/assets/sync.worker-e24d16cc.js                                   210.46 kB
+.svelte-kit/output/client/_app/immutable/assets/state_client_bg.f273214c.wasm            2,372.93 kB
+.svelte-kit/output/client/_app/immutable/assets/25.7857342e.css                              0.03 kB │ gzip:   0.05 kB
+.svelte-kit/output/client/_app/immutable/assets/JobGears.531dfb73.css                        0.04 kB │ gzip:   0.06 kB
+.svelte-kit/output/client/_app/immutable/assets/22.5afe4a55.css                              0.07 kB │ gzip:   0.09 kB
+.svelte-kit/output/client/_app/immutable/assets/CloseButton.fb853cbb.css                     0.11 kB │ gzip:   0.10 kB
+.svelte-kit/output/client/_app/immutable/assets/Grid.6c1035f8.css                            0.14 kB │ gzip:   0.13 kB
+.svelte-kit/output/client/_app/immutable/assets/23.d8ab761b.css                              0.26 kB │ gzip:   0.17 kB
+.svelte-kit/output/client/_app/immutable/assets/18.c6963c5c.css                              0.34 kB │ gzip:   0.17 kB
+.svelte-kit/output/client/_app/immutable/assets/DropdownDivider.c4ce0b2e.css                 0.43 kB │ gzip:   0.25 kB
+.svelte-kit/output/client/_app/immutable/assets/6.013be796.css                               0.59 kB │ gzip:   0.25 kB
+.svelte-kit/output/client/_app/immutable/assets/ArrowDown.c486f756.css                       0.85 kB │ gzip:   0.39 kB
+.svelte-kit/output/client/_app/immutable/assets/13.0a15a45c.css                              0.97 kB │ gzip:   0.40 kB
+.svelte-kit/output/client/_app/immutable/assets/TreeItem.87bdfabe.css                        1.32 kB │ gzip:   0.41 kB
+.svelte-kit/output/client/_app/immutable/assets/index.798bbb7e.css                           5.07 kB │ gzip:   1.32 kB
+.svelte-kit/output/client/_app/immutable/assets/0.29f203f1.css                             122.87 kB │ gzip:  21.55 kB
+.svelte-kit/output/client/_app/immutable/nodes/18.a09b5b5a.js                                0.07 kB │ gzip:   0.08 kB
+.svelte-kit/output/client/_app/immutable/chunks/navigation.c6a47880.js                       0.10 kB │ gzip:   0.11 kB
+.svelte-kit/output/client/_app/immutable/chunks/util.13123f40.js                             0.11 kB │ gzip:   0.11 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.5e2a9a64.js                            0.16 kB │ gzip:   0.14 kB
+.svelte-kit/output/client/_app/immutable/nodes/5.3bf1ad38.js                                 0.20 kB │ gzip:   0.19 kB
+.svelte-kit/output/client/_app/immutable/nodes/27.f6141c87.js                                0.21 kB │ gzip:   0.19 kB
+.svelte-kit/output/client/_app/immutable/nodes/16.9abd2854.js                                0.22 kB │ gzip:   0.21 kB
+.svelte-kit/output/client/_app/immutable/chunks/_commonjsHelpers.725317a4.js                 0.24 kB │ gzip:   0.18 kB
+.svelte-kit/output/client/_app/immutable/chunks/stores.833a849f.js                           0.24 kB │ gzip:   0.17 kB
+.svelte-kit/output/client/_app/immutable/chunks/control.f5b05b5f.js                          0.25 kB │ gzip:   0.18 kB
+.svelte-kit/output/client/_app/immutable/nodes/21.9f8960e6.js                                0.31 kB │ gzip:   0.25 kB
+.svelte-kit/output/client/_app/immutable/chunks/diff.1bf42f34.js                             0.31 kB │ gzip:   0.24 kB
+.svelte-kit/output/client/_app/immutable/nodes/14.d5fd9c1f.js                                0.34 kB │ gzip:   0.26 kB
+.svelte-kit/output/client/_app/immutable/nodes/4.2c5a1fe3.js                                 0.47 kB │ gzip:   0.33 kB
+.svelte-kit/output/client/_app/immutable/chunks/layout.ac3db02e.js                           0.52 kB │ gzip:   0.35 kB
+.svelte-kit/output/client/_app/immutable/chunks/brainfuck.637b9bf0.js                        0.61 kB │ gzip:   0.33 kB
+.svelte-kit/output/client/_app/immutable/chunks/properties.aba123c1.js                       0.67 kB │ gzip:   0.35 kB
+.svelte-kit/output/client/_app/immutable/nodes/1.3c2a6d34.js                                 0.75 kB │ gzip:   0.47 kB
+.svelte-kit/output/client/_app/immutable/chunks/preload-helper.41c905a7.js                   0.76 kB │ gzip:   0.48 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.94423881.js                            0.77 kB │ gzip:   0.50 kB
+.svelte-kit/output/client/_app/immutable/chunks/cmake.f314e514.js                            0.78 kB │ gzip:   0.46 kB
+.svelte-kit/output/client/_app/immutable/chunks/asciiarmor.e7973ceb.js                       0.79 kB │ gzip:   0.41 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.0717b718.js                            0.82 kB │ gzip:   0.51 kB
+.svelte-kit/output/client/_app/immutable/chunks/tinykeys.87a1c916.js                         0.84 kB │ gzip:   0.53 kB
+.svelte-kit/output/client/_app/immutable/chunks/http.e091c18d.js                             0.85 kB │ gzip:   0.41 kB
+.svelte-kit/output/client/_app/immutable/chunks/protobuf.1713bf80.js                         0.86 kB │ gzip:   0.52 kB
+.svelte-kit/output/client/_app/immutable/chunks/solr.eac40f87.js                             0.87 kB │ gzip:   0.46 kB
+.svelte-kit/output/client/_app/immutable/nodes/7.c6b52bea.js                                 0.87 kB │ gzip:   0.57 kB
+.svelte-kit/output/client/_app/immutable/nodes/8.bb143ed5.js                                 0.88 kB │ gzip:   0.57 kB
+.svelte-kit/output/client/_app/immutable/nodes/9.9515a6d1.js                                 0.88 kB │ gzip:   0.57 kB
+.svelte-kit/output/client/_app/immutable/nodes/12.969f089c.js                                0.89 kB │ gzip:   0.53 kB
+.svelte-kit/output/client/_app/immutable/nodes/11.99cc2731.js                                0.90 kB │ gzip:   0.59 kB
+.svelte-kit/output/client/_app/immutable/chunks/troff.1c50c70f.js                            0.96 kB │ gzip:   0.44 kB
+.svelte-kit/output/client/_app/immutable/chunks/spreadsheet.9f4dc4c6.js                      1.14 kB │ gzip:   0.54 kB
+.svelte-kit/output/client/_app/immutable/chunks/toml.024602c7.js                             1.14 kB │ gzip:   0.54 kB
+.svelte-kit/output/client/_app/immutable/nodes/20.7a13f48e.js                                1.19 kB │ gzip:   0.66 kB
+.svelte-kit/output/client/_app/immutable/nodes/19.1dbb72b7.js                                1.20 kB │ gzip:   0.67 kB
+.svelte-kit/output/client/_app/immutable/nodes/24.90a70008.js                                1.20 kB │ gzip:   0.67 kB
+.svelte-kit/output/client/_app/immutable/nodes/0.7284c4ba.js                                 1.25 kB │ gzip:   0.76 kB
+.svelte-kit/output/client/_app/immutable/chunks/mbox.b40e52ca.js                             1.40 kB │ gzip:   0.66 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.47492262.js                            1.46 kB │ gzip:   0.67 kB
+.svelte-kit/output/client/_app/immutable/nodes/17.3f4e0e66.js                                1.47 kB │ gzip:   0.81 kB
+.svelte-kit/output/client/_app/immutable/chunks/sieve.4b1eb6fb.js                            1.62 kB │ gzip:   0.77 kB
+.svelte-kit/output/client/_app/immutable/chunks/rpm.aa81b362.js                              1.62 kB │ gzip:   0.83 kB
+.svelte-kit/output/client/_app/immutable/chunks/factor.1e3b987b.js                           1.67 kB │ gzip:   0.61 kB
+.svelte-kit/output/client/_app/immutable/chunks/Icon.fe7f82ba.js                             1.72 kB │ gzip:   0.90 kB
+.svelte-kit/output/client/_app/immutable/chunks/z80.bb7f2654.js                              1.75 kB │ gzip:   0.81 kB
+.svelte-kit/output/client/_app/immutable/nodes/3.92a44dc3.js                                 1.80 kB │ gzip:   0.98 kB
+.svelte-kit/output/client/_app/immutable/chunks/eiffel.c812667a.js                           1.81 kB │ gzip:   0.93 kB
+.svelte-kit/output/client/_app/immutable/chunks/Player.2b29c43f.js                           1.83 kB │ gzip:   1.00 kB
+.svelte-kit/output/client/_app/immutable/chunks/elm.389625db.js                              1.89 kB │ gzip:   0.82 kB
+.svelte-kit/output/client/_app/immutable/chunks/mathematica.4db1ec63.js                      1.92 kB │ gzip:   0.82 kB
+.svelte-kit/output/client/_app/immutable/chunks/dockerfile.df4a70f8.js                       1.95 kB │ gzip:   0.67 kB
+.svelte-kit/output/client/_app/immutable/chunks/turtle.b550492d.js                           1.98 kB │ gzip:   0.90 kB
+.svelte-kit/output/client/_app/immutable/nodes/15.dc4221f7.js                                1.99 kB │ gzip:   1.11 kB
+.svelte-kit/output/client/_app/immutable/chunks/ebnf.9a58f677.js                             1.99 kB │ gzip:   0.81 kB
+.svelte-kit/output/client/_app/immutable/chunks/smalltalk.b41561ee.js                        2.01 kB │ gzip:   0.85 kB
+.svelte-kit/output/client/_app/immutable/chunks/dtd.8d673f3f.js                              2.06 kB │ gzip:   0.87 kB
+.svelte-kit/output/client/_app/immutable/chunks/mumps.82310ef4.js                            2.07 kB │ gzip:   0.98 kB
+.svelte-kit/output/client/_app/immutable/chunks/fcl.d5e95185.js                              2.08 kB │ gzip:   0.95 kB
+.svelte-kit/output/client/_app/immutable/chunks/ntriples.8490b09b.js                         2.10 kB │ gzip:   0.75 kB
+.svelte-kit/output/client/_app/immutable/chunks/apl.f73da2d7.js                              2.12 kB │ gzip:   1.23 kB
+.svelte-kit/output/client/_app/immutable/chunks/yacas.d031e2ab.js                            2.15 kB │ gzip:   1.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/simple-mode.6643bd24.js                      2.29 kB │ gzip:   1.10 kB
+.svelte-kit/output/client/_app/immutable/chunks/octave.3f516c2f.js                           2.30 kB │ gzip:   1.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/pascal.ed0353c0.js                           2.30 kB │ gzip:   1.19 kB
+.svelte-kit/output/client/_app/immutable/chunks/commonlisp.4f2152ad.js                       2.32 kB │ gzip:   1.10 kB
+.svelte-kit/output/client/_app/immutable/chunks/tcl.9a9d281f.js                              2.36 kB │ gzip:   1.23 kB
+.svelte-kit/output/client/_app/immutable/nodes/10.c62c73bf.js                                2.37 kB │ gzip:   1.19 kB
+.svelte-kit/output/client/_app/immutable/chunks/singletons.ce26dbd0.js                       2.42 kB │ gzip:   1.25 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.e4469943.js                            2.42 kB │ gzip:   1.50 kB
+.svelte-kit/output/client/_app/immutable/chunks/webidl.beade871.js                           2.52 kB │ gzip:   1.26 kB
+.svelte-kit/output/client/_app/immutable/chunks/pig.3510ca5f.js                              2.53 kB │ gzip:   1.38 kB
+.svelte-kit/output/client/_app/immutable/chunks/puppet.3229bfe4.js                           2.54 kB │ gzip:   1.20 kB
+.svelte-kit/output/client/_app/immutable/chunks/forth.a6c07be1.js                            2.54 kB │ gzip:   1.33 kB
+.svelte-kit/output/client/_app/immutable/chunks/shell.61e14131.js                            2.57 kB │ gzip:   1.21 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.d773afbe.js                            2.63 kB │ gzip:   1.51 kB
+.svelte-kit/output/client/_app/immutable/chunks/velocity.5bdd1b6a.js                         2.67 kB │ gzip:   1.11 kB
+.svelte-kit/output/client/_app/immutable/chunks/tiddlywiki.053c4b39.js                       2.78 kB │ gzip:   1.07 kB
+.svelte-kit/output/client/_app/immutable/chunks/modelica.c19c47b8.js                         2.79 kB │ gzip:   1.29 kB
+.svelte-kit/output/client/_app/immutable/chunks/oz.a640e05c.js                               2.90 kB │ gzip:   1.28 kB
+.svelte-kit/output/client/_app/immutable/chunks/r.3ca97919.js                                2.94 kB │ gzip:   1.36 kB
+.svelte-kit/output/client/_app/immutable/chunks/stex.611747c4.js                             3.12 kB │ gzip:   1.20 kB
+.svelte-kit/output/client/_app/immutable/chunks/CloseButton.611b2b86.js                      3.19 kB │ gzip:   1.39 kB
+.svelte-kit/output/client/_app/immutable/chunks/tiki.f8970e14.js                             3.25 kB │ gzip:   1.26 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.d9ecd92d.js                            3.29 kB │ gzip:   1.68 kB
+.svelte-kit/output/client/_app/immutable/chunks/vhdl.288f0dde.js                             3.35 kB │ gzip:   1.51 kB
+.svelte-kit/output/client/_app/immutable/chunks/lua.2d628a68.js                              3.41 kB │ gzip:   1.43 kB
+.svelte-kit/output/client/_app/immutable/nodes/25.1f5c34d3.js                                3.45 kB │ gzip:   1.64 kB
+.svelte-kit/output/client/_app/immutable/chunks/mscgen.96577242.js                           3.51 kB │ gzip:   0.98 kB
+.svelte-kit/output/client/_app/immutable/chunks/sparql.a1ae2f33.js                           3.55 kB │ gzip:   1.63 kB
+.svelte-kit/output/client/_app/immutable/chunks/cypher.236a65ad.js                           3.56 kB │ gzip:   1.52 kB
+.svelte-kit/output/client/_app/immutable/chunks/d.76ab4361.js                                3.72 kB │ gzip:   1.68 kB
+.svelte-kit/output/client/_app/immutable/chunks/coffeescript.cf6fb77c.js                     3.87 kB │ gzip:   1.69 kB
+.svelte-kit/output/client/_app/immutable/chunks/vb.e9655ff4.js                               3.90 kB │ gzip:   1.79 kB
+.svelte-kit/output/client/_app/immutable/chunks/swift.b6dd686e.js                            3.96 kB │ gzip:   1.79 kB
+.svelte-kit/output/client/_app/immutable/chunks/asn1.f9c290f0.js                             3.99 kB │ gzip:   1.96 kB
+.svelte-kit/output/client/_app/immutable/chunks/q.ddde97d0.js                                4.03 kB │ gzip:   1.67 kB
+.svelte-kit/output/client/_app/immutable/chunks/dylan.94e68d48.js                            4.05 kB │ gzip:   1.65 kB
+.svelte-kit/output/client/_app/immutable/chunks/livescript.a3318e59.js                       4.09 kB │ gzip:   1.64 kB
+.svelte-kit/output/client/_app/immutable/chunks/ttcn-cfg.0c96bcc1.js                         4.12 kB │ gzip:   1.74 kB
+.svelte-kit/output/client/_app/immutable/chunks/groovy.0f5f2f64.js                           4.14 kB │ gzip:   1.77 kB
+.svelte-kit/output/client/_app/immutable/chunks/haskell.b620645c.js                          4.16 kB │ gzip:   1.89 kB
+.svelte-kit/output/client/_app/immutable/nodes/22.150fb531.js                                4.30 kB │ gzip:   2.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/asterisk.9c249b4c.js                         4.48 kB │ gzip:   1.78 kB
+.svelte-kit/output/client/_app/immutable/chunks/gas.a519128b.js                              4.57 kB │ gzip:   1.28 kB
+.svelte-kit/output/client/_app/immutable/chunks/fortran.b746f455.js                          4.65 kB │ gzip:   2.01 kB
+.svelte-kit/output/client/_app/immutable/chunks/mllike.1f866598.js                           4.83 kB │ gzip:   1.56 kB
+.svelte-kit/output/client/_app/immutable/chunks/ttcn.a4846d83.js                             4.86 kB │ gzip:   2.15 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.2e5ba563.js                            4.95 kB │ gzip:   2.37 kB
+.svelte-kit/output/client/_app/immutable/chunks/ecl.8c848bde.js                              5.13 kB │ gzip:   2.31 kB
+.svelte-kit/output/client/_app/immutable/chunks/crystal.02658b69.js                          5.13 kB │ gzip:   2.07 kB
+.svelte-kit/output/client/_app/immutable/chunks/Button.41eb95f7.js                           5.15 kB │ gzip:   2.28 kB
+.svelte-kit/output/client/_app/immutable/chunks/ruby.e88f1f8d.js                             5.16 kB │ gzip:   2.15 kB
+.svelte-kit/output/client/_app/immutable/chunks/julia.2f39a740.js                            5.39 kB │ gzip:   2.14 kB
+.svelte-kit/output/client/_app/immutable/chunks/Sidebar.6811e0d9.js                          5.74 kB │ gzip:   2.56 kB
+.svelte-kit/output/client/_app/immutable/chunks/vbscript.e62417ba.js                         5.82 kB │ gzip:   2.57 kB
+.svelte-kit/output/client/_app/immutable/chunks/mirc.c043bc0a.js                             5.92 kB │ gzip:   2.68 kB
+.svelte-kit/output/client/_app/immutable/chunks/cobol.3c0e8dcf.js                            6.23 kB │ gzip:   2.99 kB
+.svelte-kit/output/client/_app/immutable/chunks/scheme.ca3e6863.js                           6.37 kB │ gzip:   2.39 kB
+.svelte-kit/output/client/_app/immutable/chunks/python.fa45e8d1.js                           6.48 kB │ gzip:   2.73 kB
+.svelte-kit/output/client/_app/immutable/chunks/xquery.b8525bba.js                           6.62 kB │ gzip:   2.56 kB
+.svelte-kit/output/client/_app/immutable/chunks/pug.b0293bdf.js                              6.67 kB │ gzip:   1.95 kB
+.svelte-kit/output/client/_app/immutable/chunks/textile.27197230.js                          6.80 kB │ gzip:   2.44 kB
+.svelte-kit/output/client/_app/immutable/chunks/nsis.9f961441.js                             6.81 kB │ gzip:   2.99 kB
+.svelte-kit/output/client/_app/immutable/chunks/nginx.0992a7c8.js                            7.34 kB │ gzip:   2.72 kB
+.svelte-kit/output/client/_app/immutable/chunks/powershell.c2c54630.js                       7.77 kB │ gzip:   3.33 kB
+.svelte-kit/output/client/_app/immutable/chunks/haxe.7215664e.js                             7.91 kB │ gzip:   2.95 kB
+.svelte-kit/output/client/_app/immutable/chunks/gherkin.0efe02ac.js                          7.96 kB │ gzip:   5.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/erlang.72724d5c.js                           8.07 kB │ gzip:   2.89 kB
+.svelte-kit/output/client/_app/immutable/chunks/verilog.701759f4.js                          8.24 kB │ gzip:   3.52 kB
+.svelte-kit/output/client/_app/immutable/nodes/2.9705526d.js                                 8.86 kB │ gzip:   2.65 kB
+.svelte-kit/output/client/_app/immutable/chunks/sas.4096b960.js                              9.33 kB │ gzip:   4.11 kB
+.svelte-kit/output/client/_app/immutable/chunks/perl.a9455719.js                             9.75 kB │ gzip:   3.46 kB
+.svelte-kit/output/client/_app/immutable/chunks/clojure.46c215dd.js                         10.82 kB │ gzip:   3.99 kB
+.svelte-kit/output/client/_app/immutable/chunks/idl.91cb7788.js                             11.63 kB │ gzip:   4.52 kB
+.svelte-kit/output/client/_app/immutable/chunks/ArrowDown.be4139ed.js                       11.98 kB │ gzip:   4.56 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.418d94d6.js                           12.71 kB │ gzip:   5.61 kB
+.svelte-kit/output/client/_app/immutable/chunks/DropdownDivider.ced3f8a2.js                 14.46 kB │ gzip:   5.09 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.e26106eb.js                           14.67 kB │ gzip:   5.95 kB
+.svelte-kit/output/client/_app/immutable/chunks/Modal.c3db2405.js                           15.46 kB │ gzip:   5.64 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.5c6bc70e.js                           15.78 kB │ gzip:   6.59 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.bc356285.js                           16.25 kB │ gzip:   7.43 kB
+.svelte-kit/output/client/_app/immutable/chunks/javascript.da64953c.js                      17.10 kB │ gzip:   5.76 kB
+.svelte-kit/output/client/_app/immutable/nodes/26.65364c7f.js                               18.65 kB │ gzip:   5.60 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.495fc355.js                           20.83 kB │ gzip:   9.31 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.5d3fbec2.js                           21.10 kB │ gzip:   9.70 kB
+.svelte-kit/output/client/_app/immutable/chunks/clike.be721a9d.js                           22.32 kB │ gzip:   7.87 kB
+.svelte-kit/output/client/_app/immutable/entry/start.8930397b.js                            22.71 kB │ gzip:   9.17 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.9844c9ac.js                           23.00 kB │ gzip:  10.36 kB
+.svelte-kit/output/client/_app/immutable/chunks/stylus.db1355f1.js                          25.80 kB │ gzip:   8.60 kB
+.svelte-kit/output/client/_app/immutable/chunks/css.ae0ae1d0.js                             27.13 kB │ gzip:   8.47 kB
+.svelte-kit/output/client/_app/immutable/nodes/23.c9a9ca3d.js                               29.43 kB │ gzip:  10.00 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.ddbbe5f1.js                           30.79 kB │ gzip:  12.65 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.3ca80a53.js                           32.30 kB │ gzip:  13.06 kB
+.svelte-kit/output/client/_app/immutable/chunks/event_model.ece8dd6e.js                     33.40 kB │ gzip:   7.49 kB
+.svelte-kit/output/client/_app/immutable/nodes/6.b7a7b1a4.js                                34.14 kB │ gzip:   8.62 kB
+.svelte-kit/output/client/_app/immutable/chunks/sql.62feda9f.js                             37.07 kB │ gzip:  10.95 kB
+.svelte-kit/output/client/_app/immutable/chunks/TreeItem.66b5c1b6.js                        37.89 kB │ gzip:  10.43 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.2f60e45c.js                           40.74 kB │ gzip:  16.76 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.cfa51b9d.js                           45.10 kB │ gzip:  19.16 kB
+.svelte-kit/output/client/_app/immutable/entry/app.3fe7c5d9.js                              49.04 kB │ gzip:  12.33 kB
+.svelte-kit/output/client/_app/immutable/chunks/JobGears.d580e67f.js                        67.37 kB │ gzip:  23.21 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.6feea574.js                           70.80 kB │ gzip:  25.84 kB
+.svelte-kit/output/client/_app/immutable/chunks/Grid.a91fa210.js                            85.26 kB │ gzip:  20.48 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.cd74c5a9.js                           97.77 kB │ gzip:  28.43 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.caab6fb2.js                          100.55 kB │ gzip:  33.63 kB
+.svelte-kit/output/client/_app/immutable/nodes/13.f7930375.js                              108.80 kB │ gzip:  30.76 kB
+.svelte-kit/output/client/_app/immutable/chunks/dexie.227410b3.js                          182.29 kB │ gzip:  56.07 kB
+.svelte-kit/output/client/_app/immutable/chunks/18.e54bb4fb.js                             233.86 kB │ gzip:  83.94 kB
+.svelte-kit/output/client/_app/immutable/chunks/index.b11720ba.js                          360.87 kB │ gzip:  91.74 kB
+.svelte-kit/output/client/_app/immutable/chunks/CodeMirror.285b3d46.js                     395.98 kB │ gzip: 128.84 kB
+✓ built in 12.97s
+.svelte-kit/output/server/_app/immutable/assets/ArrowDown.7de330e0.svg                                           0.30 kB
+.svelte-kit/output/server/_app/immutable/assets/evidentDataLogo.5a4da2f4.svg                                     2.40 kB
+.svelte-kit/output/server/_app/immutable/assets/evidentDeployLogo.bb89affe.svg                                   2.80 kB
+.svelte-kit/output/server/_app/immutable/assets/evidentDatabaseLogo.f28924c3.svg                                 3.42 kB
+.svelte-kit/output/server/_app/immutable/assets/evidentStackLogo.7d5def46.svg                                    4.25 kB
+.svelte-kit/output/server/_app/immutable/assets/evidentDomainFunctionsLogo.4c7f34f1.svg                          4.50 kB
+.svelte-kit/output/server/_app/immutable/assets/evidentDesignLogo.fe5b79a7.svg                                  11.71 kB
+.svelte-kit/output/server/assets/sync.worker-12f7d8e8.js                                                        14.55 kB
+.svelte-kit/output/server/vite-manifest.json                                                                    19.80 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.7857342e.css                                               0.03 kB
+.svelte-kit/output/server/_app/immutable/assets/JobGears.531dfb73.css                                            0.04 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.5afe4a55.css                                               0.07 kB
+.svelte-kit/output/server/_app/immutable/assets/CloseButton.fb853cbb.css                                         0.11 kB
+.svelte-kit/output/server/_app/immutable/assets/Grid.6c1035f8.css                                                0.14 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.fa19c804.css                                               0.28 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.c6963c5c.css                                               0.34 kB
+.svelte-kit/output/server/_app/immutable/assets/DropdownDivider.c4ce0b2e.css                                     0.43 kB
+.svelte-kit/output/server/_app/immutable/assets/_layout.013be796.css                                             0.59 kB
+.svelte-kit/output/server/_app/immutable/assets/ArrowDown.8d33323e.css                                           0.83 kB
+.svelte-kit/output/server/_app/immutable/assets/_page.0a15a45c.css                                               0.97 kB
+.svelte-kit/output/server/_app/immutable/assets/TreeItem.87bdfabe.css                                            1.32 kB
+.svelte-kit/output/server/_app/immutable/assets/_layout.25bda4cd.css                                           122.81 kB
+.svelte-kit/output/server/entries/pages/_demo_DISABLED/evident-stack/_page.ts.js                                 0.04 kB
+.svelte-kit/output/server/entries/pages/(project)/_layout.ts.js                                                  0.05 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/design/import/_page.ts.js                        0.08 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/db/_layout.ts.js                                 0.08 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/design/_page.ts.js                               0.08 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/data/_layout.ts.js                               0.08 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/deploy/_layout.ts.js                             0.09 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/design/_layout.ts.js                             0.09 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/domain-functions/_layout.ts.js                   0.10 kB
+.svelte-kit/output/server/entries/pages/_layout.server.ts.js                                                     0.12 kB
+.svelte-kit/output/server/entries/pages/auth/_page.ts.js                                                         0.13 kB
+.svelte-kit/output/server/internal.js                                                                            0.15 kB
+.svelte-kit/output/server/entries/pages/_layout.ts.js                                                            0.16 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/_page.ts.js                                      0.17 kB
+.svelte-kit/output/server/entries/pages/(non-project)/_auth_DISABLED/_page.server.ts.js                          0.27 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/design/_page.svelte.js                           0.29 kB
+.svelte-kit/output/server/entries/fallbacks/layout.svelte.js                                                     0.38 kB
+.svelte-kit/output/server/entries/endpoints/(non-project)/_auth_DISABLED/callback/_server.ts.js                  0.39 kB
+.svelte-kit/output/server/entries/pages/(non-project)/projects/new/_layout.ts.js                                 0.45 kB
+.svelte-kit/output/server/entries/pages/(non-project)/account/_page.svelte.js                                    0.45 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/data/_layout.svelte.js                           0.51 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/db/_layout.svelte.js                             0.51 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/deploy/_layout.svelte.js                         0.51 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/domain-functions/_layout.svelte.js               0.53 kB
+.svelte-kit/output/server/entries/pages/_page.svelte.js                                                          0.57 kB
+.svelte-kit/output/server/entries/pages/_layout.svelte.js                                                        0.60 kB
+.svelte-kit/output/server/entries/fallbacks/error.svelte.js                                                      0.60 kB
+.svelte-kit/output/server/entries/pages/(non-project)/_auth_DISABLED/_layout.svelte.js                           0.64 kB
+.svelte-kit/output/server/chunks/Player.js                                                                       0.68 kB
+.svelte-kit/output/server/chunks/tinykeys.js                                                                     0.85 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/deploy/_page.svelte.js                           0.96 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/db/_page.svelte.js                               0.96 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/domain-functions/_page.svelte.js                 0.98 kB
+.svelte-kit/output/server/chunks/hooks.server.js                                                                 1.01 kB
+.svelte-kit/output/server/chunks/stores.js                                                                       1.02 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/design/_layout.svelte.js                         1.29 kB
+.svelte-kit/output/server/entries/pages/(non-project)/projects/new/_page.svelte.js                               1.35 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/_layout.ts.js                                    1.37 kB
+.svelte-kit/output/server/chunks/CodeMirror.js                                                                   1.37 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/data/_page.svelte.js                             1.40 kB
+.svelte-kit/output/server/chunks/Icon.js                                                                         1.73 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/design/placements/_placement_/_page.ts.js        2.50 kB
+.svelte-kit/output/server/chunks/CloseButton.js                                                                  2.51 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/settings/confirm-delete/_page.svelte.js          2.86 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/design/import/_page.svelte.js                    3.20 kB
+.svelte-kit/output/server/chunks/index2.js                                                                       3.34 kB
+.svelte-kit/output/server/chunks/index.js                                                                        4.38 kB
+.svelte-kit/output/server/chunks/Button.js                                                                       4.70 kB
+.svelte-kit/output/server/chunks/Sidebar.js                                                                      4.87 kB
+.svelte-kit/output/server/entries/pages/(non-project)/_layout.svelte.js                                          6.49 kB
+.svelte-kit/output/server/chunks/JobGears.js                                                                     8.11 kB
+.svelte-kit/output/server/chunks/internal.js                                                                     9.12 kB
+.svelte-kit/output/server/chunks/Modal.js                                                                       10.04 kB
+.svelte-kit/output/server/chunks/DropdownDivider.js                                                             10.58 kB
+.svelte-kit/output/server/chunks/ArrowDown.js                                                                   10.79 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/data/schemas/_schema_/_page.svelte.js           12.59 kB
+.svelte-kit/output/server/chunks/index3.js                                                                      15.28 kB
+.svelte-kit/output/server/entries/pages/_demo_DISABLED/evident-stack/_page.svelte.js                            18.82 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/design/placements/_placement_/_page.svelte.js   19.84 kB
+.svelte-kit/output/server/chunks/TreeItem.js                                                                    28.03 kB
+.svelte-kit/output/server/entries/pages/(project)/projects/_id_/_layout.svelte.js                               28.12 kB
+.svelte-kit/output/server/chunks/Grid.js                                                                        57.10 kB
+.svelte-kit/output/server/entries/pages/(non-project)/_auth_DISABLED/_page.svelte.js                            59.26 kB
+.svelte-kit/output/server/chunks/event_model.js                                                                 74.10 kB
+.svelte-kit/output/server/index.js                                                                             103.87 kB
+
+Run npm run preview to preview your production build locally.
+
+> Using @sveltejs/adapter-static
+  Wrote site to "build"
+  ✔ done
+✓ built in 18.61s

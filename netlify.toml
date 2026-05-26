@@ -1,4 +1,1 @@
-[build]
-  base = "website"
-  command = "npm run build"
-  publish = "build"
+# Netlify build settings handled per-project in UI
